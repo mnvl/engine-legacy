@@ -8,18 +8,16 @@
 // REMOVE:
 #include <engine/graphic/collada_importer.h>
 
-using namespace xercesc;
-
 INT WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpstrCmdLine, INT nShowCmd) {
 	try
 	{
-	    XMLPlatformUtils::Initialize();
+		xercesc::XMLPlatformUtils::Initialize();
 
 		engine::system::window main_window("engine");
 		engine::graphic::renderer renderer(&main_window);
 
 		engine::graphic::collada_importer ci;
-		ci.load("d:\\home\\plane.dae");
+		ci.load("d:\\home\\bublik.dae");
 
 		while (true)
 		{
@@ -27,7 +25,7 @@ INT WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpstrCmdLine, INT
 			renderer.tick();
 		}
 
-		XMLPlatformUtils::Terminate();
+		xercesc::XMLPlatformUtils::Terminate();
 	}
 	catch(std::exception const &error)
 	{
@@ -36,11 +34,11 @@ INT WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpstrCmdLine, INT
 	catch (xercesc::XMLException const &error) {
 		char* message = xercesc::XMLString::transcode(error.getMessage());
 		MessageBox(0, message, 0, MB_OK);
-        XMLString::release(&message);
+        xercesc::XMLString::release(&message);
     }
 	catch (xercesc::DOMException const &error) {
 		char* message = xercesc::XMLString::transcode(error.msg);
 		MessageBox(0, message, 0, MB_OK);
-        XMLString::release(&message);
+        xercesc::XMLString::release(&message);
     }
 }
