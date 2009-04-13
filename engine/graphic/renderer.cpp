@@ -12,7 +12,11 @@ renderer::renderer(system::window *window_ptr, int width, int height, bool fulls
 	height_(height),
 	fullscreen_(fullscreen)
 {
-	direct3d_ptr_.reset(Direct3DCreate9(D3D_SDK_VERSION));
+	{
+		IDirect3D9 *direct3d_ptr = Direct3DCreate9(D3D_SDK_VERSION);
+		direct3d_ptr_.reset(direct3d_ptr);
+		direct3d_ptr->Release();
+	}
 
 	{
 		IDirect3DDevice9 *device_ptr;
@@ -38,6 +42,7 @@ renderer::renderer(system::window *window_ptr, int width, int height, bool fulls
 		if (FAILED(hr)) throw exception::directx_error(hr);
 
 		device_ptr_.reset(device_ptr);
+		device_ptr->Release();
 	}
 }
 

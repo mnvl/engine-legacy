@@ -2,6 +2,7 @@
 #include <xercesc/util/PlatformUtils.hpp>
 #include <xercesc/util/XMLString.hpp>
 #include <xercesc/dom/DOM.hpp>
+#include <engine/exception/winapi_error.h>
 #include <engine/system/window.h>
 #include <engine/graphic/renderer.h>
 
@@ -11,6 +12,11 @@
 INT WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpstrCmdLine, INT nShowCmd) {
 	try
 	{
+		{
+			char buffer[1024];
+			if (!GetModuleFileName(0, buffer, sizeof(buffer))) throw engine::exception::winapi_error();
+		}
+
 		xercesc::XMLPlatformUtils::Initialize();
 
 		engine::system::window main_window("engine");
