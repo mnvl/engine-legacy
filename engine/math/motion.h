@@ -1,9 +1,9 @@
 #pragma once
 
 
-#include <math/scalar.h>
-#include <math/vec.h>
-#include <math/matrix.h>
+#include <engine/math/scalar.h>
+#include <engine/math/vec.h>
+#include <engine/math/matrix.h>
 
 namespace math {
 	template<int N,class T=scalar> class motion;

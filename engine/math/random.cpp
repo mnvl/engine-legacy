@@ -28,7 +28,7 @@ On a Vax 11/780, this random number generator can produce a number in
 #include <precompiled.h>
 #include <meta/typedefs.h>
 #include <meta/throw_site.h>
-#include <math/random.h>
+#include <engine/math/random.h>
 
 math::random::random() {
 	meta::s64 ij;

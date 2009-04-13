@@ -1,9 +1,9 @@
 #pragma once
 
-#include <math/vec.h>
-#include <math/matrix.h>
-#include <math/aabb.h>
-#include <math/triangle.h>
+#include <engine/math/vec.h>
+#include <engine/math/matrix.h>
+#include <engine/math/aabb.h>
+#include <engine/math/triangle.h>
 
 namespace math {
 	template<class T=float>

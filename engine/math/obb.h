@@ -1,11 +1,11 @@
 #pragma once
 
-#include <math/scalar.h>
-#include <math/vec.h>
-#include <math/aabb.h>
-#include <math/ray.h>
-#include <math/triangle.h>
-#include <math/matrix.h>
+#include <engine/math/scalar.h>
+#include <engine/math/vec.h>
+#include <engine/math/aabb.h>
+#include <engine/math/ray.h>
+#include <engine/math/triangle.h>
+#include <engine/math/matrix.h>
 
 namespace math {
 	template<int N,class T=scalar> class obb;

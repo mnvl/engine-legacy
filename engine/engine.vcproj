@@ -168,6 +168,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\graphic\mesh.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\graphic\mesh.h"
+				>
+			</File>
+			<File
 				RelativePath=".\graphic\renderer.cpp"
 				>
 			</File>

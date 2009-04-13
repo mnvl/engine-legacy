@@ -1,6 +1,6 @@
 
 #include <precompiled.h>
-#include <math/vec.h>
+#include <engine/math/vec.h>
 
 template class math::vec<2>;
 template class math::vec<3>;

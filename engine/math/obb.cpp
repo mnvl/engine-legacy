@@ -1,6 +1,6 @@
 
 #include <precompiled.h>
-#include <math/obb.h>
+#include <engine/math/obb.h>
 
 template class math::obb<3>;
 
