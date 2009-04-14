@@ -18,8 +18,6 @@ private:
 	std::string filename_;
 	mesh *mesh_ptr_;
 
-	std::map<std::string, xercesc::DOMNode const *> sources_;
-
 	struct technique_info {
 		size_t count, stride;
 	};
@@ -29,9 +27,16 @@ private:
 		technique_info technique;
 	};
 
-	source_info positions_;
-	source_info normals_;
-	source_info texcoords_;
+	struct input_info {
+		std::string source_name;
+		size_t offset;
+	};
+
+	// name to source_info
+	std::map<std::string, source_info> sources_;
+
+	// semantic to source info
+	std::map<std::string, input_info> inputs_;
 
 	void process_collada(xercesc::DOMNode const *node);
 	void process_library_geometries(xercesc::DOMNode const *node);
@@ -40,6 +45,7 @@ private:
 	void process_vertices(xercesc::DOMNode const *node);
 	void process_source(xercesc::DOMNode const *node, source_info *si);
 	void process_technique(xercesc::DOMNode const *node, technique_info *si);
+	void process_triangles(xercesc::DOMNode const *node);
 };
 
 }

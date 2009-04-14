@@ -3,7 +3,6 @@
 #include <map>
 #include <sstream>
 #include <boost/scoped_ptr.hpp>
-#include <boost/lexical_cast.hpp>
 #include <xercesc/parsers/XercesDOMParser.hpp>
 #include <xercesc/sax/HandlerBase.hpp>
 #include <engine/util/xerces_lcp_transcoder.h>
@@ -91,11 +90,15 @@ void collada_importer::process_mesh(xercesc::DOMNode const *node) {
 
 		if (child_name == "source")
 		{
-			sources_.insert(std::make_pair(util::xerces_get_attribute(child, "id"), child));	
+			process_source(child, &sources_[util::xerces_get_attribute<std::string>(child, "id")]);	
 		}
 		else if (child_name == "vertices")
 		{
 			process_vertices(child);
+		}
+		else if (child_name == "triangles")
+		{
+			process_triangles(child);
 		}
 		else
 		{
@@ -110,17 +113,10 @@ void collada_importer::process_vertices(xercesc::DOMNode const *node) {
 
 		if (child_name == "input")
 		{
-			std::string const &semantic = util::xerces_get_attribute(child, "semantic");
-			std::string const &source = util::xerces_get_attribute(child, "source");
+			input_info dummy;
+			dummy.source_name = util::xerces_get_attribute<std::string>(child, "source");
 
-			if (semantic == "POSITION")
-			{
-				process_source(sources_[source.c_str() + 1], &positions_);
-			}
-			else if (semantic == "NORMAL")
-			{
-				process_source(sources_[source.c_str() + 1], &normals_);
-			}
+			inputs_[util::xerces_get_attribute<std::string>(child, "semantic")] = dummy;
 		}
 		else
 		{
@@ -162,8 +158,30 @@ void collada_importer::process_technique(xercesc::DOMNode const *node, technique
 
 		if (child_name == "accessor")
 		{
-			ti->count = boost::lexical_cast<size_t>(util::xerces_get_attribute(child, "count"));
-			ti->stride = boost::lexical_cast<size_t>(util::xerces_get_attribute(child, "stride"));
+			ti->count = util::xerces_get_attribute<size_t>(child, "count");
+			ti->stride = util::xerces_get_attribute<size_t>(child, "stride");
+		}
+		else
+		{
+		}
+	}
+}
+
+void collada_importer::process_triangles(xercesc::DOMNode const *node)
+{
+	size_t count = util::xerces_get_attribute<size_t>(node, "count");
+
+	for (xercesc::DOMNode const *child = node->getFirstChild(); child; child = child->getNextSibling()) {
+		if (child->getNodeType() != xercesc::DOMNode::ELEMENT_NODE) continue;
+		std::string const &child_name = util::xerces_lcp_transcode(child->getLocalName());
+
+		if (child_name == "input")
+		{
+			input_info dummy;
+			dummy.source_name = util::xerces_get_attribute<std::string>(child, "source");
+			dummy.offset = util::xerces_get_attribute<size_t>(child, "offset");
+
+			inputs_[util::xerces_get_attribute<std::string>(child, "semantic")] = dummy;
 		}
 		else
 		{

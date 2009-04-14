@@ -183,6 +183,14 @@
 				RelativePath=".\graphic\renderer.h"
 				>
 			</File>
+			<File
+				RelativePath=".\graphic\static_mesh.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\graphic\static_mesh.h"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="exception"

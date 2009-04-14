@@ -13,6 +13,8 @@ public:
 	renderer(system::window *window_ptr, int width = 800, int height = 600, bool fullscreen = false);
 	void tick();
 
+	IDirect3DDevice9 *get_device() const { return device_ptr_.get(); }
+
 private:
 	system::window *window_ptr_;
 	int width_, height_;

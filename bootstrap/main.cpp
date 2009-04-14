@@ -8,6 +8,7 @@
 
 // REMOVE:
 #include <engine/graphic/collada_importer.h>
+#include <engine/graphic/static_mesh.h>
 
 INT WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpstrCmdLine, INT nShowCmd) {
 	try
@@ -22,7 +23,9 @@ INT WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpstrCmdLine, INT
 		engine::system::window main_window("engine");
 		engine::graphic::renderer renderer(&main_window);
 
-		engine::graphic::collada_importer ci("d:\\home\\bublik.dae", 0);
+		engine::graphic::static_mesh sm(&renderer);
+
+		engine::graphic::collada_importer ci("d:\\home\\bublik.dae", &sm);
 		ci.load();
 
 		while (true)
