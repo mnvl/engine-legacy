@@ -1,6 +1,5 @@
 #pragma once
 
-
 #include <engine/math/scalar.h>
 #include <engine/math/vec.h>
 
@@ -36,7 +35,6 @@ class math::quaternion {
 public:
 	// типы и константы
 	typedef T scalar_type;
-	typedef std::numeric_limits<scalar_type> limits_type;
 	typedef vec<3,T> vec_type;
 	typedef matrix<3,3,scalar_type> matrix_type;
 	typedef quaternion<T> quaternion_type;
@@ -152,10 +150,10 @@ public:
     	}
 
     	bool equal(const quaternion_type& q){
-		return ( fabs(q.x - x) < limits_type::epsilon() ) &&
-               ( fabs(q.y - y) < limits_type::epsilon() ) &&
-               ( fabs(q.z - z) < limits_type::epsilon() ) &&
-               ( fabs(q.w - w) < limits_type::epsilon() );
+		return ( fabs(q.x - x) < EPSILON ) &&
+               ( fabs(q.y - y) < EPSILON ) &&
+               ( fabs(q.z - z) < EPSILON ) &&
+               ( fabs(q.w - w) < EPSILON );
     	}
 
     	//----operators------------------------------------------------
@@ -266,7 +264,7 @@ public:
     	*/
     	void decompose(vec_type &axis, scalar_type &angle)const {
         	scalar_type vl = sqrt( x*x + y*y + z*z );
-        	if( vl > limits_type::epsilon() ) {
+        	if( vl > EPSILON ) {
             		scalar_type ivl = 1 / vl;
             		axis.set( x*ivl, y*ivl, z*ivl );
             		if( w < 0 )
@@ -449,7 +447,6 @@ class math::quaternion_slerper
 {
 public:
 	typedef T scalar_type;
-	typedef std::numeric_limits<scalar_type> limits_type;
 	typedef quaternion<T> quaternion_type;
 
 private:
@@ -554,3 +551,4 @@ math::swing_twist_decomposition(const math::quaternion<T> &rotation,const math::
     twist.normalize();
     swing = rotation * twist.conjugated();
 }
+

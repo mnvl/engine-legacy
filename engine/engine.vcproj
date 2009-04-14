@@ -216,6 +216,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\math\collision.h"
+				>
+			</File>
+			<File
 				RelativePath=".\math\euler_angles.cpp"
 				>
 			</File>
@@ -228,6 +232,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\math\intersection.h"
+				>
+			</File>
+			<File
 				RelativePath=".\math\line.h"
 				>
 			</File>
@@ -237,10 +245,6 @@
 			</File>
 			<File
 				RelativePath=".\math\matrix.h"
-				>
-			</File>
-			<File
-				RelativePath=".\math\motion.h"
 				>
 			</File>
 			<File

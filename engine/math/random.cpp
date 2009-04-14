@@ -1,4 +1,3 @@
-
 /*-------------------------------------------------------------------------
 This random number generator originally appeared in "Toward a Universal 
 Random Number Generator" by George Marsaglia and Arif Zaman. 
@@ -27,11 +26,10 @@ On a Vax 11/780, this random number generator can produce a number in
 
 #include <windows.h>
 #include <stdexcept>
-#include <boost/cstdint.hpp>
 #include <engine/math/random.h>
 
 math::random::random() {
-	boost::int64_t ij;
+	__int64 ij;
 	int kl;
 
 	QueryPerformanceCounter((LARGE_INTEGER *) &ij);
@@ -47,8 +45,8 @@ void math::random::set_seed(int ij,int kl) {
 	int i, j, k, l, ii, jj, m;
 	scalar s, t;
 
-	if(ij<0 || ij>ij_max) throw std::runtime_error("The first random number seed must have a value between 0 and 31328.");
-	if(kl<0 || kl>kl_max) throw std::runtime_error("The second seed must have a value between 0 and 30081.");
+	ij = int(abs(ij)) % ij_max;
+	kl = int(abs(kl)) % kl_max;
 
 	i = (ij/177)%177 + 2;
 	j = ij%177 + 2;

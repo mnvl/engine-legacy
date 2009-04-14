@@ -1,12 +1,17 @@
 #pragma once
 
+
+#undef min
+#undef max
+
 #include <cmath>
-#include <limits>
+#include <algorithm>
 
 namespace math {
 	typedef float scalar;
 
-	static const scalar pi=3.141592654f;
+	static scalar const PI = 3.141592654f;
+	static scalar const EPSILON = 1.0e-6f;
 
 	inline scalar sign(scalar s) {
 		return s > 0 ? scalar(1) : scalar(-1);
@@ -46,7 +51,7 @@ namespace math {
 		return x;
 	}
 
-	template<class T> inline T periodic_clamp(T x, T low = -pi, T high = pi) {
+	template<class T> inline T periodic_clamp(T x, T low = -PI, T high = PI) {
 		T period = high - low;
 		while(x < low) x += period;
 		while(x > high) x -= period;

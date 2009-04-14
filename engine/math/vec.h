@@ -58,7 +58,6 @@ class math::vec<2,T> {
 public:
 	// типы и константы
 	typedef T scalar_type;
-	typedef std::numeric_limits<scalar_type> limits_type;
 	typedef size_t size_type;
 	static const size_type arity = 2;
 	typedef vec<arity,scalar_type> vec_type;
@@ -115,6 +114,10 @@ public:
 		y = y0;
 	}
 
+	void set_all(scalar_type s) {
+		set(s, s);
+	}
+
 	vec_type &operator =(const vec_type &v) {
 		x = v.x;
 		y = v.y;
@@ -167,6 +170,10 @@ public:
 		return sqrt(length_sq());
 	}
 
+	scalar_type length_manhattan() const {
+		return abs(x) + abs(y);
+	}
+
 	// нормализация
 	void normalize() {
 		scalar_type l = length();
@@ -203,7 +210,7 @@ public:
 
 	// коллинеарность
 	bool collinear(const vec_type &v) const {
-		return abs(x*v.y - y*v.x) < limits_type::epsilon();
+		return abs(x*v.y - y*v.x) < EPSILON;
 	}
 
 	// перевести в полярные координаты
@@ -215,9 +222,9 @@ class math::vec<3,T> {
 public:
 	// типы и константы
 	typedef T scalar_type;
-	typedef std::numeric_limits<scalar_type> limits_type;
 	typedef size_t size_type;
 	static const size_type arity = 3;
+	typedef vec<2, scalar_type> vec2_type;
 	typedef vec<arity,scalar_type> vec_type;
 	typedef size_type mask_type;
 
@@ -248,12 +255,19 @@ public:
 		foundation(mask);
 	}
 
-	vec(const vec_type &v):
-	x(v.x), y(v.y), z(v.z) {
+	vec(vec2_type const &v):
+	x(v.x), y(v.y), z(0)
+	{
+	}
+
+	vec(vec_type const &v):
+	x(v.x), y(v.y), z(v.z)
+	{
 	}
 
 	vec(scalar_type x0,scalar_type y0,scalar_type z0):
-	x(x0), y(y0), z(z0) {
+	x(x0), y(y0), z(z0)
+	{
 	}
 
 	void set(const scalar_type x0,const scalar_type y0,const scalar_type z0) {
@@ -392,7 +406,6 @@ class math::vec<4,T> {
 public:
 	// типы и константы
 	typedef T scalar_type;
-	typedef std::numeric_limits<scalar_type> limits_type;
 	typedef size_t size_type;
 	static const size_type arity = 4;
 	typedef vec<arity,scalar_type> vec_type;
@@ -566,7 +579,6 @@ public:
 	typedef T scalar_type;
 	typedef vec<arity,scalar_type> vec_type;
 	typedef int mask_type;
-	typedef std::numeric_limits<scalar_type> limits_type;
 
 	scalar_type i[arity];
 
@@ -664,6 +676,7 @@ template<int N,class T> inline math::vec<N,T>
 operator /(const math::vec<N,T> &lhs,const math::vec<N,T> &rhs) {
 	math::vec<N,T> res;
 	math::div(res, lhs, rhs);
+	return res;
 }
 
 template<int N,class T> inline T
@@ -914,3 +927,4 @@ math::normalize(const math::vec<N,T> &v) {
 	temp.normalize();
 	return temp;
 }
+

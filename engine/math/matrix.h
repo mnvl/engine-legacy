@@ -27,7 +27,6 @@ public:
 	typedef size_t size_type;
 	static const size_type width=3,height=3;
 	typedef T scalar_type;
-	typedef std::numeric_limits<scalar_type> limits_type;
 	typedef vec<width-1,scalar_type> point_type;
 	typedef vec<width,scalar_type> vec_type;
 	typedef quaternion<scalar_type> quaternion_type;
@@ -47,11 +46,13 @@ public:
 	void scale(scalar_type x, scalar_type y);
 	void scale(const point_type &p);
 	void rotation(scalar_type alpha,scalar_type beta,scalar_type gamma);
+	void rotation(scalar_type gamma) { rotation(0, 0, gamma); }
 	void rotation(const vec_type &v);
 	void rotation(const quaternion_type &q);
 	void rotation(vec_type const &axis, scalar_type sine, scalar_type cosine);
 	void rotation(vec_type const &axis, scalar_type angle);
 	void rotate(scalar_type alpha,scalar_type beta,scalar_type gamma);
+	void rotate(scalar_type gamma) { rotation(0, 0, gamma); }
 	void rotate(const vec_type &v);
 	void rotate(const quaternion_type &q);
 	void rotate(vec_type const &axis, scalar_type sine, scalar_type cosine);
@@ -106,7 +107,7 @@ public:
 
 	// записать в T транспонированную матрицу
 	void transpose(matrix_type &tp) {
-        	tp.ij[0][0] = ij[0][0];		tp.ij[0][1] = ij[1][0];		tp.ij[0][2] = ij[2][0];
+        tp.ij[0][0] = ij[0][0];		tp.ij[0][1] = ij[1][0];		tp.ij[0][2] = ij[2][0];
 		tp.ij[1][0] = ij[0][1];		tp.ij[1][1] = ij[1][1];		tp.ij[1][2] = ij[2][1];
 		tp.ij[2][0] = ij[0][2];		tp.ij[2][1] = ij[1][2];		tp.ij[2][2] = ij[2][2];
 	}
@@ -138,7 +139,6 @@ public:
 	typedef size_t size_type;
 	static size_type const width=4,height=4;
 	typedef T scalar_type;
-	typedef std::numeric_limits<scalar_type> limits_type;
 	typedef vec<width,scalar_type> vec_type;
 	typedef vec<width-1,scalar_type> point_type;
 	typedef quaternion<scalar_type> quaternion_type;

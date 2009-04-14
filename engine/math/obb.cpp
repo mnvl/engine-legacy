@@ -10,7 +10,7 @@ math::obb<3,T>::trace(const ray_type &r,scalar_type t_min, scalar_type t_max) co
 	forward_ray(r1, r);
 	
 	// пересечение прямой r1 с плоскостьями x=0 и x=1
-	if(abs(r1.direction.x) > limits_type::epsilon()) {
+	if(abs(r1.direction.x) > EPSILON) {
 		scalar_type dx = 1 / r1.direction.x;
 	
 		scalar_type t = -r1.origin.x * dx;
@@ -28,7 +28,7 @@ math::obb<3,T>::trace(const ray_type &r,scalar_type t_min, scalar_type t_max) co
 	}
 	
 	// пересечение прямой r1 с плоскостьями y=0 и y=1
-	if(abs(r1.direction.y) > limits_type::epsilon()) {
+	if(abs(r1.direction.y) > EPSILON) {
 		scalar_type dy = 1 / r1.direction.y;
 	
 		scalar_type t = -r1.origin.y * dy;
@@ -46,7 +46,7 @@ math::obb<3,T>::trace(const ray_type &r,scalar_type t_min, scalar_type t_max) co
 	}
 	
 	// пересечение прямой r1 с плоскостьями z=0 и z=1
-	if(abs(r1.direction.z) > limits_type::epsilon()) {
+	if(abs(r1.direction.z) > EPSILON) {
 		scalar_type dz = 1 / r1.direction.z;
 	
 		scalar_type t = -r1.origin.z * dz;

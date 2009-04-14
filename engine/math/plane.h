@@ -45,13 +45,13 @@ public:
 
 	// пересечение с прямой
 	bool intersects(const ray_type &r) const {
-		return abs(A*r.direction.x + B*r.direction.y + C*r.direction.z)>limits_type::epsilon()
+		return abs(A*r.direction.x + B*r.direction.y + C*r.direction.z)>EPSILON
 			|| contains(r);
 	}
 
 	bool contains(const ray_type &r) const {
-		return abs(A*r.direction.x + B*r.direction.y + C*r.direction.z)<limits_type::epsilon()
-			&& abs(A*r.origin.x + B*r.origin.y + C*r.origin.z + D)<limits_type::epsilon();
+		return abs(A*r.direction.x + B*r.direction.y + C*r.direction.z)<EPSILON
+			&& abs(A*r.origin.x + B*r.origin.y + C*r.origin.z + D)<EPSILON;
 	}
 
 	bool parallel(const ray_type &r) const {
@@ -86,7 +86,7 @@ public:
 		vec_type dir2 = r.direction * r.direction;
 		
 		scalar_type invdet;
-		if(dir2.z > dir2.y && dir2.z > dir2.x && dir2.z > limits_type::epsilon())
+		if(dir2.z > dir2.y && dir2.z > dir2.x && dir2.z > EPSILON)
 		{
 			/* then get a point on the XY plane */
 			invdet = scalar_type(1) / r.direction.z;
@@ -96,7 +96,7 @@ public:
 			r.origin.y = pl.A * D - A * pl.D;
 			r.origin.z = 0;
 		}
-		else if (dir2.y > dir2.x && dir2.y > limits_type::epsilon())
+		else if (dir2.y > dir2.x && dir2.y > EPSILON)
 		{
 			/* then get a point on the XZ plane */
 			invdet = scalar_type(1) / r.direction.y;
@@ -106,7 +106,7 @@ public:
 			r.origin.y = 0;
 			r.origin.z = pl.A * D -A * pl.D;
 		}
-		else if (dir2.x > limits_type::epsilon())
+		else if (dir2.x > EPSILON)
 		{
 			/* then get a point on the YZ plane */
 			invdet = scalar_type(1) / r.direction.x;

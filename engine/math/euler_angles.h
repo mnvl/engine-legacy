@@ -50,9 +50,9 @@ public:
         #endif
 	struct static_order {
 		static order_type const result = (order_type(axis)	<< 3)
-				               | (order_type(parity)	<< 2)
-					       | (order_type(rep)	<< 1)
-					       |  order_type(frame);
+									   | (order_type(parity)<< 2)
+									   | (order_type(rep)	<< 1)
+									   |  order_type(frame);
 	};
 
 	static order_type const ORDER_XYZs    = static_order<AXIS_X,PARITY_EVEN,REPETITION_NO,FRAME_STATIC>::result;
@@ -137,3 +137,4 @@ public:
 private:
 	static char const safe[], next[];
 };
+

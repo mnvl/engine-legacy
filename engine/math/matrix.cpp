@@ -390,7 +390,7 @@ math::matrix<4,4,T>::rotate(const quaternion_type &q) {
 template<class T> void
 math::matrix<4,4,T>::rotate(point_type const &axis, scalar_type sine, scalar_type cosine) {
 	matrix_type self = *this, temp;
-	temp.rotate(axis, sine, cosine);
+	temp.rotation(axis, sine, cosine);
 	mul(*this, self, temp);
 }
 

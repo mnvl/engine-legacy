@@ -19,7 +19,7 @@ math::euler_angles<T>::load(matrix_type const &M, order_type ord) {
 
 	if (s == REPETITION_YES) {
 		scalar_type sy = sqrt(M.ij[i][j]*M.ij[i][j] + M.ij[i][k]*M.ij[i][k]);
-		if (sy > 16*std::numeric_limits<math::scalar>::epsilon()) {
+		if (sy > 16*EPSILON) {
 			x = atan2(M.ij[i][j], M.ij[i][k]);
 			y = atan2(sy, M.ij[i][i]);
 			z = atan2(M.ij[j][i], -M.ij[k][i]);
@@ -30,7 +30,7 @@ math::euler_angles<T>::load(matrix_type const &M, order_type ord) {
 		}
 	} else {
 		scalar_type cy = sqrt(M.ij[i][i]*M.ij[i][i] + M.ij[j][i]*M.ij[j][i]);
-		if (cy > 16*std::numeric_limits<math::scalar>::epsilon()) {
+		if (cy > 16*EPSILON) {
 			x = atan2(M.ij[k][j], M.ij[k][k]);
 			y = atan2(-M.ij[k][i], cy);
 			z = atan2(M.ij[j][i], M.ij[i][i]);
