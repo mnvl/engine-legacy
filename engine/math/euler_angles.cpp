@@ -1,5 +1,5 @@
 
-#include <precompiled.h>
+#include <utility>
 #include <engine/math/euler_angles.h>
 
 template<class T> char const math::euler_angles<T>::safe[] = "\000\001\002\000";

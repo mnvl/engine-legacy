@@ -1,6 +1,5 @@
 #pragma once
 
-#include <meta/archive.h>
 #include <engine/math/scalar.h>
 
 namespace math {
@@ -55,7 +54,7 @@ namespace math {
 }
 
 template<class T>
-class math::vec<2,T>: public meta::plain {
+class math::vec<2,T> {
 public:
 	// типы и константы
 	typedef T scalar_type;
@@ -212,7 +211,7 @@ public:
 };
 
 template<class T>
-class math::vec<3,T>: public meta::plain {
+class math::vec<3,T> {
 public:
 	// типы и константы
 	typedef T scalar_type;
@@ -389,7 +388,7 @@ public:
 };
 
 template<class T>
-class math::vec<4,T>: public meta::plain {
+class math::vec<4,T> {
 public:
 	// типы и константы
 	typedef T scalar_type;
@@ -560,7 +559,7 @@ public:
 };
 
 template<int N,class T>
-class math::vec: public meta::plain {
+class math::vec {
 public:
     typedef size_t size_type;
 	static const size_type arity=N;
@@ -915,36 +914,3 @@ math::normalize(const math::vec<N,T> &v) {
 	temp.normalize();
 	return temp;
 }
-
-namespace math {
-	template<class Char,class Traits,class Scalar> std::basic_ostream<Char, Traits> &
-	operator <<(std::basic_ostream<Char, Traits> &os, const vec<2,Scalar> &v) {
-		return os<<v.x<<' '<<v.y;
-	}
-
-	template<class Char,class Traits,class Scalar> std::basic_ostream<Char, Traits> &
-	operator <<(std::basic_ostream<Char, Traits> &os, const vec<3,Scalar> &v) {
-		return os<<v.x<<' '<<v.y<<' '<<v.z;
-	}
-
-	template<class Char,class Traits,class Scalar> std::basic_ostream<Char, Traits> &
-	operator <<(std::basic_ostream<Char, Traits> &os, const vec<4,Scalar> &v) {
-		return os<<v.x<<' '<<v.y<<' '<<v.z<<' '<<v.w;
-	}
-
-	template<class Char,class Traits,class Scalar> std::basic_istream<Char, Traits> &
-	operator >>(std::basic_istream<Char, Traits> &is, vec<2,Scalar> &v) {
-		return is>>v.x>>v.y;
-	}
-
-	template<class Char,class Traits,class Scalar> std::basic_istream<Char, Traits> &
-	operator >>(std::basic_istream<Char, Traits> &is, vec<3,Scalar> &v) {
-		return is>>v.x>>v.y>>v.z;
-	}
-
-	template<class Char,class Traits,class Scalar> std::basic_istream<Char, Traits> &
-	operator >>(std::basic_istream<Char, Traits> &is, vec<4,Scalar> &v) {
-		return is>>v.x>>v.y>>v.z>>v.w;
-	}
-}
-

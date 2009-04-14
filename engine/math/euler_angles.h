@@ -137,16 +137,3 @@ public:
 private:
 	static char const safe[], next[];
 };
-
-namespace math {
-	template<class Char,class Traits,class Scalar> std::basic_ostream<Char, Traits> &
-	operator <<(std::basic_ostream<Char, Traits> &os, euler_angles<Scalar> const &ea) {
-		return os<<ea.x<<' '<<ea.y<<' '<<ea.z<<' '<<ea.order;
-	}
-
-	template<class Char,class Traits,class Scalar> std::basic_istream<Char, Traits> &
-	operator >>(std::basic_istream<Char, Traits> &is, euler_angles<Scalar> const &ea) {
-		return is>>ea.x>>ea.y>>ea.z>>ea.order;
-	}
-}
-

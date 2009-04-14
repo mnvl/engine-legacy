@@ -1,6 +1,7 @@
 #pragma once
 
 #include <d3d9.h>
+#include <engine/math/vec.h>
 
 class mesh {
 public:
@@ -8,8 +9,9 @@ public:
 
 #pragma pack(push, 1)
 	struct vertex {
-		math::vec<3> xyz;
-		math::vec<2> uv;
+		math::vec<3> position;
+		math::vec<3> normal;
+		math::vec<2> texcoords;
 	};
 #pragma pack(pop)
 

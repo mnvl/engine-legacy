@@ -22,8 +22,8 @@ INT WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpstrCmdLine, INT
 		engine::system::window main_window("engine");
 		engine::graphic::renderer renderer(&main_window);
 
-		engine::graphic::collada_importer ci;
-		ci.load("d:\\home\\bublik.dae");
+		engine::graphic::collada_importer ci("d:\\home\\bublik.dae", 0);
+		ci.load();
 
 		while (true)
 		{

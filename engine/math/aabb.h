@@ -207,16 +207,3 @@ public:
 		segment_aabb.max = segment_aabb.min + half_unit;
 	}
 };
-
-namespace math {
-	template<class Char,class Traits,int Arity,class Scalar> std::basic_ostream<Char, Traits> &
-	operator <<(std::basic_ostream<Char, Traits> &os, const math::aabb<Arity,Scalar> &b) {
-		return os<<b.min<<' '<<b.max;
-	}
-
-	template<class Char,class Traits,int Arity,class Scalar> std::basic_istream<Char, Traits> &
-	operator >>(std::basic_istream<Char, Traits> &is, math::aabb<Arity,Scalar> &b) {
-		return is>>b.min>>b.max;
-	}
-}
-

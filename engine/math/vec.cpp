@@ -1,5 +1,4 @@
 
-#include <precompiled.h>
 #include <engine/math/vec.h>
 
 template class math::vec<2>;

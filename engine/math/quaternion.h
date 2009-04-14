@@ -554,16 +554,3 @@ math::swing_twist_decomposition(const math::quaternion<T> &rotation,const math::
     twist.normalize();
     swing = rotation * twist.conjugated();
 }
-
-namespace math {
-	template<class Char,class Traits,class Scalar> std::basic_ostream<Char, Traits> &
-	operator <<(std::basic_ostream<Char, Traits> &os, const math::quaternion<Scalar> &q) {
-		return os<<q.x<<' '<<q.y<<' '<<q.z<<' '<<q.w;
-	}
-
-	template<class Char,class Traits,class Scalar> std::basic_istream<Char, Traits> &
-	operator >>(std::basic_istream<Char, Traits> &is, math::quaternion<Scalar> &q) {
-		return is>>q.x>>q.y>>q.z>>q.w;
-	}
-}
-
