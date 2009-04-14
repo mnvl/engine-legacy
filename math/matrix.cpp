@@ -1,5 +1,5 @@
 
-#include <engine/math/matrix.h>
+#include <math/matrix.h>
 
 template class math::matrix<3,3>;
 template class math::matrix<4,4>;

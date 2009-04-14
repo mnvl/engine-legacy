@@ -1,6 +1,6 @@
 #pragma once
 
-#include <engine/math/scalar.h>
+#include <math/scalar.h>
 
 namespace math {
 	template<int N,class T=math::scalar> class vec;

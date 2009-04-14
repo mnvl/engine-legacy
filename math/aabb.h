@@ -1,9 +1,9 @@
 #pragma once
 
-#include <engine/math/scalar.h>
-#include <engine/math/vec.h>
-#include <engine/math/ray.h>
-#include <engine/math/line.h>
+#include <math/scalar.h>
+#include <math/vec.h>
+#include <math/ray.h>
+#include <math/line.h>
 
 namespace math {
 	template<int N,class T=scalar> class aabb;

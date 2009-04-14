@@ -1,8 +1,8 @@
 #pragma once
 
-#include <engine/math/scalar.h>
-#include <engine/math/vec.h>
-#include <engine/math/quaternion.h>
+#include <math/scalar.h>
+#include <math/vec.h>
+#include <math/quaternion.h>
 
 namespace math {
 	template<int N,int M,class T=scalar> class matrix;

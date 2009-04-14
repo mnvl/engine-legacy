@@ -3,7 +3,7 @@
 #include <map>
 #include <vector>
 #include <xercesc/dom/DOM.hpp>
-#include <engine/math/vec.h>
+#include <math/vec.h>
 #include <engine/graphic/mesh.h>
 
 namespace engine {

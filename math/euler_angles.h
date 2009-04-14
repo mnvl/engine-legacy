@@ -1,9 +1,9 @@
 #pragma once
 
-#include <engine/math/scalar.h>
-#include <engine/math/vec.h>
-#include <engine/math/quaternion.h>
-#include <engine/math/matrix.h>
+#include <math/scalar.h>
+#include <math/vec.h>
+#include <math/quaternion.h>
+#include <math/matrix.h>
 
 namespace math {
 	template<class T=scalar> class euler_angles;

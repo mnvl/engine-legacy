@@ -1,7 +1,7 @@
 #pragma once
 
-#include <engine/math/scalar.h>
-#include <engine/math/vec.h>
+#include <math/scalar.h>
+#include <math/vec.h>
 
 namespace math {
 	class random;

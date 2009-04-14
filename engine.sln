@@ -6,7 +6,10 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "bootstrap", "bootstrap\bootstrap.vcproj", "{81584742-D450-4531-A80C-7E670BDE9EAB}"
 	ProjectSection(ProjectDependencies) = postProject
 		{AF08561C-5DDB-4CF2-9922-CEF93A6DBA42} = {AF08561C-5DDB-4CF2-9922-CEF93A6DBA42}
+		{658E92FE-3E9D-4180-AC31-61112D1E9442} = {658E92FE-3E9D-4180-AC31-61112D1E9442}
 	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "math", "math\math.vcproj", "{658E92FE-3E9D-4180-AC31-61112D1E9442}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -22,6 +25,10 @@ Global
 		{81584742-D450-4531-A80C-7E670BDE9EAB}.Debug|Win32.Build.0 = Debug|Win32
 		{81584742-D450-4531-A80C-7E670BDE9EAB}.Release|Win32.ActiveCfg = Release|Win32
 		{81584742-D450-4531-A80C-7E670BDE9EAB}.Release|Win32.Build.0 = Release|Win32
+		{658E92FE-3E9D-4180-AC31-61112D1E9442}.Debug|Win32.ActiveCfg = Debug|Win32
+		{658E92FE-3E9D-4180-AC31-61112D1E9442}.Debug|Win32.Build.0 = Debug|Win32
+		{658E92FE-3E9D-4180-AC31-61112D1E9442}.Release|Win32.ActiveCfg = Release|Win32
+		{658E92FE-3E9D-4180-AC31-61112D1E9442}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

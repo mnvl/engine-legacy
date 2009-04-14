@@ -1,7 +1,7 @@
 #pragma once
 
 #include <d3d9.h>
-#include <engine/math/vec.h>
+#include <math/vec.h>
 
 class mesh {
 public:

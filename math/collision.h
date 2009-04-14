@@ -2,13 +2,13 @@
 
 #include <assert.h>
 
-#include <engine/math/scalar.h>
-#include <engine/math/vec.h>
-#include <engine/math/sphere.h>
-#include <engine/math/line.h>
-#include <engine/math/aabb.h>
-#include <engine/math/obb.h>
-#include <engine/math/intersection.h>
+#include <math/scalar.h>
+#include <math/vec.h>
+#include <math/sphere.h>
+#include <math/line.h>
+#include <math/aabb.h>
+#include <math/obb.h>
+#include <math/intersection.h>
 
 namespace math {
 	static scalar const COLLISION_EPSILON = 0.001f;

@@ -26,7 +26,7 @@ On a Vax 11/780, this random number generator can produce a number in
 
 #include <windows.h>
 #include <stdexcept>
-#include <engine/math/random.h>
+#include <math/random.h>
 
 math::random::random() {
 	__int64 ij;
