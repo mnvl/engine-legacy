@@ -5,6 +5,7 @@
 #include <boost/scoped_ptr.hpp>
 #include <xercesc/parsers/XercesDOMParser.hpp>
 #include <xercesc/sax/HandlerBase.hpp>
+#include <math/matrix.h>
 #include <engine/util/xerces_lcp_transcoder.h>
 #include <engine/graphic/collada_importer.h>
 
@@ -81,7 +82,7 @@ void collada_importer::process_geometry(xercesc::DOMNode const *node) {
 	clear();
 
 	std::string const &mesh_id = util::xerces_get_attribute<std::string>(node, "id");
-	mesh_ptr_ = &builded_meshes_.insert(std::make_pair(mesh_id, buildable_mesh())).first->second;
+	mesh_ptr_ = &builded_meshes_.insert(std::make_pair(mesh_id, memory_mesh())).first->second;
 
 	for (xercesc::DOMNode const *child = node->getFirstChild(); child; child = child->getNextSibling()) {
 		if (child->getNodeType() != xercesc::DOMNode::ELEMENT_NODE) continue;
@@ -95,6 +96,8 @@ void collada_importer::process_geometry(xercesc::DOMNode const *node) {
 		{
 		}
 	}
+
+	clear();
 }
 
 void collada_importer::process_mesh(xercesc::DOMNode const *node) {
@@ -104,7 +107,7 @@ void collada_importer::process_mesh(xercesc::DOMNode const *node) {
 
 		if (child_name == "source")
 		{
-			process_source(child, &sources_[util::xerces_get_attribute<std::string>(child, "id")]);	
+			process_source(child);	
 		}
 		else if (child_name == "vertices")
 		{
@@ -120,7 +123,13 @@ void collada_importer::process_mesh(xercesc::DOMNode const *node) {
 	}
 }
 
-void collada_importer::process_vertices(xercesc::DOMNode const *node) {
+void collada_importer::process_vertices(xercesc::DOMNode const *node)
+{
+	process_inputs(node);
+}
+
+void collada_importer::process_inputs(xercesc::DOMNode const *node)
+{
 	for (xercesc::DOMNode const *child = node->getFirstChild(); child; child = child->getNextSibling()) {
 		if (child->getNodeType() != xercesc::DOMNode::ELEMENT_NODE) continue;
 		std::string const &child_name = util::xerces_lcp_transcode(child->getLocalName());
@@ -139,8 +148,10 @@ void collada_importer::process_vertices(xercesc::DOMNode const *node) {
 	}
 }
 
-void collada_importer::process_source(xercesc::DOMNode const *node, source_info *si)
+void collada_importer::process_source(xercesc::DOMNode const *node)
 {
+	source_info *si = &sources_[util::xerces_get_attribute<std::string>(node, "id")];
+
 	for (xercesc::DOMNode const *child = node->getFirstChild(); child; child = child->getNextSibling()) {
 		if (child->getNodeType() != xercesc::DOMNode::ELEMENT_NODE) continue;
 		std::string const &child_name = util::xerces_lcp_transcode(child->getLocalName());
@@ -288,6 +299,8 @@ void collada_importer::process_library_controllers(xercesc::DOMNode const *node)
 
 void collada_importer::process_controller(xercesc::DOMNode const *node)
 {
+	clear();
+
 	for (xercesc::DOMNode const *child = node->getFirstChild(); child; child = child->getNextSibling())
 	{
 		if (child->getNodeType() != xercesc::DOMNode::ELEMENT_NODE) continue;
@@ -297,12 +310,79 @@ void collada_importer::process_controller(xercesc::DOMNode const *node)
 		{
 			process_skin(child);
 		}
+		else
+		{
+
+		}
 	}
+	
+	clear();
 }
 
 void collada_importer::process_skin(xercesc::DOMNode const *node)
 {
-	std::string const &source = util::xerces_get_attribute(node, "source");
+	std::string const &source = util::xerces_get_attribute<std::string>(node, "source");
+	memory_mesh *mesh_ptr = &builded_meshes_[source.substr(1)];
+
+	math::matrix<4, 4> bind_shape_matrix;
+
+	for (xercesc::DOMNode const *child = node->getFirstChild(); child; child = child->getNextSibling())
+	{
+		if (child->getNodeType() != xercesc::DOMNode::ELEMENT_NODE) continue;
+		std::string const &child_name = util::xerces_lcp_transcode(child->getLocalName());
+
+		if (child_name == "bind_shape_matrix")
+		{
+			std::stringstream ss(util::xerces_get_text(node));
+
+			for (size_t i = 0; i < 4; i++)
+			{
+				for (size_t j = 0; j < 4; j++)
+				{
+					ss >> bind_shape_matrix.ij[i][j];
+				}
+			}
+
+			if (ss.bad()) throw std::runtime_error("error parsing bind shape matrix for "
+				+ source + " in file " + filename_);
+		}
+		else if (child_name == "source")
+		{
+			process_source(child);
+		}
+		else if (child_name == "joints")
+		{
+			process_joints(child);
+		}
+		else if (child_name == "vertex_weights")
+		{
+			process_vertex_weights(child);
+		}
+		else
+		{
+		}
+	}
+}
+
+void collada_importer::process_joints(xercesc::DOMNode const *node)
+{
+	for (xercesc::DOMNode const *child = node->getFirstChild(); child; child = child->getNextSibling())
+	{
+		if (child->getNodeType() != xercesc::DOMNode::ELEMENT_NODE) continue;
+		std::string const &child_name = util::xerces_lcp_transcode(child->getLocalName());
+
+		if (child_name == "INV_BIND_MATRIX")
+		{
+			source_info const &source = sources_[util::xerces_get_attribute(child, "source")];
+
+
+		}
+	}
+}
+
+void collada_importer::process_vertex_weights(xercesc::DOMNode *node)
+{
+
 }
 
 }

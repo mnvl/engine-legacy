@@ -40,8 +40,8 @@ private:
 	};
 
 	// id to buildable mesh
-	std::map<std::string, buildable_mesh> builded_meshes_;
-	buildable_mesh *mesh_ptr_;
+	std::map<std::string, memory_mesh> builded_meshes_;
+	memory_mesh *mesh_ptr_;
 
 	// name to source_info
 	std::map<std::string, source_info> sources_;
@@ -55,12 +55,15 @@ private:
 	void process_geometry(xercesc::DOMNode const *node);
 	void process_mesh(xercesc::DOMNode const *node);
 	void process_vertices(xercesc::DOMNode const *node);
-	void process_source(xercesc::DOMNode const *node, source_info *si);
+	void process_inputs(xercesc::DOMNode const *node);
+	void process_source(xercesc::DOMNode const *node);
 	void process_technique(xercesc::DOMNode const *node, technique_info *si);
 	void process_triangles(xercesc::DOMNode const *node);
 	void process_library_controllers(xercesc::DOMNode const *node);
 	void process_controller(xercesc::DOMNode const *node);
 	void process_skin(xercesc::DOMNode const *node);
+	void process_joints(xercesc::DOMNode const *node);
+	void process_vertex_weights(xercesc::DOMNode *node);
 	void build_mesh(std::vector<unsigned> const &indices);
 };
 

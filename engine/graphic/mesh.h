@@ -3,6 +3,7 @@
 #include <d3d9.h>
 #include <boost/cstdint.hpp>
 #include <math/vec.h>
+#include <math/matrix.h>
 
 namespace engine {
 namespace graphic {
@@ -22,6 +23,10 @@ public:
 
 	typedef boost::uint16_t index;
 	typedef math::vec<3, index> face;
+
+	struct joint {
+		math::matrix<4, 4> inverted_bind_matrix;
+	};
 
 	virtual ~mesh() {}
 

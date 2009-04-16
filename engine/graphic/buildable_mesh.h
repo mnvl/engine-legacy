@@ -7,10 +7,10 @@
 namespace engine {
 namespace graphic {
 
-class buildable_mesh: public mesh {
+class memory_mesh: public mesh {
 public:
-	buildable_mesh();
-	virtual ~buildable_mesh();
+	memory_mesh();
+	virtual ~memory_mesh();
 
 	virtual size_t get_vertices_count();
 	virtual void resize_vertex_buffer(size_t size);
