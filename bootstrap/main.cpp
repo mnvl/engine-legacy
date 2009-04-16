@@ -24,9 +24,16 @@ INT WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpstrCmdLine, INT
 		engine::graphic::renderer renderer(&main_window);
 
 		engine::graphic::static_mesh sm(&renderer);
-
-		engine::graphic::collada_importer ci("d:\\home\\bublik.dae", &sm);
+		engine::graphic::collada_importer ci("d:\\home\\bublik.dae");
 		ci.load();
+
+		engine::graphic::static_mesh sm2(&renderer);
+		engine::graphic::collada_importer ci2("d:\\home\\cf_shooter_cast.dae");
+		ci2.load();
+
+		engine::graphic::static_mesh sm3(&renderer);
+		engine::graphic::collada_importer ci3("d:\\home\\bublik.dae");
+		ci3.load();
 
 		while (true)
 		{

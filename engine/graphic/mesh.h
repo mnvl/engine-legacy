@@ -18,6 +18,7 @@ public:
 #pragma pack(pop)
 
 	typedef boost::uint16_t index;
+	typedef math::vec<3, index> face;
 
 	virtual ~mesh() {}
 
