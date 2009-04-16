@@ -58,6 +58,9 @@ private:
 	void process_source(xercesc::DOMNode const *node, source_info *si);
 	void process_technique(xercesc::DOMNode const *node, technique_info *si);
 	void process_triangles(xercesc::DOMNode const *node);
+	void process_library_controllers(xercesc::DOMNode const *node);
+	void process_controller(xercesc::DOMNode const *node);
+	void process_skin(xercesc::DOMNode const *node);
 	void build_mesh(std::vector<unsigned> const &indices);
 };
 

@@ -4,6 +4,9 @@
 #include <boost/cstdint.hpp>
 #include <math/vec.h>
 
+namespace engine {
+namespace graphic {
+
 class mesh {
 public:
 	static DWORD const VERTEX_FORMAT = D3DFVF_XYZ | D3DFVF_TEX2;
@@ -32,3 +35,6 @@ public:
 	virtual index *lock_index_buffer() = 0;
 	virtual void unlock_index_buffer(index *buffer) = 0;
 };
+
+}
+}

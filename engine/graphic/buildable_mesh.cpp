@@ -40,8 +40,8 @@ mesh::index *buildable_mesh::lock_index_buffer() {
 void buildable_mesh::unlock_index_buffer(index *buffer) {
 }
 
-void buildable_mesh::add_face(vertex const *face_vertices) {
-	for (size_t i = 0; i < face::arity; i++) {
+void buildable_mesh::add_face(vertex const *face_vertices, size_t count) {
+	for (size_t i = 0; i < count; i++) {
 		std::pair<verices_inverted_index_type::const_iterator, bool> result =
 			vertices_inverted_index_.insert(std::make_pair(face_vertices[i], vertices_.size()));
 

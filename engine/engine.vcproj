@@ -176,10 +176,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\graphic\mesh.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\graphic\mesh.h"
 				>
 			</File>

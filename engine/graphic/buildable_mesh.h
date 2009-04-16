@@ -22,7 +22,7 @@ public:
 	virtual index *lock_index_buffer();
 	virtual void unlock_index_buffer(index *buffer);
 
-	void add_face(vertex const *face_vertices);
+	void add_face(vertex const *face_vertices, size_t count);
 
 private:
 	std::vector<mesh::vertex> vertices_;

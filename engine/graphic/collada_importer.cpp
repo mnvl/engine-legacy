@@ -52,6 +52,10 @@ void collada_importer::process_collada(xercesc::DOMNode const *node) {
 		{
 			process_library_geometries(child);
 		}
+		if (child_name == "library_controllers")
+		{
+			process_library_controllers(child);
+		}
 		else
 		{
 		}
@@ -259,10 +263,46 @@ void collada_importer::build_mesh(std::vector<unsigned> const &indices)
 		face_vertices.push_back(v);
 
 		if (face_vertices.size() == 3) {
-			mesh_ptr_->add_face(&face_vertices[0]);
+			mesh_ptr_->add_face(&face_vertices[0], 3);
 			face_vertices.clear();
 		}
 	}
+}
+
+void collada_importer::process_library_controllers(xercesc::DOMNode const *node)
+{
+	for (xercesc::DOMNode const *child = node->getFirstChild(); child; child = child->getNextSibling())
+	{
+		if (child->getNodeType() != xercesc::DOMNode::ELEMENT_NODE) continue;
+		std::string const &child_name = util::xerces_lcp_transcode(child->getLocalName());
+
+		if (child_name == "controller")
+		{
+			process_controller(child);
+		}
+		else
+		{
+		}
+	}
+}
+
+void collada_importer::process_controller(xercesc::DOMNode const *node)
+{
+	for (xercesc::DOMNode const *child = node->getFirstChild(); child; child = child->getNextSibling())
+	{
+		if (child->getNodeType() != xercesc::DOMNode::ELEMENT_NODE) continue;
+		std::string const &child_name = util::xerces_lcp_transcode(child->getLocalName());
+
+		if (child_name == "skin")
+		{
+			process_skin(child);
+		}
+	}
+}
+
+void collada_importer::process_skin(xercesc::DOMNode const *node)
+{
+	std::string const &source = util::xerces_get_attribute(node, "source");
 }
 
 }
