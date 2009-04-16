@@ -39,6 +39,11 @@ public:
 	virtual void resize_index_buffer(size_t size) = 0;
 	virtual index *lock_index_buffer() = 0;
 	virtual void unlock_index_buffer(index *buffer) = 0;
+
+	virtual size_t get_joints_count() = 0;
+	virtual void resize_joints_buffer(size_t size) = 0;
+	virtual joint *lock_joints_buffer() = 0;
+	virtual void unlock_joints_buffer(joint *buffer) = 0;
 };
 
 }

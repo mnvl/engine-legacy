@@ -22,11 +22,18 @@ public:
 	virtual index *lock_index_buffer();
 	virtual void unlock_index_buffer(index *buffer);
 
-	void add_face(vertex const *face_vertices, size_t count);
+	index add_vertex(vertex const &v);
+	void add_index(index i);
+
+	virtual size_t get_joints_count();
+	virtual void resize_joints_buffer(size_t size);
+	virtual joint *lock_joints_buffer();
+	virtual void unlock_joints_buffer(joint *buffer);
 
 private:
 	std::vector<mesh::vertex> vertices_;
 	std::vector<index> indices_;
+	std::vector<joint> joints_;
 
 	// vertex to index in vertex array
 	struct vertex_comparator {

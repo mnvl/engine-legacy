@@ -5,7 +5,7 @@
 #include <xercesc/dom/DOM.hpp>
 #include <math/vec.h>
 #include <engine/graphic/mesh.h>
-#include <engine/graphic/buildable_mesh.h>
+#include <engine/graphic/memory_mesh.h>
 
 namespace engine {
 namespace graphic {
@@ -50,6 +50,7 @@ private:
 	std::map<std::string, input_info> inputs_;
 
 	void clear();
+	source_info const &indirect_source(xercesc::DOMNode const *input_node);
 	void process_collada(xercesc::DOMNode const *node);
 	void process_library_geometries(xercesc::DOMNode const *node);
 	void process_geometry(xercesc::DOMNode const *node);
@@ -63,7 +64,7 @@ private:
 	void process_controller(xercesc::DOMNode const *node);
 	void process_skin(xercesc::DOMNode const *node);
 	void process_joints(xercesc::DOMNode const *node);
-	void process_vertex_weights(xercesc::DOMNode *node);
+	void process_vertex_weights(xercesc::DOMNode const *node);
 	void build_mesh(std::vector<unsigned> const &indices);
 };
 

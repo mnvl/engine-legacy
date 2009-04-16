@@ -160,19 +160,19 @@
 			Name="graphic"
 			>
 			<File
-				RelativePath=".\graphic\buildable_mesh.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\graphic\buildable_mesh.h"
-				>
-			</File>
-			<File
 				RelativePath=".\graphic\collada_importer.cpp"
 				>
 			</File>
 			<File
 				RelativePath=".\graphic\collada_importer.h"
+				>
+			</File>
+			<File
+				RelativePath=".\graphic\memory_mesh.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\graphic\memory_mesh.h"
 				>
 			</File>
 			<File
