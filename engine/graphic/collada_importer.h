@@ -92,12 +92,15 @@ private:
 	void process_source(xercesc::DOMNode const *node);
 	void process_technique(xercesc::DOMNode const *node, technique_info *si);
 	void process_triangles(xercesc::DOMNode const *node);
+	void build_mesh(std::vector<unsigned> const &indices);
 	void process_library_controllers(xercesc::DOMNode const *node);
 	void process_controller(xercesc::DOMNode const *node);
 	void process_skin(xercesc::DOMNode const *node);
 	void process_joints(xercesc::DOMNode const *node);
 	void process_vertex_weights(xercesc::DOMNode const *node);
-	void build_mesh(std::vector<unsigned> const &indices);
+	void process_library_animations(xercesc::DOMNode const *node);
+	void process_animation(xercesc::DOMNode const *node);
+	void process_sampler(xercesc::DOMNode const *node);
 };
 
 }

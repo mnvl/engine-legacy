@@ -52,7 +52,7 @@ collada_importer::source_info const &collada_importer::indirect_source(xercesc::
 }
 
 void collada_importer::process_collada(xercesc::DOMNode const *node) {
-	for (int pass = 0; pass < 2; pass++) {
+	for (int pass = 0; pass < 3; pass++) {
 		for (xercesc::DOMNode const *child = node->getFirstChild(); child; child = child->getNextSibling()) {
 			if (child->getNodeType() != xercesc::DOMNode::ELEMENT_NODE) continue;
 			std::string const &child_name = util::xerces_lcp_transcode(child->getLocalName());
@@ -61,12 +61,13 @@ void collada_importer::process_collada(xercesc::DOMNode const *node) {
 			{
 				process_library_geometries(child);
 			}
-			if (pass ==1 && child_name == "library_controllers")
+			if (pass == 1 && child_name == "library_controllers")
 			{
 				process_library_controllers(child);
 			}
-			else
+			if (pass == 2 && child_name == "library_animations")
 			{
+				process_library_animations(child);
 			}
 		}
 	}
@@ -80,9 +81,6 @@ void collada_importer::process_library_geometries(xercesc::DOMNode const *node) 
 		if (child_name == "geometry")
 		{
 			process_geometry(child);
-		}
-		else
-		{
 		}
 	}
 }
@@ -101,9 +99,6 @@ void collada_importer::process_geometry(xercesc::DOMNode const *node) {
 		if (child_name == "mesh")
 		{
 			process_mesh(child);
-		}
-		else
-		{
 		}
 	}
 
@@ -127,9 +122,6 @@ void collada_importer::process_mesh(xercesc::DOMNode const *node) {
 		{
 			process_triangles(child);
 		}
-		else
-		{
-		}
 	}
 }
 
@@ -151,9 +143,6 @@ void collada_importer::process_inputs(xercesc::DOMNode const *node)
 			dummy.offset = 0;
 
 			inputs_[util::xerces_get_attribute<std::string>(child, "semantic")] = dummy;
-		}
-		else
-		{
 		}
 	}
 }
@@ -182,9 +171,6 @@ void collada_importer::process_source(xercesc::DOMNode const *node)
 		{
 			process_technique(child, &si->technique);
 		}
-		else
-		{
-		}
 	}
 
 	if (nocheck) return;
@@ -206,9 +192,6 @@ void collada_importer::process_technique(xercesc::DOMNode const *node, technique
 		{
 			ti->count = util::xerces_get_attribute<size_t>(child, "count");
 			ti->stride = util::xerces_get_attribute<size_t>(child, "stride");
-		}
-		else
-		{
 		}
 	}
 }
@@ -238,9 +221,6 @@ void collada_importer::process_triangles(xercesc::DOMNode const *node)
 			while (ss >> index) indices.push_back(index);
 
 			build_mesh(indices);
-		}
-		else
-		{
 		}
 	}
 }
@@ -316,9 +296,6 @@ void collada_importer::process_library_controllers(xercesc::DOMNode const *node)
 		{
 			process_controller(child);
 		}
-		else
-		{
-		}
 	}
 }
 
@@ -334,10 +311,6 @@ void collada_importer::process_controller(xercesc::DOMNode const *node)
 		if (child_name == "skin")
 		{
 			process_skin(child);
-		}
-		else
-		{
-
 		}
 	}
 	
@@ -384,9 +357,6 @@ void collada_importer::process_skin(xercesc::DOMNode const *node)
 		{
 			process_vertex_weights(child);
 		}
-		else
-		{
-		}
 	}
 }
 
@@ -423,9 +393,6 @@ void collada_importer::process_joints(xercesc::DOMNode const *node)
 					}
 				}
 			}
-		}
-		else
-		{
 		}
 	}
 }
@@ -501,6 +468,72 @@ void collada_importer::process_vertex_weights(xercesc::DOMNode const *node)
 			mesh_ptr_->joints_[joint_index].infulences.push_back(dummy);
 		}
 	}
+}
+
+void collada_importer::process_library_animations(xercesc::DOMNode const *node)
+{
+	for (xercesc::DOMNode const *child = node->getFirstChild(); child; child = child->getNextSibling())
+	{
+		if (child->getNodeType() != xercesc::DOMNode::ELEMENT_NODE) continue;
+		std::string const &child_name = util::xerces_lcp_transcode(child->getLocalName());
+
+		if (child_name == "animation")
+		{
+			process_animation(child);
+		}
+	}
+}
+
+void collada_importer::process_animation(xercesc::DOMNode const *node)
+{
+	clear();
+
+	for (xercesc::DOMNode const *child = node->getFirstChild(); child; child = child->getNextSibling())
+	{
+		if (child->getNodeType() != xercesc::DOMNode::ELEMENT_NODE) continue;
+		std::string const &child_name = util::xerces_lcp_transcode(child->getLocalName());
+
+		if (child_name == "source")
+		{
+			process_source(child);	
+		}
+		else if (child_name == "sampler")
+		{
+			process_sampler(child);
+		}
+	}
+
+	clear();
+}
+
+void collada_importer::process_sampler(xercesc::DOMNode const *node)
+{
+	source_info const *input = 0;
+	source_info const *output = 0;
+	source_info const *interpolation = 0;
+	source_info const *in_tangent = 0;
+	source_info const *out_tangent = 0;
+
+	for (xercesc::DOMNode const *child = node->getFirstChild(); child; child = child->getNextSibling())
+	{
+		if (child->getNodeType() != xercesc::DOMNode::ELEMENT_NODE) continue;
+		std::string const &child_name = util::xerces_lcp_transcode(child->getLocalName());
+
+		if (child_name == "input")
+		{
+			std::string const &semantic = util::xerces_get_attribute<std::string>(child, "semantic");
+			std::string const &source_name = util::xerces_get_attribute<std::string>(child, "source");
+			source_info const *source_ptr = &indirect_source(child);
+
+			if (semantic == "INPUT") input = source_ptr;
+			else if (semantic == "OUTPUT") output = source_ptr;
+			else if (semantic == "INTERPOLATION") interpolation = source_ptr;
+			else if (semantic == "IN_TANGENT") in_tangent = source_ptr;
+			else if (semantic == "OUT_TANGENT")	out_tangent = source_ptr;
+		}
+	}
+
+
 }
 
 }
