@@ -39,9 +39,41 @@ private:
 		size_t offset;
 	};
 
-	// id to buildable mesh
-	std::map<std::string, memory_mesh> builded_meshes_;
-	memory_mesh *mesh_ptr_;
+	struct mesh_info {
+		struct vertex_comparator {
+			bool operator ()(MemoryMesh::vertex const &lhs, MemoryMesh::vertex const &rhs) {
+				if (lhs.position < rhs.position) return true;
+				if (lhs.position > rhs.position) return false;
+
+				if (lhs.normal < rhs.normal) return true;
+				if (lhs.normal > rhs.normal) return false;
+
+				return lhs.texcoords < rhs.texcoords;
+			}
+		};
+
+		typedef std::map<MemoryMesh::vertex, MemoryMesh::index, vertex_comparator> verices_inverted_index_type;
+		verices_inverted_index_type vertices_inverted_index;
+		std::map<MemoryMesh::index, MemoryMesh::index> position_index_transform;
+
+		MemoryMesh::index getIndexForVertex(MemoryMesh::vertex const &v, MemoryMesh::index original_index) {
+			std::pair<verices_inverted_index_type::const_iterator, bool> result =
+				vertices_inverted_index.insert(std::make_pair(v, vertices_inverted_index.size()));
+
+			if (result.second) {
+				mesh.vertices_.push_back(v);
+				position_index_transform.insert(std::make_pair(original_index, result.first->second));
+			}
+
+			return result.first->second;
+		}
+
+		MemoryMesh mesh;
+	};
+
+	std::map<std::string, mesh_info> builded_meshes_;
+	MemoryMesh *mesh_ptr_;
+	mesh_info *mesh_info_;
 
 	// name to source_info
 	std::map<std::string, source_info> sources_;

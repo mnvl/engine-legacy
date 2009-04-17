@@ -37,7 +37,7 @@ void static_mesh::resize_vertex_buffer(size_t size)
 	vertex_buffer_ptr->Release();
 }
 
-mesh::vertex *static_mesh::lock_vertex_buffer()
+IMesh::vertex *static_mesh::lock_vertex_buffer()
 {
 	void *data;
 	HRESULT hr = vertex_buffer_ptr_->Lock(0, 0, &data, 0);
@@ -73,7 +73,7 @@ void static_mesh::resize_index_buffer(size_t size)
 	index_buffer_ptr->Release();
 }
 
-mesh::index *static_mesh::lock_index_buffer()
+IMesh::index *static_mesh::lock_index_buffer()
 {
 	void *data;
 	HRESULT hr = index_buffer_ptr_->Lock(0, 0, &data, 0);

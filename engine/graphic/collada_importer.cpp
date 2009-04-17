@@ -52,20 +52,22 @@ collada_importer::source_info const &collada_importer::indirect_source(xercesc::
 }
 
 void collada_importer::process_collada(xercesc::DOMNode const *node) {
-	for (xercesc::DOMNode const *child = node->getFirstChild(); child; child = child->getNextSibling()) {
-		if (child->getNodeType() != xercesc::DOMNode::ELEMENT_NODE) continue;
-		std::string const &child_name = util::xerces_lcp_transcode(child->getLocalName());
+	for (int pass = 0; pass < 2; pass++) {
+		for (xercesc::DOMNode const *child = node->getFirstChild(); child; child = child->getNextSibling()) {
+			if (child->getNodeType() != xercesc::DOMNode::ELEMENT_NODE) continue;
+			std::string const &child_name = util::xerces_lcp_transcode(child->getLocalName());
 
-		if (child_name == "library_geometries")
-		{
-			process_library_geometries(child);
-		}
-		if (child_name == "library_controllers")
-		{
-			process_library_controllers(child);
-		}
-		else
-		{
+			if (pass == 0 && child_name == "library_geometries")
+			{
+				process_library_geometries(child);
+			}
+			if (pass ==1 && child_name == "library_controllers")
+			{
+				process_library_controllers(child);
+			}
+			else
+			{
+			}
 		}
 	}
 }
@@ -89,7 +91,8 @@ void collada_importer::process_geometry(xercesc::DOMNode const *node) {
 	clear();
 
 	std::string const &mesh_id = util::xerces_get_attribute<std::string>(node, "id");
-	mesh_ptr_ = &builded_meshes_.insert(std::make_pair(mesh_id, memory_mesh())).first->second;
+	mesh_info_ = &builded_meshes_[mesh_id];
+	mesh_ptr_ = &mesh_info_->mesh;
 
 	for (xercesc::DOMNode const *child = node->getFirstChild(); child; child = child->getNextSibling()) {
 		if (child->getNodeType() != xercesc::DOMNode::ELEMENT_NODE) continue;
@@ -257,18 +260,20 @@ void collada_importer::build_mesh(std::vector<unsigned> const &indices)
 	if (texcoords.offset > stride) stride = texcoords.offset;
 	stride++;
 
-	std::vector<mesh::vertex> face_vertices;
+	std::vector<MemoryMesh::vertex> face_vertices;
+	std::vector<MemoryMesh::index> face_indices;
 
 	for (size_t index = 0; index < indices.size(); index += stride)
 	{
 		unsigned data_filled = 0;
-		mesh::vertex v;
+		MemoryMesh::vertex v;
 
 		for (size_t offset = 0; offset < stride; offset++)
 		{
 			if (offset == positions.offset)
 			{
 				positions_source.fill_vector(v.position, indices[index + offset]);
+				face_indices.push_back(indices[index + offset]);
 				data_filled |= 1;
 			}
 
@@ -292,7 +297,7 @@ void collada_importer::build_mesh(std::vector<unsigned> const &indices)
 
 		if (face_vertices.size() == 3) {
 			for (size_t i = 0; i < 3; i++) {
-				mesh_ptr_->add_index(mesh_ptr_->add_vertex(face_vertices[i]));
+				mesh_ptr_->indices_.push_back(mesh_info_->getIndexForVertex(face_vertices[i], face_indices[i]));
 			}
 
 			face_vertices.clear();
@@ -342,7 +347,8 @@ void collada_importer::process_controller(xercesc::DOMNode const *node)
 void collada_importer::process_skin(xercesc::DOMNode const *node)
 {
 	std::string const &source = util::xerces_get_attribute<std::string>(node, "source");
-	mesh_ptr_ = &builded_meshes_.find(source.substr(1))->second;
+	mesh_info_ = &builded_meshes_.find(source.substr(1))->second;
+	mesh_ptr_ = &mesh_info_->mesh;
 
 	math::matrix<4, 4> bind_shape_matrix;
 
@@ -398,18 +404,17 @@ void collada_importer::process_joints(xercesc::DOMNode const *node)
 			if (semantic == "JOINT")
 			{
 				source_info const &source = indirect_source(child);
-				mesh_ptr_->resize_joints_buffer(source.technique.count);
+				mesh_ptr_->joints_.resize(source.technique.count);
 			}
 			else if (semantic == "INV_BIND_MATRIX")
 			{
 				source_info const &source = indirect_source(child);
 
-				mesh::joint *joints_buffer = mesh_ptr_->lock_joints_buffer();
 				std::vector<float>::const_iterator get = source.data.begin();
 
-				for (size_t i = 0; i <mesh_ptr_->get_joints_count(); i++)
+				for (size_t i = 0; i <mesh_ptr_->joints_.size(); i++)
 				{
-					mesh::joint *joint_ptr = joints_buffer + i;
+					MemoryMesh::joint *joint_ptr = &mesh_ptr_->joints_[i];
 
 					for (size_t i = 0; i < 4; i++) {
 						for (size_t j = 0; j < 4; j++) {
@@ -417,8 +422,6 @@ void collada_importer::process_joints(xercesc::DOMNode const *node)
 						}
 					}
 				}
-
-				mesh_ptr_->unlock_joints_buffer(joints_buffer);
 			}
 		}
 		else
@@ -429,7 +432,75 @@ void collada_importer::process_joints(xercesc::DOMNode const *node)
 
 void collada_importer::process_vertex_weights(xercesc::DOMNode const *node)
 {
+	source_info const *joint_source = 0, *weight_source = 0;
+	size_t joint_offset, weight_offset;
+	std::vector<size_t> vcount, v;
 
+	for (xercesc::DOMNode const *child = node->getFirstChild(); child; child = child->getNextSibling())
+	{
+		if (child->getNodeType() != xercesc::DOMNode::ELEMENT_NODE) continue;
+		std::string const &child_name = util::xerces_lcp_transcode(child->getLocalName());
+
+		if (child_name == "input")
+		{
+			std::string const &semantic = util::xerces_get_attribute<std::string>(child, "semantic");
+
+			if (semantic == "JOINT")
+			{
+				joint_source = &indirect_source(child);
+				joint_offset = util::xerces_get_attribute<size_t>(child, "offset");
+			}
+			else if (semantic == "WEIGHT")
+			{
+				weight_source = &indirect_source(child);
+				weight_offset = util::xerces_get_attribute<size_t>(child, "offset");
+			}
+		}
+		else if (child_name == "vcount")
+		{
+			std::stringstream ss(util::xerces_get_text(child));
+			size_t count;
+			while (ss >> count) vcount.push_back(count);
+		}
+		else if (child_name == "v")
+		{
+			std::stringstream ss(util::xerces_get_text(child));
+			size_t item;
+			while (ss >> item) v.push_back(item);
+		}
+	}
+
+	size_t stride = max(joint_offset, weight_offset) + 1;
+	std::vector<size_t>::const_iterator get = v.begin();
+
+	for (size_t i = 0; i < vcount.size(); i++)
+	{
+		for (size_t j = 0, n = vcount[i]; j < n; j++)
+		{
+			size_t joint_index;
+			float weight;
+
+			for (size_t k = 0; k < stride; k++)
+			{
+				if (k == joint_offset)
+				{
+					joint_index = *get;
+				}
+
+				if (k == weight_offset)
+				{
+					weight = weight_source->data[*get];
+				}
+
+				get++;
+			}
+
+			MemoryMesh::influence dummy;
+			dummy.vertex_index = i;
+			dummy.weight = weight;
+			mesh_ptr_->joints_[joint_index].infulences.push_back(dummy);
+		}
+	}
 }
 
 }

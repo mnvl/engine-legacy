@@ -11,7 +11,7 @@ namespace graphic {
 class renderer;
 
 // после изменения размеров буферов данные в них портятся!
-class static_mesh: public mesh {
+class static_mesh: public IMesh {
 public:
 	static_mesh(renderer *renderer_ptr);
 	virtual ~static_mesh();

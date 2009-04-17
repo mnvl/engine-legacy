@@ -7,49 +7,38 @@
 namespace engine {
 namespace graphic {
 
-class memory_mesh: public mesh {
+class MemoryMesh {
 public:
-	memory_mesh();
-	virtual ~memory_mesh();
+	static DWORD const VERTEX_FORMAT = D3DFVF_XYZ | D3DFVF_TEX2;
+	static D3DFORMAT const INDEX_FORMAT = D3DFMT_INDEX16;
 
-	virtual size_t get_vertices_count();
-	virtual void resize_vertex_buffer(size_t size);
-	virtual vertex *lock_vertex_buffer();
-	virtual void unlock_vertex_buffer(vertex *buffer);
+#pragma pack(push, 1)
+	struct vertex {
+		math::vec<3> position;
+		math::vec<3> normal;
+		math::vec<2> texcoords;
+	};
+#pragma pack(pop)
 
-	virtual size_t get_indices_count();
-	virtual void resize_index_buffer(size_t size);
-	virtual index *lock_index_buffer();
-	virtual void unlock_index_buffer(index *buffer);
+	typedef boost::uint16_t index;
+	typedef math::vec<3, index> face;
 
-	index add_vertex(vertex const &v);
-	void add_index(index i);
-
-	virtual size_t get_joints_count();
-	virtual void resize_joints_buffer(size_t size);
-	virtual joint *lock_joints_buffer();
-	virtual void unlock_joints_buffer(joint *buffer);
-
-private:
-	std::vector<mesh::vertex> vertices_;
-	std::vector<index> indices_;
-	std::vector<joint> joints_;
-
-	// vertex to index in vertex array
-	struct vertex_comparator {
-		bool operator ()(vertex const &lhs, vertex const &rhs) {
-			if (lhs.position < rhs.position) return true;
-			if (lhs.position > rhs.position) return false;
-
-			if (lhs.normal < rhs.normal) return true;
-			if (lhs.normal > rhs.normal) return false;
-
-			return lhs.texcoords < rhs.texcoords;
-		}
+	struct influence {
+		index vertex_index;
+		math::scalar weight;
 	};
 
-	typedef std::map<mesh::vertex, index, vertex_comparator> verices_inverted_index_type;
-	verices_inverted_index_type vertices_inverted_index_;
+	struct joint {
+		math::matrix<4, 4> inverted_bind_matrix;
+		std::vector<influence> infulences;
+	};
+
+	MemoryMesh();
+	virtual ~MemoryMesh();
+
+	std::vector<vertex> vertices_;
+	std::vector<index> indices_;
+	std::vector<joint> joints_;
 };
 
 }

@@ -2,13 +2,14 @@
 
 #include <d3d9.h>
 #include <boost/cstdint.hpp>
+#include <vector>
 #include <math/vec.h>
 #include <math/matrix.h>
 
 namespace engine {
 namespace graphic {
 
-class mesh {
+class IMesh {
 public:
 	static DWORD const VERTEX_FORMAT = D3DFVF_XYZ | D3DFVF_TEX2;
 	static D3DFORMAT const INDEX_FORMAT = D3DFMT_INDEX16;
@@ -24,11 +25,17 @@ public:
 	typedef boost::uint16_t index;
 	typedef math::vec<3, index> face;
 
-	struct joint {
-		math::matrix<4, 4> inverted_bind_matrix;
+	struct influence {
+		index vertex_index;
+		math::scalar weight;
 	};
 
-	virtual ~mesh() {}
+	struct joint {
+		math::matrix<4, 4> inverted_bind_matrix;
+		std::vector<influence> infulences;
+	};
+
+	virtual ~IMesh() {}
 
 	virtual size_t get_vertices_count() = 0;
 	virtual void resize_vertex_buffer(size_t size) = 0;
