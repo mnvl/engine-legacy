@@ -25,6 +25,9 @@ INT WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpstrCmdLine, INT
 		engine::graphic::collada_importer ci2("d:\\home\\bublik.dae");
 		ci2.load();
 
+		engine::graphic::collada_importer ci3("d:\\home\\cf_shooter_cast.dae");
+		ci3.load();
+
 		while (true)
 		{
 			main_window.run_message_loop();

@@ -27,9 +27,9 @@ inline std::basic_string<XMLCh> xerces_lcp_transcode(std::string const &str) {
 }
 
 template<class T>
-inline T xerces_get_attribute(xercesc::DOMNode const *node_ptr, std::string const &attribute_name) {
-	return boost::lexical_cast<T>(xerces_lcp_transcode(node_ptr->getAttributes()->getNamedItem
-		(xerces_lcp_transcode(attribute_name).c_str())->getTextContent()));
+inline T xerces_get_attribute(xercesc::DOMNode const *node_ptr, std::string const &attribute_name, T const &default_value = T()) {
+	xercesc::DOMNode *attibute_ptr = node_ptr->getAttributes()->getNamedItem(xerces_lcp_transcode(attribute_name).c_str());
+	return attibute_ptr ? boost::lexical_cast<T>(xerces_lcp_transcode(attibute_ptr->getTextContent())) : default_value;
 }
 
 inline std::string xerces_get_text(xercesc::DOMNode const *node_ptr) {
