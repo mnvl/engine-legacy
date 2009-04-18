@@ -14,7 +14,7 @@ namespace graphic {
 
 collada_importer::collada_importer(std::string const &filename):
 filename_(filename),
-mesh_ptr_(0)
+mesh_info_(0)
 {
 }
 
@@ -90,7 +90,6 @@ void collada_importer::process_geometry(xercesc::DOMNode const *node) {
 
 	std::string const &mesh_id = util::xerces_get_attribute<std::string>(node, "id");
 	mesh_info_ = &builded_meshes_[mesh_id];
-	mesh_ptr_ = &mesh_info_->mesh;
 
 	for (xercesc::DOMNode const *child = node->getFirstChild(); child; child = child->getNextSibling()) {
 		if (child->getNodeType() != xercesc::DOMNode::ELEMENT_NODE) continue;
@@ -240,13 +239,13 @@ void collada_importer::build_mesh(std::vector<unsigned> const &indices)
 	if (texcoords.offset > stride) stride = texcoords.offset;
 	stride++;
 
-	std::vector<MemoryMesh::vertex> face_vertices;
-	std::vector<MemoryMesh::index> face_indices;
+	std::vector<memory_mesh::vertex> face_vertices;
+	std::vector<memory_mesh::index> face_indices;
 
 	for (size_t index = 0; index < indices.size(); index += stride)
 	{
 		unsigned data_filled = 0;
-		MemoryMesh::vertex v;
+		memory_mesh::vertex v;
 
 		for (size_t offset = 0; offset < stride; offset++)
 		{
@@ -277,7 +276,7 @@ void collada_importer::build_mesh(std::vector<unsigned> const &indices)
 
 		if (face_vertices.size() == 3) {
 			for (size_t i = 0; i < 3; i++) {
-				mesh_ptr_->indices_.push_back(mesh_info_->getIndexForVertex(face_vertices[i], face_indices[i]));
+				mesh_info_->mesh.indices_.push_back(mesh_info_->getIndexForVertex(face_vertices[i], face_indices[i]));
 			}
 
 			face_vertices.clear();
@@ -321,7 +320,6 @@ void collada_importer::process_skin(xercesc::DOMNode const *node)
 {
 	std::string const &source = util::xerces_get_attribute<std::string>(node, "source");
 	mesh_info_ = &builded_meshes_.find(source.substr(1))->second;
-	mesh_ptr_ = &mesh_info_->mesh;
 
 	math::matrix<4, 4> bind_shape_matrix;
 
@@ -374,7 +372,7 @@ void collada_importer::process_joints(xercesc::DOMNode const *node)
 			if (semantic == "JOINT")
 			{
 				source_info const &source = indirect_source(child);
-				mesh_ptr_->joints_.resize(source.technique.count);
+				mesh_info_->mesh.joints_.resize(source.technique.count);
 			}
 			else if (semantic == "INV_BIND_MATRIX")
 			{
@@ -382,9 +380,9 @@ void collada_importer::process_joints(xercesc::DOMNode const *node)
 
 				std::vector<float>::const_iterator get = source.data.begin();
 
-				for (size_t i = 0; i <mesh_ptr_->joints_.size(); i++)
+				for (size_t i = 0; i <mesh_info_->mesh.joints_.size(); i++)
 				{
-					MemoryMesh::joint *joint_ptr = &mesh_ptr_->joints_[i];
+					memory_mesh::joint *joint_ptr = &mesh_info_->mesh.joints_[i];
 
 					for (size_t i = 0; i < 4; i++) {
 						for (size_t j = 0; j < 4; j++) {
@@ -462,10 +460,52 @@ void collada_importer::process_vertex_weights(xercesc::DOMNode const *node)
 				get++;
 			}
 
-			MemoryMesh::influence dummy;
+			memory_mesh::influence dummy;
 			dummy.vertex_index = i;
 			dummy.weight = weight;
-			mesh_ptr_->joints_[joint_index].infulences.push_back(dummy);
+			mesh_info_->mesh.joints_[joint_index].infulences.push_back(dummy);
+		}
+	}
+}
+
+void collada_importer::process_library_visual_scenes(xercesc::DOMNode const *node)
+{
+	for (xercesc::DOMNode const *child = node->getFirstChild(); child; child = child->getNextSibling())
+	{
+		if (child->getNodeType() != xercesc::DOMNode::ELEMENT_NODE) continue;
+		std::string const &child_name = util::xerces_lcp_transcode(child->getLocalName());
+
+		if (child_name == "visual_scene")
+		{
+			process_visual_scene(node);
+		}
+	}
+}
+
+void collada_importer::process_visual_scene(xercesc::DOMNode const *node)
+{
+	for (xercesc::DOMNode const *child = node->getFirstChild(); child; child = child->getNextSibling())
+	{
+		if (child->getNodeType() != xercesc::DOMNode::ELEMENT_NODE) continue;
+		std::string const &child_name = util::xerces_lcp_transcode(child->getLocalName());
+
+		if (child_name == "node")
+		{
+			process_node(node);
+		}
+	}
+}
+
+void collada_importer::process_node(xercesc::DOMNode const *node)
+{
+	for (xercesc::DOMNode const *child = node->getFirstChild(); child; child = child->getNextSibling())
+	{
+		if (child->getNodeType() != xercesc::DOMNode::ELEMENT_NODE) continue;
+		std::string const &child_name = util::xerces_lcp_transcode(child->getLocalName());
+
+		if (child_name == "node")
+		{
+			// TODO: process node
 		}
 	}
 }

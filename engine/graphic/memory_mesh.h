@@ -7,7 +7,7 @@
 namespace engine {
 namespace graphic {
 
-class MemoryMesh {
+class memory_mesh {
 public:
 	static DWORD const VERTEX_FORMAT = D3DFVF_XYZ | D3DFVF_TEX2;
 	static D3DFORMAT const INDEX_FORMAT = D3DFMT_INDEX16;
@@ -29,12 +29,20 @@ public:
 	};
 
 	struct joint {
+		std::string name;
 		math::matrix<4, 4> inverted_bind_matrix;
 		std::vector<influence> infulences;
+		joint *parent;
+		std::vector<joint *> childs;
+
+		joint():
+		parent(0) {
+			inverted_bind_matrix.identity();
+		}
 	};
 
-	MemoryMesh();
-	virtual ~MemoryMesh();
+	memory_mesh();
+	virtual ~memory_mesh();
 
 	std::vector<vertex> vertices_;
 	std::vector<index> indices_;

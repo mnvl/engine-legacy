@@ -4,10 +4,10 @@
 namespace engine {
 namespace graphic {
 
-MemoryMesh::MemoryMesh() {
+memory_mesh::memory_mesh() {
 }
 
-MemoryMesh::~MemoryMesh() {
+memory_mesh::~memory_mesh() {
 }
 
 }

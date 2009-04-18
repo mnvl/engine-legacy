@@ -4,7 +4,6 @@
 #include <vector>
 #include <xercesc/dom/DOM.hpp>
 #include <math/vec.h>
-#include <engine/graphic/mesh.h>
 #include <engine/graphic/memory_mesh.h>
 
 namespace engine {
@@ -39,9 +38,9 @@ private:
 		size_t offset;
 	};
 
-	struct mesh_info {
+	struct mesh_in_progress {
 		struct vertex_comparator {
-			bool operator ()(MemoryMesh::vertex const &lhs, MemoryMesh::vertex const &rhs) {
+			bool operator ()(memory_mesh::vertex const &lhs, memory_mesh::vertex const &rhs) {
 				if (lhs.position < rhs.position) return true;
 				if (lhs.position > rhs.position) return false;
 
@@ -52,11 +51,11 @@ private:
 			}
 		};
 
-		typedef std::map<MemoryMesh::vertex, MemoryMesh::index, vertex_comparator> verices_inverted_index_type;
+		typedef std::map<memory_mesh::vertex, memory_mesh::index, vertex_comparator> verices_inverted_index_type;
 		verices_inverted_index_type vertices_inverted_index;
-		std::map<MemoryMesh::index, MemoryMesh::index> position_index_transform;
+		std::map<memory_mesh::index, memory_mesh::index> position_index_transform;
 
-		MemoryMesh::index getIndexForVertex(MemoryMesh::vertex const &v, MemoryMesh::index original_index) {
+		memory_mesh::index getIndexForVertex(memory_mesh::vertex const &v, memory_mesh::index original_index) {
 			std::pair<verices_inverted_index_type::const_iterator, bool> result =
 				vertices_inverted_index.insert(std::make_pair(v, vertices_inverted_index.size()));
 
@@ -68,12 +67,11 @@ private:
 			return result.first->second;
 		}
 
-		MemoryMesh mesh;
+		memory_mesh mesh;
 	};
 
-	std::map<std::string, mesh_info> builded_meshes_;
-	MemoryMesh *mesh_ptr_;
-	mesh_info *mesh_info_;
+	std::map<std::string, mesh_in_progress> builded_meshes_;
+	mesh_in_progress *mesh_info_;
 
 	// name to source_info
 	std::map<std::string, source_info> sources_;
@@ -98,6 +96,9 @@ private:
 	void process_skin(xercesc::DOMNode const *node);
 	void process_joints(xercesc::DOMNode const *node);
 	void process_vertex_weights(xercesc::DOMNode const *node);
+	void process_library_visual_scenes(xercesc::DOMNode const *node);
+	void process_visual_scene(xercesc::DOMNode const *node);
+	void process_node(xercesc::DOMNode const *node);
 	void process_library_animations(xercesc::DOMNode const *node);
 	void process_animation(xercesc::DOMNode const *node);
 	void process_sampler(xercesc::DOMNode const *node);
