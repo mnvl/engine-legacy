@@ -8,6 +8,7 @@
 
 // REMOVE:
 #include <engine/graphic/collada_importer.h>
+#include <engine/graphic/camera.h>
 
 INT WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpstrCmdLine, INT nShowCmd) {
 	try
@@ -25,13 +26,17 @@ INT WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpstrCmdLine, INT
 		engine::graphic::collada_importer ci2("d:\\home\\bublik.dae");
 		ci2.load();
 
-		engine::graphic::collada_importer ci3("d:\\home\\cf_shooter_cast.dae");
-		ci3.load();
+		engine::graphic::camera cam;
+		cam.set_position(math::vec<3>(10, 5, 0), math::vec<3>(0, 0, 0), math::vec<3>(0, 1, 0));
 
 		while (true)
 		{
 			main_window.run_message_loop();
-			renderer.tick();
+
+			renderer.begin_frame();
+			renderer.select(cam);
+			ci2.get_model().draw_writeframe(&renderer);
+			renderer.finish_frame();
 		}
 
 		xercesc::XMLPlatformUtils::Terminate();

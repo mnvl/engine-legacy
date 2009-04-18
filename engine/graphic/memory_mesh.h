@@ -10,6 +10,8 @@
 namespace engine {
 namespace graphic {
 
+class renderer;
+
 class memory_mesh {
 public:
 	static DWORD const VERTEX_FORMAT = D3DFVF_XYZ | D3DFVF_TEX2;
@@ -27,14 +29,16 @@ public:
 	typedef math::vec<3, index> face;
 
 	typedef std::vector<joint_influence> influences_type;
-	influences_type influences_;
+	influences_type influences;
 
 	memory_mesh();
 	virtual ~memory_mesh();
 
-	std::string name_;
-	std::vector<vertex> vertices_;
-	std::vector<index> indices_;
+	std::string name;
+	std::vector<vertex> vertices;
+	std::vector<index> indices;
+
+	void draw_wireframe(renderer *renderer_ptr) const;
 };
 
 }

@@ -1,6 +1,7 @@
 
 #include <d3dx9.h>
 #include <engine/exception/directx_error.h>
+#include <engine/graphic/camera.h>
 #include <engine/graphic/renderer.h>
 
 namespace engine {
@@ -46,20 +47,32 @@ renderer::renderer(system::window *window_ptr, int width, int height, bool fulls
 	}
 }
 
-void renderer::tick() {
+void renderer::begin_frame()
+{
 	HRESULT hr;
 
-	hr = device_ptr_->Clear(0, 0, D3DCLEAR_STENCIL | D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, 0, 0, 0);
+	hr = device_ptr_->Clear(0, 0, D3DCLEAR_STENCIL | D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, D3DCOLOR_XRGB(0, 0, 0), 1.0f, 0);
 	if (FAILED(hr)) throw exception::directx_error(hr);
 
 	hr = device_ptr_->BeginScene();
 	if (FAILED(hr)) throw exception::directx_error(hr);
+}
+
+void renderer::finish_frame()
+{
+	HRESULT hr;
 
 	hr = device_ptr_->EndScene();
 	if (FAILED(hr)) throw exception::directx_error(hr);
 
 	hr = device_ptr_->Present(0, 0, 0, 0);
 	if (FAILED(hr)) throw exception::directx_error(hr);
+}
+
+void renderer::select(camera const &c)
+{
+	device_ptr_->SetTransform(D3DTS_VIEW, (D3DMATRIX const *) &c.get_view_matrix());
+	device_ptr_->SetTransform(D3DTS_PROJECTION, (D3DMATRIX const *) &c.get_projection_matrix());
 }
 
 }

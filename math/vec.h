@@ -706,9 +706,47 @@ operator<(const math::vec<4,L> &left,const math::vec<4,R> &right) {
 	return left.x<right.x && left.y<right.y && left.z<right.z && left.w<right.w;   
 }
 
+template<class L,class R> inline bool
+operator <=(const math::vec<2,L> &left,const math::vec<2,R> &right) {
+	if (left.x < right.x) return true;
+	if (left.x > right.x) return false;
+
+	return left.y < right.y;
+}
+
+template<class L,class R> inline bool
+operator <=(const math::vec<3,L> &left,const math::vec<3,R> &right) {
+	if (left.x < right.x) return true;
+	if (left.x > right.x) return false;
+
+	if (left.y < right.y) return true;
+	if (left.y > right.y) return false;
+
+	return left.z < right.z;
+}
+
+template<class L,class R> inline bool
+operator <=(const math::vec<4,L> &left,const math::vec<4,R> &right) {
+	if (left.x < right.x) return true;
+	if (left.x > right.x) return false;
+
+	if (left.y < right.y) return true;
+	if (left.y > right.y) return false;
+
+	if (left.z < right.z) return true;
+	if (left.z > right.z) return false;
+
+	return left.w < right.w;
+}
+
 template<int N,class L,class R> inline bool
-operator>(const math::vec<N,L> &left,const math::vec<N,R> &right) {
+operator >(const math::vec<N,L> &left,const math::vec<N,R> &right) {
 	return right<left;
+}
+
+template<int N,class L,class R> inline bool
+operator >=(const math::vec<N,L> &left,const math::vec<N,R> &right) {
+	return right <= left;
 }
 
 template<class T> void

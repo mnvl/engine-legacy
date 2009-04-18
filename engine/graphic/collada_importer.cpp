@@ -98,8 +98,8 @@ void collada_importer::process_geometry(xercesc::DOMNode const *node) {
 
 	{
 		memory_mesh dummy;
-		dummy.name_ = mesh_id;
-		model_info_.model.meshes_.push_back(dummy);
+		dummy.name = mesh_id;
+		model_info_.model.meshes.push_back(dummy);
 	}
 
 	model_info_.select_mesh(mesh_id);
@@ -289,7 +289,7 @@ void collada_importer::build_mesh(std::vector<unsigned> const &indices)
 
 		if (face_vertices.size() == 3) {
 			for (size_t i = 0; i < 3; i++) {
-				model_info_.current_mesh->indices_.push_back(model_info_.getIndexForVertex(face_vertices[i], face_indices[i]));
+				model_info_.current_mesh->indices.push_back(model_info_.getIndexForVertex(face_vertices[i], face_indices[i]));
 			}
 
 			face_vertices.clear();
@@ -386,10 +386,10 @@ void collada_importer::process_joints(xercesc::DOMNode const *node)
 			{
 				source_info const &source = indirect_source(child);
 
-				model_info_.current_mesh->influences_.resize(source.name_array.size());
+				model_info_.current_mesh->influences.resize(source.name_array.size());
 
 				for (size_t i = 0; i < source.name_array.size(); i++) {
-					model_info_.current_mesh->influences_[i].joint_ptr = model_info_.model.get_joint_by_name(source.name_array[i]);
+					model_info_.current_mesh->influences[i].joint_ptr = model_info_.model.get_joint_by_name(source.name_array[i]);
 				}
 			}
 			else if (semantic == "INV_BIND_MATRIX")
@@ -398,9 +398,9 @@ void collada_importer::process_joints(xercesc::DOMNode const *node)
 
 				std::vector<float>::const_iterator get = source.float_array.begin();
 
-				for (size_t i = 0; i <model_info_.current_mesh->influences_.size(); i++)
+				for (size_t i = 0; i <model_info_.current_mesh->influences.size(); i++)
 				{
-					joint_influence *joint_influence_ptr = &model_info_.current_mesh->influences_[i];
+					joint_influence *joint_influence_ptr = &model_info_.current_mesh->influences[i];
 
 					for (size_t i = 0; i < 4; i++) {
 						for (size_t j = 0; j < 4; j++) {
@@ -481,7 +481,7 @@ void collada_importer::process_vertex_weights(xercesc::DOMNode const *node)
 			joint_influence::influence dummy;
 			dummy.vertex_index = i;
 			dummy.weight = weight;
-			model_info_.current_mesh->influences_[joint_index].influences.push_back(dummy);
+			model_info_.current_mesh->influences[joint_index].influences.push_back(dummy);
 		}
 	}
 }
@@ -530,7 +530,7 @@ void collada_importer::process_node(xercesc::DOMNode const *node, joint *parent)
 				joint dummy;
 				dummy.name = util::xerces_get_attribute<std::string>(node, "id");
 				dummy.parent = parent;
-				model_info_.model.joints_.push_back(dummy);
+				model_info_.model.joints.push_back(dummy);
 			}
 		}
 	}

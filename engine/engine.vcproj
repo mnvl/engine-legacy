@@ -160,6 +160,14 @@
 			Name="graphic"
 			>
 			<File
+				RelativePath=".\graphic\camera.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\graphic\camera.h"
+				>
+			</File>
+			<File
 				RelativePath=".\graphic\collada_importer.cpp"
 				>
 			</File>

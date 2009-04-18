@@ -13,6 +13,7 @@ class collada_importer {
 public:
 	collada_importer(std::string const &filename);
 	void load();
+	memory_model const &get_model() const { return model_info_.model; }
 
 private:
 	std::string filename_;
@@ -42,13 +43,13 @@ private:
 	struct model_in_progress {
 		struct vertex_comparator {
 			bool operator ()(memory_mesh::vertex const &lhs, memory_mesh::vertex const &rhs) {
-				if (lhs.position < rhs.position) return true;
-				if (lhs.position > rhs.position) return false;
+				if (lhs.position <= rhs.position) return true;
+				if (lhs.position >= rhs.position) return false;
 
-				if (lhs.normal < rhs.normal) return true;
-				if (lhs.normal > rhs.normal) return false;
+				if (lhs.normal <= rhs.normal) return true;
+				if (lhs.normal >= rhs.normal) return false;
 
-				return lhs.texcoords < rhs.texcoords;
+				return lhs.texcoords <= rhs.texcoords;
 			}
 		};
 
@@ -60,12 +61,15 @@ private:
 		memory_mesh *current_mesh;
 
 		memory_mesh::index getIndexForVertex(memory_mesh::vertex const &v, memory_mesh::index original_index) {
+			memory_mesh::index index_value = vertices_inverted_index.size();
+
 			std::pair<verices_inverted_index_type::const_iterator, bool> result =
-				vertices_inverted_index.insert(std::make_pair(v, vertices_inverted_index.size()));
+				vertices_inverted_index.insert(std::make_pair(v, index_value));
 
 			if (result.second) {
-				current_mesh->vertices_.push_back(v);
-				position_index_transform.insert(std::make_pair(original_index, result.first->second));
+				current_mesh->vertices.push_back(v);
+				position_index_transform.insert(std::make_pair(original_index, index_value));
+				return index_value;
 			}
 
 			return result.first->second;

@@ -8,12 +8,18 @@
 namespace engine {
 namespace graphic {
 
+class camera;
+
 class renderer {
 public:
 	renderer(system::window *window_ptr, int width = 800, int height = 600, bool fullscreen = false);
-	void tick();
+
+	void begin_frame();
+	void finish_frame();
 
 	IDirect3DDevice9 *get_device() const { return device_ptr_.get(); }
+
+	void select(camera const &c);
 
 private:
 	system::window *window_ptr_;
