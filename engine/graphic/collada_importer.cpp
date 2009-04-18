@@ -56,19 +56,21 @@ void collada_importer::process_collada(xercesc::DOMNode const *node) {
 			if (child->getNodeType() != xercesc::DOMNode::ELEMENT_NODE) continue;
 			std::string const &child_name = util::xerces_lcp_transcode(child->getLocalName());
 
-			if (pass == 0 && child_name == "library_visual_scenes")
+			if (pass == 1 && child_name == "library_visual_scenes")
 			{
 				process_library_visual_scenes(child);
 			}
 
-			if (pass == 1 && child_name == "library_geometries")
+			if (pass == 0 && child_name == "library_geometries")
 			{
 				process_library_geometries(child);
 			}
+
 			if (pass == 2 && child_name == "library_controllers")
 			{
 				process_library_controllers(child);
 			}
+
 			if (pass == 3 && child_name == "library_animations")
 			{
 				process_library_animations(child);
@@ -93,6 +95,13 @@ void collada_importer::process_geometry(xercesc::DOMNode const *node) {
 	clear();
 
 	std::string const &mesh_id = util::xerces_get_attribute<std::string>(node, "id");
+
+	{
+		memory_mesh dummy;
+		dummy.name_ = mesh_id;
+		model_info_.model.meshes_.push_back(dummy);
+	}
+
 	model_info_.select_mesh(mesh_id);
 
 	for (xercesc::DOMNode const *child = node->getFirstChild(); child; child = child->getNextSibling()) {
@@ -323,7 +332,7 @@ void collada_importer::process_controller(xercesc::DOMNode const *node)
 void collada_importer::process_skin(xercesc::DOMNode const *node)
 {
 	std::string const &source = util::xerces_get_attribute<std::string>(node, "source");
-	model_info_.select_mesh(source);
+	model_info_.select_mesh(source.substr(1));
 
 	math::matrix<4, 4> bind_shape_matrix;
 
@@ -486,7 +495,7 @@ void collada_importer::process_library_visual_scenes(xercesc::DOMNode const *nod
 
 		if (child_name == "visual_scene")
 		{
-			process_visual_scene(node);
+			process_visual_scene(child);
 		}
 	}
 }
@@ -516,13 +525,7 @@ void collada_importer::process_node(xercesc::DOMNode const *node, joint *parent)
 		{
 			std::string const &node_type = util::xerces_get_attribute<std::string>(child, "type");
 
-			if (node_type == "NODE")
-			{
-				memory_mesh dummy;
-				dummy.name_ = util::xerces_get_attribute<std::string>(child, "id");
-				model_info_.model.meshes_.push_back(dummy);
-			}
-			else if (node_type == "JOINT")
+			if (node_type == "JOINT")
 			{
 				joint dummy;
 				dummy.name = util::xerces_get_attribute<std::string>(node, "id");
