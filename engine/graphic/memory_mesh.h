@@ -1,8 +1,11 @@
 #pragma once
 
+#include <d3d9.h>
 #include <map>
 #include <vector>
-#include <engine/graphic/mesh.h>
+#include <boost/cstdint.hpp>
+#include <math/vec.h>
+#include <engine/graphic/skeletal_animation.h>
 
 namespace engine {
 namespace graphic {
@@ -23,30 +26,15 @@ public:
 	typedef boost::uint16_t index;
 	typedef math::vec<3, index> face;
 
-	struct influence {
-		index vertex_index;
-		math::scalar weight;
-	};
-
-	struct joint {
-		std::string name;
-		math::matrix<4, 4> inverted_bind_matrix;
-		std::vector<influence> infulences;
-		joint *parent;
-		std::vector<joint *> childs;
-
-		joint():
-		parent(0) {
-			inverted_bind_matrix.identity();
-		}
-	};
+	typedef std::vector<joint_influence> influences_type;
+	influences_type influences_;
 
 	memory_mesh();
 	virtual ~memory_mesh();
 
+	std::string name_;
 	std::vector<vertex> vertices_;
 	std::vector<index> indices_;
-	std::vector<joint> joints_;
 };
 
 }

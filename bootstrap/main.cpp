@@ -8,7 +8,6 @@
 
 // REMOVE:
 #include <engine/graphic/collada_importer.h>
-#include <engine/graphic/static_mesh.h>
 
 INT WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpstrCmdLine, INT nShowCmd) {
 	try

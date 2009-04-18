@@ -13,8 +13,7 @@ namespace engine {
 namespace graphic {
 
 collada_importer::collada_importer(std::string const &filename):
-filename_(filename),
-mesh_info_(0)
+filename_(filename)
 {
 }
 
@@ -52,20 +51,25 @@ collada_importer::source_info const &collada_importer::indirect_source(xercesc::
 }
 
 void collada_importer::process_collada(xercesc::DOMNode const *node) {
-	for (int pass = 0; pass < 3; pass++) {
+	for (int pass = 0; pass < 4; pass++) {
 		for (xercesc::DOMNode const *child = node->getFirstChild(); child; child = child->getNextSibling()) {
 			if (child->getNodeType() != xercesc::DOMNode::ELEMENT_NODE) continue;
 			std::string const &child_name = util::xerces_lcp_transcode(child->getLocalName());
 
-			if (pass == 0 && child_name == "library_geometries")
+			if (pass == 0 && child_name == "library_visual_scenes")
+			{
+				process_library_visual_scenes(child);
+			}
+
+			if (pass == 1 && child_name == "library_geometries")
 			{
 				process_library_geometries(child);
 			}
-			if (pass == 1 && child_name == "library_controllers")
+			if (pass == 2 && child_name == "library_controllers")
 			{
 				process_library_controllers(child);
 			}
-			if (pass == 2 && child_name == "library_animations")
+			if (pass == 3 && child_name == "library_animations")
 			{
 				process_library_animations(child);
 			}
@@ -89,7 +93,7 @@ void collada_importer::process_geometry(xercesc::DOMNode const *node) {
 	clear();
 
 	std::string const &mesh_id = util::xerces_get_attribute<std::string>(node, "id");
-	mesh_info_ = &builded_meshes_[mesh_id];
+	model_info_.select_mesh(mesh_id);
 
 	for (xercesc::DOMNode const *child = node->getFirstChild(); child; child = child->getNextSibling()) {
 		if (child->getNodeType() != xercesc::DOMNode::ELEMENT_NODE) continue;
@@ -149,7 +153,6 @@ void collada_importer::process_inputs(xercesc::DOMNode const *node)
 void collada_importer::process_source(xercesc::DOMNode const *node)
 {
 	source_info *si = &sources_[util::xerces_get_attribute<std::string>(node, "id")];
-	bool nocheck = false;
 
 	for (xercesc::DOMNode const *child = node->getFirstChild(); child; child = child->getNextSibling()) {
 		if (child->getNodeType() != xercesc::DOMNode::ELEMENT_NODE) continue;
@@ -160,11 +163,14 @@ void collada_importer::process_source(xercesc::DOMNode const *node)
 			std::stringstream ss(util::xerces_get_text(child));
 
 			math::scalar val;
-			while (ss >> val) { si->data.push_back(val); }
+			while (ss >> val) { si->float_array.push_back(val); }
 		}
 		else if (child_name == "Name_array")
 		{
-			nocheck = true;
+			std::stringstream ss(util::xerces_get_text(child));
+
+			std::string val;
+			while (ss >> val) { si->name_array.push_back(val); }
 		}
 		else if (child_name == "technique_common")
 		{
@@ -172,9 +178,7 @@ void collada_importer::process_source(xercesc::DOMNode const *node)
 		}
 	}
 
-	if (nocheck) return;
-
-	if (si->data.size() != si->technique.count * si->technique.stride) {
+	if (si->float_array.size() && si->float_array.size() != si->technique.count * si->technique.stride) {
 		throw std::runtime_error("malformed float_array in source "
 			+ util::xerces_get_attribute<std::string>(node, "id") 
 			+ " of file " + filename_);
@@ -276,7 +280,7 @@ void collada_importer::build_mesh(std::vector<unsigned> const &indices)
 
 		if (face_vertices.size() == 3) {
 			for (size_t i = 0; i < 3; i++) {
-				mesh_info_->mesh.indices_.push_back(mesh_info_->getIndexForVertex(face_vertices[i], face_indices[i]));
+				model_info_.current_mesh->indices_.push_back(model_info_.getIndexForVertex(face_vertices[i], face_indices[i]));
 			}
 
 			face_vertices.clear();
@@ -319,7 +323,7 @@ void collada_importer::process_controller(xercesc::DOMNode const *node)
 void collada_importer::process_skin(xercesc::DOMNode const *node)
 {
 	std::string const &source = util::xerces_get_attribute<std::string>(node, "source");
-	mesh_info_ = &builded_meshes_.find(source.substr(1))->second;
+	model_info_.select_mesh(source);
 
 	math::matrix<4, 4> bind_shape_matrix;
 
@@ -372,21 +376,26 @@ void collada_importer::process_joints(xercesc::DOMNode const *node)
 			if (semantic == "JOINT")
 			{
 				source_info const &source = indirect_source(child);
-				mesh_info_->mesh.joints_.resize(source.technique.count);
+
+				model_info_.current_mesh->influences_.resize(source.name_array.size());
+
+				for (size_t i = 0; i < source.name_array.size(); i++) {
+					model_info_.current_mesh->influences_[i].joint_ptr = model_info_.model.get_joint_by_name(source.name_array[i]);
+				}
 			}
 			else if (semantic == "INV_BIND_MATRIX")
 			{
 				source_info const &source = indirect_source(child);
 
-				std::vector<float>::const_iterator get = source.data.begin();
+				std::vector<float>::const_iterator get = source.float_array.begin();
 
-				for (size_t i = 0; i <mesh_info_->mesh.joints_.size(); i++)
+				for (size_t i = 0; i <model_info_.current_mesh->influences_.size(); i++)
 				{
-					memory_mesh::joint *joint_ptr = &mesh_info_->mesh.joints_[i];
+					joint_influence *joint_influence_ptr = &model_info_.current_mesh->influences_[i];
 
 					for (size_t i = 0; i < 4; i++) {
 						for (size_t j = 0; j < 4; j++) {
-							joint_ptr->inverted_bind_matrix.ij[j][i] = *get++;
+							joint_influence_ptr->inverted_bind_matrix.ij[j][i] = *get++;
 						}
 					}
 				}
@@ -454,16 +463,16 @@ void collada_importer::process_vertex_weights(xercesc::DOMNode const *node)
 
 				if (k == weight_offset)
 				{
-					weight = weight_source->data[*get];
+					weight = weight_source->float_array[*get];
 				}
 
 				get++;
 			}
 
-			memory_mesh::influence dummy;
+			joint_influence::influence dummy;
 			dummy.vertex_index = i;
 			dummy.weight = weight;
-			mesh_info_->mesh.joints_[joint_index].infulences.push_back(dummy);
+			model_info_.current_mesh->influences_[joint_index].influences.push_back(dummy);
 		}
 	}
 }
@@ -496,7 +505,7 @@ void collada_importer::process_visual_scene(xercesc::DOMNode const *node)
 	}
 }
 
-void collada_importer::process_node(xercesc::DOMNode const *node)
+void collada_importer::process_node(xercesc::DOMNode const *node, joint *parent)
 {
 	for (xercesc::DOMNode const *child = node->getFirstChild(); child; child = child->getNextSibling())
 	{
@@ -505,7 +514,21 @@ void collada_importer::process_node(xercesc::DOMNode const *node)
 
 		if (child_name == "node")
 		{
-			// TODO: process node
+			std::string const &node_type = util::xerces_get_attribute<std::string>(child, "type");
+
+			if (node_type == "NODE")
+			{
+				memory_mesh dummy;
+				dummy.name_ = util::xerces_get_attribute<std::string>(child, "id");
+				model_info_.model.meshes_.push_back(dummy);
+			}
+			else if (node_type == "JOINT")
+			{
+				joint dummy;
+				dummy.name = util::xerces_get_attribute<std::string>(node, "id");
+				dummy.parent = parent;
+				model_info_.model.joints_.push_back(dummy);
+			}
 		}
 	}
 }

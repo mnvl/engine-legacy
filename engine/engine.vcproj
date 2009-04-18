@@ -176,7 +176,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\graphic\mesh.h"
+				RelativePath=".\graphic\memory_model.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\graphic\memory_model.h"
 				>
 			</File>
 			<File
@@ -188,11 +192,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\graphic\static_mesh.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\graphic\static_mesh.h"
+				RelativePath=".\graphic\skeletal_animation.h"
 				>
 			</File>
 		</Filter>

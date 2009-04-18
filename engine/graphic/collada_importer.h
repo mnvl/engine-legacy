@@ -4,7 +4,7 @@
 #include <vector>
 #include <xercesc/dom/DOM.hpp>
 #include <math/vec.h>
-#include <engine/graphic/memory_mesh.h>
+#include <engine/graphic/memory_model.h>
 
 namespace engine {
 namespace graphic {
@@ -22,13 +22,14 @@ private:
 	};
 
 	struct source_info {
-		std::vector<math::scalar> data;
+		std::vector<math::scalar> float_array;
+		std::vector<std::string> name_array;
 		technique_info technique;
 
 		template<size_t N>
 		void fill_vector(math::vec<N> &v, size_t index) const {
 			size_t offset = technique.stride * index;
-			float const *get = &data[offset];
+			float const *get = &float_array[offset];
 			for (size_t i = 0; i < N; i++) v.i[i] = *get++;
 		}
 	};
@@ -38,7 +39,7 @@ private:
 		size_t offset;
 	};
 
-	struct mesh_in_progress {
+	struct model_in_progress {
 		struct vertex_comparator {
 			bool operator ()(memory_mesh::vertex const &lhs, memory_mesh::vertex const &rhs) {
 				if (lhs.position < rhs.position) return true;
@@ -55,23 +56,27 @@ private:
 		verices_inverted_index_type vertices_inverted_index;
 		std::map<memory_mesh::index, memory_mesh::index> position_index_transform;
 
+		memory_model model;
+		memory_mesh *current_mesh;
+
 		memory_mesh::index getIndexForVertex(memory_mesh::vertex const &v, memory_mesh::index original_index) {
 			std::pair<verices_inverted_index_type::const_iterator, bool> result =
 				vertices_inverted_index.insert(std::make_pair(v, vertices_inverted_index.size()));
 
 			if (result.second) {
-				mesh.vertices_.push_back(v);
+				current_mesh->vertices_.push_back(v);
 				position_index_transform.insert(std::make_pair(original_index, result.first->second));
 			}
 
 			return result.first->second;
 		}
 
-		memory_mesh mesh;
+		void select_mesh(std::string const &name) {
+			current_mesh = model.get_mesh_by_name(name);
+		}
 	};
 
-	std::map<std::string, mesh_in_progress> builded_meshes_;
-	mesh_in_progress *mesh_info_;
+	model_in_progress model_info_;
 
 	// name to source_info
 	std::map<std::string, source_info> sources_;
@@ -98,7 +103,7 @@ private:
 	void process_vertex_weights(xercesc::DOMNode const *node);
 	void process_library_visual_scenes(xercesc::DOMNode const *node);
 	void process_visual_scene(xercesc::DOMNode const *node);
-	void process_node(xercesc::DOMNode const *node);
+	void process_node(xercesc::DOMNode const *node, joint *parent = 0);
 	void process_library_animations(xercesc::DOMNode const *node);
 	void process_animation(xercesc::DOMNode const *node);
 	void process_sampler(xercesc::DOMNode const *node);
