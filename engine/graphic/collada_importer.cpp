@@ -412,7 +412,17 @@ void collada_importer::process_vertex_weights(xercesc::DOMNode const *node)
 		}
 	}
 
-	std::map<joint *, joint_influence> influences;
+	std::vector<joint_influence *> influences_lookup;
+	influences_lookup.reserve(joint_source->technique.count);
+
+	for (size_t i = 0; i < joint_source->technique.count; i++)
+	{
+		for (size_t j = 0; j < mesh_in_progress_->mesh_ptr->influences.size(); j++)
+		{
+			if (model_.get_joint_by_name(joint_source->name_array[i]) == mesh_in_progress_->mesh_ptr->influences[j].joint_ptr)
+				influences_lookup.push_back(&mesh_in_progress_->mesh_ptr->influences[j]);
+		}
+	}
 
 	size_t stride = max(joint_offset, weight_offset) + 1;
 	std::vector<size_t>::const_iterator get = v.begin();
@@ -421,14 +431,14 @@ void collada_importer::process_vertex_weights(xercesc::DOMNode const *node)
 	{
 		for (size_t j = 0, n = vcount[i]; j < n; j++)
 		{
-			joint *joint_ptr = 0;
-			float weight;
+			joint_influence *influence_ptr= 0;
+			math::scalar weight;
 
 			for (size_t k = 0; k < stride; k++)
 			{
 				if (k == joint_offset)
 				{
-					joint_ptr = model_.get_joint_by_name(joint_source->name_array[*get]);
+					influence_ptr = influences_lookup[*get];
 				}
 
 				if (k == weight_offset)
@@ -442,20 +452,13 @@ void collada_importer::process_vertex_weights(xercesc::DOMNode const *node)
 			joint_influence::vertex_weight dummy;
 			dummy.weight = weight;
 
-			for (mesh_in_progress::position_index_transform_type::const_iterator it = mesh_in_progress_->position_index_transform.find(i);
+			for (mesh_in_progress::position_index_transform_type::const_iterator it = mesh_in_progress_->position_index_transform.lower_bound(std::make_pair(i, 0));
 				it != mesh_in_progress_->position_index_transform.end() && it->first == i; it++)
 			{
 				dummy.vertex_index = it->second;
-				influences[joint_ptr].vertex_weights.push_back(dummy);
+				influence_ptr->vertex_weights.push_back(dummy);
 			}
 		}
-	}
-
-	for (std::map<joint *, joint_influence>::iterator it = influences.begin();
-		it != influences.end(); it++)
-	{
-		it->second.joint_ptr = it->first;
-		mesh_in_progress_->mesh_ptr->influences.push_back(it->second);
 	}
 }
 
@@ -724,6 +727,7 @@ void collada_importer::build_mesh(std::vector<unsigned> const &indices)
 			}
 
 			face_vertices.clear();
+			face_indices.clear();
 		}
 	}
 }

@@ -1,5 +1,6 @@
 #pragma once
 
+#include <set>
 #include <map>
 #include <vector>
 #include <stdexcept>
@@ -68,7 +69,7 @@ private:
 		memory_mesh *mesh_ptr;
 
 		typedef std::map<memory_mesh::vertex, memory_mesh::index, vertex_comparator> verices_inverted_index_type;
-		typedef std::multimap<memory_mesh::index, memory_mesh::index> position_index_transform_type;
+		typedef std::set<std::pair<memory_mesh::index, memory_mesh::index> > position_index_transform_type;
 
 		verices_inverted_index_type vertices_inverted_index;
 		position_index_transform_type position_index_transform;
