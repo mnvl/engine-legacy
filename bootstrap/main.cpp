@@ -23,8 +23,8 @@ INT WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpstrCmdLine, INT
 		engine::system::window main_window("engine");
 		engine::graphic::renderer renderer(&main_window);
 
-		//engine::graphic::collada_importer ci2("d:\\home\\cf_shooter_cast.dae");
-		engine::graphic::collada_importer ci2("d:\\home\\bublik.dae");
+		engine::graphic::collada_importer ci2("d:\\home\\cf_shooter_cast.dae");
+		//engine::graphic::collada_importer ci2("d:\\home\\bublik.dae");
 		ci2.load();
 
 		engine::graphic::camera cam;
@@ -35,13 +35,13 @@ INT WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpstrCmdLine, INT
 			main_window.run_message_loop();
 
 			renderer.begin_frame();
-			cam.set_position(math::vec<3>(20 * cos(0 * angle), 20 * sin(0 * angle), 0), math::vec<3>(0, 0, 0), math::vec<3>(0, 0, 1));
+			cam.set_position(math::vec<3>(500 * cos(angle), 0, 500 * sin(angle)), math::vec<3>(0, 0, 0), math::vec<3>(0, 1, 0));
 			renderer.select(cam);
-			ci2.get_model().draw_wireframe(&renderer, angle);
+			ci2.get_model().draw_wireframe(&renderer, math::periodic_clamp(angle / math::PI, 0.0f, 1.0f));
 			renderer.finish_frame();
 
 			angle += 0.01;
-			if (angle > 1) angle = 0;
+			if (angle > 2 * math::PI) angle = 0;
 		}
 
 		xercesc::XMLPlatformUtils::Terminate();
