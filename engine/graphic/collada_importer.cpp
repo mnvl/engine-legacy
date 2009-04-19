@@ -41,12 +41,13 @@ void collada_importer::load() {
 void collada_importer::clear() {
 	sources_.clear();
 	inputs_.clear();
+	sampler_by_name_.clear();
 }
 
 collada_importer::source_info const &collada_importer::indirect_source(xercesc::DOMNode const *input_node) {
 	std::string const &source = util::xerces_get_attribute<std::string>(input_node, "source").substr(1);
 	std::map<std::string, source_info>::const_iterator it = sources_.find(source);
-	if (it == sources_.end()) throw std::runtime_error("source " + source + " not found in " + filename_);
+	if (it == sources_.end()) throw import_error("source " + source + " not found in " + filename_);
 	return it->second;
 }
 
@@ -187,7 +188,7 @@ void collada_importer::process_source(xercesc::DOMNode const *node)
 	}
 
 	if (si->float_array.size() && si->float_array.size() != si->technique.count * si->technique.stride) {
-		throw std::runtime_error("malformed float_array in source "
+		throw import_error("malformed float_array in source "
 			+ util::xerces_get_attribute<std::string>(node, "id") 
 			+ " of file " + filename_);
 	}
@@ -203,6 +204,22 @@ void collada_importer::process_technique(xercesc::DOMNode const *node, technique
 		{
 			ti->count = util::xerces_get_attribute<size_t>(child, "count");
 			ti->stride = util::xerces_get_attribute<size_t>(child, "stride");
+
+			process_accessor(child, ti);
+		}
+	}
+}
+
+void collada_importer::process_accessor(xercesc::DOMNode const *node, technique_info *ti)
+{
+	for (xercesc::DOMNode const *child = node->getFirstChild(); child; child = child->getNextSibling()) {
+		if (child->getNodeType() != xercesc::DOMNode::ELEMENT_NODE) continue;
+		std::string const &child_name = util::xerces_lcp_transcode(child->getLocalName());
+
+		if (child_name == "param")
+		{
+			ti->params.insert(std::make_pair(util::xerces_get_attribute<std::string>(child, "name"),
+				util::xerces_get_attribute<std::string>(child, "type")));
 		}
 	}
 }
@@ -232,66 +249,6 @@ void collada_importer::process_triangles(xercesc::DOMNode const *node)
 			while (ss >> index) indices.push_back(index);
 
 			build_mesh(indices);
-		}
-	}
-}
-
-void collada_importer::build_mesh(std::vector<unsigned> const &indices)
-{
-	input_info const &positions = inputs_["POSITION"];
-	input_info const &normals = inputs_["NORMAL"];
-	input_info const &texcoords = inputs_["TEXCOORD"];
-
-	source_info const &positions_source = sources_[positions.source_name.substr(1)];
-	source_info const &normals_source = sources_[normals.source_name.substr(1)];
-	source_info const &texcoords_source = sources_[texcoords.source_name.substr(1)];
-
-	size_t stride = positions.offset;
-	if (normals.offset > stride) stride = normals.offset;
-	if (texcoords.offset > stride) stride = texcoords.offset;
-	stride++;
-
-	std::vector<memory_mesh::vertex> face_vertices;
-	std::vector<memory_mesh::index> face_indices;
-
-	for (size_t index = 0; index < indices.size(); index += stride)
-	{
-		unsigned data_filled = 0;
-		memory_mesh::vertex v;
-
-		for (size_t offset = 0; offset < stride; offset++)
-		{
-			if (offset == positions.offset)
-			{
-				positions_source.fill_vector(v.position, indices[index + offset]);
-				face_indices.push_back(indices[index + offset]);
-				data_filled |= 1;
-			}
-
-			if (offset == normals.offset)
-			{
-				normals_source.fill_vector(v.normal, indices[index + offset]);
-				data_filled |= 2;
-			}
-
-			if (offset == texcoords.offset)
-			{
-				texcoords_source.fill_vector(v.texcoords, indices[index + offset]);
-				data_filled |= 4;
-			}
-		}
-
-		if (data_filled != 7)
-			throw std::runtime_error("error importing " + filename_ + ": vertex is not filled");
-
-		face_vertices.push_back(v);
-
-		if (face_vertices.size() == 3) {
-			for (size_t i = 0; i < 3; i++) {
-				mesh_in_progress_->mesh_ptr->indices.push_back(mesh_in_progress_->getIndexForVertex(face_vertices[i], face_indices[i]));
-			}
-
-			face_vertices.clear();
 		}
 	}
 }
@@ -356,7 +313,7 @@ void collada_importer::process_skin(xercesc::DOMNode const *node)
 				}
 			}
 
-			if (ss.bad()) throw std::runtime_error("error parsing bind shape matrix for "
+			if (ss.bad()) throw import_error("error parsing bind shape matrix for "
 				+ source + " in file " + filename_);
 		}
 		else if (child_name == "source")
@@ -481,9 +438,14 @@ void collada_importer::process_vertex_weights(xercesc::DOMNode const *node)
 			}
 
 			joint_influence::vertex_weight dummy;
-			dummy.vertex_index = i;
 			dummy.weight = weight;
-			mesh_in_progress_->mesh_ptr->influences[joint_index].vertex_weights.push_back(dummy);
+
+			for (mesh_in_progress::position_index_transform_type::const_iterator it = mesh_in_progress_->position_index_transform.find(i);
+				it != mesh_in_progress_->position_index_transform.end() && it->first == i; it++)
+			{
+				dummy.vertex_index = it->second;
+				mesh_in_progress_->mesh_ptr->influences[joint_index].vertex_weights.push_back(dummy);
+			}
 		}
 	}
 }
@@ -604,6 +566,12 @@ void collada_importer::process_animation(xercesc::DOMNode const *node)
 		{
 			process_sampler(child);
 		}
+		else if (child_name == "channel")
+		{
+			sampler *sampler_ptr = &sampler_by_name_.find(util::xerces_get_attribute<std::string>(child, "source").substr(1))->second;
+			std::string const &target = util::xerces_get_attribute<std::string>(child, "target");
+			sampler_ptr->joint_ptr = model_.get_joint_by_name(target.substr(0, target.find("/")));
+		}
 	}
 
 	clear();
@@ -614,8 +582,9 @@ void collada_importer::process_sampler(xercesc::DOMNode const *node)
 	source_info const *input = 0;
 	source_info const *output = 0;
 	source_info const *interpolation = 0;
-	source_info const *in_tangent = 0;
-	source_info const *out_tangent = 0;
+
+	std::string const &name = util::xerces_get_attribute<std::string>(node, "id");
+	sampler *sampler_ptr = &sampler_by_name_.insert(std::make_pair(name, sampler())).first->second;
 
 	for (xercesc::DOMNode const *child = node->getFirstChild(); child; child = child->getNextSibling())
 	{
@@ -631,8 +600,97 @@ void collada_importer::process_sampler(xercesc::DOMNode const *node)
 			if (semantic == "INPUT") input = source_ptr;
 			else if (semantic == "OUTPUT") output = source_ptr;
 			else if (semantic == "INTERPOLATION") interpolation = source_ptr;
-			else if (semantic == "IN_TANGENT") in_tangent = source_ptr;
-			else if (semantic == "OUT_TANGENT")	out_tangent = source_ptr;
+		}
+	}
+
+	if (!input || !output || !interpolation) {
+		throw import_error("one of sources of sampler " + name + " not found");
+	}
+
+	bool output_is_matrix = false;
+
+	if (output->technique.params.find("TRANSFORM") != output->technique.params.end())
+	{
+		output_is_matrix = true;
+	}
+	else
+	{
+		throw import_error("invalid output param of sampler " + name);
+	}
+
+	std::vector<float>::const_iterator output_get = output->float_array.begin();
+
+	for (size_t sample_index = 0; sample_index < input->technique.count; sample_index++) {
+		sampler::sample s;
+
+		s.time = input->float_array[sample_index];
+
+		if (output_is_matrix) {
+			for (size_t i = 0; i < 4; i++) {
+				for (size_t j = 0; j < 4; j++) {
+					s.transform.ij[j][i] = *output_get++;
+				}
+			}
+		}
+	}
+}
+
+void collada_importer::build_mesh(std::vector<unsigned> const &indices)
+{
+	input_info const &positions = inputs_["POSITION"];
+	input_info const &normals = inputs_["NORMAL"];
+	input_info const &texcoords = inputs_["TEXCOORD"];
+
+	source_info const &positions_source = sources_[positions.source_name.substr(1)];
+	source_info const &normals_source = sources_[normals.source_name.substr(1)];
+	source_info const &texcoords_source = sources_[texcoords.source_name.substr(1)];
+
+	size_t stride = positions.offset;
+	if (normals.offset > stride) stride = normals.offset;
+	if (texcoords.offset > stride) stride = texcoords.offset;
+	stride++;
+
+	std::vector<memory_mesh::vertex> face_vertices;
+	std::vector<memory_mesh::index> face_indices;
+
+	for (size_t index = 0; index < indices.size(); index += stride)
+	{
+		unsigned data_filled = 0;
+		memory_mesh::vertex v;
+
+		for (size_t offset = 0; offset < stride; offset++)
+		{
+			if (offset == positions.offset)
+			{
+				positions_source.fill_vector(v.position, indices[index + offset]);
+				face_indices.push_back(indices[index + offset]);
+				data_filled |= 1;
+			}
+
+			if (offset == normals.offset)
+			{
+				normals_source.fill_vector(v.normal, indices[index + offset]);
+				data_filled |= 2;
+			}
+
+			if (offset == texcoords.offset)
+			{
+				texcoords_source.fill_vector(v.texcoords, indices[index + offset]);
+				data_filled |= 4;
+			}
+		}
+
+		if (data_filled != 7)
+			throw import_error("error importing " + filename_ + ": vertex is not filled");
+
+		face_vertices.push_back(v);
+
+		if (face_vertices.size() == 3) {
+			for (size_t i = 0; i < 3; i++) {
+				mesh_in_progress_->mesh_ptr->indices.push_back(mesh_in_progress_->getIndexForVertex(face_vertices[i], face_indices[i]));
+			}
+
+			face_vertices.clear();
 		}
 	}
 }

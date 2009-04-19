@@ -2,6 +2,7 @@
 
 #include <map>
 #include <vector>
+#include <stdexcept>
 #include <xercesc/dom/DOM.hpp>
 #include <math/vec.h>
 #include <engine/graphic/memory_model.h>
@@ -11,6 +12,14 @@ namespace graphic {
 
 class collada_importer {
 public:
+	class import_error: public std::runtime_error {
+	public:
+		import_error(std::string const &message):
+		runtime_error("import error: " + message)
+		{
+		}
+	};
+
 	collada_importer(std::string const &filename);
 	void load();
 	memory_model const &get_model() const { return model_; }
@@ -19,6 +28,9 @@ private:
 	std::string filename_;
 
 	struct technique_info {
+		typedef std::map<std::string, std::string> params_type;	// name to type
+
+		params_type params;
 		size_t count, stride;
 	};
 
@@ -56,8 +68,10 @@ private:
 		memory_mesh *mesh_ptr;
 
 		typedef std::map<memory_mesh::vertex, memory_mesh::index, vertex_comparator> verices_inverted_index_type;
+		typedef std::multimap<memory_mesh::index, memory_mesh::index> position_index_transform_type;
+
 		verices_inverted_index_type vertices_inverted_index;
-		std::map<memory_mesh::index, memory_mesh::index> position_index_transform;
+		position_index_transform_type position_index_transform;
 
 		mesh_in_progress(memory_mesh *mesh = 0):
 		mesh_ptr(mesh)
@@ -80,8 +94,14 @@ private:
 		}
 	};
 
+	// name to mesh in progress
 	std::map<std::string, mesh_in_progress> meshes_in_progress_;
+
+	// instance controller name to mesh name
 	std::map<std::string, std::string> mesh_by_instance_controller_;
+
+	// animation by name
+	std::map<std::string, sampler> sampler_by_name_;
 
 	mesh_in_progress *mesh_in_progress_;
 	memory_model model_;
@@ -102,8 +122,8 @@ private:
 	void process_inputs(xercesc::DOMNode const *node);
 	void process_source(xercesc::DOMNode const *node);
 	void process_technique(xercesc::DOMNode const *node, technique_info *si);
+	void process_accessor(xercesc::DOMNode const *node, technique_info *ti);
 	void process_triangles(xercesc::DOMNode const *node);
-	void build_mesh(std::vector<unsigned> const &indices);
 	void process_library_controllers(xercesc::DOMNode const *node);
 	void process_controller(xercesc::DOMNode const *node);
 	void process_skin(xercesc::DOMNode const *node);
@@ -115,6 +135,7 @@ private:
 	void process_library_animations(xercesc::DOMNode const *node);
 	void process_animation(xercesc::DOMNode const *node);
 	void process_sampler(xercesc::DOMNode const *node);
+	void build_mesh(std::vector<unsigned> const &indices);
 };
 
 }
