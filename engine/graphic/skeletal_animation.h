@@ -18,6 +18,7 @@ struct joint {
 
 	joint():
 	parent(0) {
+		frame_transform.identity();
 	}
 };
 

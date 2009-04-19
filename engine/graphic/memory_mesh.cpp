@@ -24,14 +24,12 @@ void memory_mesh::draw_wireframe(renderer *renderer_ptr, math::scalar time) cons
 	{
 		for (influences_type::const_iterator it = influences.begin(); it != influences.end(); it++)
 		{
-			if (it ->joint_ptr) {
-				for (joint_influence::vertex_weights_type::const_iterator jt = it->vertex_weights.begin(); jt != it->vertex_weights.end(); jt++)
-				{
-					animated_vertices[jt->vertex_index].position += 
-						vertices[jt->vertex_index].position *
-						it->joint_ptr->frame_transform *
-						jt->weight;
-				}
+			for (joint_influence::vertex_weights_type::const_iterator jt = it->vertex_weights.begin(); jt != it->vertex_weights.end(); jt++)
+			{
+				animated_vertices[jt->vertex_index].position += 
+					vertices[jt->vertex_index].position *
+					it->joint_ptr->frame_transform *
+					jt->weight;
 			}
 		}
 	}

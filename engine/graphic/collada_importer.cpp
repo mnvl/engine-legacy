@@ -347,10 +347,8 @@ void collada_importer::process_joints(xercesc::DOMNode const *node)
 				source_info const &source = indirect_source(child);
 				mesh_in_progress_->mesh_ptr->influences.resize(source.name_array.size());
 
-				joint_influence *influences_ptr = &mesh_in_progress_->mesh_ptr->influences[0];
-
 				for (size_t i = 0, n = source.name_array.size(); i < n; i++) {
-					influences_ptr->joint_ptr = model_.get_joint_by_name(source.name_array[i]);
+					mesh_in_progress_->mesh_ptr->influences[i].joint_ptr = model_.get_joint_by_name(source.name_array[i]);
 				}
 			}
 			else if (semantic == "INV_BIND_MATRIX")
@@ -414,6 +412,8 @@ void collada_importer::process_vertex_weights(xercesc::DOMNode const *node)
 		}
 	}
 
+	std::map<joint *, joint_influence> influences;
+
 	size_t stride = max(joint_offset, weight_offset) + 1;
 	std::vector<size_t>::const_iterator get = v.begin();
 
@@ -421,14 +421,14 @@ void collada_importer::process_vertex_weights(xercesc::DOMNode const *node)
 	{
 		for (size_t j = 0, n = vcount[i]; j < n; j++)
 		{
-			size_t joint_index;
+			joint *joint_ptr = 0;
 			float weight;
 
 			for (size_t k = 0; k < stride; k++)
 			{
 				if (k == joint_offset)
 				{
-					joint_index = *get;
+					joint_ptr = model_.get_joint_by_name(joint_source->name_array[*get]);
 				}
 
 				if (k == weight_offset)
@@ -446,9 +446,16 @@ void collada_importer::process_vertex_weights(xercesc::DOMNode const *node)
 				it != mesh_in_progress_->position_index_transform.end() && it->first == i; it++)
 			{
 				dummy.vertex_index = it->second;
-				mesh_in_progress_->mesh_ptr->influences[joint_index].vertex_weights.push_back(dummy);
+				influences[joint_ptr].vertex_weights.push_back(dummy);
 			}
 		}
+	}
+
+	for (std::map<joint *, joint_influence>::iterator it = influences.begin();
+		it != influences.end(); it++)
+	{
+		it->second.joint_ptr = it->first;
+		mesh_in_progress_->mesh_ptr->influences.push_back(it->second);
 	}
 }
 
