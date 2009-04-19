@@ -72,9 +72,9 @@ public:
 		return projection_matrix;
 	}
 
-	void SetPerspectiveProjection(math::scalar fFOV,math::scalar fAspect,math::scalar fNearPlane,
+	void set_perspective_projection(math::scalar fFOV,math::scalar fAspect,math::scalar fNearPlane,
 		math::scalar fFarPlane);
-	void SetOrthographicProjection(math::scalar width,math::scalar height,math::scalar fNearPlane,
+	void set_orthographic_projection(math::scalar width,math::scalar height,math::scalar fNearPlane,
 		math::scalar fFarPlane);
 
    	void set_position(math::vec<3> const &eye_pt,math::vec<3> const &lookat_pt,math::vec<3> const &up_dir);

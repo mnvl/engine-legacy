@@ -5,6 +5,7 @@
 #include <vector>
 #include <boost/cstdint.hpp>
 #include <math/vec.h>
+#include <math/matrix.h>
 #include <engine/graphic/skeletal_animation.h>
 
 namespace engine {
@@ -35,6 +36,7 @@ public:
 	virtual ~memory_mesh();
 
 	std::string name;
+	math::matrix<4,4> transform;
 	std::vector<vertex> vertices;
 	std::vector<index> indices;
 

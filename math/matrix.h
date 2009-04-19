@@ -1,5 +1,6 @@
 #pragma once
 
+#include <iosfwd>
 #include <math/scalar.h>
 #include <math/vec.h>
 #include <math/quaternion.h>
@@ -238,11 +239,17 @@ public:
 	}
 
 	// записать в T транспонированную матрицу
-	void transpose(matrix_type &tp) {
+	void transpose(matrix_type &tp) const {
        	tp.ij[0][0] = ij[0][0];	tp.ij[0][1] = ij[1][0];	tp.ij[0][2] = ij[2][0]; tp.ij[0][3] = ij[3][0];
 		tp.ij[1][0] = ij[0][1];	tp.ij[1][1] = ij[1][1];	tp.ij[1][2] = ij[2][1]; tp.ij[1][3] = ij[3][1];
 		tp.ij[2][0] = ij[0][2];	tp.ij[2][1] = ij[1][2];	tp.ij[2][2] = ij[2][2]; tp.ij[2][3] = ij[3][2];
 		tp.ij[3][0] = ij[0][3];	tp.ij[3][1] = ij[1][3];	tp.ij[3][2] = ij[2][3]; tp.ij[3][3] = ij[3][3];
+	}
+
+	void transpose_inplace() {
+		matrix_type tp;
+		tp = *this;
+		tp.transpose(*this);
 	}
 
 	// операции
@@ -381,3 +388,14 @@ math::mul(math::matrix<M,K,T> &result,const math::matrix<M,N,T> &left,const math
 	}
 }
 
+template <int M, int N, class T>
+std::istream &operator >>(std::istream &is, math::matrix<M, N, T> &m)
+{
+	for (int i = 0; i < M; i++) {
+		for (int j = 0; j < N; j++)	{
+			is >> m.ij[i][j];
+		}
+	}
+
+	return is;
+}

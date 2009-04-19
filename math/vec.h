@@ -1,5 +1,6 @@
 #pragma once
 
+#include <iosfwd>
 #include <math/scalar.h>
 
 namespace math {
@@ -966,3 +967,7 @@ math::normalize(const math::vec<N,T> &v) {
 	return temp;
 }
 
+template<class T>
+std::istream &operator >>(std::istream &is, math::vec<3, T> &v) {
+	return is >> v.x >> v.y >> v.z;
+}

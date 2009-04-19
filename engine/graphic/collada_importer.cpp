@@ -56,7 +56,7 @@ void collada_importer::process_collada(xercesc::DOMNode const *node) {
 			if (child->getNodeType() != xercesc::DOMNode::ELEMENT_NODE) continue;
 			std::string const &child_name = util::xerces_lcp_transcode(child->getLocalName());
 
-			if (pass == 1 && child_name == "library_visual_scenes")
+			if (pass == 2 && child_name == "library_visual_scenes")
 			{
 				process_library_visual_scenes(child);
 			}
@@ -66,7 +66,7 @@ void collada_importer::process_collada(xercesc::DOMNode const *node) {
 				process_library_geometries(child);
 			}
 
-			if (pass == 2 && child_name == "library_controllers")
+			if (pass == 1 && child_name == "library_controllers")
 			{
 				process_library_controllers(child);
 			}
@@ -314,6 +314,8 @@ void collada_importer::process_controller(xercesc::DOMNode const *node)
 {
 	clear();
 
+	std::string const &id = util::xerces_get_attribute<std::string>(node, "id");
+
 	for (xercesc::DOMNode const *child = node->getFirstChild(); child; child = child->getNextSibling())
 	{
 		if (child->getNodeType() != xercesc::DOMNode::ELEMENT_NODE) continue;
@@ -321,6 +323,7 @@ void collada_importer::process_controller(xercesc::DOMNode const *node)
 
 		if (child_name == "skin")
 		{
+			mesh_by_instance_controller_[id] = util::xerces_get_attribute<std::string>(child, "source").substr(1);
 			process_skin(child);
 		}
 	}
@@ -515,6 +518,20 @@ void collada_importer::process_visual_scene(xercesc::DOMNode const *node)
 
 void collada_importer::process_node(xercesc::DOMNode const *node, joint *parent)
 {
+	std::string const &node_type = util::xerces_get_attribute<std::string>(node, "type");
+	memory_mesh *mesh_ptr = 0;
+
+	if (node_type == "JOINT")
+	{
+		joint dummy;
+		dummy.name = util::xerces_get_attribute<std::string>(node, "id");
+		dummy.parent = parent;
+		model_.joints.push_back(dummy);
+	}
+
+	math::matrix<4, 4> transform;
+	transform.identity();
+
 	for (xercesc::DOMNode const *child = node->getFirstChild(); child; child = child->getNextSibling())
 	{
 		if (child->getNodeType() != xercesc::DOMNode::ELEMENT_NODE) continue;
@@ -522,15 +539,36 @@ void collada_importer::process_node(xercesc::DOMNode const *node, joint *parent)
 
 		if (child_name == "node")
 		{
-			std::string const &node_type = util::xerces_get_attribute<std::string>(child, "type");
+			process_node(child);
+		}
+		else if (child_name == "instance_controller")
+		{
+			std::string const &url = util::xerces_get_attribute<std::string>(child, "url");
+			mesh_ptr = model_.get_mesh_by_name(mesh_by_instance_controller_.find(url.substr(1))->second);
+		}
+		else if (child_name == "translate")
+		{
+			std::stringstream ss(util::xerces_get_text(child));
+			math::vec<3> v;
+			ss >> v;
+			transform.translate(v);
+		}
+		else if (child_name == "matrix")
+		{
+			std::stringstream ss(util::xerces_get_text(child));
+			math::matrix<4,4> m;
+			ss >> m;
+			m.transpose_inplace();
 
-			if (node_type == "JOINT")
-			{
-				joint dummy;
-				dummy.name = util::xerces_get_attribute<std::string>(node, "id");
-				dummy.parent = parent;
-				model_.joints.push_back(dummy);
-			}
+			transform *= m;
+		}
+	}
+
+	if (mesh_ptr) {
+		mesh_ptr->transform = transform;
+
+		for (size_t i = 0; i < mesh_ptr->vertices.size(); i++) {
+			mesh_ptr->vertices[i].position = mesh_ptr->vertices[i].position * transform;
 		}
 	}
 }
@@ -597,8 +635,6 @@ void collada_importer::process_sampler(xercesc::DOMNode const *node)
 			else if (semantic == "OUT_TANGENT")	out_tangent = source_ptr;
 		}
 	}
-
-
 }
 
 }

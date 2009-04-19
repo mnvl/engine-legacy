@@ -9,7 +9,7 @@ camera::camera() {
 	set_position(math::vec<3>(0,0,0),math::vec<3>(0,0,1),math::vec<3>(0,1,0));
 
    	// Set attributes for the projection matrix
-	SetPerspectiveProjection(math::PI/4, 1.0f, 1.0f, 10000.0f);
+	set_perspective_projection(math::PI/4, 1.0f, 1.0f, 10000.0f);
 }
 
 void camera::set_position(math::vec<3> const &eye_pt,math::vec<3> const &lookat_pt,
@@ -53,7 +53,7 @@ void camera::set_position(math::vec<3> const &pos,const math::quaternion<> &rot)
 	set_position(pos, pos + dir, up);
 }
 
-void camera::SetPerspectiveProjection(math::scalar fov,math::scalar aspect,
+void camera::set_perspective_projection(math::scalar fov,math::scalar aspect,
 	math::scalar z_near,math::scalar z_far)
 {
 	field_of_view	= fov;
@@ -64,7 +64,7 @@ void camera::SetPerspectiveProjection(math::scalar fov,math::scalar aspect,
 	projection_matrix.perspective(fov, aspect, z_near, z_far);
 }
 
-void camera::SetOrthographicProjection(math::scalar width,math::scalar height,
+void camera::set_orthographic_projection(math::scalar width,math::scalar height,
 	math::scalar z_near,math::scalar z_far)
 {
 	field_of_view = math::PI/4;

@@ -81,6 +81,8 @@ private:
 	};
 
 	std::map<std::string, mesh_in_progress> meshes_in_progress_;
+	std::map<std::string, std::string> mesh_by_instance_controller_;
+
 	mesh_in_progress *mesh_in_progress_;
 	memory_model model_;
 
