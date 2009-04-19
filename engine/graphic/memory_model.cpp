@@ -18,7 +18,10 @@ joint *memory_model::get_joint_by_name(std::string const &name) {
 		if (it->name == name) return &*it;
 	}
 
-	return 0;
+	joints.push_back(joint());
+	joints.back().name = name;
+
+	return &joints.back();
 }
 
 void memory_model::draw_wireframe(renderer *renderer_ptr, math::scalar time) const

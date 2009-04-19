@@ -1,5 +1,6 @@
 #pragma once
 
+#include <list>
 #include <engine/graphic/memory_mesh.h>
 #include <engine/graphic/skeletal_animation.h>
 
@@ -8,9 +9,9 @@ namespace graphic {
 
 class memory_model {
 public:
-	typedef std::vector<memory_mesh> meshes_type;
-	typedef std::vector<joint> joints_type;
-	typedef std::vector<animation> animations_type;
+	typedef std::list<memory_mesh> meshes_type;
+	typedef std::list<joint> joints_type;
+	typedef std::list<animation> animations_type;
 
 	meshes_type meshes;
 	joints_type joints;

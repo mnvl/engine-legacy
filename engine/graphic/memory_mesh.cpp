@@ -16,14 +16,21 @@ void memory_mesh::draw_wireframe(renderer *renderer_ptr, math::scalar time) cons
 	std::vector<vertex> animated_vertices;
 	animated_vertices = vertices;
 
+	for (size_t i = 0; i < animated_vertices.size(); i++) {
+		animated_vertices[i].position.set(0, 0, 0);
+	}
+
 	if (time > 0)
 	{
 		for (influences_type::const_iterator it = influences.begin(); it != influences.end(); it++)
 		{
-			for (joint_influence::vertex_weights_type::const_iterator jt = it->vertex_weights.begin(); jt != it->vertex_weights.end(); jt++)
-			{
-				if (it->joint_ptr) {
-					animated_vertices[jt->vertex_index].position += animated_vertices[jt->vertex_index].position * it->joint_ptr->frame_transform * jt->weight;
+			if (it ->joint_ptr) {
+				for (joint_influence::vertex_weights_type::const_iterator jt = it->vertex_weights.begin(); jt != it->vertex_weights.end(); jt++)
+				{
+					animated_vertices[jt->vertex_index].position += 
+						vertices[jt->vertex_index].position *
+						it->joint_ptr->frame_transform *
+						jt->weight;
 				}
 			}
 		}

@@ -57,7 +57,7 @@ void collada_importer::process_collada(xercesc::DOMNode const *node) {
 			if (child->getNodeType() != xercesc::DOMNode::ELEMENT_NODE) continue;
 			std::string const &child_name = util::xerces_lcp_transcode(child->getLocalName());
 
-			if (pass == 1 && child_name == "library_visual_scenes")
+			if (pass == 2 && child_name == "library_visual_scenes")
 			{
 				process_library_visual_scenes(child);
 			}
@@ -67,7 +67,7 @@ void collada_importer::process_collada(xercesc::DOMNode const *node) {
 				process_library_geometries(child);
 			}
 
-			if (pass == 2 && child_name == "library_controllers")
+			if (pass == 1 && child_name == "library_controllers")
 			{
 				process_library_controllers(child);
 			}
@@ -351,7 +351,6 @@ void collada_importer::process_joints(xercesc::DOMNode const *node)
 
 				for (size_t i = 0, n = source.name_array.size(); i < n; i++) {
 					influences_ptr->joint_ptr = model_.get_joint_by_name(source.name_array[i]);
-					if (influences_ptr->joint_ptr == 0) throw import_error("joint " + source.name_array[i] + " not found");
 				}
 			}
 			else if (semantic == "INV_BIND_MATRIX")
@@ -488,10 +487,13 @@ void collada_importer::process_node(xercesc::DOMNode const *node, joint *parent)
 
 	if (node_type == "JOINT")
 	{
-		joint dummy;
-		dummy.name = util::xerces_get_attribute<std::string>(node, "id");
-		dummy.parent = parent;
-		model_.joints.push_back(dummy);
+		std::string const &joint_name = util::xerces_get_attribute<std::string>(node, "id");
+		joint *joint_ptr = model_.get_joint_by_name(joint_name);
+		
+		if (parent) {
+			joint_ptr->parent = parent;
+			parent->childs.push_back(joint_ptr);
+		}
 	}
 
 	math::matrix<4, 4> transform;
@@ -518,24 +520,24 @@ void collada_importer::process_node(xercesc::DOMNode const *node, joint *parent)
 			ss >> v;
 			transform.translate(v);
 		}
+		else if (child_name == "scale")
+		{
+			std::stringstream ss(util::xerces_get_text(child));
+			math::vec<3> v;
+			ss >> v;
+			transform.scale(v);
+		}
 		else if (child_name == "matrix")
 		{
 			std::stringstream ss(util::xerces_get_text(child));
 			math::matrix<4,4> m;
 			ss >> m;
 			m.transpose_inplace();
-
 			transform *= m;
 		}
 	}
 
-	if (mesh_ptr) {
-		mesh_ptr->transform = transform;
-
-		for (size_t i = 0; i < mesh_ptr->vertices.size(); i++) {
-			mesh_ptr->vertices[i].position = mesh_ptr->vertices[i].position * transform;
-		}
-	}
+	if (mesh_ptr) mesh_ptr->transform = transform;
 }
 
 void collada_importer::process_library_animations(xercesc::DOMNode const *node)
@@ -575,10 +577,7 @@ void collada_importer::process_animation(xercesc::DOMNode const *node)
 		{
 			sampler *sampler_ptr = &sampler_by_name_.find(util::xerces_get_attribute<std::string>(child, "source").substr(1))->second;
 			std::string const &target = util::xerces_get_attribute<std::string>(child, "target");
-
 			sampler_ptr->joint_ptr = model_.get_joint_by_name(target.substr(0, target.find('/')));
-			//if (!sampler_ptr->joint_ptr) throw import_error("target " + target + " not found");
-
 			model_.animations.back().samplers.push_back(*sampler_ptr);
 		}
 	}
@@ -617,10 +616,15 @@ void collada_importer::process_sampler(xercesc::DOMNode const *node)
 	}
 
 	bool output_is_matrix = false;
+	bool output_is_vector = false;
 
 	if (output->technique.params.find("TRANSFORM") != output->technique.params.end())
 	{
 		output_is_matrix = true;
+	}
+	else if (output->technique.params.find("X") != output->technique.params.end() && output->technique.stride == 3)
+	{
+		output_is_vector = true;
 	}
 	else
 	{
@@ -640,6 +644,17 @@ void collada_importer::process_sampler(xercesc::DOMNode const *node)
 					s.transform.ij[j][i] = *output_get++;
 				}
 			}
+		}
+
+		if (output_is_vector) {
+			s.transform.identity();
+
+			math::vec<3> v;
+			v.x = *output_get++;
+			v.y = *output_get++;
+			v.z = *output_get++;
+
+			s.transform.translate(v);
 		}
 
 		sampler_ptr->samples.push_back(s);
