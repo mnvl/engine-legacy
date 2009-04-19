@@ -18,14 +18,14 @@ struct joint {
 };
 
 struct joint_influence {
-	struct influence {
+	struct vertex_weight {
 		boost::uint16_t vertex_index;
 		math::scalar weight;
 	};
 
 	joint *joint_ptr;
 	math::matrix<4, 4> inverted_bind_matrix;
-	std::vector<influence> influences;
+	std::vector<vertex_weight> vertex_weights;
 };
 
 }

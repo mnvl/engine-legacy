@@ -13,7 +13,7 @@ class collada_importer {
 public:
 	collada_importer(std::string const &filename);
 	void load();
-	memory_model const &get_model() const { return model_info_.model; }
+	memory_model const &get_model() const { return model_; }
 
 private:
 	std::string filename_;
@@ -40,7 +40,7 @@ private:
 		size_t offset;
 	};
 
-	struct model_in_progress {
+	struct mesh_in_progress {
 		struct vertex_comparator {
 			bool operator ()(memory_mesh::vertex const &lhs, memory_mesh::vertex const &rhs) {
 				if (lhs.position <= rhs.position) return true;
@@ -53,12 +53,16 @@ private:
 			}
 		};
 
+		memory_mesh *mesh_ptr;
+
 		typedef std::map<memory_mesh::vertex, memory_mesh::index, vertex_comparator> verices_inverted_index_type;
 		verices_inverted_index_type vertices_inverted_index;
 		std::map<memory_mesh::index, memory_mesh::index> position_index_transform;
 
-		memory_model model;
-		memory_mesh *current_mesh;
+		mesh_in_progress(memory_mesh *mesh = 0):
+		mesh_ptr(mesh)
+		{
+		}
 
 		memory_mesh::index getIndexForVertex(memory_mesh::vertex const &v, memory_mesh::index original_index) {
 			memory_mesh::index index_value = vertices_inverted_index.size();
@@ -67,20 +71,18 @@ private:
 				vertices_inverted_index.insert(std::make_pair(v, index_value));
 
 			if (result.second) {
-				current_mesh->vertices.push_back(v);
+				mesh_ptr->vertices.push_back(v);
 				position_index_transform.insert(std::make_pair(original_index, index_value));
 				return index_value;
 			}
 
 			return result.first->second;
 		}
-
-		void select_mesh(std::string const &name) {
-			current_mesh = model.get_mesh_by_name(name);
-		}
 	};
 
-	model_in_progress model_info_;
+	std::map<std::string, mesh_in_progress> meshes_in_progress_;
+	mesh_in_progress *mesh_in_progress_;
+	memory_model model_;
 
 	// name to source_info
 	std::map<std::string, source_info> sources_;

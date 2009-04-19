@@ -23,20 +23,25 @@ INT WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpstrCmdLine, INT
 		engine::system::window main_window("engine");
 		engine::graphic::renderer renderer(&main_window);
 
-		engine::graphic::collada_importer ci2("d:\\home\\bublik.dae");
+		engine::graphic::collada_importer ci2("d:\\home\\cf_shooter_cast.dae");
+		//engine::graphic::collada_importer ci2("d:\\home\\bublik.dae");
 		ci2.load();
 
 		engine::graphic::camera cam;
-		cam.set_position(math::vec<3>(10, 5, 0), math::vec<3>(0, 0, 0), math::vec<3>(0, 1, 0));
+		math::scalar angle = 0;
 
 		while (true)
 		{
 			main_window.run_message_loop();
 
 			renderer.begin_frame();
+			cam.set_position(math::vec<3>(500 * cos(angle), 10, 500 * sin(angle)), math::vec<3>(0, 0, 0), math::vec<3>(0, 1, 0));
 			renderer.select(cam);
 			ci2.get_model().draw_writeframe(&renderer);
 			renderer.finish_frame();
+
+			angle += 0.01;
+			if (angle > math::PI * 2) angle -= math::PI * 2;
 		}
 
 		xercesc::XMLPlatformUtils::Terminate();

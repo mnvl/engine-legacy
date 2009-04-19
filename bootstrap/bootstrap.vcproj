@@ -18,7 +18,7 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
+			OutputDirectory="$(ConfigurationName)"
 			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="1"
 			CharacterSet="0"
@@ -63,6 +63,7 @@
 				Name="VCLinkerTool"
 				AdditionalDependencies="dxerr.lib d3d9.lib d3dx9d.lib xerces-c_3D.lib"
 				LinkIncremental="2"
+				ManifestFile="$(IntDir)\$(TargetFileName).embed.manifest"
 				GenerateDebugInformation="true"
 				SubSystem="2"
 				TargetMachine="1"
