@@ -1,31 +1,39 @@
 
+#include <algorithm>
+#include <boost/lambda/lambda.hpp>
 #include <engine/graphic/skeletal_animation.h>
 
 namespace engine {
 namespace graphic {
 
-math::matrix<4,4> sampler::get(math::scalar time) const
+void sampler::add_sample(math::scalar time, math::matrix<4,4> const &m)
 {
-	samples_type::const_iterator it = samples.begin();
+	sample s;
+	s.time = time;
+	s.transform = m;
+	s.translation.set(m.ij[3][0], m.ij[3][1], m.ij[3][2]);
+	s.rotation.set_unit(m);
 
-	while (it != samples.end() && time > it->time) {
-		time -= it->time;
-		it++;
+	if (samples_.size()) {
+		samples_.back().rotation_lerper.setup_from_unit(samples_.back().rotation, s.rotation);
 	}
 
-	if (it == samples.begin()) return it->transform;
-	if (it == samples.end()) return (it - 1)->transform;
+	samples_.push_back(s);
+}
 
-	math::scalar k = time / (it->time - (it - 1)->time);
+math::matrix<4,4> sampler::get(math::scalar time) const {
+	if (time <= samples_.front().time) return samples_.front().transform;
+	if (time >= samples_.back().time) return samples_.back().transform;
+
+	using namespace boost::lambda;
+	samples_type::const_iterator it = std::lower_bound(samples_.begin(), samples_.end(), sample(time), &_1 ->* &sample::time < &_2 ->* &sample::time);
+
+	math::scalar k = (time - it->time) / ((it + 1)->time - it->time);
 	math::scalar inv_k = 1.0f - k;
 
 	math::matrix<4,4> m;
-
-	for (size_t i = 0; i < 4; i++) {
-		for (size_t j = 0; j < 4; j++) {
-			m.ij[i][j] = (it - 1)->transform.ij[i][j] * inv_k + it->transform.ij[i][j] * k;
-		}
-	}
+	m.rotation(it->rotation_lerper.interpolate(k));
+	m.translate(it->translation * inv_k + (it + 1)->translation * k);
 
 	return m;
 }

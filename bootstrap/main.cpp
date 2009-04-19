@@ -35,12 +35,12 @@ INT WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpstrCmdLine, INT
 			main_window.run_message_loop();
 
 			renderer.begin_frame();
-			cam.set_position(math::vec<3>(500 * cos(0 * angle), 10, 500 * sin(0 * angle)), math::vec<3>(0, 0, 0), math::vec<3>(0, 1, 0));
+			cam.set_position(math::vec<3>(20 * cos(0 * angle), 20 * sin(0 * angle), 0), math::vec<3>(0, 0, 0), math::vec<3>(0, 0, 1));
 			renderer.select(cam);
 			ci2.get_model().draw_wireframe(&renderer, angle);
 			renderer.finish_frame();
 
-			angle += 0.05;
+			angle += 0.01;
 			if (angle > 1) angle = 0;
 		}
 

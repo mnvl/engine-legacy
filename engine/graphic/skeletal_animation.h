@@ -41,16 +41,35 @@ struct joint_influence {
 };
 
 struct sampler {
+private:
 	struct sample {
 		math::scalar time;
 		math::matrix<4,4> transform;
+		math::quaternion<> rotation;
+		math::quaternion_lerper<> rotation_lerper;
+		math::vec<3> translation;
+
+		sample(math::scalar t = 0):
+		time(0)
+		{
+		}
 	};
 
 	typedef std::vector<sample> samples_type;
 
-	joint *joint_ptr;
-	samples_type samples;
+	joint *joint_ptr_;
+	samples_type samples_;
 
+public:
+	sampler():
+	joint_ptr_(0)
+	{
+	}
+
+	void set_joint(joint *j) { joint_ptr_ = j; }
+	joint *get_joint() const { return joint_ptr_; }
+
+	void add_sample(math::scalar time, math::matrix<4,4> const &m);
 	math::matrix<4,4> get(math::scalar time) const;
 };
 

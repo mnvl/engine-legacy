@@ -46,8 +46,8 @@ void memory_model::draw_wireframe(renderer *renderer_ptr, math::scalar time) con
 	for (animation::samplers_type::const_iterator it = animation_ptr->samplers.begin();
 		it != animation_ptr->samplers.end(); it++)
 	{
-		if (it->joint_ptr) {
-			it->joint_ptr->frame_transform = it->get(time);
+		if (it->get_joint()) {
+			it->get_joint()->frame_transform = it->get(time);
 		}
 	}
 

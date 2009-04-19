@@ -587,7 +587,7 @@ void collada_importer::process_animation(xercesc::DOMNode const *node)
 		{
 			sampler *sampler_ptr = &sampler_by_name_.find(util::xerces_get_attribute<std::string>(child, "source").substr(1))->second;
 			std::string const &target = util::xerces_get_attribute<std::string>(child, "target");
-			sampler_ptr->joint_ptr = model_.get_joint_by_name(target.substr(0, target.find('/')));
+			sampler_ptr->set_joint(model_.get_joint_by_name(target.substr(0, target.find('/'))));
 			model_.animations.back().samplers.push_back(*sampler_ptr);
 		}
 	}
@@ -644,30 +644,29 @@ void collada_importer::process_sampler(xercesc::DOMNode const *node)
 	std::vector<float>::const_iterator output_get = output->float_array.begin();
 
 	for (size_t sample_index = 0; sample_index < input->technique.count; sample_index++) {
-		sampler::sample s;
-
-		s.time = input->float_array[sample_index];
+		math::scalar time = input->float_array[sample_index];
+		math::matrix<4,4> tf;
 
 		if (output_is_matrix) {
 			for (size_t i = 0; i < 4; i++) {
 				for (size_t j = 0; j < 4; j++) {
-					s.transform.ij[j][i] = *output_get++;
+					tf.ij[j][i] = *output_get++;
 				}
 			}
 		}
 
 		if (output_is_vector) {
-			s.transform.identity();
+			tf.identity();
 
 			math::vec<3> v;
 			v.x = *output_get++;
 			v.y = *output_get++;
 			v.z = *output_get++;
 
-			s.transform.translate(v);
+			tf.translate(v);
 		}
 
-		sampler_ptr->samples.push_back(s);
+		sampler_ptr->add_sample(time, tf);
 	}
 }
 
