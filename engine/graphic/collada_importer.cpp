@@ -57,7 +57,7 @@ void collada_importer::process_collada(xercesc::DOMNode const *node) {
 			if (child->getNodeType() != xercesc::DOMNode::ELEMENT_NODE) continue;
 			std::string const &child_name = util::xerces_lcp_transcode(child->getLocalName());
 
-			if (pass == 2 && child_name == "library_visual_scenes")
+			if (pass == 1 && child_name == "library_visual_scenes")
 			{
 				process_library_visual_scenes(child);
 			}
@@ -67,7 +67,7 @@ void collada_importer::process_collada(xercesc::DOMNode const *node) {
 				process_library_geometries(child);
 			}
 
-			if (pass == 1 && child_name == "library_controllers")
+			if (pass == 2 && child_name == "library_controllers")
 			{
 				process_library_controllers(child);
 			}
@@ -347,8 +347,11 @@ void collada_importer::process_joints(xercesc::DOMNode const *node)
 				source_info const &source = indirect_source(child);
 				mesh_in_progress_->mesh_ptr->influences.resize(source.name_array.size());
 
+				joint_influence *influences_ptr = &mesh_in_progress_->mesh_ptr->influences[0];
+
 				for (size_t i = 0, n = source.name_array.size(); i < n; i++) {
-					mesh_in_progress_->mesh_ptr->influences[i].joint_ptr = model_.get_joint_by_name(source.name_array[i]);
+					influences_ptr->joint_ptr = model_.get_joint_by_name(source.name_array[i]);
+					if (influences_ptr->joint_ptr == 0) throw import_error("joint " + source.name_array[i] + " not found");
 				}
 			}
 			else if (semantic == "INV_BIND_MATRIX")
@@ -553,6 +556,8 @@ void collada_importer::process_animation(xercesc::DOMNode const *node)
 {
 	clear();
 
+	model_.animations.push_back(animation());
+
 	for (xercesc::DOMNode const *child = node->getFirstChild(); child; child = child->getNextSibling())
 	{
 		if (child->getNodeType() != xercesc::DOMNode::ELEMENT_NODE) continue;
@@ -570,7 +575,11 @@ void collada_importer::process_animation(xercesc::DOMNode const *node)
 		{
 			sampler *sampler_ptr = &sampler_by_name_.find(util::xerces_get_attribute<std::string>(child, "source").substr(1))->second;
 			std::string const &target = util::xerces_get_attribute<std::string>(child, "target");
-			sampler_ptr->joint_ptr = model_.get_joint_by_name(target.substr(0, target.find("/")));
+
+			sampler_ptr->joint_ptr = model_.get_joint_by_name(target.substr(0, target.find('/')));
+			//if (!sampler_ptr->joint_ptr) throw import_error("target " + target + " not found");
+
+			model_.animations.back().samplers.push_back(*sampler_ptr);
 		}
 	}
 
@@ -632,6 +641,8 @@ void collada_importer::process_sampler(xercesc::DOMNode const *node)
 				}
 			}
 		}
+
+		sampler_ptr->samples.push_back(s);
 	}
 }
 

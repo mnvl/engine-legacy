@@ -200,6 +200,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\graphic\skeletal_animation.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\graphic\skeletal_animation.h"
 				>
 			</File>

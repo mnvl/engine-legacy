@@ -10,14 +10,16 @@ class memory_model {
 public:
 	typedef std::vector<memory_mesh> meshes_type;
 	typedef std::vector<joint> joints_type;
+	typedef std::vector<animation> animations_type;
 
 	meshes_type meshes;
 	joints_type joints;
+	animations_type animations;
 
 	memory_mesh *get_mesh_by_name(std::string const &name);
 	joint *get_joint_by_name(std::string const &name);
 
-	void draw_writeframe(renderer *renderer_ptr) const;
+	void draw_wireframe(renderer *renderer_ptr, math::scalar time) const;
 };
 
 }

@@ -28,9 +28,7 @@ public:
 
 	typedef boost::uint16_t index;
 	typedef math::vec<3, index> face;
-
 	typedef std::vector<joint_influence> influences_type;
-	influences_type influences;
 
 	memory_mesh();
 	virtual ~memory_mesh();
@@ -39,8 +37,9 @@ public:
 	math::matrix<4,4> transform;
 	std::vector<vertex> vertices;
 	std::vector<index> indices;
+	influences_type influences;
 
-	void draw_wireframe(renderer *renderer_ptr) const;
+	void draw_wireframe(renderer *renderer_ptr, math::scalar time = 0) const;
 };
 
 }

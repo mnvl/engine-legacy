@@ -21,7 +21,7 @@ joint *memory_model::get_joint_by_name(std::string const &name) {
 	return 0;
 }
 
-void memory_model::draw_writeframe(renderer *renderer_ptr) const
+void memory_model::draw_wireframe(renderer *renderer_ptr, math::scalar time) const
 {
 	D3DMATERIAL9 material;
 
@@ -38,8 +38,18 @@ void memory_model::draw_writeframe(renderer *renderer_ptr) const
 	renderer_ptr->get_device()->SetMaterial(&material);
 	renderer_ptr->get_device()->SetFVF(memory_mesh::VERTEX_FORMAT);
 
+	animation const *animation_ptr = &*animations.begin();
+
+	for (animation::samplers_type::const_iterator it = animation_ptr->samplers.begin();
+		it != animation_ptr->samplers.end(); it++)
+	{
+		if (it->joint_ptr) {
+			it->joint_ptr->frame_transform = it->get(time);
+		}
+	}
+
 	for (meshes_type::const_iterator it = meshes.begin(); it != meshes.end(); it++) {
-		it->draw_wireframe(renderer_ptr);
+		it->draw_wireframe(renderer_ptr, time);
 	}
 }
 
