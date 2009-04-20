@@ -1,7 +1,9 @@
 
 #include <d3dx9.h>
 #include <engine/exception/directx_error.h>
+#include <engine/system/timer.h>
 #include <engine/graphic/camera.h>
+#include <engine/graphic/font.h>
 #include <engine/graphic/renderer.h>
 
 namespace engine {
@@ -45,11 +47,19 @@ renderer::renderer(system::window *window_ptr, int width, int height, bool fulls
 		device_ptr_.reset(device_ptr);
 		device_ptr->Release();
 	}
+
+	default_font_.reset(new font(this, "Courier New"));
+}
+
+renderer::~renderer() {
 }
 
 void renderer::begin_frame()
 {
 	HRESULT hr;
+
+	frame_start_time_ = system::timer::singleton().get_current_value();
+	frame_times_.push_back(frame_start_time_);
 
 	hr = device_ptr_->Clear(0, 0, D3DCLEAR_STENCIL | D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, D3DCOLOR_XRGB(0, 0, 0), 1.0f, 0);
 	if (FAILED(hr)) throw exception::directx_error(hr);
@@ -62,11 +72,24 @@ void renderer::finish_frame()
 {
 	HRESULT hr;
 
+	{
+		char buffer[4096];
+		sprintf(buffer, "%.0lf msecs, %d fps", last_frame_time_ * 1000.0, frame_times_.size());
+
+		RECT rc = { 0, 0, width_, height_ };
+
+		default_font_->get_font()->DrawText(0, buffer, strlen(buffer), &rc, DT_LEFT | DT_TOP, D3DCOLOR_XRGB(255, 255, 255));
+	}
+
 	hr = device_ptr_->EndScene();
 	if (FAILED(hr)) throw exception::directx_error(hr);
 
 	hr = device_ptr_->Present(0, 0, 0, 0);
 	if (FAILED(hr)) throw exception::directx_error(hr);
+
+	double current_time = system::timer::singleton().get_current_value();
+	last_frame_time_ = current_time - frame_start_time_;
+	while (!frame_times_.empty() && (current_time - frame_times_.front()) > 1.0) frame_times_.pop_front();
 }
 
 void renderer::select(camera const &c)

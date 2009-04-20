@@ -148,6 +148,10 @@
 			Name="system"
 			>
 			<File
+				RelativePath=".\system\timer.h"
+				>
+			</File>
+			<File
 				RelativePath=".\system\window.cpp"
 				>
 			</File>
@@ -173,6 +177,14 @@
 			</File>
 			<File
 				RelativePath=".\graphic\collada_importer.h"
+				>
+			</File>
+			<File
+				RelativePath=".\graphic\font.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\graphic\font.h"
 				>
 			</File>
 			<File
