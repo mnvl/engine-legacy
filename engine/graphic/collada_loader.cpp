@@ -4,6 +4,7 @@
 #include <sstream>
 #include <memory>
 #include <boost/ptr_container/ptr_map.hpp>
+#include <boost/ptr_container/ptr_vector.hpp>
 #include <boost/scoped_ptr.hpp>
 #include <xercesc/parsers/XercesDOMParser.hpp>
 #include <xercesc/sax/HandlerBase.hpp>
@@ -39,6 +40,56 @@ namespace collada_elements {
 			holder->check();
 			return holder.release();
 		}
+
+		template<class T> static
+		void parse_list(xercesc::DOMElement const *element_ptr, std::vector<T> &list) {
+			std::stringstream ss(xerces_get_text(element_ptr));
+			T dummy;
+			while (ss >> dummy) list.push_back(dummy);
+			if (ss.bad()) throw std::runtime_error("can't parse list");
+		}
+	};
+
+	class node: public element {
+	protected:
+		boost::ptr_vector<node> nodes_;
+		std::vector<math::matrix<4,4> > transforms_;
+
+		void process_child(std::string const &child_name, std::string const &child_id, xercesc::DOMElement const *child) {
+			if (child_name == "node") {
+				nodes_.push_back(construct<node>(child));
+			}
+			else if (child_name == "matrix") {
+				std::vector<float> list;
+				parse_list(child, list);
+				if (list.size() != 16) throw std::runtime_error("invalid <matrix>");
+
+				math::matrix<4,4> tf;
+
+				for (size_t i = 0; i < 4; i++) {
+					for (size_t j = 0; j < 4; j++) {
+						// transposed
+						tf.ij[i][j] = list[i + j * 4];
+					}
+				}
+
+				transforms_.push_back(tf);
+			}
+		}
+	};
+
+	class visual_scene: public node {
+	};
+
+	class library_visual_scenes: public element {
+	protected:
+		boost::ptr_map<std::string, visual_scene *> visual_scenes_;
+
+		void process_child(std::string const &child_name, std::string const &child_id, xercesc::DOMElement const *child) {
+			if (child_name == "visual_scene") {
+				visual_scenes_[child_id] = construct<visual_scene>(child);
+			}
+		}
 	};
 
 	class inputs_list: public element {
@@ -57,11 +108,11 @@ namespace collada_elements {
 
 	class triangles: public inputs_list {
 	private:
-		std::string indices_;
+		std::vector<size_t> indices_;
 
 		void process_child(std::string const &child_name, std::string const &child_id, xercesc::DOMElement const *child) {
 			if (child_name == "p") {
-				indices_ = xerces_get_text(child);
+				parse_list(child, indices_);
 			}
 
 			inputs_list::process_child(child_name, child_id, child);
@@ -100,19 +151,16 @@ namespace collada_elements {
 
 	class source: public element {
 	private:
-		enum array_type { FLOAT_ARRAY, NAME_ARRAY };
-		array_type array_type_;
-		std::string array_elements_;
+		std::vector<float> float_array_;
+		std::vector<std::string> name_array_;
 		boost::scoped_ptr<technique_common> technique_;
 
 		void process_child(std::string const &child_name, std::string const &child_id, xercesc::DOMElement const *child) {
 			if (child_name == "float_array") {
-				array_type_ = FLOAT_ARRAY;
-				array_elements_ = xerces_get_text(child);
+				parse_list(child, float_array_);
 			}
 			else if (child_name == "Name_array") {
-				array_type_ = NAME_ARRAY;
-				array_elements_ = xerces_get_text(child);
+				parse_list(child, name_array_);
 			}
 			else if (child_name == "technique_common") {
 				technique_.reset(construct<technique_common>(child));
@@ -121,7 +169,7 @@ namespace collada_elements {
 
 	public:
 		void check() {
-			if (array_elements_.empty()) throw std::runtime_error("malformed or unknown <source>");
+			if (float_array_.empty() && name_array_.empty()) throw std::runtime_error("malformed or unknown <source>");
 			if (!technique_) throw std::runtime_error("no <technique_common> in <source>");
 		}
 	};
@@ -180,10 +228,13 @@ namespace collada_elements {
 
 	class collada: public element {
 	private:
+		boost::scoped_ptr<library_visual_scenes> visual_scenes_;
 		boost::scoped_ptr<library_geometries> geometries_;
 
 		void process_child(std::string const &child_name, std::string const &child_id, xercesc::DOMElement const *child) {
-			if (child_name == "library_geometries") {
+			if (child_name == "library_visual_scenes") {
+				visual_scenes_.reset(construct<library_visual_scenes>(child));
+			} else if (child_name == "library_geometries") {
 				geometries_.reset(construct<library_geometries>(child));
 			}
 		}
