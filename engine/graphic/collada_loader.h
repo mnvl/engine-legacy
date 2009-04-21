@@ -16,7 +16,7 @@ public:
 	class load_error: public std::runtime_error {
 	public:
 		load_error(std::string const &message):
-		runtime_error("collada loading error: " + message)
+		runtime_error(message)
 		{
 		}
 	};
