@@ -7,7 +7,7 @@
 #include <engine/graphic/renderer.h>
 
 // REMOVE:
-#include <engine/graphic/collada_importer.h>
+#include <engine/graphic/collada_loader.h>
 #include <engine/graphic/camera.h>
 
 INT WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpstrCmdLine, INT nShowCmd) {

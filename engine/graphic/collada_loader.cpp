@@ -2,26 +2,22 @@
 #include <map>
 #include <string>
 #include <sstream>
+#include <memory>
 #include <boost/ptr_container/ptr_map.hpp>
 #include <boost/scoped_ptr.hpp>
 #include <xercesc/parsers/XercesDOMParser.hpp>
 #include <xercesc/sax/HandlerBase.hpp>
 #include <math/matrix.h>
 #include <engine/util/xerces_lcp_transcoder.h>
-#include <engine/graphic/collada_importer.h>
+#include <engine/graphic/collada_loader.h>
 
 namespace {
 	using namespace engine::util;
 
 	class element {
 	public:
-		element(xercesc::DOMElement const *element_ptr):
-		element_ptr_(element_ptr)
-		{
-		}
-
-		void go() {
-			for (xercesc::DOMNode const *child_ptr = element_ptr_->getFirstChild();
+		void go(xercesc::DOMElement const *element_ptr) {
+			for (xercesc::DOMNode const *child_ptr = element_ptr->getFirstChild();
 				child_ptr != 0; child_ptr = child_ptr->getNextSibling())
 			{
 				if (child_ptr->getNodeType() == xercesc::DOMNode::ELEMENT_NODE) {
@@ -32,54 +28,36 @@ namespace {
 		}
 
 	protected:
-		xercesc::DOMElement const *element_ptr_;
-
 		virtual void process_child(std::string const &child_name, std::string const &child_id, xercesc::DOMElement const *child) = 0;
 	};
 
 	class geometry: public element {
-	public:
-		geometry(xercesc::DOMElement const *element_ptr):
-		element(element_ptr)
-		{
-		}
-
 	private:
 		void process_child(std::string const &child_name, std::string const &child_id, xercesc::DOMElement const *child) {
-
 		}
 	};
 
 	class library_geometries: public element {
-	public:
-		library_geometries(xercesc::DOMElement const *element_ptr):
-		element(element_ptr)
-		{
-		}
-
 	private:
 		boost::ptr_map<std::string, geometry *> geometries_;
 
 		void process_child(std::string const &child_name, std::string const &child_id, xercesc::DOMElement const *child) {
 			if (child_name == "geometry") {
-				geometries_[child_id] = new geometry(child);
+				std::auto_ptr<geometry> holder(new geometry());
+				holder->go(child);
+				geometries_[child_id] = holder.get();
 			}
 		}
 	};
 
 	class collada: public element {
-	public:
-		collada(xercesc::DOMElement const *element_ptr):
-		element(element_ptr)
-		{
-		}
-
 	private:
 		boost::scoped_ptr<library_geometries> geometries_;
 
 		void process_child(std::string const &child_name, std::string const &child_id, xercesc::DOMElement const *child) {
 			if (child_name == "library_geometries") {
-				geometries_.reset(new library_geometries(child));
+				geometries_.reset(new library_geometries());
+				geometries_->go(child);
 			}
 		}
 	};
@@ -115,7 +93,7 @@ void collada_loader::load() {
 	if (util::xerces_lcp_transcode(root_node->getLocalName()) != "COLLADA")
 		throw load_error("root element is not <COLLADA />");
 
-	collada((xercesc::DOMElement *) root_node).go();
+	collada().go((xercesc::DOMElement *) root_node);
 }
 
 }

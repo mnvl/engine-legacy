@@ -172,11 +172,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\graphic\collada_importer.cpp"
+				RelativePath=".\graphic\collada_loader.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\graphic\collada_importer.h"
+				RelativePath=".\graphic\collada_loader.h"
 				>
 			</File>
 			<File
