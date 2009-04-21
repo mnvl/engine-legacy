@@ -101,8 +101,8 @@ private:
 	// instance controller name to mesh name
 	std::map<std::string, std::string> mesh_by_instance_controller_;
 
-	// animation by name
 	std::map<std::string, sampler> sampler_by_name_;
+	std::map<std::string, std::string> joint_name_by_node_name_;
 
 	mesh_in_progress *mesh_in_progress_;
 	memory_model model_;

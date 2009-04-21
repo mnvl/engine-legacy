@@ -497,7 +497,10 @@ void collada_importer::process_node(xercesc::DOMNode const *node, joint *parent)
 
 	if (node_type == "JOINT")
 	{
-		std::string const &joint_name = util::xerces_get_attribute<std::string>(node, "id");
+		std::string const &node_name = util::xerces_get_attribute<std::string>(node, "id");
+		std::string const &joint_name = util::xerces_get_attribute<std::string>(node, "sid", node_name);
+		joint_name_by_node_name_[node_name] = joint_name;
+
 		joint *joint_ptr = model_.get_joint_by_name(joint_name);
 		
 		if (parent) {
@@ -586,9 +589,14 @@ void collada_importer::process_animation(xercesc::DOMNode const *node)
 		else if (child_name == "channel")
 		{
 			sampler *sampler_ptr = &sampler_by_name_.find(util::xerces_get_attribute<std::string>(child, "source").substr(1))->second;
+
 			std::string const &target = util::xerces_get_attribute<std::string>(child, "target");
-			sampler_ptr->set_joint(model_.get_joint_by_name(target.substr(0, target.find('/'))));
-			model_.animations.back().samplers.push_back(*sampler_ptr);
+			std::string const &joint_name = joint_name_by_node_name_[target.substr(0, target.find('/'))];
+
+			if (!joint_name.empty()) {
+				sampler_ptr->set_joint(model_.get_joint_by_name(joint_name, false));
+				model_.animations.back().samplers.push_back(*sampler_ptr);
+			}
 		}
 	}
 

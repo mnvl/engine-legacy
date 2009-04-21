@@ -32,6 +32,7 @@ math::matrix<4,4> sampler::get(math::scalar time) const {
 	math::scalar inv_k = 1.0f - k;
 
 	math::matrix<4,4> m;
+
 	m.rotation(it->rotation_lerper.interpolate(k));
 	m.translate(it->translation * inv_k + (it + 1)->translation * k);
 

@@ -28,8 +28,8 @@ void memory_mesh::draw_wireframe(renderer *renderer_ptr, math::scalar time) cons
 			{
 				animated_vertices[jt->vertex_index].position += 
 					vertices[jt->vertex_index].position *
-				//	it->inverted_bind_matrix *
 					transform *
+					it->inverted_bind_matrix *
 					it->joint_ptr->frame_transform *
 					jt->weight;
 			}
