@@ -41,40 +41,64 @@ namespace collada_elements {
 			return holder.release();
 		}
 
-		template<class T> static
-		void parse_list(xercesc::DOMElement const *element_ptr, std::vector<T> &list) {
+		template<class T> static void
+		parse_list(xercesc::DOMElement const *element_ptr, std::vector<T> &list) {
 			std::stringstream ss(xerces_get_text(element_ptr));
 			T dummy;
 			while (ss >> dummy) list.push_back(dummy);
 			if (ss.bad()) throw std::runtime_error("can't parse list");
 		}
+
+		template<class T> static size_t
+		parse_list(xercesc::DOMElement const *element_ptr, T *list, size_t size) {
+			std::stringstream ss(xerces_get_text(element_ptr));
+
+			size_t i = 0;
+			while (i < size) ss >> *list++;
+
+			return i;
+		}
+
+		void parse_matrix(xercesc::DOMElement const *element_ptr, math::matrix<4, 4> &tf) {
+			if (parse_list(element_ptr, &tf.ij[0][0], 16) != 16) throw std::runtime_error("invalid <matrix>");
+			tf.transpose_inplace();
+		}
 	};
 
 	class node: public element {
 	protected:
-		boost::ptr_vector<node> nodes_;
-		std::vector<math::matrix<4,4> > transforms_;
+		struct transform {
+			std::string sid;
+			math::matrix<4,4> matrix;
+		};
+
+		std::string id_, sid_, type_;
+		node *parent_;
+		boost::ptr_vector<node> childs_;
+		std::vector<transform> transforms_;
 
 		void process_child(std::string const &child_name, std::string const &child_id, xercesc::DOMElement const *child) {
 			if (child_name == "node") {
-				nodes_.push_back(construct<node>(child));
+				childs_.push_back(construct<node>(child));
+				childs_.back().parent_ = this;
 			}
 			else if (child_name == "matrix") {
-				std::vector<float> list;
-				parse_list(child, list);
-				if (list.size() != 16) throw std::runtime_error("invalid <matrix>");
-
-				math::matrix<4,4> tf;
-
-				for (size_t i = 0; i < 4; i++) {
-					for (size_t j = 0; j < 4; j++) {
-						// transposed
-						tf.ij[i][j] = list[i + j * 4];
-					}
-				}
-
+				transform tf;
+				tf.sid = xerces_get_attribute<std::string>(child, "sid");
+				parse_matrix(child, tf.matrix);
 				transforms_.push_back(tf);
 			}
+		}
+
+	public:
+		void init(xercesc::DOMElement const *element_ptr) {
+			id_ = xerces_get_attribute<std::string>(element_ptr, "id");
+			sid_ = xerces_get_attribute<std::string>(element_ptr, "sid");
+			type_ = xerces_get_attribute<std::string>(element_ptr, "type");
+		}
+
+		void check() {
+			if (transforms_.empty()) throw std::runtime_error("no transforms defined for <node>");
 		}
 	};
 
@@ -174,17 +198,26 @@ namespace collada_elements {
 		}
 	};
 
-	class mesh: public element {
-	private:
+	class sources_list: public element {
+	protected:
 		boost::ptr_map<std::string, source *> sources_;
-		boost::scoped_ptr<vertices> vertices_;
-		boost::scoped_ptr<triangles> triangles_;
 
 		void process_child(std::string const &child_name, std::string const &child_id, xercesc::DOMElement const *child) {
 			if (child_name == "source") {
 				sources_[child_id] = construct<source>(child);
 			}
-			else if (child_name == "vertices") {
+		}
+	};
+
+	class mesh: public sources_list {
+	private:
+		boost::scoped_ptr<vertices> vertices_;
+		boost::scoped_ptr<triangles> triangles_;
+
+		void process_child(std::string const &child_name, std::string const &child_id, xercesc::DOMElement const *child) {
+			sources_list::process_child(child_name, child_id, child);
+
+			if (child_name == "vertices") {
 				vertices_.reset(construct<vertices>(child));
 			}
 			else if (child_name == "triangles") {
@@ -222,6 +255,53 @@ namespace collada_elements {
 		void process_child(std::string const &child_name, std::string const &child_id, xercesc::DOMElement const *child) {
 			if (child_name == "geometry") {
 				geometries_[child_id] = construct<geometry>(child);
+			}
+		}
+	};
+
+	class joints: public inputs_list {
+	};
+
+	class vertex_weights: public inputs_list {
+	};
+
+	class skin: public sources_list {
+	private:
+		math::matrix<4,4> bind_shape_matrix_;
+		boost::scoped_ptr<joints> joints_;
+		boost::scoped_ptr<vertex_weights> vertex_weights_;
+
+		void process_child(std::string const &child_name, std::string const &child_id, xercesc::DOMElement const *child) {
+			sources_list::process_child(child_name, child_id, child);
+
+			if (child_name == "bind_shape_matrix") {
+				parse_matrix(child, bind_shape_matrix_);
+			}
+			else if (child_name == "joints") {
+				joints_.reset(construct<joints>(child));
+			}
+			else if (child_name == "vertex_weights") {
+				vertex_weights_.reset(construct<vertex_weights>(child));
+			}
+		}
+	};
+
+	class controller: public element {
+	private:
+		boost::ptr_map<std::string, skin *> skins_;
+
+		void process_child(std::string const &child_name, std::string const &child_id, xercesc::DOMElement const *child) {
+			skins_[xerces_get_attribute<std::string>(child, "source")] = construct<skin>(child);
+		}
+	};
+
+	class library_controllers: public element {
+	private:
+		boost::ptr_map<std::string, controller *> controllers_;
+
+		void process_child(std::string const &child_name, std::string const &child_id, xercesc::DOMElement const *child) {
+			if (child_name == "controller") {
+				controllers_[child_id] = construct<controller>(child);
 			}
 		}
 	};
