@@ -52,10 +52,8 @@ namespace collada_elements {
 		template<class T> static size_t
 		parse_list(xercesc::DOMElement const *element_ptr, T *list, size_t size) {
 			std::stringstream ss(xerces_get_text(element_ptr));
-
 			size_t i = 0;
-			while (i < size) ss >> *list++;
-
+			while (i < size && ss >> *list++) i++;
 			return i;
 		}
 
@@ -78,11 +76,13 @@ namespace collada_elements {
 		std::vector<transform> transforms_;
 
 		void process_child(std::string const &child_name, std::string const &child_id, xercesc::DOMElement const *child) {
-			if (child_name == "node") {
+			if (child_name == "node")
+			{
 				childs_.push_back(construct<node>(child));
 				childs_.back().parent_ = this;
 			}
-			else if (child_name == "matrix") {
+			else if (child_name == "matrix")
+			{
 				transform tf;
 				tf.sid = xerces_get_attribute<std::string>(child, "sid");
 				parse_matrix(child, tf.matrix);
@@ -98,11 +98,14 @@ namespace collada_elements {
 		}
 
 		void check() {
-			if (transforms_.empty()) throw std::runtime_error("no transforms defined for <node>");
+			if (transforms_.empty()) throw std::runtime_error("no transforms defined for <node> with id = " + id_ + ", sid = " + sid_);
 		}
 	};
 
 	class visual_scene: public node {
+	public:
+		void check() {
+		}
 	};
 
 	class library_visual_scenes: public element {
@@ -306,16 +309,73 @@ namespace collada_elements {
 		}
 	};
 
+	class sampler: public inputs_list {
+	private:
+		struct channel {
+			std::string source_url;
+			std::string target_url;
+
+			channel(std::string const &s, std::string const &t):
+			source_url(s),
+			target_url(t)
+			{
+			}
+		};
+
+		std::vector<channel> channels_;
+
+		void process_child(std::string const &child_name, std::string const &child_id, xercesc::DOMElement const *child) {
+			inputs_list::process_child(child_name, child_id, child);
+
+			if (child_name == "channel") {
+				channels_.push_back(channel(xerces_get_attribute<std::string>(child, "source"), xerces_get_attribute<std::string>(child, "target")));
+			}
+		}
+	};
+
+	class animation: public sources_list {
+	private:
+		void process_child(std::string const &child_name, std::string const &child_id, xercesc::DOMElement const *child) {
+			sources_list::process_child(child_name, child_id, child);
+
+
+		}
+	};
+
+	class library_animations: public element {
+	private:
+		boost::ptr_map<std::string, animation *> animations_;
+
+		void process_child(std::string const &child_name, std::string const &child_id, xercesc::DOMElement const *child) {
+			if (child_name == "animation") {
+				animations_[child_id] = construct<animation>(child);
+			}
+		}
+	};
+
 	class collada: public element {
 	private:
 		boost::scoped_ptr<library_visual_scenes> visual_scenes_;
 		boost::scoped_ptr<library_geometries> geometries_;
+		boost::scoped_ptr<library_controllers> controllers_;
+		boost::scoped_ptr<library_animations> animations_;
 
 		void process_child(std::string const &child_name, std::string const &child_id, xercesc::DOMElement const *child) {
-			if (child_name == "library_visual_scenes") {
+			if (child_name == "library_visual_scenes")
+			{
 				visual_scenes_.reset(construct<library_visual_scenes>(child));
-			} else if (child_name == "library_geometries") {
+			}
+			else if (child_name == "library_geometries")
+			{
 				geometries_.reset(construct<library_geometries>(child));
+			}
+			else if (child_name == "library_controllers")
+			{
+				controllers_.reset(construct<library_controllers>(child));
+			}
+			else if (child_name == "library_animations")
+			{
+				animations_.reset(construct<library_animations>(child));
 			}
 		}
 
