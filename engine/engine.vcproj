@@ -204,19 +204,19 @@
 				>
 			</File>
 			<File
+				RelativePath=".\graphic\model.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\graphic\model.h"
+				>
+			</File>
+			<File
 				RelativePath=".\graphic\renderer.cpp"
 				>
 			</File>
 			<File
 				RelativePath=".\graphic\renderer.h"
-				>
-			</File>
-			<File
-				RelativePath=".\graphic\skeletal_animation.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\graphic\skeletal_animation.h"
 				>
 			</File>
 		</Filter>

@@ -13,16 +13,9 @@ memory_mesh *memory_model::get_mesh_by_name(std::string const &name) {
 	return 0;
 }
 
-joint *memory_model::get_joint_by_name(std::string const &name, bool can_create) {
+model::joint *memory_model::get_joint_by_name(std::string const &name) {
 	for (joints_type::iterator it = joints.begin(); it != joints.end(); it++) {
 		if (it->name == name) return &*it;
-	}
-
-	if (can_create) {
-		joints.push_back(joint());
-		joints.back().name = name;
-
-		return &joints.back();
 	}
 
 	throw std::runtime_error("joint " + name + " not found in model");

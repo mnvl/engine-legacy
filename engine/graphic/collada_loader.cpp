@@ -14,6 +14,7 @@
 
 namespace collada_elements {
 	using namespace engine::util;
+	using namespace engine::graphic;
 
 	class element {
 	public:
@@ -128,6 +129,12 @@ namespace collada_elements {
 				inputs_[xerces_get_attribute<std::string>(child, "semantic")] = xerces_get_attribute<std::string>(child, "source");
 			}
 		}
+
+	public:
+		std::string get_input(std::string const &semantic) const {
+			std::map<std::string, std::string>::const_iterator it = inputs_.find(semantic);
+			return it == inputs_.end() ? std::string() : it->second;
+		}
 	};
 
 	class vertices: public inputs_list {
@@ -210,6 +217,13 @@ namespace collada_elements {
 				sources_[child_id] = construct<source>(child);
 			}
 		}
+
+	public:
+		source *get_source(std::string const &id) const {
+			boost::ptr_map<std::string, source *>::const_iterator it = sources_.find(id);
+			if (it == sources_.end()) throw std::runtime_error("source id = " + id + " not found");
+			return *it->second;
+		}
 	};
 
 	class mesh: public sources_list {
@@ -233,6 +247,16 @@ namespace collada_elements {
 			if (!vertices_) throw std::runtime_error("no <vertices> found");
 			if (!triangles_) throw std::runtime_error("no <triangles> found");
 		}
+
+		void build_mesh(memory_mesh &mesh) {
+			source *position_source = get_source(vertices_->get_input("POSITION").substr(1));
+
+			std::string normals_input_name = vertices_->get_input("NORMAL");
+			if (normals_input_name.empty()) normals_input_name = triangles_->get_input("NORMAL");
+			source *normals_source = get_source(normals_input_name.substr(1));
+
+			source *texcoords_source = get_source(triangles_->get_input("TEXCOORD").substr(1));
+		}
 	};
 
 	class geometry: public element {
@@ -249,6 +273,10 @@ namespace collada_elements {
 		void check() {
 			if (!mesh_ptr_) throw std::runtime_error("<mesh> not found in <geometry>");
 		}
+
+		void build_mesh(memory_mesh &mesh) {
+			return mesh_ptr_->build_mesh(mesh);
+		}
 	};
 
 	class library_geometries: public element {
@@ -258,6 +286,16 @@ namespace collada_elements {
 		void process_child(std::string const &child_name, std::string const &child_id, xercesc::DOMElement const *child) {
 			if (child_name == "geometry") {
 				geometries_[child_id] = construct<geometry>(child);
+			}
+		}
+
+	public:
+		void build_meshes(memory_model *model_ptr) {
+			for (boost::ptr_map<std::string, geometry *>::const_iterator it = geometries_.begin(); it != geometries_.end(); it++) {
+				memory_mesh mesh;
+				mesh.name = it->first;
+				(*it->second)->build_mesh(mesh);
+				model_ptr->meshes.push_back(mesh);
 			}
 		}
 	};
@@ -337,8 +375,6 @@ namespace collada_elements {
 	private:
 		void process_child(std::string const &child_name, std::string const &child_id, xercesc::DOMElement const *child) {
 			sources_list::process_child(child_name, child_id, child);
-
-
 		}
 	};
 
@@ -383,6 +419,10 @@ namespace collada_elements {
 		void check() {
 			if (!geometries_) throw std::runtime_error("<library_geometries> not found");
 		}
+
+		void build_model(memory_model *model_ptr) {
+			geometries_->build_meshes(model_ptr);
+		}
 	};
 }
 
@@ -417,7 +457,9 @@ void collada_loader::load() {
 		if (util::xerces_lcp_transcode(root_node->getLocalName()) != "COLLADA")
 			throw load_error("root element is not <COLLADA />");
 
-		collada_elements::collada().go((xercesc::DOMElement *) root_node);
+		collada_elements::collada dummy;
+		dummy.go((xercesc::DOMElement *) root_node);
+		dummy.build_model(&model_);
 	}
 	catch (std::exception const &error)
 	{

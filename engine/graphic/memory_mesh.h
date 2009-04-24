@@ -6,7 +6,7 @@
 #include <boost/cstdint.hpp>
 #include <math/vec.h>
 #include <math/matrix.h>
-#include <engine/graphic/skeletal_animation.h>
+#include <engine/graphic/model.h>
 
 namespace engine {
 namespace graphic {
@@ -15,6 +15,8 @@ class renderer;
 
 class memory_mesh {
 public:
+	typedef model::joint_influence joint_influence;
+
 	static DWORD const VERTEX_FORMAT = D3DFVF_XYZ | D3DFVF_TEX2;
 	static D3DFORMAT const INDEX_FORMAT = D3DFMT_INDEX16;
 

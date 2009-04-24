@@ -27,6 +27,7 @@ public:
 
 private:
 	std::string filename_;
+	memory_model model_;
 };
 
 }
