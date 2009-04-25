@@ -25,6 +25,8 @@ public:
 	~collada_loader();
 	void load();
 
+	memory_model const &get_model() { return model_; }
+
 private:
 	std::string filename_;
 	memory_model model_;

@@ -752,6 +752,12 @@ namespace collada_elements {
 		void process_child(std::string const &child_name, std::string const &child_id, xercesc::DOMElement const *child) {
 			sources_list::process_child(child_name, child_id, child);
 		}
+
+	public:
+		model::animation build_animation(memory_model *model_ptr) {
+			model::animation dummy;
+			a.samplers.push_back(s);
+		}
 	};
 
 	class library_animations: public element {
@@ -761,6 +767,13 @@ namespace collada_elements {
 		void process_child(std::string const &child_name, std::string const &child_id, xercesc::DOMElement const *child) {
 			if (child_name == "animation") {
 				animations_[child_id] = construct<animation>(child);
+			}
+		}
+
+	public:
+		void build_animations(memory_model *model_ptr) {
+			for (boost::ptr_map<std::string, animation *>::iterator it = animations_.begin(); it != animations_.end(); it++) {
+				model_ptr->animations[it->first] = it->second->build_animation(model_ptr);
 			}
 		}
 	};
@@ -801,6 +814,7 @@ namespace collada_elements {
 			geometries_->build_meshes(model_ptr);
 			controllers_->build_joint_influences(model_ptr);
 			geometries_->fix_position_indices(model_ptr);
+			animations_->build_animations(model_ptr);
 		}
 	};
 }
