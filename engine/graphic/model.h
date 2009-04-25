@@ -13,7 +13,7 @@ namespace graphic {
 class model {
 public:
 	struct joint {
-		std::string name;
+		std::string id, name;
 		joint *parent;
 		std::vector<joint *> childs;
 		math::matrix<4,4> pretransform, interpolated_transform, posttransform;
@@ -79,6 +79,8 @@ public:
 
 	struct animation {
 		typedef std::vector<sampler> samplers_type;
+
+		std::string name;
 		samplers_type samplers;
 	};
 };

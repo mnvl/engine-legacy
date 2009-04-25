@@ -56,6 +56,13 @@ void memory_mesh::draw_wireframe(renderer *renderer_ptr, math::scalar time) cons
 			}
 		}
 	}
+	else
+	{
+		for (size_t i = 0; i < animated_vertices.size(); i++) {
+			animated_vertices[i].position = vertices[i].position;
+		}
+
+	}
 
 	size_t triangles_count = indices.size() / 3;
 

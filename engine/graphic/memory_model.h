@@ -19,8 +19,11 @@ public:
 	joints_type joints;
 	animations_type animations;
 
+	void cleanup();
+
 	memory_mesh *get_mesh_by_id(std::string const &id);
-	memory_mesh *get_mesh_by_name(std::string const &name);
+	memory_mesh *get_mesh_by_name(std::string const &name, bool can_create = false);
+	joint *get_joint_by_id(std::string const &name);
 	joint *get_joint_by_name(std::string const &name);
 
 	void draw_wireframe(renderer *renderer_ptr, math::scalar time) const;
