@@ -2,7 +2,7 @@
 #include <cppunit/extensions/HelperMacros.h>
 #include <math/collision.h>
 
-class test_collisions: public CPPUNIT_NS::TestFixture {
+class test_collisions: public CppUnit::TestFixture {
 	CPPUNIT_TEST_SUITE(test_collisions);
 	CPPUNIT_TEST(test_sphere_line_collision_1);
 	CPPUNIT_TEST(test_sphere_line_collision_2);
@@ -99,4 +99,4 @@ class test_collisions: public CPPUNIT_NS::TestFixture {
 	}
 };
 
-CPPUNIT_TEST_SUITE_REGISTRATION(test_collisions); 
+CPPUNIT_TEST_SUITE_REGISTRATION(test_collisions);

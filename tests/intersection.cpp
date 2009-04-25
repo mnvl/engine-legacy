@@ -2,7 +2,7 @@
 #include <cppunit/extensions/HelperMacros.h>
 #include <math/intersection.h>
 
-class test_intersections: public CPPUNIT_NS::TestFixture {
+class test_intersections: public CppUnit::TestFixture {
 	CPPUNIT_TEST_SUITE(test_intersections);
 	CPPUNIT_TEST(ray_ray_intersection);
 	CPPUNIT_TEST(test_sphere_line_intersection_1);

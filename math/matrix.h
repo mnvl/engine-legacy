@@ -19,6 +19,9 @@ namespace math {
 	
 	template<int M,int N,int K,class T> inline void
 	mul(matrix<M,K,T> &result,const matrix<M,N,T> &left,const matrix<N,K,T> &right);
+
+	template <int M, int N, class T> bool
+	operator ==(math::matrix<M, N, T> const &lhs, math::matrix<M, N, T> const &rhs);
 }
 
 template<class T>
@@ -388,9 +391,19 @@ math::mul(math::matrix<M,K,T> &result,const math::matrix<M,N,T> &left,const math
 	}
 }
 
+template <int M, int N, class T> bool
+math::operator ==(math::matrix<M, N, T> const &lhs, math::matrix<M, N, T> const &rhs) {
+	for(size_t i = 0; i < M; i++) {
+		for(size_t j = 0; j < N; j++) {
+			if (abs(lhs.ij[i][j] - rhs.ij[i][j]) > EPSILON) return false;
+		}
+	}
+
+	return true;
+}
+
 template <int M, int N, class T>
-std::istream &operator >>(std::istream &is, math::matrix<M, N, T> &m)
-{
+std::istream &operator >>(std::istream &is, math::matrix<M, N, T> &m) {
 	for (int i = 0; i < M; i++) {
 		for (int j = 0; j < N; j++)	{
 			is >> m.ij[i][j];
