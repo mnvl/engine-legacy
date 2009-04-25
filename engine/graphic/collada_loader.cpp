@@ -154,7 +154,7 @@ namespace collada_elements {
 		}
 
 		void build_mesh(memory_model *model_ptr, math::matrix<4,4> const &tf) {
-			memory_mesh dummy;
+			memory_mesh dummy(model_ptr);
 			dummy.name = name_;
 			dummy.transform = sum_all_transforms();
 			model_ptr->meshes.push_back(dummy);
@@ -341,11 +341,32 @@ namespace collada_elements {
 			if (!technique_) throw std::runtime_error("no <technique_common> in <source>");
 		}
 
+		size_t get_size() const {
+			return std::max(name_array_.size(), float_array_.size());
+		}
+
+		void get(size_t index, std::string &str) {
+			str = name_array_.at(index);
+		}
+
+		void get(size_t index, float &f) {
+			f = float_array_.at(index);
+		}
+
 		template <int N>
 		void get(size_t index, math::vec<N> &v) {
 			size_t array_index = index * technique_->get_stride();
 			for (size_t i = 0; i < N; i++) {
 				v.i[i] = float_array_.at(array_index++);
+			}
+		}
+
+		void get(size_t index, math::matrix<4, 4> &tf) {
+			size_t array_index = index * technique_->get_stride();
+			for (size_t i = 0; i < 4; i++) {
+				for (size_t j = 0; j < 4; j++) {
+					tf.ij[j][i] = float_array_.at(array_index++);
+				}
 			}
 		}
 	};
@@ -402,7 +423,9 @@ namespace collada_elements {
 		boost::scoped_ptr<triangles> triangles_;
 
 		vertex_indexer vertex_indexer_;
-		std::set<std::pair<size_t, size_t> > position_index_x_vertex_index_;
+
+		typedef std::set<std::pair<size_t, size_t> > position_index_x_vertex_index_type;
+		position_index_x_vertex_index_type position_index_x_vertex_index_;
 
 		void process_child(std::string const &child_name, std::string const &child_id, xercesc::DOMElement const *child) {
 			sources_list::process_child(child_name, child_id, child);
@@ -465,6 +488,25 @@ namespace collada_elements {
 				mesh.indices.push_back(vertex_index);
 			}
 		}
+
+		void fix_position_indices(memory_mesh &mesh) {
+			for (memory_mesh::influences_type::iterator it = mesh.influences.begin(); it != mesh.influences.end(); it++) {
+				std::vector<model::joint_influence::vertex_weight> weights;
+				weights.swap(it->vertex_weights);
+
+				for (size_t i = 0; i < weights.size(); i++) {
+					model::joint_influence::vertex_weight const &vw = weights[i];
+
+					position_index_x_vertex_index_type::const_iterator jt = position_index_x_vertex_index_.lower_bound(std::make_pair(i, 0));
+					while (jt != position_index_x_vertex_index_.end() && jt->first == vw.vertex_index) {
+						model::joint_influence::vertex_weight dummy = vw;
+						dummy.vertex_index = jt->second;
+						it->vertex_weights.push_back(dummy);
+						jt++;
+					}
+				}
+			}
+		}
 	};
 
 	class geometry: public element {
@@ -494,6 +536,10 @@ namespace collada_elements {
 		void build_mesh(memory_mesh &mesh) {
 			return mesh_ptr_->build_mesh(mesh);
 		}
+
+		void fix_position_indices(memory_mesh &mesh) {
+			return mesh_ptr_->fix_position_indices(mesh);
+		}
 	};
 
 	class library_geometries: public element {
@@ -514,12 +560,37 @@ namespace collada_elements {
 				it->build_mesh(*mesh_ptr);
 			}
 		}
+
+		void fix_position_indices(memory_model *model_ptr) {
+			for (boost::ptr_vector<geometry>::iterator it = geometries_.begin(); it != geometries_.end(); it++) {
+				it->fix_position_indices(*model_ptr->get_mesh_by_name(it->get_name()));
+			}
+		}
 	};
 
 	class joints: public inputs_list {
 	};
 
 	class vertex_weights: public inputs_list {
+	private:
+		std::vector<size_t> vcount_;
+		std::vector<size_t> v_;
+
+		void process_child(std::string const &child_name, std::string const &child_id, xercesc::DOMElement const *child) {
+			inputs_list::process_child(child_name, child_id, child);
+
+			if (child_name == "vcount")
+			{
+				parse_list(child, vcount_);
+			}
+			else if (child_name == "v") {
+				parse_list(child, v_);
+			}
+		}
+
+	public:
+		std::vector<size_t> const &get_vcount() const { return vcount_; }
+		std::vector<size_t> const &get_v() const { return v_; }
 	};
 
 	class skin: public sources_list {
@@ -541,6 +612,77 @@ namespace collada_elements {
 				vertex_weights_.reset(construct<vertex_weights>(child));
 			}
 		}
+
+	public:
+		void build_inverted_bind_matrices(memory_mesh *mesh_ptr)
+		{
+			source *joints_source = get_source(joints_->get_input("JOINT")->get_source().substr(1));
+			source *inverted_bind_matrices_source = get_source(joints_->get_input("INV_BIND_MATRIX")->get_source().substr(1));
+
+			for (size_t i = 0, n = joints_source->get_size(); i < n; i++)
+			{
+				std::string joint_name;
+				math::matrix<4,4> inv_bind_matrix;
+
+				joints_source->get(i, joint_name);
+				inverted_bind_matrices_source->get(i, inv_bind_matrix);
+
+				mesh_ptr->get_joint_influence_by_name(joint_name, true)->inverted_bind_matrix = inv_bind_matrix;
+			}
+		}
+
+		void build_joint_weights(memory_mesh *mesh_ptr)
+		{
+			input *joints_input = vertex_weights_->get_input("JOINT");
+			input *weights_input = vertex_weights_->get_input("WEIGHT");
+
+			source *joints_source = get_source(joints_input->get_source().substr(1));
+			source *weights_source = get_source(weights_input->get_source().substr(1));
+
+			size_t stride = 1 + std::max(joints_input->get_offset(), weights_input->get_offset());
+
+			std::vector<size_t> const &vcount = vertex_weights_->get_vcount();
+			std::vector<size_t> const &v = vertex_weights_->get_v();
+
+			std::vector<size_t>::const_iterator v_get = v.begin();
+
+			typedef std::map<size_t, std::vector<model::joint_influence::vertex_weight> > weights_type;
+			weights_type weights;
+
+			for (std::vector<size_t>::const_iterator it = vcount.begin(); it != vcount.end(); it++)
+			{
+				for (size_t position_index = 0; position_index < *it; position_index++)
+				{
+					size_t joint_index;
+					float weight;
+
+					for (size_t offset = 0; offset < stride; offset++)
+					{
+						if (offset == joints_input->get_offset())
+						{
+							joint_index = *v_get;
+						}
+
+						if (offset == weights_input->get_offset())
+						{
+							weights_source->get(*v_get, weight);
+						}
+					}
+
+					model::joint_influence::vertex_weight dummy;
+					dummy.vertex_index = position_index;
+					dummy.weight = weight;
+					weights[joint_index].push_back(dummy);
+				}
+			}
+
+			for (weights_type::iterator it = weights.begin(); it != weights.end(); it++) {
+				std::string joint_name;
+				joints_source->get(it->first, joint_name);
+
+				mesh_ptr->get_joint_influence_by_name(joint_name)->vertex_weights.swap(it->second);
+			}
+		}
 	};
 
 	class controller: public element {
@@ -549,6 +691,15 @@ namespace collada_elements {
 
 		void process_child(std::string const &child_name, std::string const &child_id, xercesc::DOMElement const *child) {
 			skins_[xerces_get_attribute<std::string>(child, "source")] = construct<skin>(child);
+		}
+
+	public:
+		void build_joint_influences(memory_model *model_ptr) {
+			for (boost::ptr_map<std::string, skin *>::const_iterator it = skins_.begin(); it != skins_.end(); it++) {
+				memory_mesh *mesh_ptr = model_ptr->get_mesh_by_id(it->first.substr(1));
+				(*it->second)->build_inverted_bind_matrices(mesh_ptr);
+				(*it->second)->build_joint_weights(mesh_ptr);
+			}
 		}
 	};
 
@@ -563,6 +714,11 @@ namespace collada_elements {
 		}
 
 	public:
+		void build_joint_influences(memory_model *model_ptr) {
+			for (boost::ptr_map<std::string, controller *>::const_iterator it = controllers_.begin(); it != controllers_.end(); it++) {
+				(*it->second)->build_joint_influences(model_ptr);
+			}
+		}
 	};
 
 	class sampler: public inputs_list {
@@ -641,6 +797,8 @@ namespace collada_elements {
 		void build_model(memory_model *model_ptr) {
 			visual_scenes_->build_hierarchy(model_ptr);
 			geometries_->build_meshes(model_ptr);
+			controllers_->build_joint_influences(model_ptr);
+			geometries_->fix_position_indices(model_ptr);
 		}
 	};
 }
