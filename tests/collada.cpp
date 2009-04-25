@@ -19,7 +19,7 @@ class test_collada_loader: public CppUnit::TestFixture {
 
 		{
 			math::matrix<4,4> tf;
-			tf.translation(math::vec<3>(1.0f, -0.5f, 3.0f));
+			tf.identity();
 			CPPUNIT_ASSERT(model_ptr->transform == tf);
 		}
 
@@ -27,7 +27,11 @@ class test_collada_loader: public CppUnit::TestFixture {
 		CPPUNIT_ASSERT (mesh_ptr->vertices.size() == 6);
 		CPPUNIT_ASSERT (mesh_ptr->indices.size() == 6);
 
-
+		{
+			math::matrix<4,4> tf;
+			tf.translation(math::vec<3>(1.0f, -0.5f, 3.0f));
+			CPPUNIT_ASSERT(mesh_ptr->transform == tf);
+		}
 	}
 };
 

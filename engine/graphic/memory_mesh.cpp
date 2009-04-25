@@ -67,7 +67,7 @@ void memory_mesh::draw_wireframe(renderer *renderer_ptr, math::scalar time) cons
 	size_t triangles_count = indices.size() / 3;
 
 	std::vector<index> dummy;
-	dummy.reserve(4 * 2 * triangles_count);
+	dummy.reserve(6 * triangles_count);
 
 	for (size_t i = 0; i < triangles_count; i++) {
 		dummy.push_back(indices[3 * i + 0]);

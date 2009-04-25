@@ -76,7 +76,7 @@ namespace collada_elements {
 			math::matrix<4,4> matrix;
 		};
 
-		std::string id_, sid_, name_, type_;
+		std::string id_, sid_, name_, type_, instance_geometry_;
 		node *parent_;
 		boost::ptr_vector<node> childs_;
 		std::vector<transform> transforms_;
@@ -93,6 +93,10 @@ namespace collada_elements {
 				tf.sid = xerces_get_attribute<std::string>(child, "sid");
 				parse_matrix(child, tf.matrix);
 				transforms_.push_back(tf);
+			}
+			else if (child_name == "instance_geometry")
+			{
+				instance_geometry_ = xerces_get_attribute<std::string>(child, "url");
 			}
 		}
 
@@ -156,7 +160,7 @@ namespace collada_elements {
 
 		void build_mesh(memory_model *model_ptr, math::matrix<4,4> const &tf) {
 			memory_mesh dummy(model_ptr);
-			dummy.name = name_;
+			dummy.name = instance_geometry_.empty() ? name_ : instance_geometry_.substr(1);
 			dummy.transform = sum_all_transforms();
 			model_ptr->meshes.push_back(dummy);
 
@@ -200,8 +204,10 @@ namespace collada_elements {
 		}
 
 		void build_hierarchy(memory_model *model_ptr) {
-			for (boost::ptr_vector<node>::iterator it = childs_.begin(); it != childs_.end(); it++) {
-				it->build_hierarchy(model_ptr, sum_all_transforms());
+			for (boost::ptr_vector<node>::iterator it = childs_.begin(); it != childs_.end(); it++) 
+			{
+				model_ptr->transform = sum_all_transforms();
+				it->build_hierarchy(model_ptr, model_ptr->transform);
 			}
 		}
 	};
@@ -392,13 +398,24 @@ namespace collada_elements {
 	private:
 		struct vertex_less {
 			bool operator ()(memory_mesh::vertex const &lhs, memory_mesh::vertex const &rhs) {
-				if (lhs.position <= rhs.position) return true;
-				if (lhs.position >= rhs.position) return false;
+				if ((lhs.position - rhs.position).length_sq() > math::EPSILON)
+				{
+					if (lhs.position <= rhs.position) return true;
+					if (lhs.position >= rhs.position) return false;
+				}
 
-				if (lhs.normal <= rhs.normal) return true;
-				if (lhs.normal >= rhs.normal) return false;
+				if ((lhs.normal - rhs.normal).length_sq() > math::EPSILON)
+				{
+					if (lhs.normal <= rhs.normal) return true;
+					if (lhs.normal >= rhs.normal) return false;
+				}
 
-				return lhs.texcoords <= rhs.texcoords;
+				if ((lhs.texcoords - rhs.texcoords).length_sq() > math::EPSILON)
+				{
+					return lhs.texcoords <= rhs.texcoords;
+				}
+
+				return false;
 			}
 		};
 
