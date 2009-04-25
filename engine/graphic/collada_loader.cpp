@@ -479,6 +479,8 @@ namespace collada_elements {
 					if (j == texcoords_input->get_offset()) {
 						texcoords_source->get(*indices_get, v.texcoords);
 					}
+
+					indices_get++;
 				}
 
 				size_t vertex_index = vertex_indexer_.choose_index(v);
