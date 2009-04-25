@@ -16,11 +16,13 @@ public:
 		std::string name;
 		joint *parent;
 		std::vector<joint *> childs;
-		mutable math::matrix<4,4> frame_transform;
+		math::matrix<4,4> pretransform, interpolated_transform, posttransform;
 
 		joint():
 		parent(0) {
-			frame_transform.identity();
+			pretransform.identity();
+			interpolated_transform.identity();
+			posttransform.identity();
 		}
 	};
 

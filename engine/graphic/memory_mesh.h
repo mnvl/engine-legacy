@@ -35,7 +35,7 @@ public:
 	memory_mesh();
 	virtual ~memory_mesh();
 
-	std::string name;
+	std::string id, name;
 	math::matrix<4,4> transform;
 	std::vector<vertex> vertices;
 	std::vector<index> indices;

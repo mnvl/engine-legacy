@@ -30,7 +30,7 @@ void memory_mesh::draw_wireframe(renderer *renderer_ptr, math::scalar time) cons
 					vertices[jt->vertex_index].position *
 					transform *
 					it->inverted_bind_matrix *
-					it->joint_ptr->frame_transform *
+					it->joint_ptr->interpolated_transform *
 					jt->weight;
 			}
 		}

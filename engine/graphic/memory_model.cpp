@@ -5,12 +5,20 @@
 namespace engine {
 namespace graphic {
 
+memory_mesh *memory_model::get_mesh_by_id(std::string const &id) {
+	for (meshes_type::iterator it = meshes.begin(); it != meshes.end(); it++) {
+		if (it->id == id) return &*it;
+	}
+
+	throw std::runtime_error("mesh with id = " + id + " not found");
+}
+
 memory_mesh *memory_model::get_mesh_by_name(std::string const &name) {
 	for (meshes_type::iterator it = meshes.begin(); it != meshes.end(); it++) {
 		if (it->name == name) return &*it;
 	}
 
-	return 0;
+	throw std::runtime_error("mesh with name = " + name + " not found");
 }
 
 model::joint *memory_model::get_joint_by_name(std::string const &name) {
@@ -44,7 +52,7 @@ void memory_model::draw_wireframe(renderer *renderer_ptr, math::scalar time) con
 		it != animation_ptr->samplers.end(); it++)
 	{
 		if (it->get_joint()) {
-			it->get_joint()->frame_transform = it->get(time);
+			it->get_joint()->interpolated_transform = it->get(time);
 		}
 	}
 

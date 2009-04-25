@@ -76,7 +76,7 @@ namespace collada_elements {
 			math::matrix<4,4> matrix;
 		};
 
-		std::string id_, sid_, type_;
+		std::string id_, sid_, name_, type_;
 		node *parent_;
 		boost::ptr_vector<node> childs_;
 		std::vector<transform> transforms_;
@@ -96,21 +96,114 @@ namespace collada_elements {
 			}
 		}
 
+		math::matrix<4,4> sum_all_transforms() const {
+			math::matrix<4,4> tf;
+			tf.identity();
+
+			if (transforms_.empty()) {
+				return tf;
+			}
+
+			for (std::vector<transform>::const_iterator it = transforms_.begin(); it != transforms_.end(); it++) {
+				tf *= it->matrix;
+			}
+
+			return tf;
+		}
+
+		void build_joint(memory_model *model_ptr, math::matrix<4,4> const &tf, model::joint *parent = 0) {
+			if (type_.empty()) {
+				math::matrix<4,4> all_transforms = tf * sum_all_transforms();
+
+				for (boost::ptr_vector<node>::iterator it = childs_.begin(); it != childs_.end(); it++) {
+					it->build_joint(model_ptr, all_transforms, parent);
+				}
+			}
+
+			model::joint dummy;
+			dummy.name = sid_;
+			dummy.parent = parent;
+			dummy.pretransform = tf;
+
+			std::vector<transform>::const_iterator transform_it = transforms_.begin();
+
+			while (transform_it != transforms_.end() && transform_it->sid.empty()) {
+				dummy.pretransform *= transform_it->matrix;
+				transform_it++;
+			}
+
+			if (transform_it != transforms_.end()) {
+				dummy.interpolated_transform = transform_it->matrix;
+				transform_it++;
+			} else {
+				dummy.interpolated_transform.identity();
+			}
+
+			while(transform_it != transforms_.end()) {
+				dummy.posttransform *= transform_it->matrix;
+				transform_it++;
+			}
+
+			math::matrix<4,4> all_transforms = dummy.pretransform * dummy.interpolated_transform * dummy.posttransform;
+
+			model_ptr->joints.push_back(dummy);
+
+			for (boost::ptr_vector<node>::iterator it = childs_.begin(); it != childs_.end(); it++) {
+				it->build_joint(model_ptr, all_transforms, &model_ptr->joints.back());
+			}
+		}
+
+		void build_mesh(memory_model *model_ptr, math::matrix<4,4> const &tf) {
+			memory_mesh dummy;
+			dummy.name = name_;
+			dummy.transform = sum_all_transforms();
+			model_ptr->meshes.push_back(dummy);
+
+			for (boost::ptr_vector<node>::iterator it = childs_.begin(); it != childs_.end(); it++) {
+				it->build_hierarchy(model_ptr, dummy.transform);
+			}
+		}
+
 	public:
 		void init(xercesc::DOMElement const *element_ptr) {
 			id_ = xerces_get_attribute<std::string>(element_ptr, "id");
 			sid_ = xerces_get_attribute<std::string>(element_ptr, "sid");
+			name_ = xerces_get_attribute<std::string>(element_ptr, "name");
 			type_ = xerces_get_attribute<std::string>(element_ptr, "type");
 		}
 
 		void check() {
 			if (transforms_.empty()) throw std::runtime_error("no transforms defined for <node> with id = " + id_ + ", sid = " + sid_);
+
+			size_t with_sid = 0;
+			for (std::vector<transform>::const_iterator it = transforms_.begin(); it != transforms_.end(); it++) {
+				with_sid += !it->sid.empty();
+				if (with_sid > 1) throw std::runtime_error("more than one matrices with sid");
+			}
+		}
+
+		void build_hierarchy(memory_model *model_ptr, math::matrix<4,4> const &tf) {
+			// we are expecting only joints and meshes
+			if (type_ == "JOINT") build_joint(model_ptr, tf, 0);
+			else build_mesh(model_ptr, tf);
+		}
+
+		void build_hierarchy(memory_model *model_ptr) {
+			model_ptr->transform = sum_all_transforms();
+			for (boost::ptr_vector<node>::iterator it = childs_.begin(); it != childs_.end(); it++) {
+				it->build_hierarchy(model_ptr, model_ptr->transform);
+			}
 		}
 	};
 
 	class visual_scene: public node {
 	public:
 		void check() {
+		}
+
+		void build_hierarchy(memory_model *model_ptr) {
+			if (childs_.size() != 1) throw std::runtime_error("invalid number of childs in <visual_scene>");
+			childs_.front().build_hierarchy(model_ptr);
 		}
 	};
 
@@ -122,6 +215,12 @@ namespace collada_elements {
 			if (child_name == "visual_scene") {
 				visual_scenes_[child_id] = construct<visual_scene>(child);
 			}
+		}
+
+	public:
+		void build_hierarchy(memory_model *model_ptr) {
+			if (visual_scenes_.size() != 1) throw std::runtime_error("expecting one <visual_scene> in <library_visual_scenes>");
+			(*visual_scenes_.begin()->second)->build_hierarchy(model_ptr);
 		}
 	};
 
@@ -370,6 +469,7 @@ namespace collada_elements {
 
 	class geometry: public element {
 	private:
+		std::string id_, name_;
 		boost::scoped_ptr<mesh> mesh_ptr_;
 
 		void process_child(std::string const &child_name, std::string const &child_id, xercesc::DOMElement const *child) {
@@ -379,6 +479,14 @@ namespace collada_elements {
 		}
 
 	public:
+		std::string const &get_id() const { return id_; }
+		std::string const &get_name() const { return name_; }
+
+		void init(xercesc::DOMElement const *element_ptr) {
+			id_ = xerces_get_attribute<std::string>(element_ptr, "id");
+			name_ = xerces_get_attribute<std::string>(element_ptr, "name");
+		}
+
 		void check() {
 			if (!mesh_ptr_) throw std::runtime_error("<mesh> not found in <geometry>");
 		}
@@ -390,21 +498,20 @@ namespace collada_elements {
 
 	class library_geometries: public element {
 	protected:
-		boost::ptr_map<std::string, geometry *> geometries_;
+		boost::ptr_vector<geometry> geometries_;
 
 		void process_child(std::string const &child_name, std::string const &child_id, xercesc::DOMElement const *child) {
 			if (child_name == "geometry") {
-				geometries_[child_id] = construct<geometry>(child);
+				geometries_.push_back(construct<geometry>(child));
 			}
 		}
 
 	public:
 		void build_meshes(memory_model *model_ptr) {
-			for (boost::ptr_map<std::string, geometry *>::const_iterator it = geometries_.begin(); it != geometries_.end(); it++) {
-				memory_mesh mesh;
-				mesh.name = it->first;
-				(*it->second)->build_mesh(mesh);
-				model_ptr->meshes.push_back(mesh);
+			for (boost::ptr_vector<geometry>::iterator it = geometries_.begin(); it != geometries_.end(); it++) {
+				memory_mesh *mesh_ptr = model_ptr->get_mesh_by_name(it->get_name());
+				mesh_ptr->id = it->get_id();
+				it->build_mesh(*mesh_ptr);
 			}
 		}
 	};
@@ -454,6 +561,8 @@ namespace collada_elements {
 				controllers_[child_id] = construct<controller>(child);
 			}
 		}
+
+	public:
 	};
 
 	class sampler: public inputs_list {
@@ -530,6 +639,7 @@ namespace collada_elements {
 		}
 
 		void build_model(memory_model *model_ptr) {
+			visual_scenes_->build_hierarchy(model_ptr);
 			geometries_->build_meshes(model_ptr);
 		}
 	};
