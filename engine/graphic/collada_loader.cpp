@@ -1,4 +1,5 @@
 
+#include <set>
 #include <map>
 #include <string>
 #include <sstream>
@@ -11,6 +12,10 @@
 #include <math/matrix.h>
 #include <engine/util/xerces_lcp_transcoder.h>
 #include <engine/graphic/collada_loader.h>
+
+#if defined(max)
+#undef max
+#endif
 
 namespace collada_elements {
 	using namespace engine::util;
@@ -120,20 +125,36 @@ namespace collada_elements {
 		}
 	};
 
+	class input: public element {
+	private:
+		std::string source_;
+		size_t offset_;
+
+	public:
+		void init(xercesc::DOMElement const *element_ptr) {
+			source_ = xerces_get_attribute<std::string>(element_ptr, "source");
+			offset_ = xerces_get_attribute<size_t>(element_ptr, "offset");
+		}
+
+		std::string const &get_source() const { return source_; }
+		size_t get_offset() const { return offset_; }
+	};
+
 	class inputs_list: public element {
 	protected:
-		std::map<std::string, std::string> inputs_;
+		boost::ptr_map<std::string, input *> inputs_;
 
 		void process_child(std::string const &child_name, std::string const &child_id, xercesc::DOMElement const *child) {
 			if (child_name == "input") {
-				inputs_[xerces_get_attribute<std::string>(child, "semantic")] = xerces_get_attribute<std::string>(child, "source");
+				inputs_[xerces_get_attribute<std::string>(child, "semantic")] = construct<input>(child);
 			}
 		}
 
 	public:
-		std::string get_input(std::string const &semantic) const {
-			std::map<std::string, std::string>::const_iterator it = inputs_.find(semantic);
-			return it == inputs_.end() ? std::string() : it->second;
+		input *get_input(std::string const &semantic) const {
+			boost::ptr_map<std::string, input *>::const_iterator it = inputs_.find(semantic);
+			if (it == inputs_.end()) throw std::runtime_error("input with semantic = " + semantic + " not found");
+			return *it->second;
 		}
 	};
 
@@ -142,6 +163,7 @@ namespace collada_elements {
 
 	class triangles: public inputs_list {
 	private:
+		size_t count_;
 		std::vector<size_t> indices_;
 
 		void process_child(std::string const &child_name, std::string const &child_id, xercesc::DOMElement const *child) {
@@ -151,6 +173,14 @@ namespace collada_elements {
 
 			inputs_list::process_child(child_name, child_id, child);
 		}
+
+	public:
+		void init(xercesc::DOMElement const *element_ptr) {
+			count_ = xerces_get_attribute<size_t>(element_ptr, "count");
+		}
+
+		size_t get_count() const { return count_; }
+		std::vector<size_t> const &get_indices() const { return indices_; }
 	};
 
 	class technique_common: public element {
@@ -166,13 +196,13 @@ namespace collada_elements {
 			}
 		};
 
-		size_t count_, stide_;
+		size_t count_, stride_;
 		std::vector<param> params_;
 
 		void process_child(std::string const &child_name, std::string const &child_id, xercesc::DOMElement const *child) {
-			if (child_name == "acessor") {
+			if (child_name == "accessor") {
 				count_ = xerces_get_attribute<size_t>(child, "count");
-				count_ = xerces_get_attribute<size_t>(child, "stride");
+				stride_ = xerces_get_attribute<size_t>(child, "stride", 3);
 
 				xercesc::DOMNodeList const *params = child->getElementsByTagName(xerces_lcp_transcode("param").c_str());
 				for (size_t i = 0, n = params->getLength(); i < n; i++) {
@@ -181,6 +211,9 @@ namespace collada_elements {
 				}
 			}
 		}
+
+	public:
+		size_t get_stride() const { return stride_; }
 	};
 
 	class source: public element {
@@ -202,9 +235,19 @@ namespace collada_elements {
 		}
 
 	public:
+		technique_common const &get_technique() const { return *technique_; }
+
 		void check() {
 			if (float_array_.empty() && name_array_.empty()) throw std::runtime_error("malformed or unknown <source>");
 			if (!technique_) throw std::runtime_error("no <technique_common> in <source>");
+		}
+
+		template <int N>
+		void get(size_t index, math::vec<N> &v) {
+			size_t array_index = index * technique_->get_stride();
+			for (size_t i = 0; i < N; i++) {
+				v.i[i] = float_array_.at(array_index++);
+			}
 		}
 	};
 
@@ -226,10 +269,41 @@ namespace collada_elements {
 		}
 	};
 
+	class vertex_indexer {
+	private:
+		struct vertex_less {
+			bool operator ()(memory_mesh::vertex const &lhs, memory_mesh::vertex const &rhs) {
+				if (lhs.position < rhs.position) return true;
+				if (lhs.position > rhs.position) return false;
+
+				if (lhs.normal < rhs.normal) return true;
+				if (lhs.normal > rhs.normal) return false;
+
+				return lhs.texcoords < rhs.texcoords;
+			}
+		};
+
+		typedef std::map<memory_mesh::vertex, size_t, vertex_less> vertex_x_index_type;
+		vertex_x_index_type vertex_x_index_;
+
+	public:
+		size_t choose_index(memory_mesh::vertex const &v) {
+			vertex_x_index_type::const_iterator it = vertex_x_index_.find(v);
+			if (it != vertex_x_index_.end()) return it->second;
+
+			size_t index = vertex_x_index_.size();
+			vertex_x_index_.insert(std::make_pair(v, index));
+			return index;
+		}
+	};
+
 	class mesh: public sources_list {
 	private:
 		boost::scoped_ptr<vertices> vertices_;
 		boost::scoped_ptr<triangles> triangles_;
+
+		vertex_indexer vertex_indexer_;
+		std::set<std::pair<size_t, size_t> > position_index_x_vertex_index_;
 
 		void process_child(std::string const &child_name, std::string const &child_id, xercesc::DOMElement const *child) {
 			sources_list::process_child(child_name, child_id, child);
@@ -249,13 +323,48 @@ namespace collada_elements {
 		}
 
 		void build_mesh(memory_mesh &mesh) {
-			source *position_source = get_source(vertices_->get_input("POSITION").substr(1));
+			input *position_input = vertices_->get_input("POSITION");
+			source *position_source = get_source(position_input->get_source().substr(1));
 
-			std::string normals_input_name = vertices_->get_input("NORMAL");
-			if (normals_input_name.empty()) normals_input_name = triangles_->get_input("NORMAL");
-			source *normals_source = get_source(normals_input_name.substr(1));
+			input *normals_input = 0;
+			try	{ normals_input = vertices_->get_input("NORMAL"); }
+			catch(...) { normals_input = triangles_->get_input("NORMAL"); }
 
-			source *texcoords_source = get_source(triangles_->get_input("TEXCOORD").substr(1));
+			source *normals_source = get_source(normals_input->get_source().substr(1));
+
+			input *texcoords_input = triangles_->get_input("TEXCOORD");
+			source *texcoords_source = get_source(texcoords_input->get_source().substr(1));
+
+			std::vector<size_t> const &indices = triangles_->get_indices();
+			std::vector<size_t>::const_iterator indices_get = indices.begin();
+
+			size_t stride = 1 + std::max(std::max(position_input->get_offset(), normals_input->get_offset()), texcoords_input->get_offset());
+
+			for (size_t i = 0; i < triangles_->get_count(); i++) {
+				size_t position_index;
+				memory_mesh::vertex v;
+
+				for (size_t j = 0; j < stride; j++) {
+					if (j == position_input->get_offset()) {
+						position_index = *indices_get;
+						position_source->get(*indices_get, v.position);
+					}
+
+					if (j == normals_input->get_offset()) {
+						normals_source->get(*indices_get, v.normal);
+					}
+
+					if (j == texcoords_input->get_offset()) {
+						texcoords_source->get(*indices_get, v.texcoords);
+					}
+				}
+
+				size_t vertex_index = vertex_indexer_.choose_index(v);
+				position_index_x_vertex_index_.insert(std::make_pair(position_index, vertex_index));
+
+				mesh.vertices.push_back(v);
+				mesh.indices.push_back(vertex_index);
+			}
 		}
 	};
 
