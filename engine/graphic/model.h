@@ -16,13 +16,25 @@ public:
 		std::string id, name;
 		joint *parent;
 		std::vector<joint *> childs;
-		math::matrix<4,4> pretransform, interpolated_transform, posttransform;
+		math::matrix<4,4> pretransform, interpolated_transform, posttransform, frame_transform;
 
 		joint():
 		parent(0) {
 			pretransform.identity();
 			interpolated_transform.identity();
 			posttransform.identity();
+		}
+
+		void build_frame_transforms() {
+			if (parent) frame_transform = parent->frame_transform;
+			else frame_transform.identity();
+
+			frame_transform *= pretransform;
+			frame_transform *= interpolated_transform;
+			frame_transform *= posttransform;
+
+			for (std::vector<joint *>::iterator it = childs.begin(); it != childs.end(); it++)
+				(*it)->build_frame_transforms();
 		}
 	};
 

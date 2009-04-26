@@ -30,10 +30,10 @@ memory_mesh *memory_model::get_mesh_by_name(std::string const &name, bool can_cr
 	}
 
 	if (can_create) {
-		memory_mesh mm(this);
-		mm.name = name;
-		meshes.push_back(mm);
-		return &meshes.back();
+		std::auto_ptr<memory_mesh> mesh_ptr(new memory_mesh(this));
+		mesh_ptr->name = name;
+		meshes.push_back(mesh_ptr.get());
+		return mesh_ptr.release();
 	}
 
 	throw std::runtime_error("mesh with name = " + name + " not found");
@@ -57,7 +57,7 @@ model::joint *memory_model::get_joint_by_name(std::string const &name)
 	throw std::runtime_error("joint with name = " + name + " not found in model");
 }
 
-void memory_model::draw_wireframe(renderer *renderer_ptr, math::scalar time) const
+void memory_model::draw_wireframe(renderer *renderer_ptr, math::scalar time)
 {
 	D3DMATERIAL9 material;
 
@@ -74,17 +74,9 @@ void memory_model::draw_wireframe(renderer *renderer_ptr, math::scalar time) con
 	renderer_ptr->get_device()->SetMaterial(&material);
 	renderer_ptr->get_device()->SetFVF(memory_mesh::VERTEX_FORMAT);
 
-	if (time > 0)
-	{
-		animation const *animation_ptr = &*animations.begin();
-
-		for (animation::samplers_type::const_iterator it = animation_ptr->samplers.begin();
-			it != animation_ptr->samplers.end(); it++)
-		{
-			if (it->get_joint()) {
-				it->get_joint()->interpolated_transform = it->get(time);
-			}
-		}
+	for (joints_type::iterator it = joints.begin(); it != joints.end(); it++) {
+		if (it->parent == 0)
+			it->build_frame_transforms();
 	}
 
 	for (meshes_type::const_iterator it = meshes.begin(); it != meshes.end(); it++) {

@@ -124,49 +124,53 @@ namespace collada_elements {
 				}
 			}
 
-			model::joint dummy;
-			dummy.id = id_;
-			dummy.name = sid_;
-			dummy.parent = parent;
-			dummy.pretransform = tf;
+			std::auto_ptr<model::joint> joint_ptr(new model::joint());
+			joint_ptr->id = id_;
+			joint_ptr->name = sid_;
+			joint_ptr->parent = parent;
 
 			std::vector<transform>::const_iterator transform_it = transforms_.begin();
 
 			while (transform_it != transforms_.end() && transform_it->sid.empty()) {
-				dummy.pretransform *= transform_it->matrix;
+				joint_ptr->pretransform *= transform_it->matrix;
 				transform_it++;
 			}
 
 			if (transform_it != transforms_.end()) {
-				dummy.interpolated_transform = transform_it->matrix;
+				joint_ptr->interpolated_transform = transform_it->matrix;
 				transform_it++;
 			} else {
-				dummy.interpolated_transform.identity();
+				joint_ptr->interpolated_transform.identity();
 			}
 
 			while(transform_it != transforms_.end()) {
-				dummy.posttransform *= transform_it->matrix;
+				joint_ptr->posttransform *= transform_it->matrix;
 				transform_it++;
 			}
 
-			math::matrix<4,4> all_transforms = dummy.pretransform * dummy.interpolated_transform * dummy.posttransform;
-
-			model_ptr->joints.push_back(dummy);
+			math::matrix<4,4> all_transforms = joint_ptr->pretransform * joint_ptr->interpolated_transform * joint_ptr->posttransform;
 
 			for (boost::ptr_vector<node>::iterator it = childs_.begin(); it != childs_.end(); it++) {
-				it->build_joint(model_ptr, all_transforms, &model_ptr->joints.back());
+				it->build_joint(model_ptr, all_transforms, joint_ptr.get());
 			}
+
+			model_ptr->joints.push_back(joint_ptr.get());
+			joint_ptr.release();
+
+			if (parent) parent->childs.push_back(&model_ptr->joints.back());
 		}
 
 		void build_mesh(memory_model *model_ptr, math::matrix<4,4> const &tf) {
-			memory_mesh dummy(model_ptr);
-			dummy.name = instance_geometry_.empty() ? name_ : instance_geometry_.substr(1);
-			dummy.transform = sum_all_transforms();
-			model_ptr->meshes.push_back(dummy);
+			std::auto_ptr<memory_mesh> mesh_ptr(new memory_mesh(model_ptr));
+			mesh_ptr->name = instance_geometry_.empty() ? name_ : instance_geometry_.substr(1);
+			mesh_ptr->transform = sum_all_transforms();
 
 			for (boost::ptr_vector<node>::iterator it = childs_.begin(); it != childs_.end(); it++) {
-				it->build_hierarchy(model_ptr, dummy.transform);
+				it->build_hierarchy(model_ptr, mesh_ptr->transform);
 			}
+
+			model_ptr->meshes.push_back(mesh_ptr.get());
+			mesh_ptr.release();
 		}
 
 	public:
@@ -832,9 +836,8 @@ namespace collada_elements {
 	public:
 		void build_animations(memory_model *model_ptr) {
 			for (boost::ptr_map<std::string, animation *>::iterator it = animations_.begin(); it != animations_.end(); it++) {
-				model::animation dummy = (*it->second)->build_animation(model_ptr);
-				dummy.name = it->first;
-				model_ptr->animations.push_back(dummy);
+				model_ptr->animations.push_back(new model::animation((*it->second)->build_animation(model_ptr)));
+				model_ptr->animations.back().name = it->first;
 			}
 		}
 	};

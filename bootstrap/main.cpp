@@ -25,11 +25,13 @@ INT WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpstrCmdLine, INT
 
 		//engine::graphic::collada_loader ci2("d:\\home\\z.dae");
 		//engine::graphic::collada_loader ci2("d:\\home\\cube.dae");
-		engine::graphic::collada_loader ci2("d:\\home\\r2.dae");
+		engine::graphic::collada_loader ci2("d:\\home\\cf_shooter_cast.dae");
 		ci2.load();
 
 		engine::graphic::camera cam;
 		math::scalar angle = 0;
+
+		engine::graphic::memory_model m = ci2.get_model();
 
 		while (true)
 		{
@@ -38,7 +40,7 @@ INT WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpstrCmdLine, INT
 			renderer.begin_frame();
 			cam.set_position(math::vec<3>(500 * cos(angle), 0, 500 * sin(angle)), math::vec<3>(0, 0, 0), math::vec<3>(0, 1, 0));
 			renderer.select(cam);
-			ci2.get_model().draw_wireframe(&renderer, math::periodic_clamp(angle / math::PI, 0.0f, 1.0f) * 2);
+			m.draw_wireframe(&renderer, 0 * math::periodic_clamp(angle / math::PI, 0.0f, 1.0f) * 2);
 			renderer.finish_frame();
 
 			angle += 0.01;
