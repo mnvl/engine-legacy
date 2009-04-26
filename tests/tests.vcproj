@@ -168,14 +168,6 @@
 	</References>
 	<Files>
 		<File
-			RelativePath=".\collada.cpp"
-			>
-		</File>
-		<File
-			RelativePath=".\collada_plane1.xml"
-			>
-		</File>
-		<File
 			RelativePath=".\collision.cpp"
 			>
 		</File>
@@ -185,6 +177,14 @@
 		</File>
 		<File
 			RelativePath=".\main.cpp"
+			>
+		</File>
+		<File
+			RelativePath=".\test_collada_loader.cpp"
+			>
+		</File>
+		<File
+			RelativePath=".\test_collada_loader_plane.xml"
 			>
 		</File>
 	</Files>

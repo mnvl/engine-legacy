@@ -9,7 +9,7 @@ class test_collada_loader: public CppUnit::TestFixture {
 
 	void test_plane_1()
 	{
-		engine::graphic::collada_loader cl("collada_plane1.xml");
+		engine::graphic::collada_loader cl("test_collada_loader_plane.xml");
 		cl.load();
 
 		engine::graphic::memory_model const *model_ptr = &cl.get_model();
