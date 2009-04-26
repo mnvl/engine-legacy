@@ -636,6 +636,8 @@ namespace collada_elements {
 	public:
 		void build_inverted_bind_matrices(memory_mesh *mesh_ptr)
 		{
+			mesh_ptr->transform = bind_shape_matrix_;
+
 			source const *joints_source = get_source(joints_->get_input("JOINT")->get_source().substr(1));
 			source const *inverted_bind_matrices_source = get_source(joints_->get_input("INV_BIND_MATRIX")->get_source().substr(1));
 
@@ -872,12 +874,9 @@ namespace collada_elements {
 		void build_model(memory_model *model_ptr) {
 			visual_scenes_->build_hierarchy(model_ptr);
 			geometries_->build_meshes(model_ptr);
-
-			if (controllers_ && animations_) {
-				controllers_->build_joint_influences(model_ptr);
-				geometries_->fix_position_indices(model_ptr);
-				animations_->build_animations(model_ptr);
-			}
+			if (controllers_) controllers_->build_joint_influences(model_ptr);
+			geometries_->fix_position_indices(model_ptr);
+			if (animations_) animations_->build_animations(model_ptr);
 		}
 	};
 }

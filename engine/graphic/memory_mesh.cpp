@@ -14,6 +14,30 @@ model_ptr_(model_ptr)
 memory_mesh::~memory_mesh() {
 }
 
+void memory_mesh::transform_vertices(std::vector<vertex> &result) const
+{
+	result = vertices;
+
+	for (size_t i = 0; i < vertices.size(); i++)
+	{
+		result[i].position = vertices[i].position * transform * model_ptr_->transform;
+	}
+
+	for (influences_type::const_iterator it = influences.begin(); it != influences.end(); it++)
+	{
+		for (joint_influence::vertex_weights_type::const_iterator jt = it->vertex_weights.begin(); jt != it->vertex_weights.end(); jt++)
+		{
+			result[jt->vertex_index].position +=
+				result[jt->vertex_index].position *
+				it->inverted_bind_matrix *
+				it->joint_ptr->pretransform *
+				it->joint_ptr->interpolated_transform *
+				it->joint_ptr->posttransform *
+				jt->weight;
+		}
+	}
+}
+
 model::joint_influence *memory_mesh::get_joint_influence_by_name(std::string const &name, bool can_create)
 {
 	model::joint *joint_ptr = model_ptr_->get_joint_by_name(name);
@@ -35,34 +59,7 @@ model::joint_influence *memory_mesh::get_joint_influence_by_name(std::string con
 void memory_mesh::draw_wireframe(renderer *renderer_ptr, math::scalar time) const
 {
 	std::vector<vertex> animated_vertices;
-	animated_vertices = vertices;
-
-	if (time > 0)
-	{
-		for (size_t i = 0; i < animated_vertices.size(); i++) {
-			animated_vertices[i].position.set(0, 0, 0);
-		}
-
-		for (influences_type::const_iterator it = influences.begin(); it != influences.end(); it++)
-		{
-			for (joint_influence::vertex_weights_type::const_iterator jt = it->vertex_weights.begin(); jt != it->vertex_weights.end(); jt++)
-			{
-				animated_vertices[jt->vertex_index].position += 
-					vertices[jt->vertex_index].position *
-					transform *
-					it->inverted_bind_matrix *
-					it->joint_ptr->interpolated_transform *
-					jt->weight;
-			}
-		}
-	}
-	else
-	{
-		for (size_t i = 0; i < animated_vertices.size(); i++) {
-			animated_vertices[i].position = vertices[i].position;
-		}
-
-	}
+	transform_vertices(animated_vertices);
 
 	size_t triangles_count = indices.size() / 3;
 

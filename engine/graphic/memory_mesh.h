@@ -44,6 +44,8 @@ public:
 	std::vector<index> indices;
 	influences_type influences;
 
+	void transform_vertices(std::vector<vertex> &result) const;
+
 	joint_influence *get_joint_influence_by_name(std::string const &name, bool can_create = false);
 	void draw_wireframe(renderer *renderer_ptr, math::scalar time = 0) const;
 };

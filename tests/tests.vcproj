@@ -184,6 +184,10 @@
 			>
 		</File>
 		<File
+			RelativePath=".\test_collada_loader_joints.xml"
+			>
+		</File>
+		<File
 			RelativePath=".\test_collada_loader_plane.xml"
 			>
 		</File>
