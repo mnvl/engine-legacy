@@ -423,13 +423,13 @@ namespace collada_elements {
 		vertex_x_index_type vertex_x_index_;
 
 	public:
-		size_t choose_index(memory_mesh::vertex const &v) {
+		std::pair<size_t, bool> choose_index(memory_mesh::vertex const &v) {
 			vertex_x_index_type::const_iterator it = vertex_x_index_.find(v);
-			if (it != vertex_x_index_.end()) return it->second;
+			if (it != vertex_x_index_.end()) return std::pair<size_t, bool>(it->second, false);
 
 			size_t index = vertex_x_index_.size();
 			vertex_x_index_.insert(std::make_pair(v, index));
-			return index;
+			return std::pair<size_t, bool>(index, true);
 		}
 	};
 
@@ -499,11 +499,11 @@ namespace collada_elements {
 					indices_get++;
 				}
 
-				size_t vertex_index = vertex_indexer_.choose_index(v);
-				position_index_x_vertex_index_.insert(std::make_pair(position_index, vertex_index));
+				std::pair<size_t, bool> vertex_index = vertex_indexer_.choose_index(v);
+				position_index_x_vertex_index_.insert(std::make_pair(position_index, vertex_index.first));
 
-				mesh.vertices.push_back(v);
-				mesh.indices.push_back(vertex_index);
+				if (vertex_index.second) mesh.vertices.push_back(v);
+				mesh.indices.push_back(vertex_index.first);
 			}
 		}
 

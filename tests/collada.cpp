@@ -24,14 +24,26 @@ class test_collada_loader: public CppUnit::TestFixture {
 		}
 
 		engine::graphic::memory_mesh const *mesh_ptr = &model_ptr->meshes.front();
-		CPPUNIT_ASSERT (mesh_ptr->vertices.size() == 6);
+		CPPUNIT_ASSERT (mesh_ptr->vertices.size() == 4);
 		CPPUNIT_ASSERT (mesh_ptr->indices.size() == 6);
 
 		{
 			math::matrix<4,4> tf;
 			tf.translation(math::vec<3>(1.0f, -0.5f, 3.0f));
-			CPPUNIT_ASSERT(mesh_ptr->transform == tf);
+			CPPUNIT_ASSERT (mesh_ptr->transform == tf);
 		}
+
+		CPPUNIT_ASSERT ((mesh_ptr->vertices[0].position - math::vec<3>(-0.5f, 0.0f,  0.5f)).length_sq() < math::EPSILON);
+		CPPUNIT_ASSERT ((mesh_ptr->vertices[1].position - math::vec<3>( 0.5f, 0.0f,  0.5f)).length_sq() < math::EPSILON);
+		CPPUNIT_ASSERT ((mesh_ptr->vertices[2].position - math::vec<3>(-0.5f, 0.0f, -0.5f)).length_sq() < math::EPSILON);
+		CPPUNIT_ASSERT ((mesh_ptr->vertices[3].position - math::vec<3>( 0.5f, 0.0f, -0.5f)).length_sq() < math::EPSILON);
+
+		CPPUNIT_ASSERT (mesh_ptr->indices[0] == 0);
+		CPPUNIT_ASSERT (mesh_ptr->indices[1] == 1);
+		CPPUNIT_ASSERT (mesh_ptr->indices[2] == 2);
+		CPPUNIT_ASSERT (mesh_ptr->indices[3] == 2);
+		CPPUNIT_ASSERT (mesh_ptr->indices[4] == 1);
+		CPPUNIT_ASSERT (mesh_ptr->indices[5] == 3);
 	}
 };
 
