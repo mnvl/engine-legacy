@@ -29,9 +29,9 @@ public:
 			if (parent) frame_transform = parent->frame_transform;
 			else frame_transform.identity();
 
-			frame_transform *= pretransform;
+			//frame_transform *= pretransform;
 			frame_transform *= interpolated_transform;
-			frame_transform *= posttransform;
+			//frame_transform *= posttransform;
 
 			for (std::vector<joint *>::iterator it = childs.begin(); it != childs.end(); it++)
 				(*it)->build_frame_transforms();

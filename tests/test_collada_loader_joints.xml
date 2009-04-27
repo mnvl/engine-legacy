@@ -13,7 +13,7 @@
           </technique_common>
         </source>
         <source id="pPlaneShape1-skin-bind_poses" name="pPlaneShape1-skin-bind_poses">
-          <float_array id="pPlaneShape1-skin-bind_poses-array" count="48">0.999705 0 0.0242755 1.04297 0 1 0 0 -0.0242755 0 0.999705 -0.0147777 0 0 0 1 0.999562 0 -0.0295949 0.0232272 0 1 0 0 0.0295949 0 0.999562 -0.0135466 0 0 0 1 1 0 0 -0.958154 0 1 0 0 0 0 1 0.0148164 0 0 0 1</float_array>
+          <float_array id="pPlaneShape1-skin-bind_poses-array" count="48">0.888839 0 -0.458219 0.996172 0 1 0 0 0.458219 0 0.888839 0.173528 0 0 0 1 0.935857 0 0.352379 0.0826578 0 1 0 0 -0.352379 0 0.935857 0.167362 0 0 0 1 1 0 0 -0.973242 0 1 0 0 0 0 1 -0.187623 0 0 0 1</float_array>
           <technique_common>
             <accessor source="#pPlaneShape1-skin-bind_poses-array" count="3" stride="16">
               <param name="TRANSFORM" type="float4x4"/>
@@ -21,7 +21,7 @@
           </technique_common>
         </source>
         <source id="pPlaneShape1-skin-weights" name="pPlaneShape1-skin-weights">
-          <float_array id="pPlaneShape1-skin-weights-array" count="19">1 0.951052 0.0451386 0.00380917 0.490062 0.490356 0.0195819 0.0211902 0.489405 0.489405 0.959345 0.0373063 0.00334871 0.484551 0.489883 0.0255661 0.0161083 0.491946 0.491946 </float_array>
+          <float_array id="pPlaneShape1-skin-weights-array" count="19">1 0.999107 0.000790946 0.000102076 0.492908 0.441247 0.065845 0.00212168 0.498939 0.498939 0.790367 0.197919 0.0117148 0.498786 0.498786 0.00242867 0.072195 0.512437 0.415368 </float_array>
           <technique_common>
             <accessor source="#pPlaneShape1-skin-weights-array" count="19" stride="1">
               <param name="WEIGHT" type="float"/>
@@ -91,7 +91,7 @@
     </geometry>
   </library_geometries>
   <library_visual_scenes>
-    <visual_scene id="VisualSceneNode" name="s">
+    <visual_scene id="VisualSceneNode" name="zxc">
       <node id="pPlane1" name="pPlane1" type="NODE">
         <matrix sid="transform">2 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1</matrix>
         <instance_controller url="#pPlaneShape1-skin">
@@ -104,54 +104,31 @@
         </instance_controller>
       </node>
       <node id="joint1" name="joint1" sid="joint1" type="JOINT">
-        <matrix sid="transform">1 0 0 -1 0 1 0 0 0 0 1 0 0 0 0 1</matrix>
+        <matrix sid="transform">0.888839 0 0.458219 -0.964951 0 1 0 0 -0.458219 0 0.888839 0.302226 0 0 0 1</matrix>
         <node id="joint2" name="joint2" sid="joint2" type="JOINT">
-          <matrix sid="transform">1 0 0 1 0 1 0 1 0 0 1 0 0 0 0 1</matrix>
+          <matrix sid="transform">0.67036 0 -0.742036 1.91611 0 1 0 0.286104 0.742036 0 0.67036 0.438796 0 0 0 1</matrix>
           <node id="joint3" name="joint3" sid="joint3" type="JOINT">
-            <matrix sid="transform">1 0 0 1 0 1 0 1 0 0 1 0 0 0 0 1</matrix>
+            <matrix sid="transform">0.935857 0 0.352379 1.05959 0 1 0 1.2767 -0.352379 0 0.935857 0 0 0 0 1</matrix>
+            <extra>
+              <technique profile="MAYA">
+                <segment_scale_compensate>1</segment_scale_compensate>
+              </technique>
+            </extra>
           </node>
+          <extra>
+            <technique profile="MAYA">
+              <segment_scale_compensate>1</segment_scale_compensate>
+            </technique>
+          </extra>
         </node>
+        <extra>
+          <technique profile="MAYA">
+            <segment_scale_compensate>1</segment_scale_compensate>
+          </technique>
+        </extra>
       </node>
     </visual_scene>
   </library_visual_scenes>
-  <library_animations>
-    <animation id="joint3.visibility_joint3">
-      <source id="joint3.visibility_joint3_joint3.visibility_joint3-input" name="joint3.visibility_joint3_joint3.visibility_joint3-input">
-        <float_array id="joint3.visibility_joint3_joint3.visibility_joint3-input-array" count="2">0.0416667 1 </float_array>
-        <technique_common>
-          <accessor source="#joint3.visibility_joint3_joint3.visibility_joint3-input-array" count="2" stride="1">
-            <param name="TIME" type="float"/>
-          </accessor>
-        </technique_common>
-        <technique profile="MAYA">
-          <pre_infinity>CONSTANT</pre_infinity>
-          <post_infinity>CONSTANT</post_infinity>
-        </technique>
-      </source>
-      <source id="joint3.visibility_joint3_joint3.visibility_joint3-output" name="joint3.visibility_joint3_joint3.visibility_joint3-output">
-        <float_array id="joint3.visibility_joint3_joint3.visibility_joint3-output-array" count="2">1 1 </float_array>
-        <technique_common>
-          <accessor source="#joint3.visibility_joint3_joint3.visibility_joint3-output-array" count="2" stride="1">
-            <param type="float"/>
-          </accessor>
-        </technique_common>
-      </source>
-      <source id="joint3.visibility_joint3_joint3.visibility_joint3-interpolation" name="joint3.visibility_joint3_joint3.visibility_joint3-interpolation">
-        <Name_array id="joint3.visibility_joint3_joint3.visibility_joint3-interpolation-array" count="2">STEP STEP </Name_array>
-        <technique_common>
-          <accessor source="#joint3.visibility_joint3_joint3.visibility_joint3-interpolation-array" count="2" stride="1">
-            <param name="INTERPOLATION" type="name"/>
-          </accessor>
-        </technique_common>
-      </source>
-      <sampler id="joint3.visibility_joint3_joint3.visibility_joint3-sampler">
-        <input semantic="INPUT" source="#joint3.visibility_joint3_joint3.visibility_joint3-input"/>
-        <input semantic="OUTPUT" source="#joint3.visibility_joint3_joint3.visibility_joint3-output"/>
-        <input semantic="INTERPOLATION" source="#joint3.visibility_joint3_joint3.visibility_joint3-interpolation"/>
-      </sampler>
-      <channel source="#joint3.visibility_joint3_joint3.visibility_joint3-sampler" target="joint3/visibility"/>
-    </animation>
-  </library_animations>
   <scene>
     <instance_visual_scene url="#VisualSceneNode"/>
   </scene>

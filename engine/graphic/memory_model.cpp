@@ -75,8 +75,9 @@ void memory_model::draw_wireframe(renderer *renderer_ptr, math::scalar time)
 	renderer_ptr->get_device()->SetFVF(memory_mesh::VERTEX_FORMAT);
 
 	for (joints_type::iterator it = joints.begin(); it != joints.end(); it++) {
-		if (it->parent == 0)
+		if (it->parent == 0) {
 			it->build_frame_transforms();
+		}
 	}
 
 	for (meshes_type::const_iterator it = meshes.begin(); it != meshes.end(); it++) {

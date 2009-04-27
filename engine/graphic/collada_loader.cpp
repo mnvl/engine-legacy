@@ -21,6 +21,8 @@ namespace collada_elements {
 	using namespace engine::util;
 	using namespace engine::graphic;
 
+	typedef model::joint_influence::vertex_weight vertex_weight;
+
 	class element {
 	public:
 		void go(xercesc::DOMElement const *element_ptr) {
@@ -124,10 +126,12 @@ namespace collada_elements {
 				}
 			}
 
-			std::auto_ptr<model::joint> joint_ptr(new model::joint());
+			model_ptr->joints.push_back(new model::joint());
+			model::joint *joint_ptr = &model_ptr->joints.back();
 			joint_ptr->id = id_;
 			joint_ptr->name = sid_;
 			joint_ptr->parent = parent;
+			if (parent) parent->childs.push_back(joint_ptr);
 
 			std::vector<transform>::const_iterator transform_it = transforms_.begin();
 
@@ -151,26 +155,19 @@ namespace collada_elements {
 			math::matrix<4,4> all_transforms = joint_ptr->pretransform * joint_ptr->interpolated_transform * joint_ptr->posttransform;
 
 			for (boost::ptr_vector<node>::iterator it = childs_.begin(); it != childs_.end(); it++) {
-				it->build_joint(model_ptr, all_transforms, joint_ptr.get());
+				it->build_joint(model_ptr, all_transforms, joint_ptr);
 			}
-
-			model_ptr->joints.push_back(joint_ptr.get());
-			joint_ptr.release();
-
-			if (parent) parent->childs.push_back(&model_ptr->joints.back());
 		}
 
 		void build_mesh(memory_model *model_ptr, math::matrix<4,4> const &tf) {
-			std::auto_ptr<memory_mesh> mesh_ptr(new memory_mesh(model_ptr));
+			model_ptr->meshes.push_back(new memory_mesh(model_ptr));
+			memory_mesh *mesh_ptr = &model_ptr->meshes.back();
 			mesh_ptr->name = instance_geometry_.empty() ? name_ : instance_geometry_.substr(1);
 			mesh_ptr->transform = sum_all_transforms();
 
 			for (boost::ptr_vector<node>::iterator it = childs_.begin(); it != childs_.end(); it++) {
 				it->build_hierarchy(model_ptr, mesh_ptr->transform);
 			}
-
-			model_ptr->meshes.push_back(mesh_ptr.get());
-			mesh_ptr.release();
 		}
 
 	public:
@@ -504,26 +501,27 @@ namespace collada_elements {
 				}
 
 				std::pair<size_t, bool> vertex_index = vertex_indexer_.choose_index(v);
-				position_index_x_vertex_index_.insert(std::make_pair(position_index, vertex_index.first));
 
-				if (vertex_index.second) mesh.vertices.push_back(v);
+				if (vertex_index.second) {
+					position_index_x_vertex_index_.insert(std::make_pair(position_index, vertex_index.first));
+					mesh.vertices.push_back(v);
+				}
+
 				mesh.indices.push_back(vertex_index.first);
 			}
 		}
 
 		void fix_position_indices(memory_mesh &mesh) {
-			for (memory_mesh::influences_type::iterator it = mesh.influences.begin(); it != mesh.influences.end(); it++) {
-				std::vector<model::joint_influence::vertex_weight> weights;
-				weights.swap(it->vertex_weights);
+			for (memory_mesh::influences_type::iterator mesh_it = mesh.influences.begin(); mesh_it != mesh.influences.end(); mesh_it++) {
+				std::vector<vertex_weight> weights;
+				weights.swap(mesh_it->vertex_weights);
 
-				for (size_t i = 0; i < weights.size(); i++) {
-					model::joint_influence::vertex_weight const &vw = weights[i];
-
-					position_index_x_vertex_index_type::const_iterator jt = position_index_x_vertex_index_.lower_bound(std::make_pair(i, 0));
-					while (jt != position_index_x_vertex_index_.end() && jt->first == vw.vertex_index) {
-						model::joint_influence::vertex_weight dummy = vw;
+				for (std::vector<vertex_weight>::const_iterator it = weights.begin(); it != weights.end(); it++) {
+					position_index_x_vertex_index_type::const_iterator jt = position_index_x_vertex_index_.lower_bound(std::make_pair(it->vertex_index, 0));
+					while (jt != position_index_x_vertex_index_.end() && jt->first == it->vertex_index) {
+						model::joint_influence::vertex_weight dummy = *it;
 						dummy.vertex_index = jt->second;
-						it->vertex_weights.push_back(dummy);
+						mesh_it->vertex_weights.push_back(dummy);
 						jt++;
 					}
 				}
@@ -675,9 +673,11 @@ namespace collada_elements {
 			typedef std::map<size_t, std::vector<model::joint_influence::vertex_weight> > weights_type;
 			weights_type weights;
 
+			size_t position_index = 0;
+
 			for (std::vector<size_t>::const_iterator it = vcount.begin(); it != vcount.end(); it++)
 			{
-				for (size_t position_index = 0; position_index < *it; position_index++)
+				for (size_t i = 0; i < *it; i++)
 				{
 					size_t joint_index;
 					float weight;
@@ -700,6 +700,8 @@ namespace collada_elements {
 					dummy.weight = weight;
 					weights[joint_index].push_back(dummy);
 				}
+
+				position_index++;
 			}
 
 			for (weights_type::iterator it = weights.begin(); it != weights.end(); it++) {
