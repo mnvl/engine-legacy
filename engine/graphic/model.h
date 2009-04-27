@@ -13,25 +13,33 @@ namespace graphic {
 class model {
 public:
 	struct joint {
+		struct transform {
+			std::string sid;
+			math::matrix<4,4> matrix;
+		};
+
 		std::string id, name;
 		joint *parent;
 		std::vector<joint *> childs;
-		math::matrix<4,4> pretransform, interpolated_transform, posttransform, frame_transform;
+		std::vector<transform> transforms;
+		math::matrix<4,4> frame_transform;
 
 		joint():
 		parent(0) {
-			pretransform.identity();
-			interpolated_transform.identity();
-			posttransform.identity();
+		}
+
+		math::matrix<4,4> &get_transform_by_sid(std::string const &sid) {
+			for (std::vector<transform>::iterator it = transforms.begin(); it != transforms.end(); it++)
+				if (it->sid == sid) return it->matrix;
+			throw std::logic_error("transform sid = " + sid + " not found");
 		}
 
 		void build_frame_transforms() {
 			if (parent) frame_transform = parent->frame_transform;
 			else frame_transform.identity();
 
-			frame_transform *= pretransform;
-			frame_transform *= interpolated_transform;
-			frame_transform *= posttransform;
+			for (std::vector<transform>::iterator it = transforms.begin(); it != transforms.end(); it++)
+				frame_transform *= it->matrix;
 
 			for (std::vector<joint *>::iterator it = childs.begin(); it != childs.end(); it++)
 				(*it)->build_frame_transforms();
@@ -73,6 +81,7 @@ public:
 
 		typedef std::vector<sample> samples_type;
 
+		std::string sid_;
 		joint *joint_ptr_;
 		samples_type samples_;
 
@@ -82,11 +91,14 @@ public:
 		{
 		}
 
-		void set_joint(joint *j) { joint_ptr_ = j; }
-		joint *get_joint() const { return joint_ptr_; }
+		void set_target(joint *joint_ptr, std::string const &sid) { joint_ptr_ = joint_ptr; sid_ = sid; }
 
 		void add_sample(math::scalar time, math::matrix<4,4> const &m);
 		math::matrix<4,4> get(math::scalar time) const;
+
+		void set_target_matrix(math::scalar t) const {
+			joint_ptr_->get_transform_by_sid(sid_) = get(t);
+		}
 	};
 
 	struct animation {
@@ -94,6 +106,12 @@ public:
 
 		std::string name;
 		samplers_type samplers;
+
+		void set_time(math::scalar t) {
+			for (samplers_type::iterator it = samplers.begin(); it != samplers.end(); it++) {
+				it->set_target_matrix(t);
+			}
+		}
 	};
 };
 

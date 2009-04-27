@@ -6,7 +6,9 @@
 #include <memory>
 #include <boost/ptr_container/ptr_map.hpp>
 #include <boost/ptr_container/ptr_vector.hpp>
+#include <boost/algorithm/string/split.hpp>
 #include <boost/scoped_ptr.hpp>
+#include <boost/lambda/lambda.hpp>
 #include <xercesc/parsers/XercesDOMParser.hpp>
 #include <xercesc/sax/HandlerBase.hpp>
 #include <math/matrix.h>
@@ -73,10 +75,7 @@ namespace collada_elements {
 
 	class node: public element {
 	protected:
-		struct transform {
-			std::string sid;
-			math::matrix<4,4> matrix;
-		};
+		typedef model::joint::transform transform;
 
 		std::string id_, sid_, name_, type_, instance_geometry_;
 		node *parent_;
@@ -94,6 +93,33 @@ namespace collada_elements {
 				transform tf;
 				tf.sid = xerces_get_attribute<std::string>(child, "sid");
 				parse_matrix(child, tf.matrix);
+				transforms_.push_back(tf);
+			}
+			else if (child_name == "translate")
+			{
+				transform tf;
+				tf.sid = xerces_get_attribute<std::string>(child, "sid");
+				math::vec<3> v;
+				parse_list(child, v.i, 3);
+				tf.matrix.translation(v);
+				transforms_.push_back(tf);
+			}
+			else if (child_name == "rotate")
+			{
+				transform tf;
+				tf.sid = xerces_get_attribute<std::string>(child, "sid");
+				math::vec<3> v;
+				parse_list(child, v.i, 3);
+				tf.matrix.rotation(v);
+				transforms_.push_back(tf);
+			}
+			else if (child_name == "scale")
+			{
+				transform tf;
+				tf.sid = xerces_get_attribute<std::string>(child, "sid");
+				math::vec<3> v;
+				parse_list(child, v.i, 3);
+				tf.matrix.scaling(v);
 				transforms_.push_back(tf);
 			}
 			else if (child_name == "instance_geometry")
@@ -131,28 +157,11 @@ namespace collada_elements {
 			joint_ptr->id = id_;
 			joint_ptr->name = sid_;
 			joint_ptr->parent = parent;
+			joint_ptr->transforms = transforms_;
+
 			if (parent) parent->childs.push_back(joint_ptr);
 
-			std::vector<transform>::const_iterator transform_it = transforms_.begin();
-
-			while (transform_it != transforms_.end() && transform_it->sid.empty()) {
-				joint_ptr->pretransform *= transform_it->matrix;
-				transform_it++;
-			}
-
-			if (transform_it != transforms_.end()) {
-				joint_ptr->interpolated_transform = transform_it->matrix;
-				transform_it++;
-			} else {
-				joint_ptr->interpolated_transform.identity();
-			}
-
-			while(transform_it != transforms_.end()) {
-				joint_ptr->posttransform *= transform_it->matrix;
-				transform_it++;
-			}
-
-			math::matrix<4,4> all_transforms = joint_ptr->pretransform * joint_ptr->interpolated_transform * joint_ptr->posttransform;
+			math::matrix<4,4> all_transforms = sum_all_transforms();
 
 			for (boost::ptr_vector<node>::iterator it = childs_.begin(); it != childs_.end(); it++) {
 				it->build_joint(model_ptr, all_transforms, joint_ptr);
@@ -183,12 +192,6 @@ namespace collada_elements {
 				transform tf;
 				tf.matrix.identity();
 				transforms_.push_back(tf);
-			}
-
-			size_t with_sid = 0;
-			for (std::vector<transform>::const_iterator it = transforms_.begin(); it != transforms_.end(); it++) {
-				with_sid += !it->sid.empty();
-				if (with_sid > 1) throw std::runtime_error("more than one matrices with sid");
 			}
 		}
 
@@ -368,10 +371,19 @@ namespace collada_elements {
 		}
 
 		void get(size_t index, math::matrix<4, 4> &tf) const {
-			size_t array_index = index * technique_->get_stride();
-			for (size_t i = 0; i < 4; i++) {
-				for (size_t j = 0; j < 4; j++) {
-					tf.ij[j][i] = float_array_.at(array_index++);
+			if (technique_->get_stride() == 3)
+			{
+				math::vec<3> v;
+				get(index, v);
+				tf.translation(v);
+			}
+			else
+			{
+				for (size_t i = 0; i < 4; i++) {
+					for (size_t j = 0; j < 4; j++) {
+						size_t array_index = index * technique_->get_stride();
+						tf.ij[j][i] = float_array_.at(array_index++);
+					}
 				}
 			}
 		}
@@ -810,15 +822,16 @@ namespace collada_elements {
 					dummy.add_sample(t, m);
 				}
 
-				try
 				{
-					dummy.set_joint(model_ptr->get_joint_by_id(it->target_url.substr(0, it->target_url.find('/'))));
-					result.samplers.push_back(dummy);
-				}
-				catch(...)
-				{
+					using namespace boost::lambda;
+					std::vector<std::string> parsed_target_components;
+					boost::split(parsed_target_components, it->target_url, _1 == '/', boost::algorithm::token_compress_on);
+					if (parsed_target_components.size() != 2) throw std::runtime_error("invalid url " + it->target_url);
 
+					dummy.set_target(model_ptr->get_joint_by_id(parsed_target_components[0]), parsed_target_components[1]);
 				}
+
+				result.samplers.push_back(dummy);
 			}
 
 			return result;

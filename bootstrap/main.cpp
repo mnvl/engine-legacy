@@ -25,7 +25,7 @@ INT WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpstrCmdLine, INT
 
 		//engine::graphic::collada_loader ci2("d:\\home\\z.dae");
 		//engine::graphic::collada_loader ci2("d:\\home\\cube.dae");
-		engine::graphic::collada_loader ci2("e:\\home\\r2.dae");
+		engine::graphic::collada_loader ci2("d:\\home\\zzzzz.xml");
 		ci2.load();
 
 		engine::graphic::camera cam;

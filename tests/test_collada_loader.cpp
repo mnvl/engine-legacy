@@ -52,10 +52,10 @@ class test_collada_loader: public CppUnit::TestFixture {
 		engine::graphic::collada_loader cl("test_collada_loader_joints.xml");
 		cl.load();
 
-		engine::graphic::memory_model const *model_ptr = &cl.get_model();
+		engine::graphic::memory_model *model_ptr = const_cast<engine::graphic::memory_model *>(&cl.get_model());
 		CPPUNIT_ASSERT (model_ptr->meshes.size() == 1);
 		CPPUNIT_ASSERT (model_ptr->joints.size() == 3);
-		CPPUNIT_ASSERT (model_ptr->animations.size() == 0);
+		CPPUNIT_ASSERT (model_ptr->animations.size() == 1);
 
 		CPPUNIT_ASSERT (model_ptr->joints[0].parent == 0);
 		CPPUNIT_ASSERT (model_ptr->joints[1].parent == &model_ptr->joints[0]);
@@ -69,7 +69,9 @@ class test_collada_loader: public CppUnit::TestFixture {
 
 		CPPUNIT_ASSERT (model_ptr->joints[2].childs.size() == 0);
 
-		engine::graphic::memory_mesh const *mesh_ptr = &model_ptr->meshes.front();
+		engine::graphic::memory_mesh *mesh_ptr = &model_ptr->meshes.front();
+
+		model_ptr->set_time(0.05);
 
 		std::vector<engine::graphic::memory_mesh::vertex> vertices;
 		mesh_ptr->transform_vertices(vertices);
