@@ -17,6 +17,7 @@ memory_mesh::~memory_mesh() {
 void memory_mesh::transform_vertices(std::vector<vertex> &result) const {
 	result = vertices;
 
+	/*
 	for (size_t i = 0; i < vertices.size(); i++)
 	{
 		result[i].position = 
@@ -24,6 +25,7 @@ void memory_mesh::transform_vertices(std::vector<vertex> &result) const {
 			transform *
 			model_ptr_->transform;
 	}
+	*/
 
 	for (influences_type::const_iterator it = influences.begin(); it != influences.end(); it++)
 	{
@@ -31,6 +33,7 @@ void memory_mesh::transform_vertices(std::vector<vertex> &result) const {
 		{
 			result[jt->vertex_index].position +=
 				vertices[jt->vertex_index].position *
+				model_ptr_->transform *
 				it->inverted_bind_matrix *
 				it->joint_ptr->frame_transform *
 				jt->weight;

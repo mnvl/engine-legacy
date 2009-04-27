@@ -35,11 +35,12 @@ public:
 		}
 
 		void build_frame_transforms() {
-			if (parent) frame_transform = parent->frame_transform;
-			else frame_transform.identity();
+			frame_transform.identity();
 
-			for (std::vector<transform>::iterator it = transforms.begin(); it != transforms.end(); it++)
+			for (std::vector<transform>::reverse_iterator it = transforms.rbegin(); it != transforms.rend(); it++)
 				frame_transform *= it->matrix;
+
+			if (parent) frame_transform *= parent->frame_transform;
 
 			for (std::vector<joint *>::iterator it = childs.begin(); it != childs.end(); it++)
 				(*it)->build_frame_transforms();
@@ -97,7 +98,7 @@ public:
 		math::matrix<4,4> get(math::scalar time) const;
 
 		void set_target_matrix(math::scalar t) const {
-			joint_ptr_->get_transform_by_sid(sid_) = get(t);
+			if (joint_ptr_)	joint_ptr_->get_transform_by_sid(sid_) = get(t);
 		}
 	};
 

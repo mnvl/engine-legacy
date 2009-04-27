@@ -705,6 +705,8 @@ namespace collada_elements {
 						{
 							weights_source->get(*v_get, weight);
 						}
+
+						v_get++;
 					}
 
 					model::joint_influence::vertex_weight dummy;
@@ -828,7 +830,13 @@ namespace collada_elements {
 					boost::split(parsed_target_components, it->target_url, _1 == '/', boost::algorithm::token_compress_on);
 					if (parsed_target_components.size() != 2) throw std::runtime_error("invalid url " + it->target_url);
 
-					dummy.set_target(model_ptr->get_joint_by_id(parsed_target_components[0]), parsed_target_components[1]);
+					try
+					{
+						dummy.set_target(model_ptr->get_joint_by_id(parsed_target_components[0]), parsed_target_components[1]);
+					}
+					catch(...)
+					{
+					}
 				}
 
 				result.samplers.push_back(dummy);
