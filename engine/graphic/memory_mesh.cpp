@@ -29,8 +29,8 @@ void memory_mesh::transform_vertices(std::vector<vertex> &result) const
 		{
 			result[jt->vertex_index].position +=
 				vertices[jt->vertex_index].position *
-				//transform *
-				//model_ptr_->transform *
+				transform *
+				model_ptr_->transform *
 				it->inverted_bind_matrix *
 				it->joint_ptr->frame_transform *
 				jt->weight;

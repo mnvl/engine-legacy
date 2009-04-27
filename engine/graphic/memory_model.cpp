@@ -74,6 +74,12 @@ void memory_model::draw_wireframe(renderer *renderer_ptr, math::scalar time)
 	renderer_ptr->get_device()->SetMaterial(&material);
 	renderer_ptr->get_device()->SetFVF(memory_mesh::VERTEX_FORMAT);
 
+	animation &a = animations.front();
+
+	for (size_t i = 0; i < a.samplers.size(); i++) {
+		a.samplers[i].get_joint()->interpolated_transform = a.samplers[i].get(time);
+	}
+
 	for (joints_type::iterator it = joints.begin(); it != joints.end(); it++) {
 		if (it->parent == 0) {
 			it->build_frame_transforms();

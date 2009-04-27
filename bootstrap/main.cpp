@@ -25,13 +25,13 @@ INT WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpstrCmdLine, INT
 
 		//engine::graphic::collada_loader ci2("d:\\home\\z.dae");
 		//engine::graphic::collada_loader ci2("d:\\home\\cube.dae");
-		engine::graphic::collada_loader ci2("e:\\home\\bublik2.dae");
+		engine::graphic::collada_loader ci2("e:\\home\\r2.dae");
 		ci2.load();
 
 		engine::graphic::camera cam;
 		math::scalar angle = 0;
 
-		engine::graphic::memory_model m = ci2.get_model();
+		engine::graphic::memory_model &m = const_cast<engine::graphic::memory_model &>(ci2.get_model());
 
 		while (true)
 		{
