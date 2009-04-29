@@ -128,30 +128,7 @@ namespace collada_elements {
 			}
 		}
 
-		math::matrix<4,4> sum_all_transforms() const {
-			math::matrix<4,4> tf;
-			tf.identity();
-
-			if (transforms_.empty()) {
-				return tf;
-			}
-
-			for (std::vector<transform>::const_iterator it = transforms_.begin(); it != transforms_.end(); it++) {
-				tf *= it->matrix;
-			}
-
-			return tf;
-		}
-
-		void build_joint(memory_model *model_ptr, math::matrix<4,4> const &tf, model::joint *parent = 0) {
-			if (type_.empty()) {
-				math::matrix<4,4> all_transforms = tf * sum_all_transforms();
-
-				for (boost::ptr_vector<node>::iterator it = childs_.begin(); it != childs_.end(); it++) {
-					it->build_joint(model_ptr, all_transforms, parent);
-				}
-			}
-
+		void build_joint(memory_model *model_ptr, model::joint *parent = 0) {
 			model_ptr->joints.push_back(new model::joint());
 			model::joint *joint_ptr = &model_ptr->joints.back();
 			joint_ptr->id = id_;
@@ -161,21 +138,27 @@ namespace collada_elements {
 
 			if (parent) parent->childs.push_back(joint_ptr);
 
-			math::matrix<4,4> all_transforms = sum_all_transforms();
-
 			for (boost::ptr_vector<node>::iterator it = childs_.begin(); it != childs_.end(); it++) {
-				it->build_joint(model_ptr, all_transforms, joint_ptr);
+				it->build_joint(model_ptr, joint_ptr);
 			}
 		}
 
-		void build_mesh(memory_model *model_ptr, math::matrix<4,4> const &tf) {
+		math::matrix<4,4> sum_all_transforms() const {
+			math::matrix<4,4> result;
+			result.identity();
+			for (std::vector<transform>::const_reverse_iterator it = transforms_.rbegin(); it != transforms_.rend(); it++)
+				result *= it->matrix;
+			return result;
+		}
+
+		void build_mesh(memory_model *model_ptr) {
 			model_ptr->meshes.push_back(new memory_mesh(model_ptr));
 			memory_mesh *mesh_ptr = &model_ptr->meshes.back();
 			mesh_ptr->name = instance_geometry_.empty() ? name_ : instance_geometry_.substr(1);
 			mesh_ptr->transform = sum_all_transforms();
 
 			for (boost::ptr_vector<node>::iterator it = childs_.begin(); it != childs_.end(); it++) {
-				it->build_hierarchy(model_ptr, mesh_ptr->transform);
+				it->build_hierarchy(model_ptr);
 			}
 		}
 
@@ -195,10 +178,10 @@ namespace collada_elements {
 			}
 		}
 
-		void build_hierarchy(memory_model *model_ptr, math::matrix<4,4> const &tf) {
+		void build_hierarchy(memory_model *model_ptr) {
 			// we are expecting only joints and meshes
-			if (type_ == "JOINT") build_joint(model_ptr, tf, 0);
-			else build_mesh(model_ptr, tf);
+			if (type_ == "JOINT") build_joint(model_ptr, 0);
+			else build_mesh(model_ptr);
 		}
 	};
 
@@ -208,10 +191,10 @@ namespace collada_elements {
 		}
 
 		void build_hierarchy(memory_model *model_ptr) {
-			for (boost::ptr_vector<node>::iterator it = childs_.begin(); it != childs_.end(); it++) 
-			{
-				model_ptr->transform = sum_all_transforms();
-				it->build_hierarchy(model_ptr, model_ptr->transform);
+			model_ptr->transform = sum_all_transforms();
+
+			for (boost::ptr_vector<node>::iterator it = childs_.begin(); it != childs_.end(); it++) {
+				it->build_hierarchy(model_ptr);
 			}
 		}
 	};
@@ -830,13 +813,7 @@ namespace collada_elements {
 					boost::split(parsed_target_components, it->target_url, _1 == '/', boost::algorithm::token_compress_on);
 					if (parsed_target_components.size() != 2) throw std::runtime_error("invalid url " + it->target_url);
 
-					try
-					{
-						dummy.set_target(model_ptr->get_joint_by_id(parsed_target_components[0]), parsed_target_components[1]);
-					}
-					catch(...)
-					{
-					}
+					dummy.set_target(model_ptr->get_joint_by_id(parsed_target_components[0]), parsed_target_components[1]);
 				}
 
 				result.samplers.push_back(dummy);
