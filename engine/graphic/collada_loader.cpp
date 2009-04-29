@@ -110,7 +110,7 @@ namespace collada_elements {
 				tf.sid = xerces_get_attribute<std::string>(child, "sid");
 				float v[4];
 				parse_list(child, v, 4);
-				tf.matrix.rotation(math::vec<3>(v[0], v[1], v[2]), v[3]);
+				tf.matrix.rotation(math::vec<3>(v[0], v[1], v[2]), v[3] * math::PI / 180.0f);
 				transforms_.push_back(tf);
 			}
 			else if (child_name == "scale")

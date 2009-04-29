@@ -23,7 +23,7 @@ INT WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpstrCmdLine, INT
 		engine::system::window main_window("engine");
 		engine::graphic::renderer renderer(&main_window);
 
-		engine::graphic::collada_loader ci2("e:\\home\\r2.dae");
+		engine::graphic::collada_loader ci2("d:\\home\\ñf_shooter_cast.dae");
 		//engine::graphic::collada_loader ci2("e:\\home\\zxc.dae");
 		//engine::graphic::collada_loader ci2("e:\\home\\zzz.dae");
 		ci2.load();
