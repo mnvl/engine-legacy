@@ -5,7 +5,7 @@
 class test_collada_loader: public CppUnit::TestFixture {
 	CPPUNIT_TEST_SUITE(test_collada_loader);
 	CPPUNIT_TEST(test_plane);
-	CPPUNIT_TEST(test_joints);
+	CPPUNIT_TEST(test_animation);
 	CPPUNIT_TEST_SUITE_END();
 
 	void test_plane()
@@ -47,9 +47,9 @@ class test_collada_loader: public CppUnit::TestFixture {
 		CPPUNIT_ASSERT (mesh_ptr->indices[5] == 3);
 	}
 
-	void test_joints()
+	void test_animation()
 	{
-		engine::graphic::collada_loader cl("test_collada_loader_joints.xml");
+		engine::graphic::collada_loader cl("test_collada_loader_animations.xml");
 		cl.load();
 
 		engine::graphic::memory_model *model_ptr = const_cast<engine::graphic::memory_model *>(&cl.get_model());
@@ -71,12 +71,19 @@ class test_collada_loader: public CppUnit::TestFixture {
 
 		engine::graphic::memory_mesh *mesh_ptr = &model_ptr->meshes.front();
 
-		model_ptr->set_time(0.05f);
+		model_ptr->set_time(0);
+		std::vector<engine::graphic::memory_mesh::vertex> vertices1;
+		mesh_ptr->transform_vertices(vertices1);
 
-		std::vector<engine::graphic::memory_mesh::vertex> vertices;
-		mesh_ptr->transform_vertices(vertices);
+		model_ptr->set_time(1);
+		std::vector<engine::graphic::memory_mesh::vertex> vertices2;
+		mesh_ptr->transform_vertices(vertices2);
 
-		CPPUNIT_ASSERT(vertices.size() == 6);
+		CPPUNIT_ASSERT((vertices1[0].position - math::vec<3>(-1.0f, 0.8f, 1.0f)).length_sq() < 0.1f);
+		CPPUNIT_ASSERT((vertices2[0].position - math::vec<3>(-1.0f, 0.8f, 1.0f)).length_sq() < 0.1f);
+
+		CPPUNIT_ASSERT((vertices1[3].position - math::vec<3>(1.0f, 1.6f, -1.0f)).length_sq() < 0.1f);
+		CPPUNIT_ASSERT((vertices2[3].position - math::vec<3>(2.0f, 0.0f, -0.3f)).length_sq() < 0.1f);
 	}
 };
 

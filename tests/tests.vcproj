@@ -184,7 +184,7 @@
 			>
 		</File>
 		<File
-			RelativePath=".\test_collada_loader_joints.xml"
+			RelativePath=".\test_collada_loader_animation.xml"
 			>
 		</File>
 		<File

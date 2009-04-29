@@ -24,7 +24,7 @@ INT WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpstrCmdLine, INT
 		engine::graphic::renderer renderer(&main_window);
 
 		//engine::graphic::collada_loader ci2("d:\\home\\bublik.dae");
-		engine::graphic::collada_loader ci2("e:\\home\\r2.dae");
+		engine::graphic::collada_loader ci2("e:\\home\\zxc.dae");
 		//engine::graphic::collada_loader ci2("e:\\home\\zzz.dae");
 		ci2.load();
 
