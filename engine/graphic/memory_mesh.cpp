@@ -27,6 +27,16 @@ void memory_mesh::transform_vertices(std::vector<vertex> &result) const {
 	}
 	*/
 
+	std::vector<math::scalar> factor(vertices.size(), 0.0f);
+
+	for (influences_type::const_iterator it = influences.begin(); it != influences.end(); it++)
+	{
+		for (joint_influence::vertex_weights_type::const_iterator jt = it->vertex_weights.begin(); jt != it->vertex_weights.end(); jt++)
+		{
+			factor[jt->vertex_index] += jt->weight;
+		}
+	}
+
 	for (influences_type::const_iterator it = influences.begin(); it != influences.end(); it++)
 	{
 		for (joint_influence::vertex_weights_type::const_iterator jt = it->vertex_weights.begin(); jt != it->vertex_weights.end(); jt++)

@@ -108,9 +108,9 @@ namespace collada_elements {
 			{
 				transform tf;
 				tf.sid = xerces_get_attribute<std::string>(child, "sid");
-				math::vec<3> v;
-				parse_list(child, v.i, 3);
-				tf.matrix.rotation(v);
+				float v[4];
+				parse_list(child, v, 4);
+				tf.matrix.rotation(math::vec<3>(v[0], v[1], v[2]), v[3]);
 				transforms_.push_back(tf);
 			}
 			else if (child_name == "scale")
@@ -362,9 +362,10 @@ namespace collada_elements {
 			}
 			else
 			{
+				size_t array_index = index * technique_->get_stride();
+
 				for (size_t i = 0; i < 4; i++) {
 					for (size_t j = 0; j < 4; j++) {
-						size_t array_index = index * technique_->get_stride();
 						tf.ij[j][i] = float_array_.at(array_index++);
 					}
 				}

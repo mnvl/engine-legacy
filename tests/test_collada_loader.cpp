@@ -5,6 +5,7 @@
 class test_collada_loader: public CppUnit::TestFixture {
 	CPPUNIT_TEST_SUITE(test_collada_loader);
 	CPPUNIT_TEST(test_plane);
+	CPPUNIT_TEST(test_joint);
 	CPPUNIT_TEST(test_animation);
 	CPPUNIT_TEST_SUITE_END();
 
@@ -47,9 +48,38 @@ class test_collada_loader: public CppUnit::TestFixture {
 		CPPUNIT_ASSERT (mesh_ptr->indices[5] == 3);
 	}
 
+	void test_joint()
+	{
+		engine::graphic::collada_loader cl("test_collada_loader_joint.xml");
+		cl.load();
+
+		engine::graphic::memory_model *model_ptr = const_cast<engine::graphic::memory_model *>(&cl.get_model());
+		CPPUNIT_ASSERT (model_ptr->meshes.size() == 1);
+		CPPUNIT_ASSERT (model_ptr->joints.size() == 1);
+		CPPUNIT_ASSERT (model_ptr->animations.size() == 1);
+
+		CPPUNIT_ASSERT (model_ptr->joints[0].parent == 0);
+
+		engine::graphic::memory_mesh *mesh_ptr = &model_ptr->meshes.front();
+
+		model_ptr->set_time(0);
+		std::vector<engine::graphic::memory_mesh::vertex> vertices1;
+		mesh_ptr->transform_vertices(vertices1);
+
+		CPPUNIT_ASSERT (vertices1.size() == 3);
+		CPPUNIT_ASSERT (abs(vertices1[0].position.y) < 0.1f);
+
+		model_ptr->set_time(1);
+		std::vector<engine::graphic::memory_mesh::vertex> vertices2;
+		mesh_ptr->transform_vertices(vertices2);
+
+		CPPUNIT_ASSERT (vertices2.size() == 3);
+		CPPUNIT_ASSERT (abs(vertices2[0].position.y - 1.0f) < 0.1f);
+	}
+
 	void test_animation()
 	{
-		engine::graphic::collada_loader cl("test_collada_loader_animations.xml");
+		engine::graphic::collada_loader cl("test_collada_loader_animation.xml");
 		cl.load();
 
 		engine::graphic::memory_model *model_ptr = const_cast<engine::graphic::memory_model *>(&cl.get_model());
@@ -79,8 +109,8 @@ class test_collada_loader: public CppUnit::TestFixture {
 		std::vector<engine::graphic::memory_mesh::vertex> vertices2;
 		mesh_ptr->transform_vertices(vertices2);
 
-		CPPUNIT_ASSERT((vertices1[0].position - math::vec<3>(-1.0f, 0.8f, 1.0f)).length_sq() < 0.1f);
-		CPPUNIT_ASSERT((vertices2[0].position - math::vec<3>(-1.0f, 0.8f, 1.0f)).length_sq() < 0.1f);
+		CPPUNIT_ASSERT((vertices1[0].position - math::vec<3>(-1.0f, 0.85f, 1.0f)).length_sq() < 0.1f);
+		CPPUNIT_ASSERT((vertices2[0].position - math::vec<3>(-1.0f, 0.85f, 1.0f)).length_sq() < 0.1f);
 
 		CPPUNIT_ASSERT((vertices1[3].position - math::vec<3>(1.0f, 1.6f, -1.0f)).length_sq() < 0.1f);
 		CPPUNIT_ASSERT((vertices2[3].position - math::vec<3>(2.0f, 0.0f, -0.3f)).length_sq() < 0.1f);
