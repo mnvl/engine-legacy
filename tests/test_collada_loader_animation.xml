@@ -86,7 +86,7 @@
     </geometry>
   </library_geometries>
   <library_visual_scenes>
-    <visual_scene id="VisualSceneNode" name="zxc">
+    <visual_scene id="VisualSceneNode" name="animation">
       <node id="pPlane1" name="pPlane1" type="NODE">
         <translate sid="translate">0 0 0</translate>
         <rotate sid="rotateZ">0 0 1 0</rotate>
@@ -119,7 +119,7 @@
           <rotate sid="rotateY">0 1 0 0</rotate>
           <rotate sid="rotateX">1 0 0 0</rotate>
           <node id="joint3" name="joint3" sid="joint3" type="JOINT">
-            <translate sid="translate">1.37002 0.821187 0.548362</translate>
+            <translate sid="translate">1.55796 -0.87967 1.86443</translate>
             <rotate sid="jointOrientZ">0 0 1 0</rotate>
             <rotate sid="jointOrientY">0 1 0 -44.1544</rotate>
             <rotate sid="jointOrientX">1 0 0 0</rotate>
