@@ -24,8 +24,8 @@ INT WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpstrCmdLine, INT
 		engine::graphic::renderer renderer(&main_window);
 
 		//engine::graphic::collada_loader ci2("d:\\home\\bublik.dae");
-		//engine::graphic::collada_loader ci2("d:\\home\\r2.dae");
-		engine::graphic::collada_loader ci2("e:\\home\\bublik.dae");
+		engine::graphic::collada_loader ci2("e:\\home\\r2.dae");
+		//engine::graphic::collada_loader ci2("e:\\home\\zzz.dae");
 		ci2.load();
 
 		engine::graphic::camera cam;
@@ -43,7 +43,7 @@ INT WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpstrCmdLine, INT
 			m.draw_wireframe(&renderer, math::periodic_clamp(angle / math::PI, 0.0f, 1.0f) * 2);
 			renderer.finish_frame();
 
-			angle += 0.01;
+			angle += 0.01f;
 			if (angle > 2 * math::PI) angle = 0;
 		}
 

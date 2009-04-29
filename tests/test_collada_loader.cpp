@@ -71,7 +71,7 @@ class test_collada_loader: public CppUnit::TestFixture {
 
 		engine::graphic::memory_mesh *mesh_ptr = &model_ptr->meshes.front();
 
-		model_ptr->set_time(0.05);
+		model_ptr->set_time(0.05f);
 
 		std::vector<engine::graphic::memory_mesh::vertex> vertices;
 		mesh_ptr->transform_vertices(vertices);
