@@ -62,14 +62,14 @@ class test_collada_loader: public CppUnit::TestFixture {
 
 		engine::graphic::memory_mesh *mesh_ptr = &model_ptr->meshes.front();
 
-		model_ptr->set_time(0);
+		model_ptr->set_animation_time(0);
 		std::vector<engine::graphic::memory_mesh::vertex> vertices1;
 		mesh_ptr->transform_vertices(vertices1);
 
 		CPPUNIT_ASSERT (vertices1.size() == 3);
 		CPPUNIT_ASSERT (abs(vertices1[0].position.y) < 0.1f);
 
-		model_ptr->set_time(1);
+		model_ptr->set_animation_time(1);
 		std::vector<engine::graphic::memory_mesh::vertex> vertices2;
 		mesh_ptr->transform_vertices(vertices2);
 
@@ -101,11 +101,11 @@ class test_collada_loader: public CppUnit::TestFixture {
 
 		engine::graphic::memory_mesh *mesh_ptr = &model_ptr->meshes.front();
 
-		model_ptr->set_time(0);
+		model_ptr->set_animation_time(0);
 		std::vector<engine::graphic::memory_mesh::vertex> vertices1;
 		mesh_ptr->transform_vertices(vertices1);
 
-		model_ptr->set_time(1);
+		model_ptr->set_animation_time(1);
 		std::vector<engine::graphic::memory_mesh::vertex> vertices2;
 		mesh_ptr->transform_vertices(vertices2);
 

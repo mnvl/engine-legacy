@@ -57,7 +57,7 @@ model::joint *memory_model::get_joint_by_name(std::string const &name)
 	throw std::runtime_error("joint with name = " + name + " not found in model");
 }
 
-void memory_model::set_time(math::scalar t)
+void memory_model::set_animation_time(math::scalar t)
 {
 	animation &a = animations.front();
 	a.set_time(t);
@@ -86,7 +86,7 @@ void memory_model::draw_wireframe(renderer *renderer_ptr, math::scalar time)
 	renderer_ptr->get_device()->SetMaterial(&material);
 	renderer_ptr->get_device()->SetFVF(memory_mesh::VERTEX_FORMAT);
 
-	set_time(time);
+	set_animation_time(time);
 
 	math::matrix<4,4> m1 = joints[0].frame_transform;
 	math::matrix<4,4> m2 = joints[1].frame_transform;

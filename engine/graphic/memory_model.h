@@ -26,7 +26,7 @@ public:
 	joint *get_joint_by_id(std::string const &name);
 	joint *get_joint_by_name(std::string const &name);
 	
-	void set_time(math::scalar t);
+	void set_animation_time(math::scalar t);
 
 	void draw_wireframe(renderer *renderer_ptr, math::scalar time);
 };
