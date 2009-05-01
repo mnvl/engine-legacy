@@ -15,3 +15,7 @@ ADD_LIBRARY (graphic STATIC
 	renderer.h
 	renderer.cpp
 )
+
+ADD_LIBRARY (graphic_tests STATIC
+	test_collada_loader.cpp
+)

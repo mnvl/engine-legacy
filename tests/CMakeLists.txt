@@ -1,12 +1,16 @@
 
 ADD_EXECUTABLE (tests
-
-	collision.cpp
-	intersection.cpp
-	test_matrix.cpp
-	test_collada_loader.cpp
-
 	main.cpp
 )
 
-TARGET_LINK_LIBRARIES (tests math graphic xerces-c_3D cppunitd)
+TARGET_LINK_LIBRARIES (tests
+	math
+	math_tests
+	graphic
+	graphic_tests
+)
+
+TARGET_LINK_LIBRARIES (tests debug
+	xerces-c_3D
+	cppunitd
+)
