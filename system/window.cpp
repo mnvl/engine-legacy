@@ -1,7 +1,7 @@
 
 #include <stdio.h>
-#include <engine/exception/winapi_error.h>
-#include <engine/system/window.h>
+#include <exception/winapi_error.h>
+#include <system/window.h>
 
 namespace engine {
 namespace system {

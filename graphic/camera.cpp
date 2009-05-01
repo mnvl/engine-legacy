@@ -1,5 +1,5 @@
 
-#include <engine/graphic/camera.h>
+#include <graphic/camera.h>
 
 namespace engine {
 namespace graphic {

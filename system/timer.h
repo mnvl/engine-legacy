@@ -2,7 +2,7 @@
 
 #include <windows.h>
 #include <boost/cstdint.hpp>
-#include <engine/exception/winapi_error.h>
+#include <exception/winapi_error.h>
 
 namespace engine {
 namespace system {

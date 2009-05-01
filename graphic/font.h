@@ -3,7 +3,7 @@
 #include <d3d9.h>
 #include <d3dx9.h>
 #include <boost/intrusive_ptr.hpp>
-#include <engine/util/boost_com_intrusive_ptr.h>
+#include <util/boost_com_intrusive_ptr.h>
 
 namespace engine {
 namespace graphic {

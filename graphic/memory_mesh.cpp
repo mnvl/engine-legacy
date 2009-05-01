@@ -1,7 +1,7 @@
 
-#include <engine/graphic/renderer.h>
-#include <engine/graphic/memory_model.h>
-#include <engine/graphic/memory_mesh.h>
+#include <graphic/renderer.h>
+#include <graphic/memory_model.h>
+#include <graphic/memory_mesh.h>
 
 namespace engine {
 namespace graphic {

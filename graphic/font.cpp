@@ -1,7 +1,7 @@
 
-#include <engine/exception/directx_error.h>
-#include <engine/graphic/renderer.h>
-#include <engine/graphic/font.h>
+#include <exception/directx_error.h>
+#include <graphic/renderer.h>
+#include <graphic/font.h>
 
 namespace engine {
 namespace graphic {

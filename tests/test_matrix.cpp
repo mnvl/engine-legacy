@@ -1,7 +1,7 @@
 
 #include <math/matrix.h>
 
-#include <engine/graphic/collada_loader.h>
+#include <graphic/collada_loader.h>
 #include <cppunit/extensions/HelperMacros.h>
 
 class test_matrix: public CppUnit::TestFixture {

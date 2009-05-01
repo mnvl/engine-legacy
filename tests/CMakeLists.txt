@@ -9,4 +9,4 @@ ADD_EXECUTABLE (tests
 	main.cpp
 )
 
-TARGET_LINK_LIBRARIES (tests math engine xerces-c_3D cppunitd)
+TARGET_LINK_LIBRARIES (tests math graphic xerces-c_3D cppunitd)

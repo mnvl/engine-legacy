@@ -12,8 +12,8 @@
 #include <xercesc/parsers/XercesDOMParser.hpp>
 #include <xercesc/sax/HandlerBase.hpp>
 #include <math/matrix.h>
-#include <engine/util/xerces_lcp_transcoder.h>
-#include <engine/graphic/collada_loader.h>
+#include <util/xerces_lcp_transcoder.h>
+#include <graphic/collada_loader.h>
 
 #if defined(max)
 #undef max

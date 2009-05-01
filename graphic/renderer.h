@@ -5,8 +5,8 @@
 #include <d3dx9.h>
 #include <boost/intrusive_ptr.hpp>
 #include <boost/scoped_ptr.hpp>
-#include <engine/util/boost_com_intrusive_ptr.h>
-#include <engine/system/window.h>
+#include <util/boost_com_intrusive_ptr.h>
+#include <system/window.h>
 
 namespace engine {
 namespace graphic {

@@ -1,7 +1,7 @@
 
 #include <algorithm>
 #include <boost/lambda/lambda.hpp>
-#include <engine/graphic/model.h>
+#include <graphic/model.h>
 
 namespace engine {
 namespace graphic {

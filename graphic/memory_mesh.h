@@ -6,7 +6,7 @@
 #include <boost/cstdint.hpp>
 #include <math/vec.h>
 #include <math/matrix.h>
-#include <engine/graphic/model.h>
+#include <graphic/model.h>
 
 namespace engine {
 namespace graphic {

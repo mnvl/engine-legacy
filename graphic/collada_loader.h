@@ -6,7 +6,7 @@
 #include <stdexcept>
 #include <xercesc/dom/DOM.hpp>
 #include <math/vec.h>
-#include <engine/graphic/memory_model.h>
+#include <graphic/memory_model.h>
 
 namespace engine {
 namespace graphic {

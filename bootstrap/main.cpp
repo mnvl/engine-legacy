@@ -2,13 +2,13 @@
 #include <xercesc/util/PlatformUtils.hpp>
 #include <xercesc/util/XMLString.hpp>
 #include <xercesc/dom/DOM.hpp>
-#include <engine/exception/winapi_error.h>
-#include <engine/system/window.h>
-#include <engine/graphic/renderer.h>
+#include <exception/winapi_error.h>
+#include <system/window.h>
+#include <graphic/renderer.h>
 
 // REMOVE:
-#include <engine/graphic/collada_loader.h>
-#include <engine/graphic/camera.h>
+#include <graphic/collada_loader.h>
+#include <graphic/camera.h>
 
 INT WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpstrCmdLine, INT nShowCmd)
 {

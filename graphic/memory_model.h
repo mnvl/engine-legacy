@@ -2,8 +2,8 @@
 
 #include <boost/ptr_container/ptr_vector.hpp>
 #include <math/matrix.h>
-#include <engine/graphic/memory_mesh.h>
-#include <engine/graphic/model.h>
+#include <graphic/memory_mesh.h>
+#include <graphic/model.h>
 
 namespace engine {
 namespace graphic {

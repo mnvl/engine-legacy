@@ -1,10 +1,10 @@
 
 #include <d3dx9.h>
-#include <engine/exception/directx_error.h>
-#include <engine/system/timer.h>
-#include <engine/graphic/camera.h>
-#include <engine/graphic/font.h>
-#include <engine/graphic/renderer.h>
+#include <exception/directx_error.h>
+#include <system/timer.h>
+#include <graphic/camera.h>
+#include <graphic/font.h>
+#include <graphic/renderer.h>
 
 namespace engine {
 namespace graphic {
