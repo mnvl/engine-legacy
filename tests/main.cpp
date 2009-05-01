@@ -14,16 +14,16 @@ int main(int argc, char* argv[])
 	CppUnit::TestResult controller;
 
 	CppUnit::TestResultCollector result;
-	controller.addListener( &result );        
+	controller.addListener(&result);        
 
 	CppUnit::BriefTestProgressListener progress;
-	controller.addListener( &progress );      
+	controller.addListener(&progress);      
 
 	CppUnit::TestRunner runner;
-	runner.addTest( CppUnit::TestFactoryRegistry::getRegistry().makeTest() );
-	runner.run( controller );
+	runner.addTest(CppUnit::TestFactoryRegistry::getRegistry().makeTest());
+	runner.run(controller);
 
-	CppUnit::CompilerOutputter outputter( &result, CppUnit::stdCOut() );
+	CppUnit::CompilerOutputter outputter(&result, CppUnit::stdCOut());
 	outputter.write();
 
 	xercesc::XMLPlatformUtils::Terminate();

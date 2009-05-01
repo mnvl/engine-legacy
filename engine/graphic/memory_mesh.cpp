@@ -17,15 +17,10 @@ memory_mesh::~memory_mesh() {
 void memory_mesh::transform_vertices(std::vector<vertex> &result) const {
 	result = vertices;
 
-	/*
 	for (size_t i = 0; i < vertices.size(); i++)
 	{
-		result[i].position = 
-			vertices[i].position *
-			transform *
-			model_ptr_->transform;
+		result[i].position.set(0, 0, 0);
 	}
-	*/
 
 	std::vector<math::scalar> factor(vertices.size(), 0.0f);
 
