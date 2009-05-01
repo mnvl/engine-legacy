@@ -1,6 +1,4 @@
 
-INCLUDE_DIRECTORIES (${ENGINE_SOURCE_DIR})
-
 ADD_LIBRARY (math STATIC
 	aabb.h
 	euler_angles.h

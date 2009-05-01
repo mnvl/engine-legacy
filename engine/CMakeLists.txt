@@ -1,6 +1,4 @@
 
-INCLUDE_DIRECTORIES (${ENGINE_SOURCE_DIR})
-
 ADD_LIBRARY (engine STATIC
 	exception/directx_error.h
 	exception/winapi_error.h
