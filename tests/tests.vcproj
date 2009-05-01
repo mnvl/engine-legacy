@@ -195,6 +195,10 @@
 			RelativePath=".\test_collada_loader_plane.xml"
 			>
 		</File>
+		<File
+			RelativePath=".\test_matrix.cpp"
+			>
+		</File>
 	</Files>
 	<Globals>
 	</Globals>
