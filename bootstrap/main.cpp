@@ -10,7 +10,8 @@
 #include <engine/graphic/collada_loader.h>
 #include <engine/graphic/camera.h>
 
-INT WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpstrCmdLine, INT nShowCmd) {
+INT WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpstrCmdLine, INT nShowCmd)
+{
 	try
 	{
 		{
