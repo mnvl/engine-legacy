@@ -23,9 +23,3 @@ ADD_LIBRARY (math STATIC
 	random.cpp
 	vec.cpp
 )
-
-ADD_LIBRARY (math_tests STATIC
-	test_collision.cpp
-	test_intersection.cpp
-	test_matrix.cpp
-)
