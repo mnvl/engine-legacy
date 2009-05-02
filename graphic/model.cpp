@@ -31,9 +31,9 @@ math::matrix<4,4> model::sampler::get(math::scalar time) const {
 	math::scalar k = (time - it->time) / ((it + 1)->time - it->time);
 	math::scalar inv_k = 1.0f - k;
 
+	math::matrix<4,4> m;
 	m.rotation(it->rotation_interpolator.interpolate(k));
 	m.translate(it->translation * inv_k + (it + 1)->translation * k);
-
 	return m;
 }
 

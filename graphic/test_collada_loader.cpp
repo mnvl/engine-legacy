@@ -84,20 +84,24 @@ class test_collada_loader: public CppUnit::TestFixture {
 
 		engine::graphic::memory_model *model_ptr = const_cast<engine::graphic::memory_model *>(&cl.get_model());
 		CPPUNIT_ASSERT (model_ptr->meshes.size() == 1);
-		CPPUNIT_ASSERT (model_ptr->joints.size() == 3);
+		CPPUNIT_ASSERT (model_ptr->joints.size() == 4);
 		CPPUNIT_ASSERT (model_ptr->animations.size() == 1);
 
 		CPPUNIT_ASSERT (model_ptr->joints[0].parent == 0);
-		CPPUNIT_ASSERT (model_ptr->joints[1].parent == &model_ptr->joints[0]);
+		CPPUNIT_ASSERT (model_ptr->joints[1].parent == 0);
 		CPPUNIT_ASSERT (model_ptr->joints[2].parent == &model_ptr->joints[1]);
+		CPPUNIT_ASSERT (model_ptr->joints[3].parent == &model_ptr->joints[2]);
 
-		CPPUNIT_ASSERT (model_ptr->joints[0].childs.size() == 1);
-		CPPUNIT_ASSERT (model_ptr->joints[0].childs[0] == &model_ptr->joints[1]);
+
+		CPPUNIT_ASSERT (model_ptr->joints[0].childs.size() == 0);
 
 		CPPUNIT_ASSERT (model_ptr->joints[1].childs.size() == 1);
 		CPPUNIT_ASSERT (model_ptr->joints[1].childs[0] == &model_ptr->joints[2]);
 
-		CPPUNIT_ASSERT (model_ptr->joints[2].childs.size() == 0);
+		CPPUNIT_ASSERT (model_ptr->joints[2].childs.size() == 1);
+		CPPUNIT_ASSERT (model_ptr->joints[2].childs[0] == &model_ptr->joints[3]);
+
+		CPPUNIT_ASSERT (model_ptr->joints[3].childs.size() == 0);
 
 		engine::graphic::memory_mesh *mesh_ptr = &model_ptr->meshes.front();
 
