@@ -15,7 +15,7 @@ void model::sampler::add_sample(math::scalar time, math::matrix<4,4> const &m)
 	s.rotation.set_unit(m);
 
 	if (samples_.size()) {
-		samples_.back().rotation_lerper.setup_from_unit(samples_.back().rotation, s.rotation);
+		samples_.back().rotation_interpolator.setup_from_unit(samples_.back().rotation, s.rotation);
 	}
 
 	samples_.push_back(s);
@@ -31,9 +31,7 @@ math::matrix<4,4> model::sampler::get(math::scalar time) const {
 	math::scalar k = (time - it->time) / ((it + 1)->time - it->time);
 	math::scalar inv_k = 1.0f - k;
 
-	math::matrix<4,4> m;
-
-	m.rotation(it->rotation_lerper.interpolate(k));
+	m.rotation(it->rotation_interpolator.interpolate(k));
 	m.translate(it->translation * inv_k + (it + 1)->translation * k);
 
 	return m;

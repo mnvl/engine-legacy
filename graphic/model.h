@@ -71,7 +71,7 @@ public:
 			math::scalar time;
 			math::matrix<4,4> transform;
 			math::quaternion<> rotation;
-			math::quaternion_lerper<> rotation_lerper;
+			math::quaternion_slerper<> rotation_interpolator;
 			math::vec<3> translation;
 
 			sample(math::scalar t = 0):

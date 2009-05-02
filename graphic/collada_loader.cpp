@@ -151,6 +151,13 @@ namespace collada_elements {
 			return result;
 		}
 
+		bool have_instance_controller() const {
+			for (boost::ptr_vector<node>::const_iterator it = childs_.begin(); it != childs_.end(); it++) {
+				if (it->name_ == "instance_controller") return true;
+			}
+			return false;
+		}
+
 		void build_mesh(memory_model *model_ptr) {
 			model_ptr->meshes.push_back(new memory_mesh(model_ptr));
 			memory_mesh *mesh_ptr = &model_ptr->meshes.back();
@@ -180,7 +187,7 @@ namespace collada_elements {
 
 		void build_hierarchy(memory_model *model_ptr) {
 			// we are expecting only joints and meshes
-			if (type_ == "JOINT") build_joint(model_ptr, 0);
+			if (type_ == "JOINT" || !have_instance_controller()) build_joint(model_ptr, 0);
 			else build_mesh(model_ptr);
 		}
 	};

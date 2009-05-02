@@ -461,7 +461,7 @@ public:
             cos_omega = -cos_omega;
             q2 = -q2;
         }
-        if(cos_omega > (1 - limits_type::round_error)) cos_omega = 1 - limits_type::round_error;
+		if(cos_omega > (1 - math::EPSILON)) cos_omega = 1 - math::EPSILON;
         omega = (scalar_type) acos(cos_omega);
         scalar_type inv_sin_omega = (scalar_type)(1/sin(omega));
         q1.scale(inv_sin_omega);
@@ -476,11 +476,11 @@ public:
         setup_from_unit(q1, q2);
     }
 
-    void interpolate(scalar_type t, quaternion_type& result_q){
+    void interpolate(scalar_type t, quaternion_type &result_q) const {
         result_q = q1*(scalar_type)sin((1 - t)*omega) + q2*(scalar_type)sin(t*omega);
     }
 
-	quaternion_type interpolate(scalar_type t){
+	quaternion_type interpolate(scalar_type t) const {
 		quaternion_type result_q;
 		interpolate(t, result_q);
 		return result_q;
