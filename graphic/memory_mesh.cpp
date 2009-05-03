@@ -9,6 +9,7 @@ namespace graphic {
 memory_mesh::memory_mesh(memory_model *model_ptr):
 model_ptr_(model_ptr)
 {
+	transform.identity();
 }
 
 memory_mesh::~memory_mesh() {
@@ -37,11 +38,9 @@ void memory_mesh::transform_vertices(std::vector<vertex> &result) const {
 		for (joint_influence::vertex_weights_type::const_iterator jt = it->vertex_weights.begin(); jt != it->vertex_weights.end(); jt++)
 		{
 			result[jt->vertex_index].position +=
-				vertices[jt->vertex_index].position *
-				transform *
-				model_ptr_->transform *
+				((vertices[jt->vertex_index].position * transform) *
 				it->inverted_bind_matrix *
-				it->joint_ptr->frame_transform *
+				it->joint_ptr->frame_transform) *
 				jt->weight;
 		}
 	}

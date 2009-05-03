@@ -1085,6 +1085,25 @@ namespace collada_elements {
 			if (controllers_) controllers_->build_joint_influences(model_ptr);
 			geometries_->fix_position_indices(model_ptr);
 			if (animations_) animations_->build_animations(model_ptr);
+			postprocess(model_ptr);
+		}
+
+		void postprocess(memory_model *model_ptr)
+		{
+			// if model has only one joint then that joint is root node
+			if (model_ptr->joints.size() == 1)
+			{
+				model_ptr->joints.front().build_frame_transforms();
+
+				for (memory_model::meshes_type::iterator it = model_ptr->meshes.begin();
+					it != model_ptr->meshes.end(); it++)
+				{
+					if (it->influences.size() != 0) throw std::logic_error("root node of model is animated");
+					it->transform = model_ptr->joints.front().frame_transform;
+				}
+
+				model_ptr->joints.clear();
+			}
 		}
 	};
 }

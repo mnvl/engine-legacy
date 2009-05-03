@@ -92,7 +92,6 @@ void memory_model::draw_wireframe(renderer *renderer_ptr, math::scalar time)
 	math::matrix<4,4> m2 = joints[1].frame_transform;
 	math::matrix<4,4> m3 = joints[2].frame_transform;
 
-
 	for (meshes_type::const_iterator it = meshes.begin(); it != meshes.end(); it++) {
 		it->draw_wireframe(renderer_ptr, time);
 	}

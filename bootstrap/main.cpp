@@ -24,7 +24,7 @@ INT WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpstrCmdLine, INT
 		engine::system::window main_window("engine");
 		engine::graphic::renderer renderer(&main_window);
 
-		engine::graphic::collada_loader ci2("d:\\home\\complex_animation.dae");
+		engine::graphic::collada_loader ci2("d:\\home\\1.dae");
 		//engine::graphic::collada_loader ci2("e:\\home\\zxc.dae");
 		//engine::graphic::collada_loader ci2("e:\\home\\zzz.dae");
 		ci2.load();
@@ -39,9 +39,9 @@ INT WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpstrCmdLine, INT
 			main_window.run_message_loop();
 
 			renderer.begin_frame();
-			cam.set_position(math::vec<3>(10, 0, 10), math::vec<3>(0, 0, 0), math::vec<3>(0, 1, 0));
+			cam.set_position(math::vec<3>(5000 * cos(angle), 0, 5000 * sin(angle)), math::vec<3>(0, 0, 0), math::vec<3>(0, 1, 0));
 			renderer.select(cam);
-			m.draw_wireframe(&renderer, angle / math::PI);
+			m.draw_wireframe(&renderer, 0);
 			renderer.finish_frame();
 
 			angle += 0.01f;
