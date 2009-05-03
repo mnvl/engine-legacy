@@ -306,7 +306,7 @@ namespace collada_elements {
 		math::matrix<4,4> get_baked_matrix() const
 		{
 			math::matrix<4,4> result;
-			result.rotation(axis_, angle_);
+			result.rotation(axis_, angle_ * math::PI / 180.0f);
 			return result;
 		}
 
@@ -318,7 +318,7 @@ namespace collada_elements {
 			source_ptr->get(index, angle);
 
 			math::matrix<4,4> result;
-			result.rotation(axis_, angle);
+			result.rotation(axis_, angle * math::PI / 180.0f);
 
 			return result;
 		}
