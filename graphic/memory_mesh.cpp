@@ -18,6 +18,16 @@ memory_mesh::~memory_mesh() {
 void memory_mesh::transform_vertices(std::vector<vertex> &result) const {
 	result = vertices;
 
+	if (model_ptr_->animations.empty())
+	{
+		for (std::vector<vertex>::iterator it = result.begin(); it != result.end(); it++)
+		{
+			it->position = it->position * transform * model_ptr_->transform;
+		}
+
+		return;
+	}
+
 	for (size_t i = 0; i < vertices.size(); i++)
 	{
 		result[i].position.set(0, 0, 0);
