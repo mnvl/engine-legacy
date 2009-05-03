@@ -7,7 +7,6 @@ class test_collada_loader: public CppUnit::TestFixture {
 	CPPUNIT_TEST(test_plane);
 	CPPUNIT_TEST(test_joint);
 	CPPUNIT_TEST(test_animation);
-	CPPUNIT_TEST(test_animation_2);
 	CPPUNIT_TEST_SUITE_END();
 
 	void test_plane()
