@@ -14,6 +14,11 @@ class model {
 public:
 	struct joint {
 		struct transform {
+			transform(std::string const &s, math::matrix<4,4> const &m):
+			sid(s), matrix(m)
+			{
+			}
+
 			std::string sid;
 			math::matrix<4,4> matrix;
 		};

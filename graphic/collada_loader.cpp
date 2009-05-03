@@ -25,8 +25,23 @@ namespace collada_elements {
 
 	typedef model::joint_influence::vertex_weight vertex_weight;
 
-	class element {
+	class library_visual_scenes;
+
+	class root_element {
 	public:
+		virtual library_visual_scenes *get_visual_scenes() = 0;
+	};
+
+	class element {
+	private:
+		root_element *root_;
+
+	public:
+		element():
+		root_(0)
+		{
+		}
+
 		void go(xercesc::DOMElement const *element_ptr) {
 			for (xercesc::DOMNode const *child_ptr = element_ptr->getFirstChild();
 				child_ptr != 0; child_ptr = child_ptr->getNextSibling())
@@ -38,13 +53,17 @@ namespace collada_elements {
 			}
 		}
 
+		root_element *get_root() const { return root_; }
+		void set_root(root_element *root) { root_ = root; }
+
 		void init(xercesc::DOMElement const *element_ptr) {}
 		virtual void process_child(std::string const &child_name, std::string const &child_id, xercesc::DOMElement const *child) {}
 		void check() {}
 
-		template <class T> static
-		T *construct(xercesc::DOMElement const *element_ptr) {
+		template <class T> T *
+		construct(xercesc::DOMElement const *element_ptr) {
 			std::auto_ptr<T> holder(new T());
+			holder->set_root(get_root());
 			holder->init(element_ptr);
 			holder->go(element_ptr);
 			holder->check();
@@ -73,214 +92,6 @@ namespace collada_elements {
 		}
 	};
 
-	class node: public element {
-	protected:
-		typedef model::joint::transform transform;
-
-		std::string id_, sid_, name_, type_, instance_geometry_;
-		node *parent_;
-		boost::ptr_vector<node> childs_;
-		std::vector<transform> transforms_;
-
-		void process_child(std::string const &child_name, std::string const &child_id, xercesc::DOMElement const *child) {
-			if (child_name == "node")
-			{
-				childs_.push_back(construct<node>(child));
-				childs_.back().parent_ = this;
-			}
-			else if (child_name == "matrix")
-			{
-				transform tf;
-				tf.sid = xerces_get_attribute<std::string>(child, "sid");
-				parse_matrix(child, tf.matrix);
-				transforms_.push_back(tf);
-			}
-			else if (child_name == "translate")
-			{
-				transform tf;
-				tf.sid = xerces_get_attribute<std::string>(child, "sid");
-				math::vec<3> v;
-				parse_list(child, v.i, 3);
-				tf.matrix.translation(v);
-				transforms_.push_back(tf);
-			}
-			else if (child_name == "rotate")
-			{
-				transform tf;
-				tf.sid = xerces_get_attribute<std::string>(child, "sid");
-				float v[4];
-				parse_list(child, v, 4);
-				tf.matrix.rotation(math::vec<3>(v[0], v[1], v[2]), v[3] * math::PI / 180.0f);
-				transforms_.push_back(tf);
-			}
-			else if (child_name == "scale")
-			{
-				transform tf;
-				tf.sid = xerces_get_attribute<std::string>(child, "sid");
-				math::vec<3> v;
-				parse_list(child, v.i, 3);
-				tf.matrix.scaling(v);
-				transforms_.push_back(tf);
-			}
-			else if (child_name == "instance_geometry")
-			{
-				instance_geometry_ = xerces_get_attribute<std::string>(child, "url");
-			}
-		}
-
-		void build_joint(memory_model *model_ptr, model::joint *parent = 0) {
-			model_ptr->joints.push_back(new model::joint());
-			model::joint *joint_ptr = &model_ptr->joints.back();
-			joint_ptr->id = id_;
-			joint_ptr->name = sid_;
-			joint_ptr->parent = parent;
-			joint_ptr->transforms = transforms_;
-
-			if (parent) parent->childs.push_back(joint_ptr);
-
-			for (boost::ptr_vector<node>::iterator it = childs_.begin(); it != childs_.end(); it++) {
-				it->build_joint(model_ptr, joint_ptr);
-			}
-		}
-
-		math::matrix<4,4> sum_all_transforms() const {
-			math::matrix<4,4> result;
-			result.identity();
-			for (std::vector<transform>::const_reverse_iterator it = transforms_.rbegin(); it != transforms_.rend(); it++)
-				result *= it->matrix;
-			return result;
-		}
-
-		bool have_instance_controller() const {
-			for (boost::ptr_vector<node>::const_iterator it = childs_.begin(); it != childs_.end(); it++) {
-				if (it->name_ == "instance_controller") return true;
-			}
-			return false;
-		}
-
-		void build_mesh(memory_model *model_ptr) {
-			model_ptr->meshes.push_back(new memory_mesh(model_ptr));
-			memory_mesh *mesh_ptr = &model_ptr->meshes.back();
-			mesh_ptr->name = instance_geometry_.empty() ? name_ : instance_geometry_.substr(1);
-			mesh_ptr->transform = sum_all_transforms();
-
-			for (boost::ptr_vector<node>::iterator it = childs_.begin(); it != childs_.end(); it++) {
-				it->build_hierarchy(model_ptr);
-			}
-		}
-
-	public:
-		void init(xercesc::DOMElement const *element_ptr) {
-			id_ = xerces_get_attribute<std::string>(element_ptr, "id");
-			sid_ = xerces_get_attribute<std::string>(element_ptr, "sid");
-			name_ = xerces_get_attribute<std::string>(element_ptr, "name");
-			type_ = xerces_get_attribute<std::string>(element_ptr, "type");
-		}
-
-		void check() {
-			if (transforms_.empty()) {
-				transform tf;
-				tf.matrix.identity();
-				transforms_.push_back(tf);
-			}
-		}
-
-		void build_hierarchy(memory_model *model_ptr) {
-			// we are expecting only joints and meshes
-			if (type_ == "JOINT" || !have_instance_controller()) build_joint(model_ptr, 0);
-			else build_mesh(model_ptr);
-		}
-	};
-
-	class visual_scene: public node {
-	public:
-		void check() {
-		}
-
-		void build_hierarchy(memory_model *model_ptr) {
-			model_ptr->transform = sum_all_transforms();
-
-			for (boost::ptr_vector<node>::iterator it = childs_.begin(); it != childs_.end(); it++) {
-				it->build_hierarchy(model_ptr);
-			}
-		}
-	};
-
-	class library_visual_scenes: public element {
-	protected:
-		boost::ptr_map<std::string, visual_scene> visual_scenes_;
-
-		void process_child(std::string const &child_name, std::string const &child_id, xercesc::DOMElement const *child) {
-			if (child_name == "visual_scene") {
-				visual_scenes_.insert(const_cast<std::string &>(child_id), construct<visual_scene>(child));
-			}
-		}
-
-	public:
-		void build_hierarchy(memory_model *model_ptr) {
-			if (visual_scenes_.size() != 1) throw std::runtime_error("expecting one <visual_scene> in <library_visual_scenes>");
-			visual_scenes_.begin()->second->build_hierarchy(model_ptr);
-		}
-	};
-
-	class input: public element {
-	private:
-		std::string source_;
-		size_t offset_;
-
-	public:
-		void init(xercesc::DOMElement const *element_ptr) {
-			source_ = xerces_get_attribute<std::string>(element_ptr, "source");
-			offset_ = xerces_get_attribute<size_t>(element_ptr, "offset");
-		}
-
-		std::string const &get_source() const { return source_; }
-		size_t get_offset() const { return offset_; }
-	};
-
-	class inputs_list: public element {
-	protected:
-		boost::ptr_map<std::string, input> inputs_;
-
-		void process_child(std::string const &child_name, std::string const &child_id, xercesc::DOMElement const *child) {
-			if (child_name == "input") {
-				inputs_.insert(xerces_get_attribute<std::string>(child, "semantic"), construct<input>(child));
-			}
-		}
-
-	public:
-		input const *get_input(std::string const &semantic) const {
-			boost::ptr_map<std::string, input>::const_iterator it = inputs_.find(semantic);
-			if (it == inputs_.end()) throw std::runtime_error("input with semantic = " + semantic + " not found");
-			return it->second;
-		}
-	};
-
-	class vertices: public inputs_list {
-	};
-
-	class triangles: public inputs_list {
-	private:
-		size_t count_;
-		std::vector<size_t> indices_;
-
-		void process_child(std::string const &child_name, std::string const &child_id, xercesc::DOMElement const *child) {
-			if (child_name == "p") {
-				parse_list(child, indices_);
-			}
-
-			inputs_list::process_child(child_name, child_id, child);
-		}
-
-	public:
-		void init(xercesc::DOMElement const *element_ptr) {
-			count_ = xerces_get_attribute<size_t>(element_ptr, "count");
-		}
-
-		size_t get_count() const { return count_; }
-		std::vector<size_t> const &get_indices() const { return indices_; }
-	};
-
 	class technique_common: public element {
 	private:
 		struct param {
@@ -289,7 +100,7 @@ namespace collada_elements {
 
 			param(std::string const &n, std::string const &t):
 			name(n),
-			type(t)
+				type(t)
 			{
 			}
 		};
@@ -361,20 +172,11 @@ namespace collada_elements {
 		}
 
 		void get(size_t index, math::matrix<4, 4> &tf) const {
-			if (technique_->get_stride() == 3)
-			{
-				math::vec<3> v;
-				get(index, v);
-				tf.translation(v);
-			}
-			else
-			{
-				size_t array_index = index * technique_->get_stride();
+			size_t array_index = index * technique_->get_stride();
 
-				for (size_t i = 0; i < 4; i++) {
-					for (size_t j = 0; j < 4; j++) {
-						tf.ij[j][i] = float_array_.at(array_index++);
-					}
+			for (size_t i = 0; i < 4; i++) {
+				for (size_t j = 0; j < 4; j++) {
+					tf.ij[j][i] = float_array_.at(array_index++);
 				}
 			}
 		}
@@ -396,6 +198,383 @@ namespace collada_elements {
 			if (it == sources_.end()) throw std::runtime_error("source id = " + id + " not found");
 			return it->second;
 		}
+	};
+
+	class transform: public element {
+	protected:
+		std::string sid_;
+
+	public:
+		void init(xercesc::DOMElement const *element_ptr)
+		{
+			sid_ = xerces_get_attribute<std::string>(element_ptr, "sid");
+		}
+
+		std::string const &get_sid() const { return sid_; }
+
+		virtual math::matrix<4,4> get_baked_matrix() const = 0;
+		virtual math::matrix<4,4> get_baked_sample(source const *source_ptr, int index, std::string const &param) const = 0;
+	};
+
+	class identity_transform: public transform {
+	public:
+		math::matrix<4,4> get_baked_matrix() const
+	    {
+			math::matrix<4,4> m;
+			m.identity();
+			return m;
+		}
+
+		math::matrix<4,4> get_baked_sample(source const *source_ptr, int index, std::string const &param) const
+		{
+			throw std::logic_error("can't read identity transform sample from source");
+	    }
+	};
+
+
+	class matrix_transform: public transform {
+	private:
+		math::matrix<4,4> matrix_;
+
+	public:
+		void init(xercesc::DOMElement const *element_ptr)
+		{
+			transform::init(element_ptr);
+			parse_matrix(element_ptr, matrix_);
+		}
+
+		math::matrix<4,4> get_baked_matrix() const
+		{
+			return matrix_;
+		}
+
+		math::matrix<4,4> get_baked_sample(source const *source_ptr, int index, std::string const &param) const
+		{
+			math::matrix<4,4> result;
+			source_ptr->get(index, result);
+			return result;
+		}
+	};
+
+	class translation_transform: public transform {
+	private:
+		math::vec<3> translate_;
+
+	public:
+		void init(xercesc::DOMElement const *element_ptr)
+		{
+			transform::init(element_ptr);
+			parse_list(element_ptr, translate_.i, 3);
+		}
+
+	    math::matrix<4,4> get_baked_matrix() const
+		{
+			math::matrix<4,4> result;
+			result.translation(translate_);
+			return result;
+		}
+
+		math::matrix<4,4> get_baked_sample(source const *source_ptr, int index, std::string const &param) const
+		{
+			math::vec<3> translate;
+			source_ptr->get(index, translate);
+
+			math::matrix<4,4> result;
+			result.translation(translate);
+
+			return result;
+		}
+	};
+
+	class rotation_transform: public transform {
+	private:
+		math::vec<3> axis_;
+		math::scalar angle_;
+
+	public:
+		void init(xercesc::DOMElement const *element_ptr)
+		{
+			transform::init(element_ptr);
+
+			math::scalar s[4];
+			parse_list(element_ptr, s, 4);
+
+			axis_.set(s[0], s[1], s[2]);
+			angle_ = s[3];
+		}
+
+		math::matrix<4,4> get_baked_matrix() const
+		{
+			math::matrix<4,4> result;
+			result.rotation(axis_, angle_);
+			return result;
+		}
+
+		math::matrix<4,4> get_baked_sample(source const *source_ptr, int index, std::string const &param) const
+		{
+			if (param != "ANGLE") throw std::runtime_error("unexpected rotation transform param type " + param);
+
+			math::scalar angle;
+			source_ptr->get(index, angle);
+
+			math::matrix<4,4> result;
+			result.rotation(axis_, angle);
+
+			return result;
+		}
+	};
+
+	class scale_transform: public transform {
+	private:
+		math::vec<3> scale_;
+
+	public:
+		void init(xercesc::DOMElement const *element_ptr)
+		{
+			transform::init(element_ptr);
+			parse_list(element_ptr, scale_.i, 3);
+		}
+
+		math::matrix<4,4> get_baked_matrix() const
+		{
+			math::matrix<4,4> result;
+			result.scaling(scale_);
+			return result;
+		}
+
+		math::matrix<4,4> get_baked_sample(source const *source_ptr, int index, std::string const &param) const
+		{
+			math::vec<3> scale;
+			source_ptr->get(index, scale);
+
+			math::matrix<4,4> result;
+			result.scaling(scale);
+
+			return result;
+		}
+	};
+
+	class node: public element {
+	protected:
+		std::string id_, sid_, name_, type_, instance_geometry_;
+		node *parent_;
+		boost::ptr_vector<node> childs_;
+		boost::ptr_vector<transform> transforms_;
+
+		void process_child(std::string const &child_name, std::string const &child_id, xercesc::DOMElement const *child) {
+			if (child_name == "node")
+			{
+				childs_.push_back(construct<node>(child));
+				childs_.back().parent_ = this;
+			}
+			else if (child_name == "matrix")
+			{
+				transforms_.push_back(construct<matrix_transform>(child));
+			}
+			else if (child_name == "translate")
+			{
+				transforms_.push_back(construct<translation_transform>(child));
+			}
+			else if (child_name == "rotate")
+			{
+				transforms_.push_back(construct<rotation_transform>(child));
+			}
+			else if (child_name == "scale")
+			{
+				transforms_.push_back(construct<scale_transform>(child));
+			}
+			else if (child_name == "instance_geometry")
+			{
+				instance_geometry_ = xerces_get_attribute<std::string>(child, "url");
+			}
+		}
+
+		void build_joint(memory_model *model_ptr, model::joint *parent = 0) {
+			model_ptr->joints.push_back(new model::joint());
+			model::joint *joint_ptr = &model_ptr->joints.back();
+			joint_ptr->id = id_;
+			joint_ptr->name = sid_;
+			joint_ptr->parent = parent;
+
+			for (boost::ptr_vector<transform>::const_iterator it = transforms_.begin(); it != transforms_.end(); it++) {
+				joint_ptr->transforms.push_back(model::joint::transform(it->get_sid(), it->get_baked_matrix()));
+			}
+
+			if (parent) parent->childs.push_back(joint_ptr);
+
+			for (boost::ptr_vector<node>::iterator it = childs_.begin(); it != childs_.end(); it++) {
+				it->build_joint(model_ptr, joint_ptr);
+			}
+		}
+
+		math::matrix<4,4> sum_all_transforms() const {
+			math::matrix<4,4> result;
+			result.identity();
+			for (boost::ptr_vector<transform>::const_reverse_iterator it = transforms_.rbegin(); it != transforms_.rend(); it++)
+				result *= it->get_baked_matrix();
+			return result;
+		}
+
+		bool have_instance_controller() const {
+			for (boost::ptr_vector<node>::const_iterator it = childs_.begin(); it != childs_.end(); it++) {
+				if (it->name_ == "instance_controller") return true;
+			}
+			return false;
+		}
+
+		void build_mesh(memory_model *model_ptr) {
+			model_ptr->meshes.push_back(new memory_mesh(model_ptr));
+			memory_mesh *mesh_ptr = &model_ptr->meshes.back();
+			mesh_ptr->name = instance_geometry_.empty() ? name_ : instance_geometry_.substr(1);
+			mesh_ptr->transform = sum_all_transforms();
+
+			for (boost::ptr_vector<node>::iterator it = childs_.begin(); it != childs_.end(); it++) {
+				it->build_hierarchy(model_ptr);
+			}
+		}
+
+	public:
+		void init(xercesc::DOMElement const *element_ptr) {
+			id_ = xerces_get_attribute<std::string>(element_ptr, "id");
+			sid_ = xerces_get_attribute<std::string>(element_ptr, "sid");
+			name_ = xerces_get_attribute<std::string>(element_ptr, "name");
+			type_ = xerces_get_attribute<std::string>(element_ptr, "type");
+		}
+
+		void check() {
+			if (transforms_.empty()) {
+				transforms_.push_back(new identity_transform());
+			}
+		}
+
+		void build_hierarchy(memory_model *model_ptr) {
+			// we are expecting only joints and meshes
+			if (type_ == "JOINT" || !have_instance_controller()) build_joint(model_ptr, 0);
+			else build_mesh(model_ptr);
+		}
+
+		node const *get_node_by_id(std::string const &id) const
+		{
+			if (id == id_) return this;
+
+			for (boost::ptr_vector<node>::const_iterator it = childs_.begin(); it != childs_.end(); it++)
+			{
+				if (node const *node_ptr = it->get_node_by_id(id)) return node_ptr;
+			}
+
+			return 0;
+		}
+
+		transform const *get_transform_by_sid(std::string const &sid) const
+		{
+			for (boost::ptr_vector<transform>::const_iterator it = transforms_.begin();
+				it != transforms_.end(); it ++)
+			{
+				if (it->get_sid() == sid) return &*it;
+			}
+
+			throw std::logic_error("transform with sid = " + sid + " not found in node id = " + id_);
+		}
+	};
+
+	class visual_scene: public node {
+	public:
+		void check() {
+		}
+
+		void build_hierarchy(memory_model *model_ptr) {
+			model_ptr->transform = sum_all_transforms();
+
+			for (boost::ptr_vector<node>::iterator it = childs_.begin(); it != childs_.end(); it++) {
+				it->build_hierarchy(model_ptr);
+			}
+		}
+	};
+
+	class library_visual_scenes: public element {
+	protected:
+		boost::ptr_map<std::string, visual_scene> visual_scenes_;
+
+		void process_child(std::string const &child_name, std::string const &child_id, xercesc::DOMElement const *child) {
+			if (child_name == "visual_scene") {
+				visual_scenes_.insert(const_cast<std::string &>(child_id), construct<visual_scene>(child));
+			}
+		}
+
+	public:
+		node const *get_node_by_id(std::string const &id) const
+		{
+			for (boost::ptr_map<std::string, visual_scene>::const_iterator it = visual_scenes_.begin();
+				it != visual_scenes_.end(); it++)
+			{
+				if (node const *node_ptr = it->second->get_node_by_id(id)) return node_ptr;
+			}
+
+			throw std::logic_error("node with id = " + id + " not found");
+		}
+
+		void build_hierarchy(memory_model *model_ptr) {
+			if (visual_scenes_.size() != 1) throw std::runtime_error("expecting one <visual_scene> in <library_visual_scenes>");
+			visual_scenes_.begin()->second->build_hierarchy(model_ptr);
+		}
+	};
+
+	class input: public element {
+	private:
+		std::string source_;
+		size_t offset_;
+
+	public:
+		void init(xercesc::DOMElement const *element_ptr) {
+			source_ = xerces_get_attribute<std::string>(element_ptr, "source");
+			offset_ = xerces_get_attribute<size_t>(element_ptr, "offset");
+		}
+
+		std::string const &get_source() const { return source_; }
+		size_t get_offset() const { return offset_; }
+	};
+
+	class inputs_list: public element {
+	protected:
+		boost::ptr_map<std::string, input> inputs_;
+
+		void process_child(std::string const &child_name, std::string const &child_id, xercesc::DOMElement const *child) {
+			if (child_name == "input") {
+				inputs_.insert(xerces_get_attribute<std::string>(child, "semantic"), construct<input>(child));
+			}
+		}
+
+	public:
+		input const *get_input(std::string const &semantic) const {
+			boost::ptr_map<std::string, input>::const_iterator it = inputs_.find(semantic);
+			if (it == inputs_.end()) throw std::runtime_error("input with semantic = " + semantic + " not found");
+			return it->second;
+		}
+	};
+
+	class vertices: public inputs_list {
+	};
+
+	class triangles: public inputs_list {
+	private:
+		size_t count_;
+		std::vector<size_t> indices_;
+
+		void process_child(std::string const &child_name, std::string const &child_id, xercesc::DOMElement const *child) {
+			if (child_name == "p") {
+				parse_list(child, indices_);
+			}
+
+			inputs_list::process_child(child_name, child_id, child);
+		}
+
+	public:
+		void init(xercesc::DOMElement const *element_ptr) {
+			count_ = xerces_get_attribute<size_t>(element_ptr, "count");
+		}
+
+		size_t get_count() const { return count_; }
+		std::vector<size_t> const &get_indices() const { return indices_; }
 	};
 
 	class vertex_indexer {
@@ -777,7 +956,8 @@ namespace collada_elements {
 		std::vector<channel> channels_;
 		boost::ptr_map<std::string, sampler *> samplers_;
 
-		void process_child(std::string const &child_name, std::string const &child_id, xercesc::DOMElement const *child) {
+		void process_child(std::string const &child_name, std::string const &child_id, xercesc::DOMElement const *child)
+		{
 			sources_list::process_child(child_name, child_id, child);
 
 			if (child_name == "sampler")
@@ -791,7 +971,8 @@ namespace collada_elements {
 		}
 
 	public:
-		model::animation build_animation(memory_model *model_ptr) {
+		model::animation build_animation(memory_model *model_ptr)
+		{
 			model::animation result;
 
 			for (std::vector<channel>::const_iterator it = channels_.begin(); it != channels_.end(); it++) {
@@ -801,27 +982,30 @@ namespace collada_elements {
 				sampler *sampler_ptr = *jt->second;
 
 				source const *time_input = get_source(sampler_ptr->get_input("INPUT")->get_source().substr(1));
-				source const *matrix_output = get_source(sampler_ptr->get_input("OUTPUT")->get_source().substr(1));
+				source const *transform_output = get_source(sampler_ptr->get_input("OUTPUT")->get_source().substr(1));
 
 				model::sampler dummy;
+				transform const *transform_ptr = 0;
+
+				// target is in form <node>/<transform>.<param>, <param> may be omitted
+				std::vector<std::string> parsed_target_components;
+				using namespace boost::lambda;
+				boost::split(parsed_target_components, it->target_url, _1 == '/' || _1 == '.', boost::algorithm::token_compress_on);
+				if (parsed_target_components.size() == 2) parsed_target_components.push_back(std::string());
+				if (parsed_target_components.size() != 3) throw std::runtime_error("invalid url " + it->target_url);
+
+				model::joint *joint_ptr = model_ptr->get_joint_by_id(parsed_target_components[0]);
+				dummy.set_target(joint_ptr, parsed_target_components[1]);
+
+				transform_ptr = get_root()->get_visual_scenes()->get_node_by_id(parsed_target_components[0])->get_transform_by_sid(parsed_target_components[1]);
 
 				for (size_t i = 0, n = time_input->get_size(); i < n; i++) {
 					float t;
-					math::matrix<4,4> m;
-
 					time_input->get(i, t);
-					matrix_output->get(i, m);
+
+					math::matrix<4,4> m = transform_ptr->get_baked_sample(transform_output, i, parsed_target_components.back());
 
 					dummy.add_sample(t, m);
-				}
-
-				{
-					using namespace boost::lambda;
-					std::vector<std::string> parsed_target_components;
-					boost::split(parsed_target_components, it->target_url, _1 == '/', boost::algorithm::token_compress_on);
-					if (parsed_target_components.size() != 2) throw std::runtime_error("invalid url " + it->target_url);
-
-					dummy.set_target(model_ptr->get_joint_by_id(parsed_target_components[0]), parsed_target_components[1]);
 				}
 
 				result.samplers.push_back(dummy);
@@ -850,14 +1034,15 @@ namespace collada_elements {
 		}
 	};
 
-	class collada: public element {
+	class collada: public element, public root_element {
 	private:
 		boost::scoped_ptr<library_visual_scenes> visual_scenes_;
 		boost::scoped_ptr<library_geometries> geometries_;
 		boost::scoped_ptr<library_controllers> controllers_;
 		boost::scoped_ptr<library_animations> animations_;
 
-		void process_child(std::string const &child_name, std::string const &child_id, xercesc::DOMElement const *child) {
+		void process_child(std::string const &child_name, std::string const &child_id, xercesc::DOMElement const *child)
+		{
 			if (child_name == "library_visual_scenes")
 			{
 				visual_scenes_.reset(construct<library_visual_scenes>(child));
@@ -877,12 +1062,24 @@ namespace collada_elements {
 		}
 
 	public:
-		void check() {
+		collada()
+		{
+			set_root(this);
+		}
+
+		library_visual_scenes *get_visual_scenes()
+		{
+			return visual_scenes_.get();
+		}
+
+		void check()
+		{
 			if (!visual_scenes_) throw std::runtime_error("<library_visual_scenes> not found");
 			if (!geometries_) throw std::runtime_error("<library_geometries> not found");
 		}
 
-		void build_model(memory_model *model_ptr) {
+		void build_model(memory_model *model_ptr)
+		{
 			visual_scenes_->build_hierarchy(model_ptr);
 			geometries_->build_meshes(model_ptr);
 			if (controllers_) controllers_->build_joint_influences(model_ptr);

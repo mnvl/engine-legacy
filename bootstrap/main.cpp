@@ -24,7 +24,7 @@ INT WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpstrCmdLine, INT
 		engine::system::window main_window("engine");
 		engine::graphic::renderer renderer(&main_window);
 
-		engine::graphic::collada_loader ci2("d:\\home\\bublik.dae");
+		engine::graphic::collada_loader ci2("d:\\home\\complex_animation.dae");
 		//engine::graphic::collada_loader ci2("e:\\home\\zxc.dae");
 		//engine::graphic::collada_loader ci2("e:\\home\\zzz.dae");
 		ci2.load();
@@ -39,7 +39,7 @@ INT WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpstrCmdLine, INT
 			main_window.run_message_loop();
 
 			renderer.begin_frame();
-			cam.set_position(math::vec<3>(0, 10, 0), math::vec<3>(0, 0, 0), math::vec<3>(1, 0, 0));
+			cam.set_position(math::vec<3>(10, 0, 10), math::vec<3>(0, 0, 0), math::vec<3>(0, 1, 0));
 			renderer.select(cam);
 			m.draw_wireframe(&renderer, angle / math::PI);
 			renderer.finish_frame();

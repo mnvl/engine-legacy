@@ -7,6 +7,7 @@ class test_collada_loader: public CppUnit::TestFixture {
 	CPPUNIT_TEST(test_plane);
 	CPPUNIT_TEST(test_joint);
 	CPPUNIT_TEST(test_animation);
+	CPPUNIT_TEST(test_animation_2);
 	CPPUNIT_TEST_SUITE_END();
 
 	void test_plane()
@@ -118,6 +119,15 @@ class test_collada_loader: public CppUnit::TestFixture {
 
 		CPPUNIT_ASSERT((vertices1[3].position - math::vec<3>(1.0f, 1.6f, -1.0f)).length_sq() < 0.1f);
 		CPPUNIT_ASSERT((vertices2[3].position - math::vec<3>(2.0f, 0.0f, -0.3f)).length_sq() < 0.1f);
+	}
+
+	void test_animation_2()
+	{
+		engine::graphic::collada_loader cl("test_collada_loader_animation_2.xml");
+		cl.load();
+
+		engine::graphic::memory_model *model_ptr = const_cast<engine::graphic::memory_model *>(&cl.get_model());
+		CPPUNIT_ASSERT (model_ptr->meshes.size() == 1);
 	}
 };
 
