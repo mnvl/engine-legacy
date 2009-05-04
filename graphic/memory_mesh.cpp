@@ -47,11 +47,13 @@ void memory_mesh::transform_vertices(std::vector<vertex> &result) const {
 		for (joint_influence::vertex_weights_type::const_iterator jt = it->vertex_weights.begin(); jt != it->vertex_weights.end(); jt++)
 		{
 			result[jt->vertex_index].position +=
-				((vertices[jt->vertex_index].position * matrix) *
+				((vertices[jt->vertex_index].position * bind_shape_matrix) *
 				it->inverted_bind_matrix * it->joint_ptr->matrix) *
 				jt->weight;
 		}
 	}
+
+
 }
 
 model::joint_influence *memory_mesh::get_joint_influence_by_name(std::string const &name, bool can_create)

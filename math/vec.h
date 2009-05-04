@@ -443,6 +443,10 @@ public:
 	x(v.x), y(v.y), z(v.z), w(v.w) {
 	}
 
+	vec(vec<arity - 1, scalar_type> const &v):
+	x(v.x), y(v.y), z(v.z), w(1) {
+	}
+
 	vec(scalar_type x0,scalar_type y0,scalar_type z0,scalar_type w0):
 	x(x0), y(y0), z(z0), w(w0) {
 	}
@@ -460,7 +464,6 @@ public:
 		w = w0;
 	}
 	
-
 	// присваивание
 	vec_type &operator =(const vec_type &v) {
 		x = v.x;

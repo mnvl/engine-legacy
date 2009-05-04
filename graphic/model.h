@@ -57,6 +57,7 @@ public:
 			}
 
 			if (parent) matrix *= parent->matrix;
+
 			if (instance_ptr) instance_ptr->matrix = matrix;
 
 			for (std::vector<joint *>::iterator it = childs.begin(); it != childs.end(); it++)

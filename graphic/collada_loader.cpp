@@ -1054,7 +1054,7 @@ namespace collada_elements {
 		else if (instance_controller_)
 		{
 			controller const *controller_ptr = get_root()->get_controllers()->get_controller_by_id(instance_controller_->get_url());
-			model_ptr->get_joint_by_id(instance_controller_->get_skeleton())->instance_ptr = model_ptr->get_mesh_by_id(controller_ptr->get_skin_source_id());
+			joint_ptr->instance_ptr = model_ptr->get_mesh_by_id(controller_ptr->get_skin_source_id());
 		}
 
 		for (boost::ptr_vector<node>::iterator it = childs_.begin(); it != childs_.end(); it++) {
