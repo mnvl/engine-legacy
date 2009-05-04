@@ -28,12 +28,12 @@ math::matrix<4,4> model::sampler::get(math::scalar time) const {
 	using namespace boost::lambda;
 	samples_type::const_iterator it = std::lower_bound(samples_.begin(), samples_.end(), sample(time), &_1 ->* &sample::time < &_2 ->* &sample::time);
 
-	math::scalar k = (time - it->time) / ((it + 1)->time - it->time);
+	math::scalar k = (time - (it - 1)->time) / (it->time - (it - 1)->time);
 	math::scalar inv_k = 1.0f - k;
 
 	math::matrix<4,4> m;
-	m.rotation(it->rotation_interpolator.interpolate(k));
-	m.translate(it->translation * inv_k + (it + 1)->translation * k);
+	m.rotation((it - 1)->rotation_interpolator.interpolate(k));
+	m.translate((it - 1)->translation * inv_k + it->translation * k);
 	return m;
 }
 
