@@ -93,7 +93,7 @@ public:
 			math::vec<3> translation;
 
 			sample(math::scalar t = 0):
-			time(0)
+			time(t)
 			{
 			}
 		};

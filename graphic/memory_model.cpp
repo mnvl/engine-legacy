@@ -52,10 +52,9 @@ model::joint *memory_model::get_joint_by_name(std::string const &name)
 
 void memory_model::set_animation_time(math::scalar t)
 {
-	if (animations.size())
+	for (animations_type::iterator it = animations.begin(); it != animations.end(); it++)
 	{
-		animation &a = animations.front();
-		a.set_time(t);
+		it->set_time(t);
 	}
 
 	for (joints_type::iterator it = joints.begin(); it != joints.end(); it++) {

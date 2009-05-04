@@ -530,7 +530,8 @@ namespace collada_elements {
 
 	class inputs_list: public element {
 	protected:
-		boost::ptr_map<std::string, input> inputs_;
+		typedef boost::ptr_map<std::string, input> inputs_type;
+		inputs_type inputs_;
 
 		void process_child(std::string const &child_name, std::string const &child_id, xercesc::DOMElement const *child) {
 			if (child_name == "input") {
@@ -539,8 +540,23 @@ namespace collada_elements {
 		}
 
 	public:
-		input const *get_input(std::string const &semantic) const {
-			boost::ptr_map<std::string, input>::const_iterator it = inputs_.find(semantic);
+		size_t get_stride() const
+		{
+			if (inputs_.empty()) throw std::logic_error("trying to calculate stride of empty input list");
+
+			size_t max_offset = 0;
+
+			for (inputs_type::const_iterator it = inputs_.begin(); it != inputs_.end(); it++)
+			{
+				if (it->second->get_offset() > max_offset) max_offset = it->second->get_offset(); 
+			}
+
+			return 1 + max_offset;
+		}
+
+		input const *get_input(std::string const &semantic) const
+		{
+			inputs_type::const_iterator it = inputs_.find(semantic);
 			if (it == inputs_.end()) throw std::runtime_error("input with semantic = " + semantic + " not found");
 			return it->second;
 		}
@@ -653,7 +669,7 @@ namespace collada_elements {
 			std::vector<size_t> const &indices = triangles_->get_indices();
 			std::vector<size_t>::const_iterator indices_get = indices.begin();
 
-			size_t stride = 1 + std::max(std::max(position_input->get_offset(), normals_input->get_offset()), texcoords_input->get_offset());
+			size_t stride = triangles_->get_stride();
 
 			for (size_t i = 0, n = triangles_->get_count() * 3; i < n; i++) {
 				size_t position_index;
@@ -662,7 +678,7 @@ namespace collada_elements {
 				for (size_t j = 0; j < stride; j++) {
 					if (j == position_input->get_offset()) {
 						position_index = *indices_get;
-						position_source->get(*indices_get, v.position);
+						position_source->get(position_index, v.position);
 					}
 
 					if (j == normals_input->get_offset()) {
