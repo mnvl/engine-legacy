@@ -74,7 +74,7 @@ void renderer::finish_frame()
 
 	{
 		char buffer[4096];
-		sprintf(buffer, "%.0lf msecs, %d fps", last_frame_time_ * 1000.0, frame_times_.size());
+		sprintf(buffer, "%4.0lf msecs, %3d fps", last_frame_time_ * 1000.0, frame_times_.size());
 
 		RECT rc = { 0, 0, width_, height_ };
 
