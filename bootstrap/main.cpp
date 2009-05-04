@@ -37,9 +37,9 @@ INT WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpstrCmdLine, INT
 			main_window.run_message_loop();
 
 			renderer.begin_frame();
-			cam.set_position(math::vec<3>(100 * cos(angle), 0, 100 * sin(angle)), math::vec<3>(0, 0, 0), math::vec<3>(0, 1, 0));
+			cam.set_position(math::vec<3>(5000 * cos(angle), 5000 * sin(angle), 0), math::vec<3>(0, 0, 0), math::vec<3>(0, 0, 1));
 			renderer.select(cam);
-			m.draw_wireframe(&renderer, 0);
+			m.draw_wireframe(&renderer, 0 * angle / math::PI);
 			renderer.finish_frame();
 
 			angle += 0.01f;

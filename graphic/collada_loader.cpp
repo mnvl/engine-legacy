@@ -73,18 +73,18 @@ namespace collada_elements {
 		}
 
 		template<class T> static void
-		parse_list(xercesc::DOMElement const *element_ptr, std::vector<T> &list) {
+		parse_list(xercesc::DOMElement const *element_ptr, std::vector<T> &v) {
 			std::stringstream ss(xerces_get_text(element_ptr));
 			T dummy;
-			while (ss >> dummy) list.push_back(dummy);
+			while (ss >> dummy) v.push_back(dummy);
 			if (ss.bad()) throw std::runtime_error("can't parse list");
 		}
 
 		template<class T> static size_t
-		parse_list(xercesc::DOMElement const *element_ptr, T *list, size_t size) {
+		parse_list(xercesc::DOMElement const *element_ptr, T *list_ptr, size_t size) {
 			std::stringstream ss(xerces_get_text(element_ptr));
 			size_t i = 0;
-			while (i < size && ss >> *list++) i++;
+			while (i < size && ss >> *list_ptr++) i++;
 			return i;
 		}
 
@@ -356,14 +356,39 @@ namespace collada_elements {
 		}
 	};
 
+	class instance_controller: public element {
+	private:
+		std::string url_;
+		std::string skeleton_;
+
+		void process_child(std::string const &child_name, std::string const &child_id, xercesc::DOMElement const *child)
+		{
+			if (child_name == "skeleton")
+			{
+				skeleton_ = xerces_get_text(child).substr(1);
+			}
+		}
+
+	public:
+		std::string const &get_url() const { return url_; }
+		std::string const &get_skeleton() const { return skeleton_; }
+
+		void init(xercesc::DOMElement const *element_ptr)
+		{
+			url_ = xerces_get_attribute<std::string>(element_ptr, "url").substr(1);
+		}
+	};
+
 	class node: public element {
 	protected:
-		std::string id_, sid_, name_, type_, instance_geometry_, instance_controller_;
+		std::string id_, sid_, name_, type_, instance_geometry_;
 		node *parent_;
 		boost::ptr_vector<node> childs_;
 		boost::ptr_vector<transform> transforms_;
+		boost::scoped_ptr<instance_controller> instance_controller_;
 
-		void process_child(std::string const &child_name, std::string const &child_id, xercesc::DOMElement const *child) {
+		void process_child(std::string const &child_name, std::string const &child_id, xercesc::DOMElement const *child)
+		{
 			if (child_name == "node")
 			{
 				childs_.push_back(construct<node>(child));
@@ -391,7 +416,7 @@ namespace collada_elements {
 			}
 			else if (child_name == "instance_controller")
 			{
-				instance_controller_ = xerces_get_attribute<std::string>(child, "url");
+				instance_controller_.reset(construct<instance_controller>(child));
 			}
 		}
 
@@ -1013,7 +1038,7 @@ namespace collada_elements {
 
 		model::joint *joint_ptr = &model_ptr->joints.back();
 		joint_ptr->id = id_;
-		joint_ptr->name = name_;
+		joint_ptr->name = sid_;
 		joint_ptr->parent = parent_ptr;
 
 		for (boost::ptr_vector<transform>::const_iterator it = transforms_.begin(); it != transforms_.end(); it++) {
@@ -1026,10 +1051,10 @@ namespace collada_elements {
 		{
 			joint_ptr->instance_ptr = model_ptr->get_mesh_by_id(instance_geometry_.substr(1));
 		}
-		else if (instance_controller_.size())
+		else if (instance_controller_)
 		{
-			controller const *controller_ptr = get_root()->get_controllers()->get_controller_by_id(instance_controller_.substr(1));
-			joint_ptr->instance_ptr = model_ptr->get_mesh_by_id(controller_ptr->get_skin_source_id());
+			controller const *controller_ptr = get_root()->get_controllers()->get_controller_by_id(instance_controller_->get_url());
+			model_ptr->get_joint_by_id(instance_controller_->get_skeleton())->instance_ptr = model_ptr->get_mesh_by_id(controller_ptr->get_skin_source_id());
 		}
 
 		for (boost::ptr_vector<node>::iterator it = childs_.begin(); it != childs_.end(); it++) {
