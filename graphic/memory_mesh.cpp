@@ -52,8 +52,6 @@ void memory_mesh::transform_vertices(std::vector<vertex> &result) const {
 				jt->weight;
 		}
 	}
-
-
 }
 
 model::joint_influence *memory_mesh::get_joint_influence_by_name(std::string const &name, bool can_create)

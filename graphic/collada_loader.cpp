@@ -9,6 +9,7 @@
 #include <boost/algorithm/string/split.hpp>
 #include <boost/scoped_ptr.hpp>
 #include <boost/lambda/lambda.hpp>
+#include <boost/lexical_cast.hpp>
 #include <xercesc/parsers/XercesDOMParser.hpp>
 #include <xercesc/sax/HandlerBase.hpp>
 #include <math/matrix.h>
@@ -125,6 +126,7 @@ namespace collada_elements {
 
 	public:
 		size_t get_stride() const { return stride_; }
+		size_t get_count() const { return count_; }
 	};
 
 	class source: public element {
@@ -151,6 +153,16 @@ namespace collada_elements {
 		void check() {
 			if (float_array_.empty() && name_array_.empty()) throw std::runtime_error("malformed or unknown <source>");
 			if (!technique_) throw std::runtime_error("no <technique_common> in <source>");
+
+			size_t array_size = std::max(float_array_.size(), name_array_.size());
+			size_t expected_size = technique_->get_stride() * technique_->get_count();
+
+			if (array_size != expected_size)
+			{
+				throw std::runtime_error("array has " + boost::lexical_cast<std::string>(expected_size) 
+					+ " elements, parsed " + boost::lexical_cast<std::string>(array_size) + " elements");
+			}
+
 		}
 
 		size_t get_size() const {
@@ -168,6 +180,7 @@ namespace collada_elements {
 		template <int N>
 		void get(size_t index, math::vec<N> &v) const {
 			size_t array_index = index * technique_->get_stride();
+
 			for (size_t i = 0; i < N; i++) {
 				v.i[i] = float_array_.at(array_index++);
 			}
