@@ -14,7 +14,7 @@ namespace graphic {
 class memory_model;
 class renderer;
 
-class memory_mesh {
+class memory_mesh: public mesh {
 public:
 	typedef model::joint joint;
 	typedef model::joint_influence joint_influence;
@@ -34,12 +34,12 @@ public:
 	typedef math::vec<3, index> face;
 	typedef std::list<joint_influence> influences_type;
 
-	memory_mesh(memory_model *model_ptr);
+	memory_mesh(memory_model *m);
 	virtual ~memory_mesh();
 
-	memory_model *model_ptr_;
+	memory_model *model_ptr;
 	std::string id, name;
-	math::matrix<4,4> transform;
+	math::matrix<4,4> bind_shape_matrix;
 	std::vector<vertex> vertices;
 	std::vector<index> indices;
 	influences_type influences;

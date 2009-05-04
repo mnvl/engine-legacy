@@ -356,7 +356,7 @@ namespace collada_elements {
 
 	class node: public element {
 	protected:
-		std::string id_, sid_, name_, type_, instance_geometry_;
+		std::string id_, sid_, name_, type_, instance_geometry_, instance_controller_;
 		node *parent_;
 		boost::ptr_vector<node> childs_;
 		boost::ptr_vector<transform> transforms_;
@@ -387,49 +387,9 @@ namespace collada_elements {
 			{
 				instance_geometry_ = xerces_get_attribute<std::string>(child, "url");
 			}
-		}
-
-		void build_joint(memory_model *model_ptr, model::joint *parent = 0) {
-			model_ptr->joints.push_back(new model::joint());
-			model::joint *joint_ptr = &model_ptr->joints.back();
-			joint_ptr->id = id_;
-			joint_ptr->name = sid_;
-			joint_ptr->parent = parent;
-
-			for (boost::ptr_vector<transform>::const_iterator it = transforms_.begin(); it != transforms_.end(); it++) {
-				joint_ptr->transforms.push_back(model::joint::transform(it->get_sid(), it->get_baked_matrix()));
-			}
-
-			if (parent) parent->childs.push_back(joint_ptr);
-
-			for (boost::ptr_vector<node>::iterator it = childs_.begin(); it != childs_.end(); it++) {
-				it->build_joint(model_ptr, joint_ptr);
-			}
-		}
-
-		math::matrix<4,4> sum_all_transforms() const {
-			math::matrix<4,4> result;
-			result.identity();
-			for (boost::ptr_vector<transform>::const_reverse_iterator it = transforms_.rbegin(); it != transforms_.rend(); it++)
-				result *= it->get_baked_matrix();
-			return result;
-		}
-
-		bool have_instance_controller() const {
-			for (boost::ptr_vector<node>::const_iterator it = childs_.begin(); it != childs_.end(); it++) {
-				if (it->name_ == "instance_controller") return true;
-			}
-			return false;
-		}
-
-		void build_mesh(memory_model *model_ptr) {
-			model_ptr->meshes.push_back(new memory_mesh(model_ptr));
-			memory_mesh *mesh_ptr = &model_ptr->meshes.back();
-			mesh_ptr->name = instance_geometry_.empty() ? name_ : instance_geometry_.substr(1);
-			mesh_ptr->transform = sum_all_transforms();
-
-			for (boost::ptr_vector<node>::iterator it = childs_.begin(); it != childs_.end(); it++) {
-				it->build_hierarchy(model_ptr);
+			else if (child_name == "instance_controller")
+			{
+				instance_controller_ = xerces_get_attribute<std::string>(child, "url");
 			}
 		}
 
@@ -447,10 +407,24 @@ namespace collada_elements {
 			}
 		}
 
-		void build_hierarchy(memory_model *model_ptr) {
-			// we are expecting only joints and meshes
-			if (type_ == "JOINT" || !have_instance_controller()) build_joint(model_ptr, 0);
-			else build_mesh(model_ptr);
+		void build_hierarchy(memory_model *model_ptr, model::joint *parent_ptr) {
+			model_ptr->joints.push_back(new model::joint());
+
+			model::joint *joint_ptr = &model_ptr->joints.back();
+			joint_ptr->id = id_;
+			joint_ptr->parent = parent_ptr;
+
+			for (boost::ptr_vector<transform>::const_iterator it = transforms_.begin(); it != transforms_.end(); it++) {
+				joint_ptr->transforms.push_back(model::joint::transform(it->get_sid(), it->get_baked_matrix()));
+			}
+
+			if (parent_ptr) parent_ptr->childs.push_back(joint_ptr);
+			if (instance_geometry_.size()) joint_ptr->instance_ptr = model_ptr->get_mesh_by_id(instance_geometry_.substr(1));
+			if (instance_controller_.size()) joint_ptr->instance_ptr = model_ptr->get_mesh_by_id(instance_controller_.substr(1));
+
+			for (boost::ptr_vector<node>::iterator it = childs_.begin(); it != childs_.end(); it++) {
+				it->build_hierarchy(model_ptr, joint_ptr);
+			}
 		}
 
 		node const *get_node_by_id(std::string const &id) const
@@ -483,10 +457,8 @@ namespace collada_elements {
 		}
 
 		void build_hierarchy(memory_model *model_ptr) {
-			model_ptr->transform = sum_all_transforms();
-
 			for (boost::ptr_vector<node>::iterator it = childs_.begin(); it != childs_.end(); it++) {
-				it->build_hierarchy(model_ptr);
+				it->build_hierarchy(model_ptr, 0);
 			}
 		}
 	};
@@ -643,7 +615,7 @@ namespace collada_elements {
 			if (!triangles_) throw std::runtime_error("no <triangles> found");
 		}
 
-		void build_mesh(memory_mesh &mesh) {
+		void build_mesh(memory_mesh *mesh_ptr) {
 			input const *position_input = vertices_->get_input("POSITION");
 			source const *position_source = get_source(position_input->get_source().substr(1));
 
@@ -686,15 +658,17 @@ namespace collada_elements {
 
 				if (vertex_index.second) {
 					position_index_x_vertex_index_.insert(std::make_pair(position_index, vertex_index.first));
-					mesh.vertices.push_back(v);
+					mesh_ptr->vertices.push_back(v);
 				}
 
-				mesh.indices.push_back(vertex_index.first);
+				mesh_ptr->indices.push_back(vertex_index.first);
 			}
 		}
 
-		void fix_position_indices(memory_mesh &mesh) {
-			for (memory_mesh::influences_type::iterator mesh_it = mesh.influences.begin(); mesh_it != mesh.influences.end(); mesh_it++) {
+		void fix_position_indices(memory_mesh *mesh_ptr) {
+			for (memory_mesh::influences_type::iterator mesh_it = mesh_ptr->influences.begin();
+				mesh_it != mesh_ptr->influences.end(); mesh_it++)
+			{
 				std::vector<vertex_weight> weights;
 				weights.swap(mesh_it->vertex_weights);
 
@@ -735,12 +709,12 @@ namespace collada_elements {
 			if (!mesh_ptr_) throw std::runtime_error("<mesh> not found in <geometry>");
 		}
 
-		void build_mesh(memory_mesh &mesh) {
-			return mesh_ptr_->build_mesh(mesh);
+		void build_mesh(memory_mesh *mesh_ptr) {
+			return mesh_ptr_->build_mesh(mesh_ptr);
 		}
 
-		void fix_position_indices(memory_mesh &mesh) {
-			return mesh_ptr_->fix_position_indices(mesh);
+		void fix_position_indices(memory_mesh *mesh_ptr) {
+			return mesh_ptr_->fix_position_indices(mesh_ptr);
 		}
 	};
 
@@ -757,16 +731,17 @@ namespace collada_elements {
 	public:
 		void build_meshes(memory_model *model_ptr) {
 			for (boost::ptr_vector<geometry>::iterator it = geometries_.begin(); it != geometries_.end(); it++) {
-				memory_mesh *mesh_ptr = model_ptr->get_mesh_by_name(it->get_name(), true);
+				model_ptr->meshes.push_back(new memory_mesh(model_ptr));
+				memory_mesh *mesh_ptr = &model_ptr->meshes.back();
 				mesh_ptr->id = it->get_id();
 				mesh_ptr->name = it->get_name();
-				it->build_mesh(*mesh_ptr);
+				it->build_mesh(mesh_ptr);
 			}
 		}
 
 		void fix_position_indices(memory_model *model_ptr) {
 			for (boost::ptr_vector<geometry>::iterator it = geometries_.begin(); it != geometries_.end(); it++) {
-				it->fix_position_indices(*model_ptr->get_mesh_by_name(it->get_name()));
+				it->fix_position_indices(model_ptr->get_mesh_by_id(it->get_id()));
 			}
 		}
 	};
@@ -820,7 +795,7 @@ namespace collada_elements {
 	public:
 		void build_inverted_bind_matrices(memory_mesh *mesh_ptr)
 		{
-			mesh_ptr->transform = bind_shape_matrix_;
+			mesh_ptr->bind_shape_matrix = bind_shape_matrix_;
 
 			source const *joints_source = get_source(joints_->get_input("JOINT")->get_source().substr(1));
 			source const *inverted_bind_matrices_source = get_source(joints_->get_input("INV_BIND_MATRIX")->get_source().substr(1));
@@ -1080,30 +1055,11 @@ namespace collada_elements {
 
 		void build_model(memory_model *model_ptr)
 		{
-			visual_scenes_->build_hierarchy(model_ptr);
 			geometries_->build_meshes(model_ptr);
+			visual_scenes_->build_hierarchy(model_ptr);
 			if (controllers_) controllers_->build_joint_influences(model_ptr);
 			geometries_->fix_position_indices(model_ptr);
 			if (animations_) animations_->build_animations(model_ptr);
-			postprocess(model_ptr);
-		}
-
-		void postprocess(memory_model *model_ptr)
-		{
-			// if model has only one joint then that joint is root node
-			if (model_ptr->joints.size() == 1)
-			{
-				model_ptr->joints.front().build_frame_transforms();
-
-				for (memory_model::meshes_type::iterator it = model_ptr->meshes.begin();
-					it != model_ptr->meshes.end(); it++)
-				{
-					if (it->influences.size() != 0) throw std::logic_error("root node of model is animated");
-					it->transform = model_ptr->joints.front().frame_transform;
-				}
-
-				model_ptr->joints.clear();
-			}
 		}
 	};
 }

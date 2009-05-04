@@ -16,24 +16,14 @@ class test_collada_loader: public CppUnit::TestFixture {
 
 		engine::graphic::memory_model const *model_ptr = &cl.get_model();
 		CPPUNIT_ASSERT (model_ptr->meshes.size() == 1);
-		CPPUNIT_ASSERT (model_ptr->joints.size() == 0);
+		CPPUNIT_ASSERT (model_ptr->joints.size() == 1);
 		CPPUNIT_ASSERT (model_ptr->animations.size() == 0);
 
-		{
-			math::matrix<4,4> tf;
-			tf.identity();
-			CPPUNIT_ASSERT(model_ptr->transform == tf);
-		}
+		CPPUNIT_ASSERT (model_ptr->joints[0].instance_ptr == &model_ptr->meshes[0]);
 
 		engine::graphic::memory_mesh const *mesh_ptr = &model_ptr->meshes.front();
 		CPPUNIT_ASSERT (mesh_ptr->vertices.size() == 4);
 		CPPUNIT_ASSERT (mesh_ptr->indices.size() == 6);
-
-		{
-			math::matrix<4,4> tf;
-			tf.translation(math::vec<3>(1.0f, -0.5f, 3.0f));
-			CPPUNIT_ASSERT (mesh_ptr->transform == tf);
-		}
 
 		CPPUNIT_ASSERT ((mesh_ptr->vertices[0].position - math::vec<3>(-0.5f, 0.0f,  0.5f)).length_sq() < math::EPSILON);
 		CPPUNIT_ASSERT ((mesh_ptr->vertices[1].position - math::vec<3>( 0.5f, 0.0f,  0.5f)).length_sq() < math::EPSILON);
@@ -60,6 +50,8 @@ class test_collada_loader: public CppUnit::TestFixture {
 
 		CPPUNIT_ASSERT (model_ptr->joints[0].parent == 0);
 		CPPUNIT_ASSERT (model_ptr->joints[1].parent == 0);
+
+		CPPUNIT_ASSERT (model_ptr->joints[0].instance_ptr == (engine::graphic::mesh *) &model_ptr->meshes[0]);
 
 		engine::graphic::memory_mesh *mesh_ptr = &model_ptr->meshes.front();
 
@@ -92,7 +84,6 @@ class test_collada_loader: public CppUnit::TestFixture {
 		CPPUNIT_ASSERT (model_ptr->joints[1].parent == 0);
 		CPPUNIT_ASSERT (model_ptr->joints[2].parent == &model_ptr->joints[1]);
 		CPPUNIT_ASSERT (model_ptr->joints[3].parent == &model_ptr->joints[2]);
-
 
 		CPPUNIT_ASSERT (model_ptr->joints[0].childs.size() == 0);
 

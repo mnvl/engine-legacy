@@ -14,7 +14,6 @@ public:
 	typedef boost::ptr_vector<joint> joints_type;
 	typedef boost::ptr_vector<animation> animations_type;
 
-	math::matrix<4,4> transform;
 	meshes_type meshes;
 	joints_type joints;
 	animations_type animations;
@@ -22,12 +21,10 @@ public:
 	void cleanup();
 
 	memory_mesh *get_mesh_by_id(std::string const &id);
-	memory_mesh *get_mesh_by_name(std::string const &name, bool can_create = false);
+	memory_mesh *get_mesh_by_name(std::string const &name);
 	joint *get_joint_by_id(std::string const &name);
 	joint *get_joint_by_name(std::string const &name);
-	
 	void set_animation_time(math::scalar t);
-
 	void draw_wireframe(renderer *renderer_ptr, math::scalar time);
 };
 

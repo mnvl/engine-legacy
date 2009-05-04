@@ -6,10 +6,9 @@
 namespace engine {
 namespace graphic {
 
-memory_mesh::memory_mesh(memory_model *model_ptr):
-model_ptr_(model_ptr)
+memory_mesh::memory_mesh(memory_model *m):
+model_ptr(m)
 {
-	transform.identity();
 }
 
 memory_mesh::~memory_mesh() {
@@ -18,11 +17,11 @@ memory_mesh::~memory_mesh() {
 void memory_mesh::transform_vertices(std::vector<vertex> &result) const {
 	result = vertices;
 
-	if (model_ptr_->animations.empty())
+	if (model_ptr->animations.empty())
 	{
 		for (std::vector<vertex>::iterator it = result.begin(); it != result.end(); it++)
 		{
-			it->position = it->position * transform * model_ptr_->transform;
+			it->position = it->position * matrix;
 		}
 
 		return;
@@ -48,9 +47,9 @@ void memory_mesh::transform_vertices(std::vector<vertex> &result) const {
 		for (joint_influence::vertex_weights_type::const_iterator jt = it->vertex_weights.begin(); jt != it->vertex_weights.end(); jt++)
 		{
 			result[jt->vertex_index].position +=
-				((vertices[jt->vertex_index].position * transform) *
+				((vertices[jt->vertex_index].position * bind_shape_matrix) *
 				it->inverted_bind_matrix *
-				it->joint_ptr->frame_transform) *
+				it->joint_ptr->matrix) *
 				jt->weight;
 		}
 	}
@@ -58,7 +57,7 @@ void memory_mesh::transform_vertices(std::vector<vertex> &result) const {
 
 model::joint_influence *memory_mesh::get_joint_influence_by_name(std::string const &name, bool can_create)
 {
-	model::joint *joint_ptr = model_ptr_->get_joint_by_name(name);
+	model::joint *joint_ptr = model_ptr->get_joint_by_name(name);
 
 	for (influences_type::iterator it = influences.begin(); it != influences.end(); it++) {
 		if (it->joint_ptr == joint_ptr) return &*it;

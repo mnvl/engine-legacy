@@ -23,17 +23,10 @@ memory_mesh *memory_model::get_mesh_by_id(std::string const &id)
 	throw std::runtime_error("mesh with id = " + id + " not found");
 }
 
-memory_mesh *memory_model::get_mesh_by_name(std::string const &name, bool can_create)
+memory_mesh *memory_model::get_mesh_by_name(std::string const &name)
 {
 	for (meshes_type::iterator it = meshes.begin(); it != meshes.end(); it++) {
 		if (it->name == name) return &*it;
-	}
-
-	if (can_create) {
-		std::auto_ptr<memory_mesh> mesh_ptr(new memory_mesh(this));
-		mesh_ptr->name = name;
-		meshes.push_back(mesh_ptr.get());
-		return mesh_ptr.release();
 	}
 
 	throw std::runtime_error("mesh with name = " + name + " not found");
@@ -61,12 +54,6 @@ void memory_model::set_animation_time(math::scalar t)
 {
 	animation &a = animations.front();
 	a.set_time(t);
-
-	for (joints_type::iterator it = joints.begin(); it != joints.end(); it++) {
-		if (it->parent == 0) {
-			it->build_frame_transforms();
-		}
-	}
 }
 
 void memory_model::draw_wireframe(renderer *renderer_ptr, math::scalar time)
@@ -87,6 +74,12 @@ void memory_model::draw_wireframe(renderer *renderer_ptr, math::scalar time)
 	renderer_ptr->get_device()->SetFVF(memory_mesh::VERTEX_FORMAT);
 
 	if (time > 0) set_animation_time(time);
+
+	for (joints_type::iterator it = joints.begin(); it != joints.end(); it++) {
+		if (it->parent == 0) {
+			it->build_frame_transforms();
+		}
+	}
 
 	for (meshes_type::const_iterator it = meshes.begin(); it != meshes.end(); it++) {
 		it->draw_wireframe(renderer_ptr, time);

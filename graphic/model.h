@@ -10,6 +10,11 @@
 namespace engine {
 namespace graphic {
 
+class mesh {
+public:
+	math::matrix<4,4> matrix;
+};
+
 class model {
 public:
 	struct joint {
@@ -27,10 +32,13 @@ public:
 		joint *parent;
 		std::vector<joint *> childs;
 		std::vector<transform> transforms;
-		math::matrix<4,4> frame_transform;
+		math::matrix<4,4> matrix;
+		mesh *instance_ptr;
 
 		joint():
-		parent(0) {
+		parent(0),
+		instance_ptr(0)
+		{
 		}
 
 		math::matrix<4,4> &get_transform_by_sid(std::string const &sid) {
@@ -40,12 +48,16 @@ public:
 		}
 
 		void build_frame_transforms() {
-			frame_transform.identity();
+			matrix.identity();
 
-			for (std::vector<transform>::reverse_iterator it = transforms.rbegin(); it != transforms.rend(); it++)
-				frame_transform *= it->matrix;
+			for (std::vector<transform>::reverse_iterator it = transforms.rbegin();
+				it != transforms.rend(); it++)
+			{
+				matrix *= it->matrix;
+			}
 
-			if (parent) frame_transform *= parent->frame_transform;
+			if (parent) matrix *= parent->matrix;
+			if (instance_ptr) instance_ptr->matrix = matrix;
 
 			for (std::vector<joint *>::iterator it = childs.begin(); it != childs.end(); it++)
 				(*it)->build_frame_transforms();
