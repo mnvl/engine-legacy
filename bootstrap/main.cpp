@@ -24,7 +24,7 @@ INT WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpstrCmdLine, INT
 		engine::system::window main_window("engine");
 		engine::graphic::renderer renderer(&main_window);
 
-		engine::graphic::collada_loader ci2("e:\\home\\1.dae");
+		engine::graphic::collada_loader ci2("e:\\home\\r2.dae");
 		ci2.load();
 
 		engine::graphic::camera cam;

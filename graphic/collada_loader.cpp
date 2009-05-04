@@ -26,10 +26,12 @@ namespace collada_elements {
 	typedef model::joint_influence::vertex_weight vertex_weight;
 
 	class library_visual_scenes;
+	class library_controllers;
 
 	class root_element {
 	public:
 		virtual library_visual_scenes *get_visual_scenes() = 0;
+		virtual library_controllers *get_controllers() = 0;
 	};
 
 	class element {
@@ -407,25 +409,7 @@ namespace collada_elements {
 			}
 		}
 
-		void build_hierarchy(memory_model *model_ptr, model::joint *parent_ptr) {
-			model_ptr->joints.push_back(new model::joint());
-
-			model::joint *joint_ptr = &model_ptr->joints.back();
-			joint_ptr->id = id_;
-			joint_ptr->parent = parent_ptr;
-
-			for (boost::ptr_vector<transform>::const_iterator it = transforms_.begin(); it != transforms_.end(); it++) {
-				joint_ptr->transforms.push_back(model::joint::transform(it->get_sid(), it->get_baked_matrix()));
-			}
-
-			if (parent_ptr) parent_ptr->childs.push_back(joint_ptr);
-			if (instance_geometry_.size()) joint_ptr->instance_ptr = model_ptr->get_mesh_by_id(instance_geometry_.substr(1));
-			if (instance_controller_.size()) joint_ptr->instance_ptr = model_ptr->get_mesh_by_id(instance_controller_.substr(1));
-
-			for (boost::ptr_vector<node>::iterator it = childs_.begin(); it != childs_.end(); it++) {
-				it->build_hierarchy(model_ptr, joint_ptr);
-			}
-		}
+		void build_hierarchy(memory_model *model_ptr, model::joint *parent_ptr);
 
 		node const *get_node_by_id(std::string const &id) const
 		{
@@ -881,6 +865,12 @@ namespace collada_elements {
 		}
 
 	public:
+		std::string get_skin_source_id() const
+		{
+			if (skins_.size() != 1) throw std::logic_error("zero or more than one <skin> in <controller>");
+			return skins_.begin()->first.substr(1);
+		}
+
 		void build_joint_influences(memory_model *model_ptr) {
 			for (boost::ptr_map<std::string, skin *>::const_iterator it = skins_.begin(); it != skins_.end(); it++) {
 				memory_mesh *mesh_ptr = model_ptr->get_mesh_by_id(it->first.substr(1));
@@ -901,6 +891,14 @@ namespace collada_elements {
 		}
 
 	public:
+		controller const *get_controller_by_id(std::string const &id) const
+		{
+			boost::ptr_map<std::string, controller *>::const_iterator it = controllers_.find(id);
+			if (it != controllers_.end()) return *it->second;
+
+			throw std::logic_error("controller with id = " + id + " not found");
+		}
+
 		void build_joint_influences(memory_model *model_ptr) {
 			for (boost::ptr_map<std::string, controller *>::const_iterator it = controllers_.begin(); it != controllers_.end(); it++) {
 				(*it->second)->build_joint_influences(model_ptr);
@@ -1009,6 +1007,36 @@ namespace collada_elements {
 		}
 	};
 
+	void node::build_hierarchy(memory_model *model_ptr, model::joint *parent_ptr)
+	{
+		model_ptr->joints.push_back(new model::joint());
+
+		model::joint *joint_ptr = &model_ptr->joints.back();
+		joint_ptr->id = id_;
+		joint_ptr->name = name_;
+		joint_ptr->parent = parent_ptr;
+
+		for (boost::ptr_vector<transform>::const_iterator it = transforms_.begin(); it != transforms_.end(); it++) {
+			joint_ptr->transforms.push_back(model::joint::transform(it->get_sid(), it->get_baked_matrix()));
+		}
+
+		if (parent_ptr) parent_ptr->childs.push_back(joint_ptr);
+
+		if (instance_geometry_.size())
+		{
+			joint_ptr->instance_ptr = model_ptr->get_mesh_by_id(instance_geometry_.substr(1));
+		}
+		else if (instance_controller_.size())
+		{
+			controller const *controller_ptr = get_root()->get_controllers()->get_controller_by_id(instance_controller_.substr(1));
+			joint_ptr->instance_ptr = model_ptr->get_mesh_by_id(controller_ptr->get_skin_source_id());
+		}
+
+		for (boost::ptr_vector<node>::iterator it = childs_.begin(); it != childs_.end(); it++) {
+			it->build_hierarchy(model_ptr, joint_ptr);
+		}
+	}
+
 	class collada: public element, public root_element {
 	private:
 		boost::scoped_ptr<library_visual_scenes> visual_scenes_;
@@ -1045,6 +1073,11 @@ namespace collada_elements {
 		library_visual_scenes *get_visual_scenes()
 		{
 			return visual_scenes_.get();
+		}
+
+		library_controllers *get_controllers()
+		{
+			return controllers_.get();
 		}
 
 		void check()
