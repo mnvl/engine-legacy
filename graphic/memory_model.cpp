@@ -52,8 +52,17 @@ model::joint *memory_model::get_joint_by_name(std::string const &name)
 
 void memory_model::set_animation_time(math::scalar t)
 {
-	animation &a = animations.front();
-	a.set_time(t);
+	if (animations.size())
+	{
+		animation &a = animations.front();
+		a.set_time(t);
+	}
+
+	for (joints_type::iterator it = joints.begin(); it != joints.end(); it++) {
+		if (it->parent == 0) {
+			it->build_frame_transforms();
+		}
+	}
 }
 
 void memory_model::draw_wireframe(renderer *renderer_ptr, math::scalar time)
@@ -73,13 +82,7 @@ void memory_model::draw_wireframe(renderer *renderer_ptr, math::scalar time)
 	renderer_ptr->get_device()->SetMaterial(&material);
 	renderer_ptr->get_device()->SetFVF(memory_mesh::VERTEX_FORMAT);
 
-	if (time > 0) set_animation_time(time);
-
-	for (joints_type::iterator it = joints.begin(); it != joints.end(); it++) {
-		if (it->parent == 0) {
-			it->build_frame_transforms();
-		}
-	}
+	set_animation_time(time);
 
 	for (meshes_type::const_iterator it = meshes.begin(); it != meshes.end(); it++) {
 		it->draw_wireframe(renderer_ptr, time);
