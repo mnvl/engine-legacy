@@ -32,7 +32,7 @@ memory_mesh *memory_model::get_mesh_by_name(std::string const &name)
 	throw std::runtime_error("mesh with name = " + name + " not found");
 }
 
-model::joint *memory_model::get_joint_by_id(std::string const &id)
+joint *memory_model::get_joint_by_id(std::string const &id)
 {
 	for (joints_type::iterator it = joints.begin(); it != joints.end(); it++) {
 		if (it->id == id) return &*it;
@@ -41,7 +41,7 @@ model::joint *memory_model::get_joint_by_id(std::string const &id)
 	throw std::runtime_error("joint with id = " + id + " not found in model");
 }
 
-model::joint *memory_model::get_joint_by_name(std::string const &name)
+joint *memory_model::get_joint_by_name(std::string const &name)
 {
 	for (joints_type::iterator it = joints.begin(); it != joints.end(); it++) {
 		if (it->name == name) return &*it;

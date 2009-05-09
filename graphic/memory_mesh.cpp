@@ -54,9 +54,9 @@ void memory_mesh::transform_vertices(std::vector<vertex> &result) const {
 	}
 }
 
-model::joint_influence *memory_mesh::get_joint_influence_by_name(std::string const &name, bool can_create)
+joint_influence *memory_mesh::get_joint_influence_by_name(std::string const &name, bool can_create)
 {
-	model::joint *joint_ptr = model_ptr->get_joint_by_name(name);
+	joint *joint_ptr = model_ptr->get_joint_by_name(name);
 
 	for (influences_type::iterator it = influences.begin(); it != influences.end(); it++) {
 		if (it->joint_ptr == joint_ptr) return &*it;

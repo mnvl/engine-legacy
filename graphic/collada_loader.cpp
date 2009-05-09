@@ -24,15 +24,15 @@ namespace collada_elements {
 	using namespace engine::util;
 	using namespace engine::graphic;
 
-	typedef model::joint_influence::vertex_weight vertex_weight;
+	typedef joint_influence::vertex_weight vertex_weight;
 
-	class library_visual_scenes;
-	class library_controllers;
+	class library_visual_scenes_e;
+	class library_controllers_e;
 
 	class root_element {
 	public:
-		virtual library_visual_scenes *get_visual_scenes() = 0;
-		virtual library_controllers *get_controllers() = 0;
+		virtual library_visual_scenes_e *get_visual_scenes() = 0;
+		virtual library_controllers_e *get_controllers() = 0;
 	};
 
 	class element {
@@ -95,7 +95,7 @@ namespace collada_elements {
 		}
 	};
 
-	class technique_common: public element {
+	class technique_common_e: public element {
 	private:
 		struct param {
 			std::string name;
@@ -118,8 +118,8 @@ namespace collada_elements {
 
 				xercesc::DOMNodeList const *params = child->getElementsByTagName(xerces_lcp_transcode("param").c_str());
 				for (size_t i = 0, n = params->getLength(); i < n; i++) {
-					xercesc::DOMNode const *node = params->item(i);
-					params_.push_back(param(xerces_get_attribute<std::string>(node, "name"), xerces_get_attribute<std::string>(node, "type")));
+					xercesc::DOMNode const *node_e = params->item(i);
+					params_.push_back(param(xerces_get_attribute<std::string>(node_e, "name"), xerces_get_attribute<std::string>(node_e, "type")));
 				}
 			}
 		}
@@ -129,11 +129,11 @@ namespace collada_elements {
 		size_t get_count() const { return count_; }
 	};
 
-	class source: public element {
+	class source_e: public element {
 	private:
 		std::vector<float> float_array_;
 		std::vector<std::string> name_array_;
-		boost::scoped_ptr<technique_common> technique_;
+		boost::scoped_ptr<technique_common_e> technique_;
 
 		void process_child(std::string const &child_name, std::string const &child_id, xercesc::DOMElement const *child) {
 			if (child_name == "float_array") {
@@ -143,12 +143,12 @@ namespace collada_elements {
 				parse_list(child, name_array_);
 			}
 			else if (child_name == "technique_common") {
-				technique_.reset(construct<technique_common>(child));
+				technique_.reset(construct<technique_common_e>(child));
 			}
 		}
 
 	public:
-		technique_common const &get_technique() const { return *technique_; }
+		technique_common_e const &get_technique() const { return *technique_; }
 
 		void check() {
 			if (float_array_.empty() && name_array_.empty()) throw std::runtime_error("malformed or unknown <source>");
@@ -197,25 +197,25 @@ namespace collada_elements {
 		}
 	};
 
-	class sources_list: public element {
+	class sources_list_e: public element {
 	protected:
-		boost::ptr_map<std::string, source> sources_;
+		boost::ptr_map<std::string, source_e> sources_;
 
 		void process_child(std::string const &child_name, std::string const &child_id, xercesc::DOMElement const *child) {
 			if (child_name == "source") {
-				sources_.insert(const_cast<std::string &>(child_id), construct<source>(child));
+				sources_.insert(const_cast<std::string &>(child_id), construct<source_e>(child));
 			}
 		}
 
 	public:
-		source const *get_source(std::string const &id) const {
-			boost::ptr_map<std::string, source>::const_iterator it = sources_.find(id);
+		source_e const *get_source(std::string const &id) const {
+			boost::ptr_map<std::string, source_e>::const_iterator it = sources_.find(id);
 			if (it == sources_.end()) throw std::runtime_error("source id = " + id + " not found");
 			return it->second;
 		}
 	};
 
-	class transform: public element {
+	class transform_e: public element {
 	protected:
 		std::string sid_;
 
@@ -228,10 +228,10 @@ namespace collada_elements {
 		std::string const &get_sid() const { return sid_; }
 
 		virtual math::matrix<4,4> get_baked_matrix() const = 0;
-		virtual math::matrix<4,4> get_baked_sample(source const *source_ptr, int index, std::string const &param) const = 0;
+		virtual math::matrix<4,4> get_baked_sample(source_e const *source_ptr, int index, std::string const &param) const = 0;
 	};
 
-	class identity_transform: public transform {
+	class identity_transform_e: public transform_e {
 	public:
 		math::matrix<4,4> get_baked_matrix() const
 	    {
@@ -240,21 +240,21 @@ namespace collada_elements {
 			return m;
 		}
 
-		math::matrix<4,4> get_baked_sample(source const *source_ptr, int index, std::string const &param) const
+		math::matrix<4,4> get_baked_sample(source_e const *source_ptr, int index, std::string const &param) const
 		{
 			throw std::logic_error("can't read identity transform sample from source");
 	    }
 	};
 
 
-	class matrix_transform: public transform {
+	class matrix_transform_e: public transform_e {
 	private:
 		math::matrix<4,4> matrix_;
 
 	public:
 		void init(xercesc::DOMElement const *element_ptr)
 		{
-			transform::init(element_ptr);
+			transform_e::init(element_ptr);
 			parse_matrix(element_ptr, matrix_);
 		}
 
@@ -263,7 +263,7 @@ namespace collada_elements {
 			return matrix_;
 		}
 
-		math::matrix<4,4> get_baked_sample(source const *source_ptr, int index, std::string const &param) const
+		math::matrix<4,4> get_baked_sample(source_e const *source_ptr, int index, std::string const &param) const
 		{
 			math::matrix<4,4> result;
 			source_ptr->get(index, result);
@@ -271,14 +271,14 @@ namespace collada_elements {
 		}
 	};
 
-	class translation_transform: public transform {
+	class translation_transform_e: public transform_e {
 	private:
 		math::vec<3> translate_;
 
 	public:
 		void init(xercesc::DOMElement const *element_ptr)
 		{
-			transform::init(element_ptr);
+			transform_e::init(element_ptr);
 			parse_list(element_ptr, translate_.i, 3);
 		}
 
@@ -289,7 +289,7 @@ namespace collada_elements {
 			return result;
 		}
 
-		math::matrix<4,4> get_baked_sample(source const *source_ptr, int index, std::string const &param) const
+		math::matrix<4,4> get_baked_sample(source_e const *source_ptr, int index, std::string const &param) const
 		{
 			math::vec<3> translate;
 			source_ptr->get(index, translate);
@@ -301,7 +301,7 @@ namespace collada_elements {
 		}
 	};
 
-	class rotation_transform: public transform {
+	class rotation_transform_e: public transform_e {
 	private:
 		math::vec<3> axis_;
 		math::scalar angle_;
@@ -309,7 +309,7 @@ namespace collada_elements {
 	public:
 		void init(xercesc::DOMElement const *element_ptr)
 		{
-			transform::init(element_ptr);
+			transform_e::init(element_ptr);
 
 			math::scalar s[4];
 			parse_list(element_ptr, s, 4);
@@ -325,7 +325,7 @@ namespace collada_elements {
 			return result;
 		}
 
-		math::matrix<4,4> get_baked_sample(source const *source_ptr, int index, std::string const &param) const
+		math::matrix<4,4> get_baked_sample(source_e const *source_ptr, int index, std::string const &param) const
 		{
 			if (param != "ANGLE") throw std::runtime_error("unexpected rotation transform param type " + param);
 
@@ -339,14 +339,14 @@ namespace collada_elements {
 		}
 	};
 
-	class scale_transform: public transform {
+	class scale_transform_e: public transform_e {
 	private:
 		math::vec<3> scale_;
 
 	public:
 		void init(xercesc::DOMElement const *element_ptr)
 		{
-			transform::init(element_ptr);
+			transform_e::init(element_ptr);
 			parse_list(element_ptr, scale_.i, 3);
 		}
 
@@ -357,7 +357,7 @@ namespace collada_elements {
 			return result;
 		}
 
-		math::matrix<4,4> get_baked_sample(source const *source_ptr, int index, std::string const &param) const
+		math::matrix<4,4> get_baked_sample(source_e const *source_ptr, int index, std::string const &param) const
 		{
 			math::vec<3> scale;
 			source_ptr->get(index, scale);
@@ -369,7 +369,7 @@ namespace collada_elements {
 		}
 	};
 
-	class instance_controller: public element {
+	class instance_controller_e: public element {
 	private:
 		std::string url_;
 		std::string skeleton_;
@@ -392,36 +392,36 @@ namespace collada_elements {
 		}
 	};
 
-	class node: public element {
+	class node_e: public element {
 	protected:
 		std::string id_, sid_, name_, type_, instance_geometry_;
-		node *parent_;
-		boost::ptr_vector<node> childs_;
-		boost::ptr_vector<transform> transforms_;
-		boost::scoped_ptr<instance_controller> instance_controller_;
+		node_e *parent_;
+		boost::ptr_vector<node_e> childs_;
+		boost::ptr_vector<transform_e> transforms_;
+		boost::scoped_ptr<instance_controller_e> instance_controller_;
 
 		void process_child(std::string const &child_name, std::string const &child_id, xercesc::DOMElement const *child)
 		{
 			if (child_name == "node")
 			{
-				childs_.push_back(construct<node>(child));
+				childs_.push_back(construct<node_e>(child));
 				childs_.back().parent_ = this;
 			}
 			else if (child_name == "matrix")
 			{
-				transforms_.push_back(construct<matrix_transform>(child));
+				transforms_.push_back(construct<matrix_transform_e>(child));
 			}
 			else if (child_name == "translate")
 			{
-				transforms_.push_back(construct<translation_transform>(child));
+				transforms_.push_back(construct<translation_transform_e>(child));
 			}
 			else if (child_name == "rotate")
 			{
-				transforms_.push_back(construct<rotation_transform>(child));
+				transforms_.push_back(construct<rotation_transform_e>(child));
 			}
 			else if (child_name == "scale")
 			{
-				transforms_.push_back(construct<scale_transform>(child));
+				transforms_.push_back(construct<scale_transform_e>(child));
 			}
 			else if (child_name == "instance_geometry")
 			{
@@ -429,7 +429,7 @@ namespace collada_elements {
 			}
 			else if (child_name == "instance_controller")
 			{
-				instance_controller_.reset(construct<instance_controller>(child));
+				instance_controller_.reset(construct<instance_controller_e>(child));
 			}
 		}
 
@@ -443,27 +443,27 @@ namespace collada_elements {
 
 		void check() {
 			if (transforms_.empty()) {
-				transforms_.push_back(new identity_transform());
+				transforms_.push_back(new identity_transform_e());
 			}
 		}
 
-		void build_hierarchy(memory_model *model_ptr, model::joint *parent_ptr);
+		void build_hierarchy(memory_model *model_ptr, joint *parent_ptr);
 
-		node const *get_node_by_id(std::string const &id) const
+		node_e const *get_node_by_id(std::string const &id) const
 		{
 			if (id == id_) return this;
 
-			for (boost::ptr_vector<node>::const_iterator it = childs_.begin(); it != childs_.end(); it++)
+			for (boost::ptr_vector<node_e>::const_iterator it = childs_.begin(); it != childs_.end(); it++)
 			{
-				if (node const *node_ptr = it->get_node_by_id(id)) return node_ptr;
+				if (node_e const *node_ptr = it->get_node_by_id(id)) return node_ptr;
 			}
 
 			return 0;
 		}
 
-		transform const *get_transform_by_sid(std::string const &sid) const
+		transform_e const *get_transform_by_sid(std::string const &sid) const
 		{
-			for (boost::ptr_vector<transform>::const_iterator it = transforms_.begin();
+			for (boost::ptr_vector<transform_e>::const_iterator it = transforms_.begin();
 				it != transforms_.end(); it ++)
 			{
 				if (it->get_sid() == sid) return &*it;
@@ -473,35 +473,35 @@ namespace collada_elements {
 		}
 	};
 
-	class visual_scene: public node {
+	class visual_scene_e: public node_e {
 	public:
 		void check() {
 		}
 
 		void build_hierarchy(memory_model *model_ptr) {
-			for (boost::ptr_vector<node>::iterator it = childs_.begin(); it != childs_.end(); it++) {
+			for (boost::ptr_vector<node_e>::iterator it = childs_.begin(); it != childs_.end(); it++) {
 				it->build_hierarchy(model_ptr, 0);
 			}
 		}
 	};
 
-	class library_visual_scenes: public element {
+	class library_visual_scenes_e: public element {
 	protected:
-		boost::ptr_map<std::string, visual_scene> visual_scenes_;
+		boost::ptr_map<std::string, visual_scene_e> visual_scenes_;
 
 		void process_child(std::string const &child_name, std::string const &child_id, xercesc::DOMElement const *child) {
 			if (child_name == "visual_scene") {
-				visual_scenes_.insert(const_cast<std::string &>(child_id), construct<visual_scene>(child));
+				visual_scenes_.insert(const_cast<std::string &>(child_id), construct<visual_scene_e>(child));
 			}
 		}
 
 	public:
-		node const *get_node_by_id(std::string const &id) const
+		node_e const *get_node_by_id(std::string const &id) const
 		{
-			for (boost::ptr_map<std::string, visual_scene>::const_iterator it = visual_scenes_.begin();
+			for (boost::ptr_map<std::string, visual_scene_e>::const_iterator it = visual_scenes_.begin();
 				it != visual_scenes_.end(); it++)
 			{
-				if (node const *node_ptr = it->second->get_node_by_id(id)) return node_ptr;
+				if (node_e const *node_ptr = it->second->get_node_by_id(id)) return node_ptr;
 			}
 
 			throw std::logic_error("node with id = " + id + " not found");
@@ -513,7 +513,7 @@ namespace collada_elements {
 		}
 	};
 
-	class input: public element {
+	class input_e: public element {
 	private:
 		std::string source_;
 		size_t offset_;
@@ -528,14 +528,14 @@ namespace collada_elements {
 		size_t get_offset() const { return offset_; }
 	};
 
-	class inputs_list: public element {
+	class inputs_list_e: public element {
 	protected:
-		typedef boost::ptr_map<std::string, input> inputs_type;
+		typedef boost::ptr_map<std::string, input_e> inputs_type;
 		inputs_type inputs_;
 
 		void process_child(std::string const &child_name, std::string const &child_id, xercesc::DOMElement const *child) {
 			if (child_name == "input") {
-				inputs_.insert(xerces_get_attribute<std::string>(child, "semantic"), construct<input>(child));
+				inputs_.insert(xerces_get_attribute<std::string>(child, "semantic"), construct<input_e>(child));
 			}
 		}
 
@@ -554,7 +554,7 @@ namespace collada_elements {
 			return 1 + max_offset;
 		}
 
-		input const *get_input(std::string const &semantic) const
+		input_e const *get_input(std::string const &semantic) const
 		{
 			inputs_type::const_iterator it = inputs_.find(semantic);
 			if (it == inputs_.end()) throw std::runtime_error("input with semantic = " + semantic + " not found");
@@ -562,10 +562,10 @@ namespace collada_elements {
 		}
 	};
 
-	class vertices: public inputs_list {
+	class vertices_e: public inputs_list_e {
 	};
 
-	class triangles: public inputs_list {
+	class triangles_e: public inputs_list_e {
 	private:
 		size_t count_;
 		std::vector<size_t> indices_;
@@ -575,7 +575,7 @@ namespace collada_elements {
 				parse_list(child, indices_);
 			}
 
-			inputs_list::process_child(child_name, child_id, child);
+			inputs_list_e::process_child(child_name, child_id, child);
 		}
 
 	public:
@@ -626,10 +626,10 @@ namespace collada_elements {
 		}
 	};
 
-	class mesh: public sources_list {
+	class mesh_e: public sources_list_e {
 	private:
-		boost::scoped_ptr<vertices> vertices_;
-		boost::scoped_ptr<triangles> triangles_;
+		boost::scoped_ptr<vertices_e> vertices_;
+		boost::scoped_ptr<triangles_e> triangles_;
 
 		vertex_indexer vertex_indexer_;
 
@@ -637,13 +637,13 @@ namespace collada_elements {
 		position_index_x_vertex_index_type position_index_x_vertex_index_;
 
 		void process_child(std::string const &child_name, std::string const &child_id, xercesc::DOMElement const *child) {
-			sources_list::process_child(child_name, child_id, child);
+			sources_list_e::process_child(child_name, child_id, child);
 
 			if (child_name == "vertices") {
-				vertices_.reset(construct<vertices>(child));
+				vertices_.reset(construct<vertices_e>(child));
 			}
 			else if (child_name == "triangles") {
-				triangles_.reset(construct<triangles>(child));
+				triangles_.reset(construct<triangles_e>(child));
 			}
 		}
 
@@ -654,17 +654,17 @@ namespace collada_elements {
 		}
 
 		void build_mesh(memory_mesh *mesh_ptr) {
-			input const *position_input = vertices_->get_input("POSITION");
-			source const *position_source = get_source(position_input->get_source().substr(1));
+			input_e const *position_input = vertices_->get_input("POSITION");
+			source_e const *position_source = get_source(position_input->get_source().substr(1));
 
-			input const *normals_input = 0;
+			input_e const *normals_input = 0;
 			try	{ normals_input = vertices_->get_input("NORMAL"); }
 			catch(...) { normals_input = triangles_->get_input("NORMAL"); }
 
-			source const *normals_source = get_source(normals_input->get_source().substr(1));
+			source_e const *normals_source = get_source(normals_input->get_source().substr(1));
 
-			input const *texcoords_input = triangles_->get_input("TEXCOORD");
-			source const *texcoords_source = get_source(texcoords_input->get_source().substr(1));
+			input_e const *texcoords_input = triangles_->get_input("TEXCOORD");
+			source_e const *texcoords_source = get_source(texcoords_input->get_source().substr(1));
 
 			std::vector<size_t> const &indices = triangles_->get_indices();
 			std::vector<size_t>::const_iterator indices_get = indices.begin();
@@ -713,7 +713,7 @@ namespace collada_elements {
 				for (std::vector<vertex_weight>::const_iterator it = weights.begin(); it != weights.end(); it++) {
 					position_index_x_vertex_index_type::const_iterator jt = position_index_x_vertex_index_.lower_bound(std::make_pair(it->vertex_index, 0));
 					while (jt != position_index_x_vertex_index_.end() && jt->first == it->vertex_index) {
-						model::joint_influence::vertex_weight dummy = *it;
+						joint_influence::vertex_weight dummy = *it;
 						dummy.vertex_index = jt->second;
 						mesh_it->vertex_weights.push_back(dummy);
 						jt++;
@@ -723,14 +723,14 @@ namespace collada_elements {
 		}
 	};
 
-	class geometry: public element {
+	class geometry_e: public element {
 	private:
 		std::string id_, name_;
-		boost::scoped_ptr<mesh> mesh_ptr_;
+		boost::scoped_ptr<mesh_e> mesh_ptr_;
 
 		void process_child(std::string const &child_name, std::string const &child_id, xercesc::DOMElement const *child) {
 			if (child_name == "mesh") {
-				mesh_ptr_.reset(construct<mesh>(child));
+				mesh_ptr_.reset(construct<mesh_e>(child));
 			}
 		}
 
@@ -756,19 +756,19 @@ namespace collada_elements {
 		}
 	};
 
-	class library_geometries: public element {
+	class library_geometries_e: public element {
 	protected:
-		boost::ptr_vector<geometry> geometries_;
+		boost::ptr_vector<geometry_e> geometries_;
 
 		void process_child(std::string const &child_name, std::string const &child_id, xercesc::DOMElement const *child) {
 			if (child_name == "geometry") {
-				geometries_.push_back(construct<geometry>(child));
+				geometries_.push_back(construct<geometry_e>(child));
 			}
 		}
 
 	public:
 		void build_meshes(memory_model *model_ptr) {
-			for (boost::ptr_vector<geometry>::iterator it = geometries_.begin(); it != geometries_.end(); it++) {
+			for (boost::ptr_vector<geometry_e>::iterator it = geometries_.begin(); it != geometries_.end(); it++) {
 				model_ptr->meshes.push_back(new memory_mesh(model_ptr));
 				memory_mesh *mesh_ptr = &model_ptr->meshes.back();
 				mesh_ptr->id = it->get_id();
@@ -778,22 +778,22 @@ namespace collada_elements {
 		}
 
 		void fix_position_indices(memory_model *model_ptr) {
-			for (boost::ptr_vector<geometry>::iterator it = geometries_.begin(); it != geometries_.end(); it++) {
+			for (boost::ptr_vector<geometry_e>::iterator it = geometries_.begin(); it != geometries_.end(); it++) {
 				it->fix_position_indices(model_ptr->get_mesh_by_id(it->get_id()));
 			}
 		}
 	};
 
-	class joints: public inputs_list {
+	class joints_e: public inputs_list_e {
 	};
 
-	class vertex_weights: public inputs_list {
+	class vertex_weights_e: public inputs_list_e {
 	private:
 		std::vector<size_t> vcount_;
 		std::vector<size_t> v_;
 
 		void process_child(std::string const &child_name, std::string const &child_id, xercesc::DOMElement const *child) {
-			inputs_list::process_child(child_name, child_id, child);
+			inputs_list_e::process_child(child_name, child_id, child);
 
 			if (child_name == "vcount")
 			{
@@ -810,23 +810,23 @@ namespace collada_elements {
 		std::vector<size_t> const &get_v() const { return v_; }
 	};
 
-	class skin: public sources_list {
+	class skin_e: public sources_list_e {
 	private:
 		math::matrix<4,4> bind_shape_matrix_;
-		boost::scoped_ptr<joints> joints_;
-		boost::scoped_ptr<vertex_weights> vertex_weights_;
+		boost::scoped_ptr<joints_e> joints_;
+		boost::scoped_ptr<vertex_weights_e> vertex_weights_;
 
 		void process_child(std::string const &child_name, std::string const &child_id, xercesc::DOMElement const *child) {
-			sources_list::process_child(child_name, child_id, child);
+			sources_list_e::process_child(child_name, child_id, child);
 
 			if (child_name == "bind_shape_matrix") {
 				parse_matrix(child, bind_shape_matrix_);
 			}
 			else if (child_name == "joints") {
-				joints_.reset(construct<joints>(child));
+				joints_.reset(construct<joints_e>(child));
 			}
 			else if (child_name == "vertex_weights") {
-				vertex_weights_.reset(construct<vertex_weights>(child));
+				vertex_weights_.reset(construct<vertex_weights_e>(child));
 			}
 		}
 
@@ -835,8 +835,8 @@ namespace collada_elements {
 		{
 			mesh_ptr->bind_shape_matrix = bind_shape_matrix_;
 
-			source const *joints_source = get_source(joints_->get_input("JOINT")->get_source().substr(1));
-			source const *inverted_bind_matrices_source = get_source(joints_->get_input("INV_BIND_MATRIX")->get_source().substr(1));
+			source_e const *joints_source = get_source(joints_->get_input("JOINT")->get_source().substr(1));
+			source_e const *inverted_bind_matrices_source = get_source(joints_->get_input("INV_BIND_MATRIX")->get_source().substr(1));
 
 			for (size_t i = 0, n = joints_source->get_size(); i < n; i++)
 			{
@@ -852,11 +852,11 @@ namespace collada_elements {
 
 		void build_joint_weights(memory_mesh *mesh_ptr)
 		{
-			input const *joints_input = vertex_weights_->get_input("JOINT");
-			input const *weights_input = vertex_weights_->get_input("WEIGHT");
+			input_e const *joints_input = vertex_weights_->get_input("JOINT");
+			input_e const *weights_input = vertex_weights_->get_input("WEIGHT");
 
-			source const *joints_source = get_source(joints_input->get_source().substr(1));
-			source const *weights_source = get_source(weights_input->get_source().substr(1));
+			source_e const *joints_source = get_source(joints_input->get_source().substr(1));
+			source_e const *weights_source = get_source(weights_input->get_source().substr(1));
 
 			size_t stride = 1 + std::max(joints_input->get_offset(), weights_input->get_offset());
 
@@ -865,7 +865,7 @@ namespace collada_elements {
 
 			std::vector<size_t>::const_iterator v_get = v.begin();
 
-			typedef std::map<size_t, std::vector<model::joint_influence::vertex_weight> > weights_type;
+			typedef std::map<size_t, std::vector<joint_influence::vertex_weight> > weights_type;
 			weights_type weights;
 
 			size_t position_index = 0;
@@ -892,7 +892,7 @@ namespace collada_elements {
 						v_get++;
 					}
 
-					model::joint_influence::vertex_weight dummy;
+					joint_influence::vertex_weight dummy;
 					dummy.vertex_index = position_index;
 					dummy.weight = weight;
 					weights[joint_index].push_back(dummy);
@@ -910,12 +910,12 @@ namespace collada_elements {
 		}
 	};
 
-	class controller: public element {
+	class controller_e: public element {
 	private:
-		boost::ptr_map<std::string, skin *> skins_;
+		boost::ptr_map<std::string, skin_e *> skins_;
 
 		void process_child(std::string const &child_name, std::string const &child_id, xercesc::DOMElement const *child) {
-			skins_[xerces_get_attribute<std::string>(child, "source")] = construct<skin>(child);
+			skins_[xerces_get_attribute<std::string>(child, "source")] = construct<skin_e>(child);
 		}
 
 	public:
@@ -926,7 +926,7 @@ namespace collada_elements {
 		}
 
 		void build_joint_influences(memory_model *model_ptr) {
-			for (boost::ptr_map<std::string, skin *>::const_iterator it = skins_.begin(); it != skins_.end(); it++) {
+			for (boost::ptr_map<std::string, skin_e *>::const_iterator it = skins_.begin(); it != skins_.end(); it++) {
 				memory_mesh *mesh_ptr = model_ptr->get_mesh_by_id(it->first.substr(1));
 				(*it->second)->build_inverted_bind_matrices(mesh_ptr);
 				(*it->second)->build_joint_weights(mesh_ptr);
@@ -934,40 +934,40 @@ namespace collada_elements {
 		}
 	};
 
-	class library_controllers: public element {
+	class library_controllers_e: public element {
 	private:
-		boost::ptr_map<std::string, controller *> controllers_;
+		boost::ptr_map<std::string, controller_e *> controllers_;
 
 		void process_child(std::string const &child_name, std::string const &child_id, xercesc::DOMElement const *child) {
 			if (child_name == "controller") {
-				controllers_[child_id] = construct<controller>(child);
+				controllers_[child_id] = construct<controller_e>(child);
 			}
 		}
 
 	public:
-		controller const *get_controller_by_id(std::string const &id) const
+		controller_e const *get_controller_by_id(std::string const &id) const
 		{
-			boost::ptr_map<std::string, controller *>::const_iterator it = controllers_.find(id);
+			boost::ptr_map<std::string, controller_e *>::const_iterator it = controllers_.find(id);
 			if (it != controllers_.end()) return *it->second;
 
 			throw std::logic_error("controller with id = " + id + " not found");
 		}
 
 		void build_joint_influences(memory_model *model_ptr) {
-			for (boost::ptr_map<std::string, controller *>::const_iterator it = controllers_.begin(); it != controllers_.end(); it++) {
+			for (boost::ptr_map<std::string, controller_e *>::const_iterator it = controllers_.begin(); it != controllers_.end(); it++) {
 				(*it->second)->build_joint_influences(model_ptr);
 			}
 		}
 	};
 
-	class sampler: public inputs_list {
+	class sampler_e: public inputs_list_e {
 	private:
 		void process_child(std::string const &child_name, std::string const &child_id, xercesc::DOMElement const *child) {
-			inputs_list::process_child(child_name, child_id, child);
+			inputs_list_e::process_child(child_name, child_id, child);
 		}
 	};
 
-	class animation: public sources_list {
+	class animation_e: public sources_list_e {
 	private:
 		struct channel {
 			std::string source_url;
@@ -981,15 +981,15 @@ namespace collada_elements {
 		};
 
 		std::vector<channel> channels_;
-		boost::ptr_map<std::string, sampler *> samplers_;
+		boost::ptr_map<std::string, sampler_e *> samplers_;
 
 		void process_child(std::string const &child_name, std::string const &child_id, xercesc::DOMElement const *child)
 		{
-			sources_list::process_child(child_name, child_id, child);
+			sources_list_e::process_child(child_name, child_id, child);
 
 			if (child_name == "sampler")
 			{
-				samplers_[child_id] = construct<sampler>(child);
+				samplers_[child_id] = construct<sampler_e>(child);
 			}
 			else if (child_name == "channel")
 			{
@@ -998,21 +998,21 @@ namespace collada_elements {
 		}
 
 	public:
-		model::animation build_animation(memory_model *model_ptr)
+		animation build_animation(memory_model *model_ptr)
 		{
-			model::animation result;
+			animation result;
 
 			for (std::vector<channel>::const_iterator it = channels_.begin(); it != channels_.end(); it++) {
-				boost::ptr_map<std::string, sampler *>::iterator jt = samplers_.find(it->source_url.substr(1));
+				boost::ptr_map<std::string, sampler_e *>::iterator jt = samplers_.find(it->source_url.substr(1));
 				if (jt == samplers_.end()) throw std::runtime_error("sampler for url " + it->source_url + " not found");
 
-				sampler *sampler_ptr = *jt->second;
+				sampler_e *sampler_ptr = *jt->second;
 
-				source const *time_input = get_source(sampler_ptr->get_input("INPUT")->get_source().substr(1));
-				source const *transform_output = get_source(sampler_ptr->get_input("OUTPUT")->get_source().substr(1));
+				source_e const *time_input = get_source(sampler_ptr->get_input("INPUT")->get_source().substr(1));
+				source_e const *transform_output = get_source(sampler_ptr->get_input("OUTPUT")->get_source().substr(1));
 
-				model::sampler dummy;
-				transform const *transform_ptr = 0;
+				sampler dummy;
+				transform_e const *transform_ptr = 0;
 
 				// target is in form <node>/<transform>.<param>, <param> may be omitted
 				std::vector<std::string> parsed_target_components;
@@ -1021,7 +1021,7 @@ namespace collada_elements {
 				if (parsed_target_components.size() == 2) parsed_target_components.push_back(std::string());
 				if (parsed_target_components.size() != 3) throw std::runtime_error("invalid url " + it->target_url);
 
-				model::joint *joint_ptr = model_ptr->get_joint_by_id(parsed_target_components[0]);
+				joint *joint_ptr = model_ptr->get_joint_by_id(parsed_target_components[0]);
 				dummy.set_target(joint_ptr, parsed_target_components[1]);
 
 				transform_ptr = get_root()->get_visual_scenes()->get_node_by_id(parsed_target_components[0])->get_transform_by_sid(parsed_target_components[1]);
@@ -1042,36 +1042,36 @@ namespace collada_elements {
 		}
 	};
 
-	class library_animations: public element {
+	class library_animations_e: public element {
 	private:
-		boost::ptr_map<std::string, animation *> animations_;
+		boost::ptr_map<std::string, animation_e *> animations_;
 
 		void process_child(std::string const &child_name, std::string const &child_id, xercesc::DOMElement const *child) {
 			if (child_name == "animation") {
-				animations_[child_id] = construct<animation>(child);
+				animations_[child_id] = construct<animation_e>(child);
 			}
 		}
 
 	public:
 		void build_animations(memory_model *model_ptr) {
-			for (boost::ptr_map<std::string, animation *>::iterator it = animations_.begin(); it != animations_.end(); it++) {
-				model_ptr->animations.push_back(new model::animation((*it->second)->build_animation(model_ptr)));
+			for (boost::ptr_map<std::string, animation_e *>::iterator it = animations_.begin(); it != animations_.end(); it++) {
+				model_ptr->animations.push_back(new engine::graphic::animation((*it->second)->build_animation(model_ptr)));
 				model_ptr->animations.back().name = it->first;
 			}
 		}
 	};
 
-	void node::build_hierarchy(memory_model *model_ptr, model::joint *parent_ptr)
+	void node_e::build_hierarchy(memory_model *model_ptr, joint *parent_ptr)
 	{
-		model_ptr->joints.push_back(new model::joint());
+		model_ptr->joints.push_back(new joint());
 
-		model::joint *joint_ptr = &model_ptr->joints.back();
+		joint *joint_ptr = &model_ptr->joints.back();
 		joint_ptr->id = id_;
 		joint_ptr->name = sid_;
 		joint_ptr->parent = parent_ptr;
 
-		for (boost::ptr_vector<transform>::const_iterator it = transforms_.begin(); it != transforms_.end(); it++) {
-			joint_ptr->transforms.push_back(model::joint::transform(it->get_sid(), it->get_baked_matrix()));
+		for (boost::ptr_vector<transform_e>::const_iterator it = transforms_.begin(); it != transforms_.end(); it++) {
+			joint_ptr->transforms.push_back(joint::transform(it->get_sid(), it->get_baked_matrix()));
 		}
 
 		if (parent_ptr) parent_ptr->childs.push_back(joint_ptr);
@@ -1082,54 +1082,54 @@ namespace collada_elements {
 		}
 		else if (instance_controller_)
 		{
-			controller const *controller_ptr = get_root()->get_controllers()->get_controller_by_id(instance_controller_->get_url());
+			controller_e const *controller_ptr = get_root()->get_controllers()->get_controller_by_id(instance_controller_->get_url());
 			joint_ptr->instance_ptr = model_ptr->get_mesh_by_id(controller_ptr->get_skin_source_id());
 		}
 
-		for (boost::ptr_vector<node>::iterator it = childs_.begin(); it != childs_.end(); it++) {
+		for (boost::ptr_vector<node_e>::iterator it = childs_.begin(); it != childs_.end(); it++) {
 			it->build_hierarchy(model_ptr, joint_ptr);
 		}
 	}
 
-	class collada: public element, public root_element {
+	class collada_e: public element, public root_element {
 	private:
-		boost::scoped_ptr<library_visual_scenes> visual_scenes_;
-		boost::scoped_ptr<library_geometries> geometries_;
-		boost::scoped_ptr<library_controllers> controllers_;
-		boost::scoped_ptr<library_animations> animations_;
+		boost::scoped_ptr<library_visual_scenes_e> visual_scenes_;
+		boost::scoped_ptr<library_geometries_e> geometries_;
+		boost::scoped_ptr<library_controllers_e> controllers_;
+		boost::scoped_ptr<library_animations_e> animations_;
 
 		void process_child(std::string const &child_name, std::string const &child_id, xercesc::DOMElement const *child)
 		{
 			if (child_name == "library_visual_scenes")
 			{
-				visual_scenes_.reset(construct<library_visual_scenes>(child));
+				visual_scenes_.reset(construct<library_visual_scenes_e>(child));
 			}
 			else if (child_name == "library_geometries")
 			{
-				geometries_.reset(construct<library_geometries>(child));
+				geometries_.reset(construct<library_geometries_e>(child));
 			}
 			else if (child_name == "library_controllers")
 			{
-				controllers_.reset(construct<library_controllers>(child));
+				controllers_.reset(construct<library_controllers_e>(child));
 			}
 			else if (child_name == "library_animations")
 			{
-				animations_.reset(construct<library_animations>(child));
+				animations_.reset(construct<library_animations_e>(child));
 			}
 		}
 
 	public:
-		collada()
+		collada_e()
 		{
 			set_root(this);
 		}
 
-		library_visual_scenes *get_visual_scenes()
+		library_visual_scenes_e *get_visual_scenes()
 		{
 			return visual_scenes_.get();
 		}
 
-		library_controllers *get_controllers()
+		library_controllers_e *get_controllers()
 		{
 			return controllers_.get();
 		}
@@ -1182,7 +1182,7 @@ void collada_loader::load() {
 		if (util::xerces_lcp_transcode(root_node->getLocalName()) != "COLLADA")
 			throw load_error("root element is not <COLLADA />");
 
-		collada_elements::collada dummy;
+		collada_elements::collada_e dummy;
 		dummy.go((xercesc::DOMElement *) root_node);
 		dummy.build_model(&model_);
 		model_.cleanup();
