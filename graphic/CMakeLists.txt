@@ -1,17 +1,31 @@
 
 ADD_LIBRARY (graphic STATIC
-	collada_loader.cpp
-	model.h
-	collada_loader.h
 	font.h
 	font.cpp
-	camera.cpp
+
+    joint.h
+    joint_influence.h
+    sampler.h
+    sampler.cpp
+    animation.h
+    mesh.h
+	model.h
+	model.cpp
+
+	memory_mesh.h
 	memory_mesh.cpp
-	camera.h
 	memory_model.h
 	memory_model.cpp
-	model.cpp
-	memory_mesh.h
+	
+	static_model.h
+	static_model.cpp
+	
+	collada_loader.h
+	collada_loader.cpp
+
+	camera.h
+	camera.cpp
+
 	renderer.h
 	renderer.cpp
 )

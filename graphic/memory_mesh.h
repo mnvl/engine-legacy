@@ -20,15 +20,15 @@ public:
 	static D3DFORMAT const INDEX_FORMAT = D3DFMT_INDEX16;
 
 #pragma pack(push, 1)
-	struct vertex {
+	struct vertex_t {
 		math::vec<3> position;
 		math::vec<3> normal;
 		math::vec<2> texcoords;
 	};
 #pragma pack(pop)
 
-	typedef boost::uint16_t index;
-	typedef math::vec<3, index> face;
+	typedef boost::uint16_t index_t;
+	typedef math::vec<3, index_t> face;
 	typedef std::list<joint_influence> influences_type;
 
 	memory_mesh(memory_model *m);
@@ -37,11 +37,11 @@ public:
 	memory_model *model_ptr;
 	std::string id, name;
 	math::matrix<4,4> bind_shape_matrix;
-	std::vector<vertex> vertices;
-	std::vector<index> indices;
+	std::vector<vertex_t> vertices;
+	std::vector<index_t> indices;
 	influences_type influences;
 
-	void transform_vertices(std::vector<vertex> &result) const;
+	void transform_vertices(joint const *joint_ptr, std::vector<vertex_t> &result) const;
 
 	joint_influence *get_joint_influence_by_name(std::string const &name, bool can_create = false);
 	void draw_wireframe(renderer *renderer_ptr, math::scalar time = 0) const;

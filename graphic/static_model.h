@@ -18,7 +18,7 @@ public:
 	static_model(renderer *renderer_ptr);
 	~static_model();
 
-	void build_from_memory_model(memory_model const *model_ptr);
+	void build_from_memory_model(memory_model *model_ptr);
 
 private:
 	renderer *renderer_ptr_;

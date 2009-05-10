@@ -26,11 +26,11 @@ public:
 	std::vector<joint *> childs;
 	std::vector<transform> transforms;
 	mutable math::matrix<4,4> matrix;
-	mesh *instance_ptr;
+	mesh *mesh_ptr;
 
 	joint():
 	parent(0),
-		instance_ptr(0)
+	mesh_ptr(0)
 	{
 	}
 

@@ -590,7 +590,7 @@ namespace collada_elements {
 	class vertex_indexer {
 	private:
 		struct vertex_less {
-			bool operator ()(memory_mesh::vertex const &lhs, memory_mesh::vertex const &rhs) {
+			bool operator ()(memory_mesh::vertex_t const &lhs, memory_mesh::vertex_t const &rhs) {
 				if ((lhs.position - rhs.position).length_sq() > math::EPSILON)
 				{
 					if (lhs.position <= rhs.position) return true;
@@ -612,11 +612,11 @@ namespace collada_elements {
 			}
 		};
 
-		typedef std::map<memory_mesh::vertex, size_t, vertex_less> vertex_x_index_type;
+		typedef std::map<memory_mesh::vertex_t, size_t, vertex_less> vertex_x_index_type;
 		vertex_x_index_type vertex_x_index_;
 
 	public:
-		std::pair<size_t, bool> choose_index(memory_mesh::vertex const &v) {
+		std::pair<size_t, bool> choose_index(memory_mesh::vertex_t const &v) {
 			vertex_x_index_type::const_iterator it = vertex_x_index_.find(v);
 			if (it != vertex_x_index_.end()) return std::pair<size_t, bool>(it->second, false);
 
@@ -673,7 +673,7 @@ namespace collada_elements {
 
 			for (size_t i = 0, n = triangles_->get_count() * 3; i < n; i++) {
 				size_t position_index;
-				memory_mesh::vertex v;
+				memory_mesh::vertex_t v;
 
 				for (size_t j = 0; j < stride; j++) {
 					if (j == position_input->get_offset()) {
@@ -1078,12 +1078,12 @@ namespace collada_elements {
 
 		if (instance_geometry_.size())
 		{
-			joint_ptr->instance_ptr = model_ptr->get_mesh_by_id(instance_geometry_.substr(1));
+			joint_ptr->mesh_ptr = model_ptr->get_mesh_by_id(instance_geometry_.substr(1));
 		}
 		else if (instance_controller_)
 		{
 			controller_e const *controller_ptr = get_root()->get_controllers()->get_controller_by_id(instance_controller_->get_url());
-			joint_ptr->instance_ptr = model_ptr->get_mesh_by_id(controller_ptr->get_skin_source_id());
+			joint_ptr->mesh_ptr = model_ptr->get_mesh_by_id(controller_ptr->get_skin_source_id());
 		}
 
 		for (boost::ptr_vector<node_e>::iterator it = childs_.begin(); it != childs_.end(); it++) {

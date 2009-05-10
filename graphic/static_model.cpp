@@ -15,15 +15,20 @@ static_model::~static_model()
 {
 }
 
-void static_model::build_from_memory_model(const engine::graphic::memory_model *model_ptr)
+void static_model::build_from_memory_model(engine::graphic::memory_model *model_ptr)
 {
 	size_t total_vertices = 0, total_indices = 0;
 
-	for (memory_model::meshes_type::const_iterator it = model_ptr->meshes.begin();
-		it != model_ptr->meshes.end(); it++)
+	for (memory_model::joints_type::const_iterator it = model_ptr->joints.begin();
+		it != model_ptr->joints.end(); it++)
 	{
-		total_vertices = it->vertices.size();
-		total_indices = it->indices.size();
+		if (it->mesh_ptr)
+		{
+			memory_mesh *mesh_ptr = (memory_mesh *) it->mesh_ptr;
+
+			total_vertices += mesh_ptr->vertices.size();
+			total_indices += mesh_ptr->indices.size();
+		}
 	}
 
 	HRESULT hr;
@@ -56,15 +61,22 @@ void static_model::build_from_memory_model(const engine::graphic::memory_model *
 	hr = index_buffer_->Lock(0, 0, (void **) &index_put, D3DLOCK_DISCARD);
 	if (FAILED(hr)) throw exception::directx_error(hr);
 
-	for (memory_model::meshes_type::const_iterator it = model_ptr->meshes.begin();
-		it != model_ptr->meshes.end(); it++)
-	{
-		std::vector<vertex_t> buffer;
-		it->transform_vertices(buffer);
-		vertex_put = std::copy(buffer.begin(), buffer.end(), vertex_put);
+	model_ptr->set_animation_time(0);
 
-		using namespace boost::lambda;
-		index_put = std::transform(it->indices.begin(), it->indices.end(), index_put, _1 + index_offset);
+	for (memory_model::joints_type::const_iterator it = model_ptr->joints.begin();
+		it != model_ptr->joints.end(); it++)
+	{
+		if (it->mesh_ptr)
+		{
+			memory_mesh *mesh_ptr = (memory_mesh *) it->mesh_ptr;
+
+			std::vector<vertex_t> buffer;
+			mesh_ptr->transform_vertices(&*it, buffer);
+			vertex_put = std::copy(buffer.begin(), buffer.end(), vertex_put);
+
+			using namespace boost::lambda;
+			index_put = std::transform(mesh_ptr->indices.begin(), mesh_ptr->indices.end(), index_put, _1 + index_offset);
+		}
 	}
 
 	vertex_buffer_->Unlock();

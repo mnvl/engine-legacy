@@ -14,14 +14,14 @@ model_ptr(m)
 memory_mesh::~memory_mesh() {
 }
 
-void memory_mesh::transform_vertices(std::vector<vertex> &result) const {
+void memory_mesh::transform_vertices(joint const *joint_ptr, std::vector<vertex_t> &result) const {
 	result = vertices;
 
 	if (model_ptr->animations.empty())
 	{
-		for (std::vector<vertex>::iterator it = result.begin(); it != result.end(); it++)
+		for (std::vector<vertex_t>::iterator it = result.begin(); it != result.end(); it++)
 		{
-			it->position = it->position * matrix;
+			it->position = it->position * joint_ptr->matrix;
 		}
 
 		return;
@@ -74,12 +74,12 @@ joint_influence *memory_mesh::get_joint_influence_by_name(std::string const &nam
 
 void memory_mesh::draw_wireframe(renderer *renderer_ptr, math::scalar time) const
 {
-	std::vector<vertex> animated_vertices;
-	transform_vertices(animated_vertices);
+	std::vector<vertex_t> animated_vertices;
+	//transform_vertices(animated_vertices);
 
 	size_t triangles_count = indices.size() / 3;
 
-	std::vector<index> dummy;
+	std::vector<index_t> dummy;
 	dummy.reserve(6 * triangles_count);
 
 	for (size_t i = 0; i < triangles_count; i++) {
@@ -94,7 +94,7 @@ void memory_mesh::draw_wireframe(renderer *renderer_ptr, math::scalar time) cons
 	}
 
 	renderer_ptr->get_device()->DrawIndexedPrimitiveUP(D3DPT_LINELIST, 0, animated_vertices.size(),
-		dummy.size() / 2, &dummy[0], INDEX_FORMAT, &animated_vertices[0], sizeof(vertex));
+		dummy.size() / 2, &dummy[0], INDEX_FORMAT, &animated_vertices[0], sizeof(vertex_t));
 }
 
 }
