@@ -1,7 +1,7 @@
 
 #include <stdio.h>
 #include <exception/winapi_error.h>
-#include <system/window.h>
+#include <platform/window.h>
 
 namespace platform {
 

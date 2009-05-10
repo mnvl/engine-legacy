@@ -1,7 +1,7 @@
 
 #include <d3dx9.h>
 #include <exception/directx_error.h>
-#include <system/timer.h>
+#include <platform/timer.h>
 #include <graphic/camera.h>
 #include <graphic/font.h>
 #include <graphic/renderer.h>

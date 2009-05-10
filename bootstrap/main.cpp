@@ -3,7 +3,7 @@
 #include <xercesc/util/XMLString.hpp>
 #include <xercesc/dom/DOM.hpp>
 #include <exception/winapi_error.h>
-#include <system/window.h>
+#include <platform/window.h>
 #include <graphic/renderer.h>
 
 // REMOVE:

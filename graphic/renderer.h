@@ -6,7 +6,7 @@
 #include <boost/intrusive_ptr.hpp>
 #include <boost/scoped_ptr.hpp>
 #include <util/boost_com_intrusive_ptr.h>
-#include <system/window.h>
+#include <platform/window.h>
 
 namespace graphic {
 

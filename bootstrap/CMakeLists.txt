@@ -19,7 +19,8 @@ TARGET_LINK_LIBRARIES (bootstrap optimized
 )
 
 TARGET_LINK_LIBRARIES (bootstrap
-	graphic
-	system
 	math
+	platform
+	graphic
+	scene
 )
