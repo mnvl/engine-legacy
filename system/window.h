@@ -2,8 +2,7 @@
 
 #include <windows.h>
 
-namespace engine {
-namespace system {
+namespace platform {
 
 class window {
 public:
@@ -22,5 +21,4 @@ private:
 	static LRESULT CALLBACK dispatch_message(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 };
 
-}
 }

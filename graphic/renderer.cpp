@@ -6,10 +6,9 @@
 #include <graphic/font.h>
 #include <graphic/renderer.h>
 
-namespace engine {
 namespace graphic {
 
-renderer::renderer(system::window *window_ptr, int width, int height, bool fullscreen):
+renderer::renderer(platform::window *window_ptr, int width, int height, bool fullscreen):
 	window_ptr_(window_ptr),
 	width_(width),
 	height_(height),
@@ -58,7 +57,7 @@ void renderer::begin_frame()
 {
 	HRESULT hr;
 
-	frame_start_time_ = system::timer::singleton().get_current_value();
+	frame_start_time_ = platform::timer::singleton().get_current_value();
 	frame_times_.push_back(frame_start_time_);
 
 	hr = device_ptr_->Clear(0, 0, D3DCLEAR_STENCIL | D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, D3DCOLOR_XRGB(0, 0, 0), 1.0f, 0);
@@ -87,7 +86,7 @@ void renderer::finish_frame()
 	hr = device_ptr_->Present(0, 0, 0, 0);
 	if (FAILED(hr)) throw exception::directx_error(hr);
 
-	double current_time = system::timer::singleton().get_current_value();
+	double current_time = platform::timer::singleton().get_current_value();
 	last_frame_time_ = current_time - frame_start_time_;
 	while (!frame_times_.empty() && (current_time - frame_times_.front()) > 1.0) frame_times_.pop_front();
 }
@@ -99,4 +98,4 @@ void renderer::select(camera const &c)
 }
 
 }
-}
+

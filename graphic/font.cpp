@@ -3,7 +3,6 @@
 #include <graphic/renderer.h>
 #include <graphic/font.h>
 
-namespace engine {
 namespace graphic {
 
 font::font(renderer *renderer, std::string const &face_name, int height) {
@@ -21,5 +20,4 @@ font::font(renderer *renderer, std::string const &face_name, int height) {
 font::~font() {
 }
 
-}
 }

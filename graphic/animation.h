@@ -3,7 +3,6 @@
 #include <vector>
 #include <graphic/sampler.h>
 
-namespace engine {
 namespace graphic {
 
 struct animation {
@@ -20,5 +19,3 @@ struct animation {
 };
 
 }
-}
-

@@ -2,6 +2,9 @@
 ADD_LIBRARY (graphic STATIC
 	font.h
 	font.cpp
+	
+	material.h
+	material.cpp
 
     joint.h
     joint_influence.h
@@ -9,6 +12,7 @@ ADD_LIBRARY (graphic STATIC
     sampler.cpp
     animation.h
     mesh.h
+    mesh.cpp
 	model.h
 	model.cpp
 

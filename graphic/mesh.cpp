@@ -1,7 +1,6 @@
 
 #include <graphic/mesh.h>
 
-namespace engine {
 namespace graphic {
 
 mesh::mesh(model *model_ptr):
@@ -28,5 +27,5 @@ void mesh::draw()
 }
 
 }
-}
+
 

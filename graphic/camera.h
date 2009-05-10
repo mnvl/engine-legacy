@@ -3,7 +3,6 @@
 #include <math/vec.h>
 #include <math/matrix.h>
 
-namespace engine {
 namespace graphic {
 
 class camera {
@@ -82,5 +81,4 @@ public:
 	void set_position(math::vec<3> const &pos,const math::quaternion<> &rot);
 };
 
-}
 }

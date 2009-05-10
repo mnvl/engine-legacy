@@ -8,7 +8,6 @@
 #include <math/vec.h>
 #include <graphic/memory_model.h>
 
-namespace engine {
 namespace graphic {
 
 class collada_loader {
@@ -32,5 +31,4 @@ private:
 	memory_model model_;
 };
 
-}
 }

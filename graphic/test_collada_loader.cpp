@@ -11,17 +11,17 @@ class test_collada_loader: public CppUnit::TestFixture {
 
 	void test_plane()
 	{
-		engine::graphic::collada_loader cl("test_collada_loader_plane.xml");
+		graphic::collada_loader cl("test_collada_loader_plane.xml");
 		cl.load();
 
-		engine::graphic::memory_model const *model_ptr = &cl.get_model();
+		graphic::memory_model const *model_ptr = &cl.get_model();
 		CPPUNIT_ASSERT (model_ptr->meshes.size() == 1);
 		CPPUNIT_ASSERT (model_ptr->joints.size() == 1);
 		CPPUNIT_ASSERT (model_ptr->animations.size() == 0);
 
 		CPPUNIT_ASSERT (model_ptr->joints[0].mesh_ptr == &model_ptr->meshes[0]);
 
-		engine::graphic::memory_mesh const *mesh_ptr = &model_ptr->meshes.front();
+		graphic::memory_mesh const *mesh_ptr = (graphic::memory_mesh const *) &model_ptr->meshes.front();
 		CPPUNIT_ASSERT (mesh_ptr->vertices.size() == 4);
 		CPPUNIT_ASSERT (mesh_ptr->indices.size() == 6);
 
@@ -40,10 +40,10 @@ class test_collada_loader: public CppUnit::TestFixture {
 
 	void test_joint()
 	{
-		engine::graphic::collada_loader cl("test_collada_loader_joint.xml");
+		graphic::collada_loader cl("test_collada_loader_joint.xml");
 		cl.load();
 
-		engine::graphic::memory_model *model_ptr = const_cast<engine::graphic::memory_model *>(&cl.get_model());
+		graphic::memory_model *model_ptr = const_cast<graphic::memory_model *>(&cl.get_model());
 		CPPUNIT_ASSERT (model_ptr->meshes.size() == 1);
 		CPPUNIT_ASSERT (model_ptr->joints.size() == 2);
 		CPPUNIT_ASSERT (model_ptr->animations.size() == 1);
@@ -51,19 +51,19 @@ class test_collada_loader: public CppUnit::TestFixture {
 		CPPUNIT_ASSERT (model_ptr->joints[0].parent == 0);
 		CPPUNIT_ASSERT (model_ptr->joints[1].parent == 0);
 
-		CPPUNIT_ASSERT (model_ptr->joints[0].mesh_ptr == (engine::graphic::mesh *) &model_ptr->meshes[0]);
+		CPPUNIT_ASSERT (model_ptr->joints[0].mesh_ptr == (graphic::mesh *) &model_ptr->meshes[0]);
 
-		engine::graphic::memory_mesh *mesh_ptr = &model_ptr->meshes.front();
+		graphic::memory_mesh *mesh_ptr = (graphic::memory_mesh *) &model_ptr->meshes.front();
 
 		model_ptr->set_animation_time(0);
-		std::vector<engine::graphic::memory_mesh::vertex_t> vertices1;
+		std::vector<graphic::memory_mesh::vertex_t> vertices1;
 		mesh_ptr->transform_vertices(&model_ptr->joints[0], vertices1);
 
 		CPPUNIT_ASSERT (vertices1.size() == 3);
 		CPPUNIT_ASSERT (abs(vertices1[0].position.y) < 0.1f);
 
 		model_ptr->set_animation_time(1);
-		std::vector<engine::graphic::memory_mesh::vertex_t> vertices2;
+		std::vector<graphic::memory_mesh::vertex_t> vertices2;
 		mesh_ptr->transform_vertices(&model_ptr->joints[0], vertices2);
 
 		CPPUNIT_ASSERT (vertices2.size() == 3);
@@ -72,10 +72,10 @@ class test_collada_loader: public CppUnit::TestFixture {
 
 	void test_animation()
 	{
-		engine::graphic::collada_loader cl("test_collada_loader_animation.xml");
+		graphic::collada_loader cl("test_collada_loader_animation.xml");
 		cl.load();
 
-		engine::graphic::memory_model *model_ptr = const_cast<engine::graphic::memory_model *>(&cl.get_model());
+		graphic::memory_model *model_ptr = const_cast<graphic::memory_model *>(&cl.get_model());
 		CPPUNIT_ASSERT (model_ptr->meshes.size() == 1);
 		CPPUNIT_ASSERT (model_ptr->joints.size() == 4);
 		CPPUNIT_ASSERT (model_ptr->animations.size() == 1);
@@ -95,15 +95,15 @@ class test_collada_loader: public CppUnit::TestFixture {
 
 		CPPUNIT_ASSERT (model_ptr->joints[3].childs.size() == 0);
 
-		engine::graphic::memory_mesh *mesh_ptr = &model_ptr->meshes.front();
+		graphic::memory_mesh *mesh_ptr = (graphic::memory_mesh *) &model_ptr->meshes.front();
 		CPPUNIT_ASSERT (model_ptr->joints[0].mesh_ptr == mesh_ptr);
 
 		model_ptr->set_animation_time(0);
-		std::vector<engine::graphic::memory_mesh::vertex_t> vertices1;
+		std::vector<graphic::memory_mesh::vertex_t> vertices1;
 		mesh_ptr->transform_vertices(&model_ptr->joints[0], vertices1);
 
 		model_ptr->set_animation_time(1);
-		std::vector<engine::graphic::memory_mesh::vertex_t> vertices2;
+		std::vector<graphic::memory_mesh::vertex_t> vertices2;
 		mesh_ptr->transform_vertices(&model_ptr->joints[0], vertices2);
 
 		CPPUNIT_ASSERT((vertices1[0].position - math::vec<3>(-1.0f, 0.85f, 1.0f)).length_sq() < 0.1f);

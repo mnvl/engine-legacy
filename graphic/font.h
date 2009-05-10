@@ -5,7 +5,6 @@
 #include <boost/intrusive_ptr.hpp>
 #include <util/boost_com_intrusive_ptr.h>
 
-namespace engine {
 namespace graphic {
 
 class renderer;
@@ -21,5 +20,4 @@ private:
 	boost::intrusive_ptr<ID3DXFont> font_ptr_;
 };
 
-}
 }

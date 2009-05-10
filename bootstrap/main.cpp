@@ -8,6 +8,7 @@
 
 // REMOVE:
 #include <graphic/collada_loader.h>
+#include <graphic/static_model.h>
 #include <graphic/camera.h>
 
 INT WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpstrCmdLine, INT nShowCmd)
@@ -16,30 +17,39 @@ INT WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpstrCmdLine, INT
 	{
 		{
 			char buffer[1024];
-			if (!GetModuleFileName(0, buffer, sizeof(buffer))) throw engine::exception::winapi_error();
+			if (!GetModuleFileName(0, buffer, sizeof(buffer))) throw exception::winapi_error();
 		}
 
 		xercesc::XMLPlatformUtils::Initialize();
 
-		engine::system::window main_window("engine");
-		engine::graphic::renderer renderer(&main_window);
+		platform::window main_window("engine");
+		graphic::renderer renderer(&main_window);
 
-		engine::graphic::collada_loader ci2("d:\\home\\r2.dae");
+		graphic::collada_loader ci2("d:\\home\\z1.dae");
 		ci2.load();
 
-		engine::graphic::camera cam;
+		graphic::camera cam;
 		math::scalar angle = 0;
 
-		engine::graphic::memory_model &m = const_cast<engine::graphic::memory_model &>(ci2.get_model());
+		boost::shared_ptr<graphic::material> mat(new graphic::material(&renderer));
+		mat->set_texture("d:\\home\\z1.bmp");
+
+		graphic::static_model m(&renderer);
+		m.build_from_memory_model(const_cast<graphic::memory_model *>(&ci2.get_model()));
+
+		m.meshes[0].set_material(mat);
 
 		while (true)
 		{
 			main_window.run_message_loop();
 
 			renderer.begin_frame();
-			cam.set_position(math::vec<3>(10000 * cos(angle), 10000 * sin(angle), 0), math::vec<3>(0, 0, 0), math::vec<3>(0, 0, 1));
+			cam.set_position(math::vec<3>(10 * cos(angle), 10 * sin(angle), 0), math::vec<3>(0, 0, 0), math::vec<3>(0, 0, 1));
 			renderer.select(cam);
-			m.draw_wireframe(&renderer, 0 * angle / math::PI);
+
+			m.draw();
+			//((graphic::memory_model &) ci2.get_model()).draw_wireframe(&renderer, 0);
+
 			renderer.finish_frame();
 
 			angle += 0.01f;
@@ -51,15 +61,22 @@ INT WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpstrCmdLine, INT
 	catch(std::exception const &error)
 	{
 		MessageBox(0, error.what(), 0, MB_OK);
+		return 1;
 	}
-	catch (xercesc::XMLException const &error) {
+	catch (xercesc::XMLException const &error)
+	{
 		char* message = xercesc::XMLString::transcode(error.getMessage());
 		MessageBox(0, message, 0, MB_OK);
         xercesc::XMLString::release(&message);
+		return 1;
     }
-	catch (xercesc::DOMException const &error) {
+	catch (xercesc::DOMException const &error)
+	{
 		char* message = xercesc::XMLString::transcode(error.msg);
 		MessageBox(0, message, 0, MB_OK);
         xercesc::XMLString::release(&message);
+		return 1;
     }
+
+	return 0;
 }

@@ -3,7 +3,6 @@
 #include <graphic/renderer.h>
 #include <util/boost_com_intrusive_ptr.h>
 
-namespace engine {
 namespace graphic {
 
 class material {
@@ -20,5 +19,4 @@ private:
 	boost::intrusive_ptr<IDirect3DTexture9> texture_ptr_;
 };
 
-}
 }

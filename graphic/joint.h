@@ -4,7 +4,6 @@
 #include <vector>
 #include <math/matrix.h>
 
-namespace engine {
 namespace graphic {
 
 class mesh;
@@ -57,4 +56,4 @@ public:
 };
 
 }
-}
+

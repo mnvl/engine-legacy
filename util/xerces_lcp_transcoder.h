@@ -7,7 +7,6 @@
 #include <boost/scoped_array.hpp>
 #include <boost/lexical_cast.hpp>
 
-namespace engine {
 namespace util {
 
 inline std::string xerces_lcp_transcode(XMLCh const *str) {
@@ -37,4 +36,4 @@ inline std::string xerces_get_text(xercesc::DOMNode const *node_ptr) {
 }
 
 }
-}
+

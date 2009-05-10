@@ -1,7 +1,6 @@
 
 #include <graphic/camera.h>
 
-namespace engine {
 namespace graphic {
 
 camera::camera() {
@@ -76,5 +75,4 @@ void camera::set_orthographic_projection(math::scalar width,math::scalar height,
 	projection_matrix.ortho(width, height, z_near, z_far);
 }
 
-}
 }

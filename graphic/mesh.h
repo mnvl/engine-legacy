@@ -4,7 +4,6 @@
 #include <graphic/joint_influence.h>
 #include <graphic/material.h>
 
-namespace engine {
 namespace graphic {
 
 class model;
@@ -26,4 +25,4 @@ protected:
 };
 
 }
-}
+

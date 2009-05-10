@@ -3,8 +3,7 @@
 #include <exception/winapi_error.h>
 #include <system/window.h>
 
-namespace engine {
-namespace system {
+namespace platform {
 
 window::window(char const *title):
 	handle_(0)
@@ -74,5 +73,4 @@ LRESULT window::process_message(UINT uMsg, WPARAM wParam, LPARAM lParam) {
 	return DefWindowProc(handle_, uMsg, wParam, lParam);
 }
 
-}
 }

@@ -3,7 +3,6 @@
 #include <exception>
 #include <windows.h>
 
-namespace engine {
 namespace exception {
 
 class winapi_error: public std::exception {
@@ -31,5 +30,4 @@ public:
 	}
 };
 
-}
 }

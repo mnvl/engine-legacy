@@ -4,8 +4,7 @@
 #include <boost/cstdint.hpp>
 #include <exception/winapi_error.h>
 
-namespace engine {
-namespace system {
+namespace platform {
 
 class timer {
 public:
@@ -38,4 +37,4 @@ private:
 };
 
 }
-}
+

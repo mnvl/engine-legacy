@@ -5,22 +5,22 @@
 #include <graphic/memory_mesh.h>
 #include <graphic/model.h>
 
-namespace engine {
 namespace graphic {
 
 class memory_model: public model {
 public:
-	typedef boost::ptr_vector<memory_mesh> meshes_type;
-
-	meshes_type meshes;
-
 	void cleanup();
 
-	memory_mesh *get_mesh_by_id(std::string const &id);
-	memory_mesh *get_mesh_by_name(std::string const &name);
+	memory_mesh *get_mesh_by_id(std::string const &id) {
+		return (memory_mesh *) model::get_mesh_by_id(id);
+	}
+	
+	memory_mesh *get_mesh_by_name(std::string const &name) {
+		return (memory_mesh *) model::get_mesh_by_name(name);
+	}
+
 	void set_animation_time(math::scalar t);
 	void draw_wireframe(renderer *renderer_ptr, math::scalar time);
 };
 
-}
 }

@@ -2,34 +2,15 @@
 #include <graphic/renderer.h>
 #include <graphic/memory_model.h>
 
-namespace engine {
 namespace graphic {
 
 void memory_model::cleanup()
 {
 	meshes_type::iterator it = meshes.begin();
 	while (it != meshes.end()) {
-		if (it->indices.empty()) it = meshes.erase(it);
+		if (((memory_mesh *) &*it)->indices.empty()) it = meshes.erase(it);
 		else it++;
 	}
-}
-
-memory_mesh *memory_model::get_mesh_by_id(std::string const &id)
-{
-	for (meshes_type::iterator it = meshes.begin(); it != meshes.end(); it++) {
-		if (it->id == id) return &*it;
-	}
-
-	throw std::runtime_error("mesh with id = " + id + " not found");
-}
-
-memory_mesh *memory_model::get_mesh_by_name(std::string const &name)
-{
-	for (meshes_type::iterator it = meshes.begin(); it != meshes.end(); it++) {
-		if (it->name == name) return &*it;
-	}
-
-	throw std::runtime_error("mesh with name = " + name + " not found");
 }
 
 void memory_model::set_animation_time(math::scalar t)
@@ -65,10 +46,13 @@ void memory_model::draw_wireframe(renderer *renderer_ptr, math::scalar time)
 
 	set_animation_time(time);
 
-	for (meshes_type::const_iterator it = meshes.begin(); it != meshes.end(); it++) {
-		it->draw_wireframe(renderer_ptr, time);
+	for (joints_type::iterator it = joints.begin(); it != joints.end(); it++)
+	{
+		if (it->mesh_ptr)
+		{
+			((memory_mesh *) it->mesh_ptr)->draw_wireframe(renderer_ptr, &*it, time);
+		}
 	}
 }
 
-}
 }

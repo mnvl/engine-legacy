@@ -8,7 +8,6 @@
 #include <math/matrix.h>
 #include <graphic/model.h>
 
-namespace engine {
 namespace graphic {
 
 class memory_model;
@@ -35,7 +34,6 @@ public:
 	virtual ~memory_mesh();
 
 	memory_model *model_ptr;
-	std::string id, name;
 	math::matrix<4,4> bind_shape_matrix;
 	std::vector<vertex_t> vertices;
 	std::vector<index_t> indices;
@@ -44,8 +42,7 @@ public:
 	void transform_vertices(joint const *joint_ptr, std::vector<vertex_t> &result) const;
 
 	joint_influence *get_joint_influence_by_name(std::string const &name, bool can_create = false);
-	void draw_wireframe(renderer *renderer_ptr, math::scalar time = 0) const;
+	void draw_wireframe(renderer *renderer_ptr, joint *joint_ptr, math::scalar time = 0) const;
 };
 
-}
 }

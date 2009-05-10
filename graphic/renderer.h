@@ -8,7 +8,6 @@
 #include <util/boost_com_intrusive_ptr.h>
 #include <system/window.h>
 
-namespace engine {
 namespace graphic {
 
 class camera;
@@ -16,7 +15,7 @@ class font;
 
 class renderer {
 public:
-	renderer(system::window *window_ptr, int width = 800, int height = 600, bool fullscreen = false);
+	renderer(platform::window *window_ptr, int width = 800, int height = 600, bool fullscreen = false);
 	~renderer();
 
 	void begin_frame();
@@ -27,7 +26,7 @@ public:
 	void select(camera const &c);
 
 private:
-	system::window *window_ptr_;
+	platform::window *window_ptr_;
 	int width_, height_;
 	bool fullscreen_;
 
@@ -40,5 +39,4 @@ private:
 	std::deque<double> frame_times_;
 };
 
-}
 }

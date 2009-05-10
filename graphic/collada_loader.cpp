@@ -21,8 +21,8 @@
 #endif
 
 namespace collada_elements {
-	using namespace engine::util;
-	using namespace engine::graphic;
+	using namespace util;
+	using namespace graphic;
 
 	typedef joint_influence::vertex_weight vertex_weight;
 
@@ -770,7 +770,7 @@ namespace collada_elements {
 		void build_meshes(memory_model *model_ptr) {
 			for (boost::ptr_vector<geometry_e>::iterator it = geometries_.begin(); it != geometries_.end(); it++) {
 				model_ptr->meshes.push_back(new memory_mesh(model_ptr));
-				memory_mesh *mesh_ptr = &model_ptr->meshes.back();
+				memory_mesh *mesh_ptr = (memory_mesh *) &model_ptr->meshes.back();
 				mesh_ptr->id = it->get_id();
 				mesh_ptr->name = it->get_name();
 				it->build_mesh(mesh_ptr);
@@ -1055,7 +1055,7 @@ namespace collada_elements {
 	public:
 		void build_animations(memory_model *model_ptr) {
 			for (boost::ptr_map<std::string, animation_e *>::iterator it = animations_.begin(); it != animations_.end(); it++) {
-				model_ptr->animations.push_back(new engine::graphic::animation((*it->second)->build_animation(model_ptr)));
+				model_ptr->animations.push_back(new graphic::animation((*it->second)->build_animation(model_ptr)));
 				model_ptr->animations.back().name = it->first;
 			}
 		}
@@ -1151,7 +1151,6 @@ namespace collada_elements {
 	};
 }
 
-namespace engine {
 namespace graphic {
 
 collada_loader::collada_loader(std::string const &filename):
@@ -1194,4 +1193,4 @@ void collada_loader::load() {
 }
 
 }
-}
+

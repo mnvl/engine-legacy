@@ -2,7 +2,6 @@
 #include <exception/directx_error.h>
 #include <graphic/material.h>
 
-namespace engine {
 namespace graphic {
 
 material::material(renderer *renderer_ptr):
@@ -38,4 +37,4 @@ void material::select()
 }
 
 }
-}
+

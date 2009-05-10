@@ -3,7 +3,6 @@
 #include <graphic/memory_model.h>
 #include <graphic/memory_mesh.h>
 
-namespace engine {
 namespace graphic {
 
 memory_mesh::memory_mesh(memory_model *m):
@@ -72,10 +71,10 @@ joint_influence *memory_mesh::get_joint_influence_by_name(std::string const &nam
 	throw std::runtime_error("influence of joint " + joint_ptr->name + " to mesh " + name + " not found");
 }
 
-void memory_mesh::draw_wireframe(renderer *renderer_ptr, math::scalar time) const
+void memory_mesh::draw_wireframe(renderer *renderer_ptr, joint *joint_ptr, math::scalar time) const
 {
 	std::vector<vertex_t> animated_vertices;
-	//transform_vertices(animated_vertices);
+	transform_vertices(joint_ptr, animated_vertices);
 
 	size_t triangles_count = indices.size() / 3;
 
@@ -97,5 +96,4 @@ void memory_mesh::draw_wireframe(renderer *renderer_ptr, math::scalar time) cons
 		dummy.size() / 2, &dummy[0], INDEX_FORMAT, &animated_vertices[0], sizeof(vertex_t));
 }
 
-}
 }

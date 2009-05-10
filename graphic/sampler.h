@@ -7,7 +7,6 @@
 #include <math/matrix.h>
 #include <graphic/joint.h>
 
-namespace engine {
 namespace graphic {
 
 struct sampler {
@@ -49,5 +48,5 @@ public:
 
 
 }
-}
+
 

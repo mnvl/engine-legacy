@@ -3,7 +3,6 @@
 #include <boost/lambda/lambda.hpp>
 #include <graphic/sampler.h>
 
-namespace engine {
 namespace graphic {
 
 void sampler::add_sample(math::scalar time, math::matrix<4,4> const &m)
@@ -38,4 +37,4 @@ math::matrix<4,4> sampler::get(math::scalar time) const {
 }
 
 }
-}
+

@@ -4,7 +4,6 @@
 #include <dxerr.h>
 #include <exception>
 
-namespace engine {
 namespace exception {
 
 class directx_error: public std::exception {
@@ -17,5 +16,4 @@ public:
 	char const *what() const throw() { return DXGetErrorDescription(hresult_); }
 };
 
-}
 }
