@@ -1244,47 +1244,38 @@ namespace collada_elements {
 			textures_.insert(std::make_pair(child_name, xerces_get_attribute<std::string>(textures_list_ptr->item(0), "texture")));
 		}
 
+
 	public:
-		graphic::material *build_material() const
+		std::string const &get_sampler_name(std::string const &component_name) const
 		{
-			std::auto_ptr<graphic::material> material_ptr(new graphic::material());
-
-			// TODO: lookup in newparams
-			if (textures_.find("diffuse") != textures_.end())
-			{
-				material_ptr->set_texture(textures_.find("diffuse")->second);
-			}
-
-			if (textures_.find("specular") != textures_.end())
-			{
-				material_ptr->set_texture(textures_.find("specular")->second);
-			}
-
-			return material_ptr.release();
+			std::map<std::string, std::string>::const_iterator it = textures_.find(component_name);
+			if (it != textures_.end()) return it->second;
+				
+			throw std::logic_error("texture for component " + component_name + " not found");
 		}
 	};
 
 	class technique_e: public element {
 	private:
-		boost::scoped_ptr<phong_lambert_blinn_e> material_ptr_;
+		boost::scoped_ptr<phong_lambert_blinn_e> shader_ptr_;
 
 		void process_child(std::string const &child_name, std::string const &child_id, xercesc::DOMElement const *child_ptr)
 		{
 			if (child_name == "phong" || child_name == "lambert" || child_name == "blinn")
 			{
-				material_ptr_.reset(construct<phong_lambert_blinn_e>(child_ptr));
+				shader_ptr_.reset(construct<phong_lambert_blinn_e>(child_ptr));
 			}
 		}
 
 	public:
 		void check()
 		{
-			if (!material_ptr_) throw std::logic_error("material not found in <technique> or unknown material type");
+			if (!shader_ptr_) throw std::logic_error("material not found in <technique> or unknown material type");
 		}
 
-		graphic::material *build_material() const
+		phong_lambert_blinn_e const *get_shader() const
 		{
-			return material_ptr_->build_material();
+			return shader_ptr_.get();
 		}
 	};
 
@@ -1306,10 +1297,39 @@ namespace collada_elements {
 			}
 		}
 
+		newparam_e const *get_newparam(std::string const &name) const
+		{
+			boost::ptr_map<std::string, newparam_e *>::const_iterator it = newparams_.find(name);
+			if (it == newparams_.end()) throw std::logic_error("<newparam> with name " + name + " not found");
+
+			return *it->second;
+		}
+
+		std::string const &get_surface_filename(std::string const &component_name) const;
+
 	public:
 		graphic::material *build_material() const
 		{
-			return technique_ptr_->build_material();
+			std::auto_ptr<graphic::material> material_ptr(new graphic::material());
+
+			try
+			{
+				material_ptr->set_texture(get_surface_filename("diffuse"));
+			}
+			catch(std::logic_error const &)
+			{
+				// no such texture
+			}
+
+			try
+			{
+				material_ptr->set_specular_map(get_surface_filename("specular"));
+			}
+			catch(std::logic_error const &)
+			{
+			}
+
+			return material_ptr.release();
 		}
 	};
 
@@ -1512,6 +1532,19 @@ namespace collada_elements {
 		material_ptr->set_name(name_);
 
 		return material_ptr.release();
+	}
+
+	std::string const &profile_common_e::get_surface_filename(std::string const &component_name) const
+	{
+		std::string const &sampler_name = technique_ptr_->get_shader()->get_sampler_name(component_name);
+		newparam_e const *sampler_ptr = get_newparam(sampler_name);
+
+		std::string const &surface_name = sampler_ptr->get_sampler()->get_source();
+		newparam_e const *surface_ptr = get_newparam(surface_name);
+
+		std::string const &image_name = surface_ptr->get_surface()->get_init_from();
+
+		return get_root()->get_images()->get_image_by_name(image_name)->get_init_from();
 	}
 
 	class collada_e: public element, public root_element {
