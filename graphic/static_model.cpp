@@ -26,8 +26,6 @@ static_model *static_mesh::get_model()
 
 void static_mesh::draw()
 {
-	material_ptr_->select();
-
 	HRESULT hr = get_model()->get_renderer()->get_device()->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, 0,
 		vertices_count_, first_vertex_offset_, indices_count_ / 3);
 	if (FAILED(hr)) throw exception::directx_error(hr);

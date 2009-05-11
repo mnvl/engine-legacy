@@ -12,8 +12,8 @@
 #include <boost/lexical_cast.hpp>
 #include <xercesc/parsers/XercesDOMParser.hpp>
 #include <xercesc/sax/HandlerBase.hpp>
-#include <math/matrix.h>
 #include <util/xerces_lcp_transcoder.h>
+#include <math/matrix.h>
 #include <graphic/collada_loader.h>
 
 #if defined(max)
@@ -80,23 +80,26 @@ namespace collada_elements {
 		}
 
 		template<class T> static void
-		parse_list(xercesc::DOMElement const *element_ptr, std::vector<T> &v) {
+		parse_list(xercesc::DOMElement const *element_ptr, std::vector<T> &v)
+		{
 			std::stringstream ss(xerces_get_text(element_ptr));
 			T dummy;
 			while (ss >> dummy) v.push_back(dummy);
-			if (ss.bad()) throw std::runtime_error("can't parse list");
+			if (ss.bad()) throw std::logic_error("can't parse list");
 		}
 
 		template<class T> static size_t
-		parse_list(xercesc::DOMElement const *element_ptr, T *list_ptr, size_t size) {
+		parse_list(xercesc::DOMElement const *element_ptr, T *list_ptr, size_t size)
+		{
 			std::stringstream ss(xerces_get_text(element_ptr));
 			size_t i = 0;
 			while (i < size && ss >> *list_ptr++) i++;
 			return i;
 		}
 
-		void parse_matrix(xercesc::DOMElement const *element_ptr, math::matrix<4, 4> &tf) {
-			if (parse_list(element_ptr, &tf.ij[0][0], 16) != 16) throw std::runtime_error("invalid <matrix>");
+		void parse_matrix(xercesc::DOMElement const *element_ptr, math::matrix<4, 4> &tf)
+		{
+			if (parse_list(element_ptr, &tf.ij[0][0], 16) != 16) throw std::logic_error("invalid <matrix>");
 			tf.transpose_inplace();
 		}
 	};
@@ -116,23 +119,42 @@ namespace collada_elements {
 
 		size_t count_, stride_;
 		std::vector<param> params_;
+		std::map<std::string, std::string> instance_materials_;
 
-		void process_child(std::string const &child_name, std::string const &child_id, xercesc::DOMElement const *child_ptr) {
-			if (child_name == "accessor") {
+		void process_child(std::string const &child_name, std::string const &child_id, xercesc::DOMElement const *child_ptr)
+		{
+			if (child_name == "accessor")
+			{
 				count_ = xerces_get_attribute<size_t>(child_ptr, "count");
 				stride_ = xerces_get_attribute<size_t>(child_ptr, "stride", 3);
 
 				xercesc::DOMNodeList const *params = child_ptr->getElementsByTagName(xerces_lcp_transcode("param").c_str());
-				for (size_t i = 0, n = params->getLength(); i < n; i++) {
+
+				for (size_t i = 0, n = params->getLength(); i < n; i++)
+				{
 					xercesc::DOMNode const *node_e = params->item(i);
 					params_.push_back(param(xerces_get_attribute<std::string>(node_e, "name"), xerces_get_attribute<std::string>(node_e, "type")));
 				}
+			}
+			else if (child_name == "instance_material")
+			{
+				std::string const &symbol = xerces_get_attribute<std::string>(child_ptr, "symbol");
+				std::string const &target = xerces_get_attribute<std::string>(child_ptr, "target");
+				instance_materials_.insert(std::make_pair(symbol, target.substr(1)));
 			}
 		}
 
 	public:
 		size_t get_stride() const { return stride_; }
 		size_t get_count() const { return count_; }
+
+		std::string const &get_material_by_symbol(std::string const &symbol) const
+		{
+			std::map<std::string, std::string>::const_iterator it = instance_materials_.find(symbol);
+			if (it != instance_materials_.end()) return it->second;
+
+			throw std::logic_error("<instance_material> with symbol = " + symbol + " not found");
+		}
 	};
 
 	class source_e: public element {
@@ -157,15 +179,15 @@ namespace collada_elements {
 		technique_common_e const &get_technique() const { return *technique_; }
 
 		void check() {
-			if (float_array_.empty() && name_array_.empty()) throw std::runtime_error("malformed or unknown <source>");
-			if (!technique_) throw std::runtime_error("no <technique_common> in <source>");
+			if (float_array_.empty() && name_array_.empty()) throw std::logic_error("malformed or unknown <source>");
+			if (!technique_) throw std::logic_error("no <technique_common> in <source>");
 
 			size_t array_size = std::max(float_array_.size(), name_array_.size());
 			size_t expected_size = technique_->get_stride() * technique_->get_count();
 
 			if (array_size != expected_size)
 			{
-				throw std::runtime_error("array has " + boost::lexical_cast<std::string>(expected_size) 
+				throw std::logic_error("array has " + boost::lexical_cast<std::string>(expected_size) 
 					+ " elements, parsed " + boost::lexical_cast<std::string>(array_size) + " elements");
 			}
 
@@ -216,7 +238,7 @@ namespace collada_elements {
 	public:
 		source_e const *get_source(std::string const &id) const {
 			boost::ptr_map<std::string, source_e>::const_iterator it = sources_.find(id);
-			if (it == sources_.end()) throw std::runtime_error("source id = " + id + " not found");
+			if (it == sources_.end()) throw std::logic_error("source id = " + id + " not found");
 			return it->second;
 		}
 	};
@@ -333,7 +355,7 @@ namespace collada_elements {
 
 		math::matrix<4,4> get_baked_sample(source_e const *source_ptr, int index, std::string const &param) const
 		{
-			if (param != "ANGLE") throw std::runtime_error("unexpected rotation transform param type " + param);
+			if (param != "ANGLE") throw std::logic_error("unexpected rotation transform param type " + param);
 
 			math::scalar angle;
 			source_ptr->get(index, angle);
@@ -398,13 +420,63 @@ namespace collada_elements {
 		}
 	};
 
+	class bind_material_e: public element {
+	private:
+		boost::scoped_ptr<technique_common_e> technique_common_ptr_;
+
+		void process_child(std::string const &child_name, std::string const &child_id, xercesc::DOMElement const *child_ptr)
+		{
+			if (child_name == "technique_common")
+			{
+				technique_common_ptr_.reset(construct<technique_common_e>(child_ptr));
+			}
+		}
+
+	public:
+		technique_common_e const *get_technique_common() const
+		{
+			return technique_common_ptr_.get();
+		}
+	};
+
+	class instance_geometry_e: public element {
+	private:
+		std::string url_;
+		boost::scoped_ptr<bind_material_e> bind_material_ptr_;
+
+		void process_child(std::string const &child_name, std::string const &child_id, xercesc::DOMElement const *child_ptr)
+		{
+			if (child_name == "bind_material")
+			{
+				bind_material_ptr_.reset(construct<bind_material_e>(child_ptr));
+			}
+		}
+
+	public:
+		std::string const &get_url() const
+		{
+			return url_;
+		}
+
+		bind_material_e const *get_bind_material() const
+		{
+			return bind_material_ptr_.get();
+		}
+
+		void init(xercesc::DOMElement const *element_ptr)
+		{
+			url_ = xerces_get_attribute<std::string>(element_ptr, "url").substr(1);
+		}
+	};
+
 	class node_e: public element {
 	protected:
-		std::string id_, sid_, name_, type_, instance_geometry_;
+		std::string id_, sid_, name_, type_;
 		node_e *parent_;
 		boost::ptr_vector<node_e> childs_;
 		boost::ptr_vector<transform_e> transforms_;
 		boost::scoped_ptr<instance_controller_e> instance_controller_;
+		boost::scoped_ptr<instance_geometry_e> instance_geometry_;
 
 		void process_child(std::string const &child_name, std::string const &child_id, xercesc::DOMElement const *child_ptr)
 		{
@@ -431,7 +503,7 @@ namespace collada_elements {
 			}
 			else if (child_name == "instance_geometry")
 			{
-				instance_geometry_ = xerces_get_attribute<std::string>(child_ptr, "url");
+				instance_geometry_.reset(construct<instance_geometry_e>(child_ptr));
 			}
 			else if (child_name == "instance_controller")
 			{
@@ -514,7 +586,7 @@ namespace collada_elements {
 		}
 
 		void build_hierarchy(memory_model *model_ptr) {
-			if (visual_scenes_.size() != 1) throw std::runtime_error("expecting one <visual_scene> in <library_visual_scenes>");
+			if (visual_scenes_.size() != 1) throw std::logic_error("expecting one <visual_scene> in <library_visual_scenes>");
 			visual_scenes_.begin()->second->build_hierarchy(model_ptr);
 		}
 	};
@@ -563,7 +635,7 @@ namespace collada_elements {
 		input_e const *get_input(std::string const &semantic) const
 		{
 			inputs_type::const_iterator it = inputs_.find(semantic);
-			if (it == inputs_.end()) throw std::runtime_error("input with semantic = " + semantic + " not found");
+			if (it == inputs_.end()) throw std::logic_error("input with semantic = " + semantic + " not found");
 			return it->second;
 		}
 	};
@@ -575,9 +647,11 @@ namespace collada_elements {
 	private:
 		size_t count_;
 		std::vector<size_t> indices_;
+		std::string material_;
 
 		void process_child(std::string const &child_name, std::string const &child_id, xercesc::DOMElement const *child_ptr) {
-			if (child_name == "p") {
+			if (child_name == "p")
+			{
 				parse_list(child_ptr, indices_);
 			}
 
@@ -585,11 +659,14 @@ namespace collada_elements {
 		}
 
 	public:
-		void init(xercesc::DOMElement const *element_ptr) {
+		void init(xercesc::DOMElement const *element_ptr)
+		{
 			count_ = xerces_get_attribute<size_t>(element_ptr, "count");
+			material_ = xerces_get_attribute<std::string>(element_ptr, "material");
 		}
 
 		size_t get_count() const { return count_; }
+		std::string const &get_material() const { return material_; }
 		std::vector<size_t> const &get_indices() const { return indices_; }
 	};
 
@@ -635,7 +712,7 @@ namespace collada_elements {
 	class mesh_e: public sources_list_e {
 	private:
 		boost::scoped_ptr<vertices_e> vertices_;
-		boost::scoped_ptr<triangles_e> triangles_;
+		boost::ptr_vector<triangles_e> triangles_;
 
 		vertex_indexer vertex_indexer_;
 
@@ -645,69 +722,23 @@ namespace collada_elements {
 		void process_child(std::string const &child_name, std::string const &child_id, xercesc::DOMElement const *child_ptr) {
 			sources_list_e::process_child(child_name, child_id, child_ptr);
 
-			if (child_name == "vertices") {
+			if (child_name == "vertices")
+			{
 				vertices_.reset(construct<vertices_e>(child_ptr));
 			}
-			else if (child_name == "triangles") {
-				triangles_.reset(construct<triangles_e>(child_ptr));
+			else if (child_name == "triangles")
+			{
+				triangles_.push_back(construct<triangles_e>(child_ptr));
 			}
 		}
 
 	public:
 		void check() {
-			if (!vertices_) throw std::runtime_error("no <vertices> found");
-			if (!triangles_) throw std::runtime_error("no <triangles> found");
+			if (!vertices_) throw std::logic_error("no <vertices> found");
+			if (triangles_.empty()) throw std::logic_error("no <triangles> found");
 		}
 
-		void build_mesh(memory_mesh *mesh_ptr) {
-			input_e const *position_input = vertices_->get_input("POSITION");
-			source_e const *position_source = get_source(position_input->get_source().substr(1));
-
-			input_e const *normals_input = 0;
-			try	{ normals_input = vertices_->get_input("NORMAL"); }
-			catch(...) { normals_input = triangles_->get_input("NORMAL"); }
-
-			source_e const *normals_source = get_source(normals_input->get_source().substr(1));
-
-			input_e const *texcoords_input = triangles_->get_input("TEXCOORD");
-			source_e const *texcoords_source = get_source(texcoords_input->get_source().substr(1));
-
-			std::vector<size_t> const &indices = triangles_->get_indices();
-			std::vector<size_t>::const_iterator indices_get = indices.begin();
-
-			size_t stride = triangles_->get_stride();
-
-			for (size_t i = 0, n = triangles_->get_count() * 3; i < n; i++) {
-				size_t position_index;
-				memory_mesh::vertex_t v;
-
-				for (size_t j = 0; j < stride; j++) {
-					if (j == position_input->get_offset()) {
-						position_index = *indices_get;
-						position_source->get(position_index, v.position);
-					}
-
-					if (j == normals_input->get_offset()) {
-						normals_source->get(*indices_get, v.normal);
-					}
-
-					if (j == texcoords_input->get_offset()) {
-						texcoords_source->get(*indices_get, v.texcoords);
-					}
-
-					indices_get++;
-				}
-
-				std::pair<size_t, bool> vertex_index = vertex_indexer_.choose_index(v);
-
-				if (vertex_index.second) {
-					position_index_x_vertex_index_.insert(std::make_pair(position_index, vertex_index.first));
-					mesh_ptr->vertices.push_back(v);
-				}
-
-				mesh_ptr->indices.push_back(vertex_index.first);
-			}
-		}
+		void build_mesh(memory_mesh *mesh_ptr);
 
 		void fix_position_indices(memory_mesh *mesh_ptr) {
 			for (memory_mesh::influences_type::iterator mesh_it = mesh_ptr->influences.begin();
@@ -750,7 +781,7 @@ namespace collada_elements {
 		}
 
 		void check() {
-			if (!mesh_ptr_) throw std::runtime_error("<mesh> not found in <geometry>");
+			if (!mesh_ptr_) throw std::logic_error("<mesh> not found in <geometry>");
 		}
 
 		void build_mesh(memory_mesh *mesh_ptr) {
@@ -1010,7 +1041,7 @@ namespace collada_elements {
 
 			for (std::vector<channel>::const_iterator it = channels_.begin(); it != channels_.end(); it++) {
 				boost::ptr_map<std::string, sampler_e *>::iterator jt = samplers_.find(it->source_url.substr(1));
-				if (jt == samplers_.end()) throw std::runtime_error("sampler for url " + it->source_url + " not found");
+				if (jt == samplers_.end()) throw std::logic_error("sampler for url " + it->source_url + " not found");
 
 				sampler_e *sampler_ptr = *jt->second;
 
@@ -1025,7 +1056,7 @@ namespace collada_elements {
 				using namespace boost::lambda;
 				boost::split(parsed_target_components, it->target_url, _1 == '/' || _1 == '.', boost::algorithm::token_compress_on);
 				if (parsed_target_components.size() == 2) parsed_target_components.push_back(std::string());
-				if (parsed_target_components.size() != 3) throw std::runtime_error("invalid url " + it->target_url);
+				if (parsed_target_components.size() != 3) throw std::logic_error("invalid url " + it->target_url);
 
 				joint *joint_ptr = model_ptr->get_joint_by_id(parsed_target_components[0]);
 				dummy.set_target(joint_ptr, parsed_target_components[1]);
@@ -1213,6 +1244,12 @@ namespace collada_elements {
 				profile_common_ptr_.reset(construct<profile_common_e>(child_ptr));
 			}
 		}
+
+	public:
+		profile_common_e const *get_profile_common() const
+		{
+			return profile_common_ptr_.get();
+		}
 	};
 
 	class library_effects_e: public element {
@@ -1223,7 +1260,7 @@ namespace collada_elements {
 		{
 			if (child_name == "effect")
 			{
-				effects_[child_name] = construct<effect_e>(child_ptr);
+				effects_[child_id] = construct<effect_e>(child_ptr);
 			}
 		}
 
@@ -1237,9 +1274,108 @@ namespace collada_elements {
 		}
 	};
 
-	class library_images_e: public element {
+	class image_e: public element {
+	private:
+		std::string init_from_;
+
+		void process_child(std::string const &child_name, std::string const &child_id, xercesc::DOMElement const *child_ptr)
+		{
+			if (child_name == "init_from")
+			{
+				init_from_ = xerces_get_text(child_ptr);
+			}
+		}
+
 	public:
+		std::string const &get_init_from() const
+		{
+			return init_from_;
+		}
 	};
+
+	class library_images_e: public element {
+	private:
+		boost::ptr_map<std::string, image_e *> images_;
+
+		void process_child(std::string const &child_name, std::string const &child_id, xercesc::DOMElement const *child_ptr)
+		{
+			if (child_name == "image")
+			{
+				images_[child_id] = construct<image_e>(child_ptr);
+			}
+		}
+
+	public:
+		image_e const *get_image_by_name(std::string const &name)
+		{
+			boost::ptr_map<std::string, image_e *>::const_iterator it = images_.find(name);
+			if (it != images_.end()) return *it->second;
+
+			throw std::logic_error("image " + name + " not found");
+		}
+	};
+
+	void mesh_e::build_mesh(memory_mesh *mesh_ptr)
+	{
+		input_e const *position_input = vertices_->get_input("POSITION");
+		source_e const *position_source = get_source(position_input->get_source().substr(1));
+
+		for (boost::ptr_vector<triangles_e>::const_iterator it = triangles_.begin();
+			it != triangles_.end(); it++)
+		{
+			triangles_e const *triangles_ptr = &*it;
+
+			input_e const *normals_input = 0;
+			try	{ normals_input = vertices_->get_input("NORMAL"); }
+			catch(...) { normals_input = triangles_ptr->get_input("NORMAL"); }
+
+			source_e const *normals_source = get_source(normals_input->get_source().substr(1));
+
+			input_e const *texcoords_input = triangles_ptr->get_input("TEXCOORD");
+			source_e const *texcoords_source = get_source(texcoords_input->get_source().substr(1));
+
+			std::vector<size_t> const &indices = triangles_ptr->get_indices();
+			std::vector<size_t>::const_iterator indices_get = indices.begin();
+
+			size_t stride = triangles_ptr->get_stride();
+
+			for (size_t i = 0, n = triangles_ptr->get_count() * 3; i < n; i++) {
+				size_t position_index;
+				memory_mesh::vertex_t v;
+
+				for (size_t j = 0; j < stride; j++) {
+					if (j == position_input->get_offset()) {
+						position_index = *indices_get;
+						position_source->get(position_index, v.position);
+					}
+
+					if (j == normals_input->get_offset()) {
+						normals_source->get(*indices_get, v.normal);
+					}
+
+					if (j == texcoords_input->get_offset()) {
+						texcoords_source->get(*indices_get, v.texcoords);
+					}
+
+					indices_get++;
+				}
+
+				std::pair<size_t, bool> vertex_index = vertex_indexer_.choose_index(v);
+
+				if (vertex_index.second) {
+					position_index_x_vertex_index_.insert(std::make_pair(position_index, vertex_index.first));
+					mesh_ptr->vertices.push_back(v);
+				}
+
+				mesh_ptr->indices.push_back(vertex_index.first);
+			}
+
+			mesh::assigned_material dummy;
+			dummy.material_name = triangles_ptr->get_material();
+			dummy.triangles_count = triangles_ptr->get_count();
+			mesh_ptr->assigned_materials.push_back(dummy);
+		}
+	}
 
 	void node_e::build_hierarchy(memory_model *model_ptr, joint *parent_ptr)
 	{
@@ -1256,9 +1392,28 @@ namespace collada_elements {
 
 		if (parent_ptr) parent_ptr->childs.push_back(joint_ptr);
 
-		if (instance_geometry_.size())
+		if (instance_geometry_)
 		{
-			joint_ptr->mesh_ptr = model_ptr->get_mesh_by_id(instance_geometry_.substr(1));
+			joint_ptr->mesh_ptr = model_ptr->get_mesh_by_id(instance_geometry_->get_url());
+
+			for (mesh::assigned_materials_type::iterator it = joint_ptr->mesh_ptr->assigned_materials.begin();
+				it != joint_ptr->mesh_ptr->assigned_materials.end(); it++)
+			{
+				std::string material_symbol = it->material_name;
+
+				std::string material_name = instance_geometry_->
+					get_bind_material()->
+					get_technique_common()->
+					get_material_by_symbol(material_symbol);
+
+				material_e const *material_ptr = get_root()->get_materials()->get_material_by_name(material_name);
+
+				effect_e const *effect_ptr = get_root()->get_effects()->get_effect_by_name(material_ptr->get_instance_effect_url().substr(1));
+
+				profile_common_e const *profile_common_ptr = effect_ptr->get_profile_common();
+
+				// TODO: go on
+			}
 		}
 		else if (instance_controller_)
 		{
@@ -1346,8 +1501,8 @@ namespace collada_elements {
 
 		void check()
 		{
-			if (!visual_scenes_) throw std::runtime_error("<library_visual_scenes> not found");
-			if (!geometries_) throw std::runtime_error("<library_geometries> not found");
+			if (!visual_scenes_) throw std::logic_error("<library_visual_scenes> not found");
+			if (!geometries_) throw std::logic_error("<library_geometries> not found");
 		}
 
 		void build_model(memory_model *model_ptr)

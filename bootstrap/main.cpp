@@ -25,19 +25,19 @@ INT WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpstrCmdLine, INT
 		platform::window main_window("engine");
 		graphic::renderer renderer(&main_window);
 
-		graphic::collada_loader ci2("d:\\home\\z1.dae");
+		graphic::collada_loader ci2("e:\\home\\z1.dae");
 		ci2.load();
 
 		graphic::camera cam;
 		math::scalar angle = 0;
 
-		boost::shared_ptr<graphic::material> mat(new graphic::material(&renderer));
-		mat->set_texture("d:\\home\\z1.bmp");
+		//boost::shared_ptr<graphic::material> mat(new graphic::material(&renderer));
+		//mat->set_texture("d:\\home\\z1.bmp");
 
 		graphic::static_model m(&renderer);
 		m.build_from_memory_model(const_cast<graphic::memory_model *>(&ci2.get_model()));
 
-		m.meshes[0].set_material(mat);
+		//m.meshes[0].set_material(mat);
 
 		while (true)
 		{

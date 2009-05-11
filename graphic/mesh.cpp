@@ -12,11 +12,6 @@ mesh::~mesh()
 {
 }
 
-void mesh::set_material(boost::shared_ptr<material> const &material_ptr)
-{
-	material_ptr_ = material_ptr;
-}
-
 model *mesh::get_model() const
 {
 	return model_ptr_;

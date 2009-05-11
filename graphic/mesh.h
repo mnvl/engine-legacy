@@ -10,18 +10,25 @@ class model;
 
 class mesh {
 public:
+	struct assigned_material
+	{
+		std::string material_name;
+		size_t triangles_count;
+	};
+
+	typedef std::vector<assigned_material> assigned_materials_type;
+
 	std::string id, name;
+	assigned_materials_type assigned_materials;
 
 	mesh(model *model_ptr = 0);
 	virtual ~mesh();
 
-	virtual void set_material(boost::shared_ptr<material> const &material_ptr);
 	virtual model *get_model() const;
 	virtual void draw();
 
 protected:
 	model *model_ptr_;
-	boost::shared_ptr<material> material_ptr_;
 };
 
 }
