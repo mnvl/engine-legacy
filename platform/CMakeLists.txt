@@ -1,6 +1,10 @@
 
 ADD_LIBRARY (platform STATIC
-	window.cpp
-	window.h
 	timer.h
+
+	file_handle.h
+	file_handle.cpp
+
+	window.h
+	window.cpp
 )
