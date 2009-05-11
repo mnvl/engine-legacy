@@ -6,7 +6,7 @@
 namespace graphic {
 
 memory_mesh::memory_mesh(memory_model *m):
-model_ptr(m)
+mesh(m)
 {
 }
 
@@ -16,7 +16,7 @@ memory_mesh::~memory_mesh() {
 void memory_mesh::transform_vertices(joint const *joint_ptr, std::vector<vertex_t> &result) const {
 	result = vertices;
 
-	if (model_ptr->animations.empty())
+	if (get_model()->animations.empty())
 	{
 		for (std::vector<vertex_t>::iterator it = result.begin(); it != result.end(); it++)
 		{
@@ -55,7 +55,7 @@ void memory_mesh::transform_vertices(joint const *joint_ptr, std::vector<vertex_
 
 joint_influence *memory_mesh::get_joint_influence_by_name(std::string const &name, bool can_create)
 {
-	joint *joint_ptr = model_ptr->get_joint_by_name(name);
+	joint *joint_ptr = get_model()->get_joint_by_name(name);
 
 	for (influences_type::iterator it = influences.begin(); it != influences.end(); it++) {
 		if (it->joint_ptr == joint_ptr) return &*it;

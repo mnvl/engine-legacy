@@ -14,6 +14,7 @@
 #include <xercesc/parsers/XercesDOMParser.hpp>
 #include <xercesc/sax/HandlerBase.hpp>
 #include <util/xerces_lcp_transcoder.h>
+#include <util/logger.h>
 #include <math/matrix.h>
 #include <graphic/collada_loader.h>
 
@@ -830,6 +831,8 @@ namespace collada_elements {
 		{
 			for (boost::ptr_vector<geometry_e>::iterator it = geometries_.begin(); it != geometries_.end(); it++)
 			{
+				LOG_INFO("building mesh id = " << it->get_id() << ", name = " << it->get_name());
+	
 				model_ptr->meshes.push_back(new memory_mesh(model_ptr));
 				memory_mesh *mesh_ptr = (memory_mesh *) &model_ptr->meshes.back();
 
@@ -1185,6 +1188,8 @@ namespace collada_elements {
 
 		void library_materials_e::build_materials(memory_model *model_ptr) const
 		{
+			LOG_INFO("building materials...");
+
 			for (boost::ptr_map<std::string, material_e *>::const_iterator it = materials_.begin();
 				it != materials_.end(); it++)
 			{
@@ -1282,12 +1287,12 @@ namespace collada_elements {
 
 
 	public:
-		std::string const &get_sampler_name(std::string const &component_name) const
+		std::string get_sampler_name(std::string const &component_name) const
 		{
 			std::map<std::string, std::string>::const_iterator it = textures_.find(component_name);
 			if (it != textures_.end()) return it->second;
 				
-			throw std::logic_error("texture for component " + component_name + " not found");
+			return std::string();
 		}
 	};
 
@@ -1348,21 +1353,27 @@ namespace collada_elements {
 		{
 			std::auto_ptr<graphic::material> material_ptr(new graphic::material());
 
-			try
+			std::string const &diffuse_texture = get_surface_filename("diffuse");
+			std::string const &specular_texture = get_surface_filename("specular");
+
+			if (diffuse_texture.size())
 			{
-				material_ptr->set_texture(get_surface_filename("diffuse"));
+				LOG_INFO("diffuse_texture = " << diffuse_texture);
+				material_ptr->set_texture(diffuse_texture);
 			}
-			catch(std::logic_error const &)
+			else
 			{
-				// no such texture
+				LOG_INFO("no specular_texture");
 			}
 
-			try
+			if (specular_texture.size())
 			{
-				material_ptr->set_specular_map(get_surface_filename("specular"));
+				LOG_INFO("specular_texture = " << diffuse_texture);
+				material_ptr->set_specular_map(specular_texture);
 			}
-			catch(std::logic_error const &)
+			else
 			{
+				LOG_INFO("no specular_texture");
 			}
 
 			return material_ptr.release();
@@ -1546,6 +1557,9 @@ namespace collada_elements {
 				std::string const &material_name = instance_geometry_->get_bind_material()->get_technique_common()->get_material_by_symbol(material_symbol);
 
 				assigned_material_it->material_ptr = mesh_ptr->get_model()->get_material_by_name(material_name);
+
+				assigned_material_it++;
+				triangles_it++;
 			}
 
 			if (assigned_material_it != mesh_ptr->assigned_materials.end() || triangles_it != triangles.end())
@@ -1566,6 +1580,8 @@ namespace collada_elements {
 
 	graphic::material *material_e::build_material() const
 	{
+		LOG_INFO("material " << name_);
+
 		std::auto_ptr<graphic::material> material_ptr(get_root()->
 			get_effects()->
 			get_effect_by_name(instance_effect_url_.substr(1))->
@@ -1579,6 +1595,8 @@ namespace collada_elements {
 	std::string profile_common_e::get_surface_filename(std::string const &component_name) const
 	{
 		std::string const &sampler_name = technique_ptr_->get_shader()->get_sampler_name(component_name);
+		if (sampler_name.empty()) return sampler_name;
+
 		newparam_e const *sampler_ptr = get_newparam(sampler_name);
 
 		std::string const &surface_name = sampler_ptr->get_sampler()->get_source();
@@ -1678,11 +1696,11 @@ namespace collada_elements {
 		void build_model(memory_model *model_ptr)
 		{
 			geometries_->build_meshes(model_ptr);
+			if (materials_) materials_->build_materials(model_ptr);
 			visual_scenes_->build_hierarchy(model_ptr);
 			if (controllers_) controllers_->build_joint_influences(model_ptr);
 			geometries_->fix_position_indices(model_ptr);
 			if (animations_) animations_->build_animations(model_ptr);
-			if (materials_) materials_->build_materials(model_ptr);
 		}
 	};
 }
@@ -1698,7 +1716,10 @@ collada_loader::~collada_loader() {
 }
 
 void collada_loader::load() {
-	try {
+	try
+	{
+		LOG_INFO("parsing collada file " << filename_);
+
 		boost::scoped_ptr<xercesc::XercesDOMParser> parser(new xercesc::XercesDOMParser());
 		parser->setValidationScheme(xercesc::XercesDOMParser::Val_Always);
 		parser->setDoNamespaces(true);
@@ -1721,6 +1742,8 @@ void collada_loader::load() {
 		dummy.go((xercesc::DOMElement *) root_node);
 		dummy.build_model(&model_);
 		model_.cleanup();
+
+		LOG_INFO("finished parsing " << filename_);
 	}
 	catch (std::exception const &error)
 	{

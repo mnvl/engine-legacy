@@ -33,7 +33,6 @@ public:
 	memory_mesh(memory_model *m);
 	virtual ~memory_mesh();
 
-	memory_model *model_ptr;
 	math::matrix<4,4> bind_shape_matrix;
 	std::vector<vertex_t> vertices;
 	std::vector<index_t> indices;

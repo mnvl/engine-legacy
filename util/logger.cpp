@@ -22,17 +22,17 @@ logger::message::message(logger *logger_ptr, level_t level, char const *filename
 	int line, char const *pretty_function):
 logger_ptr_(logger_ptr)
 {
-	(*this) << boost::posix_time::microsec_clock::local_time() << '\t'
+	stream_ << boost::posix_time::microsec_clock::local_time() << '\t'
 			<< get_level_text(level) << '\t'
-			<< filename << '\t'
-			<< pretty_function << ':' << line << '\t';
+			<< filename << ':' << line << '\t'
+			<< pretty_function << '\t';
 }
 
 logger::message::~message()
 {
-	(*this) << '\n';
+	stream_ << '\n';
 
-	logger_ptr_->write(*this);
+	logger_ptr_->write(stream_.str());
 }
 
 logger::logger()
@@ -51,12 +51,11 @@ logger &logger::instance()
 
 void logger::set_file(std::string const &filename)
 {
-	file_.open(filename.c_str(), O_WRONLY);
+	file_.open(filename.c_str(), O_WRONLY | O_CREAT);
 }
 
-void logger::write(message const &msg)
+void logger::write(std::string const &str)
 {
-	std::string const &str = msg.str();
 	file_.write(str.c_str(), str.size());
 }
 
