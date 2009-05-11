@@ -1,5 +1,5 @@
 
-ADD_LIBRARY (system STATIC
+ADD_LIBRARY (platform STATIC
 	window.cpp
 	window.h
 	timer.h
