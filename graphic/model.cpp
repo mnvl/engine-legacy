@@ -48,4 +48,13 @@ mesh *model::get_mesh_by_name(std::string const &name)
 	throw std::runtime_error("mesh with name = " + name + " not found");
 }
 
+material *model::get_material_by_name(std::string const &name)
+{
+	for (materials_type::iterator it = materials_.begin(); it != materials_.end(); it++) {
+		if (it->get_name() == name) return &*it;
+	}
+
+	throw std::runtime_error("material with name = " + name + " not found");
+}
+
 }

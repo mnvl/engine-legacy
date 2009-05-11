@@ -10,6 +10,7 @@
 #include <boost/scoped_ptr.hpp>
 #include <boost/lambda/lambda.hpp>
 #include <boost/lexical_cast.hpp>
+#include <boost/filesystem.hpp>
 #include <xercesc/parsers/XercesDOMParser.hpp>
 #include <xercesc/sax/HandlerBase.hpp>
 #include <util/xerces_lcp_transcoder.h>
@@ -27,6 +28,7 @@ namespace collada_elements {
 	typedef joint_influence::vertex_weight vertex_weight;
 
 	class library_visual_scenes_e;
+	class library_geometries_e;
 	class library_controllers_e;
 	class library_materials_e;
 	class library_effects_e;
@@ -35,6 +37,7 @@ namespace collada_elements {
 	class root_element {
 	public:
 		virtual library_visual_scenes_e *get_visual_scenes() = 0;
+		virtual library_geometries_e *get_geometries() = 0;
 		virtual library_controllers_e *get_controllers() = 0;
 		virtual library_materials_e *get_materials() = 0;
 		virtual library_effects_e *get_effects() = 0;
@@ -649,7 +652,8 @@ namespace collada_elements {
 		std::vector<size_t> indices_;
 		std::string material_;
 
-		void process_child(std::string const &child_name, std::string const &child_id, xercesc::DOMElement const *child_ptr) {
+		void process_child(std::string const &child_name, std::string const &child_id, xercesc::DOMElement const *child_ptr)
+		{
 			if (child_name == "p")
 			{
 				parse_list(child_ptr, indices_);
@@ -740,16 +744,20 @@ namespace collada_elements {
 
 		void build_mesh(memory_mesh *mesh_ptr);
 
-		void fix_position_indices(memory_mesh *mesh_ptr) {
+		void fix_position_indices(memory_mesh *mesh_ptr)
+		{
 			for (memory_mesh::influences_type::iterator mesh_it = mesh_ptr->influences.begin();
 				mesh_it != mesh_ptr->influences.end(); mesh_it++)
 			{
 				std::vector<vertex_weight> weights;
 				weights.swap(mesh_it->vertex_weights);
 
-				for (std::vector<vertex_weight>::const_iterator it = weights.begin(); it != weights.end(); it++) {
+				for (std::vector<vertex_weight>::const_iterator it = weights.begin(); it != weights.end(); it++)
+				{
 					position_index_x_vertex_index_type::const_iterator jt = position_index_x_vertex_index_.lower_bound(std::make_pair(it->vertex_index, 0));
-					while (jt != position_index_x_vertex_index_.end() && jt->first == it->vertex_index) {
+					
+					while (jt != position_index_x_vertex_index_.end() && jt->first == it->vertex_index)
+					{
 						joint_influence::vertex_weight dummy = *it;
 						dummy.vertex_index = jt->second;
 						mesh_it->vertex_weights.push_back(dummy);
@@ -757,6 +765,11 @@ namespace collada_elements {
 					}
 				}
 			}
+		}
+
+		boost::ptr_vector<triangles_e> const &get_triangles() const
+		{
+			return triangles_;
 		}
 	};
 
@@ -775,21 +788,30 @@ namespace collada_elements {
 		std::string const &get_id() const { return id_; }
 		std::string const &get_name() const { return name_; }
 
-		void init(xercesc::DOMElement const *element_ptr) {
+		void init(xercesc::DOMElement const *element_ptr)
+		{
 			id_ = xerces_get_attribute<std::string>(element_ptr, "id");
 			name_ = xerces_get_attribute<std::string>(element_ptr, "name");
 		}
 
-		void check() {
+		void check()
+		{
 			if (!mesh_ptr_) throw std::logic_error("<mesh> not found in <geometry>");
 		}
 
-		void build_mesh(memory_mesh *mesh_ptr) {
+		void build_mesh(memory_mesh *mesh_ptr)
+		{
 			return mesh_ptr_->build_mesh(mesh_ptr);
 		}
 
-		void fix_position_indices(memory_mesh *mesh_ptr) {
+		void fix_position_indices(memory_mesh *mesh_ptr)
+		{
 			return mesh_ptr_->fix_position_indices(mesh_ptr);
+		}
+
+		mesh_e const *get_mesh() const
+		{
+			return mesh_ptr_.get();
 		}
 	};
 
@@ -804,14 +826,28 @@ namespace collada_elements {
 		}
 
 	public:
-		void build_meshes(memory_model *model_ptr) {
-			for (boost::ptr_vector<geometry_e>::iterator it = geometries_.begin(); it != geometries_.end(); it++) {
+		void build_meshes(memory_model *model_ptr)
+		{
+			for (boost::ptr_vector<geometry_e>::iterator it = geometries_.begin(); it != geometries_.end(); it++)
+			{
 				model_ptr->meshes.push_back(new memory_mesh(model_ptr));
 				memory_mesh *mesh_ptr = (memory_mesh *) &model_ptr->meshes.back();
+
 				mesh_ptr->id = it->get_id();
 				mesh_ptr->name = it->get_name();
+
 				it->build_mesh(mesh_ptr);
 			}
+		}
+
+		geometry_e const *get_geometry_by_id(std::string const &id)
+		{
+			for (boost::ptr_vector<geometry_e>::iterator it = geometries_.begin(); it != geometries_.end(); it++)
+			{
+				if (it->get_id() == id) return &*it;
+			}
+
+			throw std::logic_error("geometry id = " + id + " not found");
 		}
 
 		void fix_position_indices(memory_model *model_ptr) {
@@ -1305,7 +1341,7 @@ namespace collada_elements {
 			return *it->second;
 		}
 
-		std::string const &get_surface_filename(std::string const &component_name) const;
+		std::string get_surface_filename(std::string const &component_name) const;
 
 	public:
 		graphic::material *build_material() const
@@ -1494,21 +1530,27 @@ namespace collada_elements {
 
 		if (instance_geometry_)
 		{
-			joint_ptr->mesh_ptr = model_ptr->get_mesh_by_id(instance_geometry_->get_url());
+			graphic::memory_mesh *mesh_ptr = model_ptr->get_mesh_by_id(instance_geometry_->get_url());
 
-			for (mesh::assigned_materials_type::iterator it = joint_ptr->mesh_ptr->assigned_materials.begin();
-				it != joint_ptr->mesh_ptr->assigned_materials.end(); it++)
+			joint_ptr->mesh_ptr = mesh_ptr;
+
+			mesh_e const *mesh_element_ptr = get_root()->get_geometries()->get_geometry_by_id(instance_geometry_->get_url())->get_mesh();
+			boost::ptr_vector<triangles_e> const &triangles = mesh_element_ptr->get_triangles();
+
+			mesh::assigned_materials_type::iterator assigned_material_it = mesh_ptr->assigned_materials.begin();
+			boost::ptr_vector<triangles_e>::const_iterator triangles_it = triangles.begin();
+
+			while (assigned_material_it != mesh_ptr->assigned_materials.end() && triangles_it != triangles.end())
 			{
-				/*
-				std::string material_symbol = it->material_name;
+				std::string const &material_symbol = triangles_it->get_material();
+				std::string const &material_name = instance_geometry_->get_bind_material()->get_technique_common()->get_material_by_symbol(material_symbol);
 
-				std::string material_name = instance_geometry_->
-					get_bind_material()->
-					get_technique_common()->
-					get_material_by_symbol(material_symbol);
+				assigned_material_it->material_ptr = mesh_ptr->get_model()->get_material_by_name(material_name);
+			}
 
-				// TODO: go on
-				*/
+			if (assigned_material_it != mesh_ptr->assigned_materials.end() || triangles_it != triangles.end())
+			{
+				throw std::logic_error("mismatcing number of <triangles> and assigned_materials in mesh with id = " + instance_geometry_->get_url());
 			}
 		}
 		else if (instance_controller_)
@@ -1534,7 +1576,7 @@ namespace collada_elements {
 		return material_ptr.release();
 	}
 
-	std::string const &profile_common_e::get_surface_filename(std::string const &component_name) const
+	std::string profile_common_e::get_surface_filename(std::string const &component_name) const
 	{
 		std::string const &sampler_name = technique_ptr_->get_shader()->get_sampler_name(component_name);
 		newparam_e const *sampler_ptr = get_newparam(sampler_name);
@@ -1544,7 +1586,9 @@ namespace collada_elements {
 
 		std::string const &image_name = surface_ptr->get_surface()->get_init_from();
 
-		return get_root()->get_images()->get_image_by_name(image_name)->get_init_from();
+		std::string const &filepath = get_root()->get_images()->get_image_by_name(image_name)->get_init_from();
+
+		return boost::filesystem::path(filepath).filename();
 	}
 
 	class collada_e: public element, public root_element {
@@ -1598,6 +1642,11 @@ namespace collada_elements {
 		library_visual_scenes_e *get_visual_scenes()
 		{
 			return visual_scenes_.get();
+		}
+
+		library_geometries_e *get_geometries() 
+		{
+			return geometries_.get();
 		}
 
 		library_controllers_e *get_controllers()

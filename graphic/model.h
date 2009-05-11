@@ -27,6 +27,7 @@ public:
 	joint *get_joint_by_name(std::string const &name);
 	mesh *get_mesh_by_id(std::string const &id);
 	mesh *get_mesh_by_name(std::string const &name);
+	material *get_material_by_name(std::string const &name);
 
 protected:
 	renderer *renderer_ptr_;
