@@ -52,7 +52,16 @@ void memory_mesh::draw_static(joint *joint_ptr) const
 		it != triangles_list.end(); it++)
 	{
 		device_ptr->SetFVF(VERTEX_FORMAT);
-		it->material_ptr->select();
+
+		if (it->material_ptr)
+		{
+			it->material_ptr->select();
+		}
+		else
+		{
+			get_model()->get_renderer()->get_default_material()->select();
+		}
+
 		device_ptr->SetTransform(D3DTS_WORLDMATRIX(0), (D3DMATRIX const *) joint_ptr->matrix.ij);
 
 		device_ptr->DrawIndexedPrimitiveUP(D3DPT_TRIANGLELIST, it->minimal_vertex_index, it->vertices_count,

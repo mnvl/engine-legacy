@@ -32,7 +32,7 @@ INT WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpstrCmdLine, INT
 		platform::window main_window("engine");
 		graphic::renderer renderer(&main_window);
 
-		graphic::collada_loader ci2("d:\\home\\goblin.dae", &renderer);
+		graphic::collada_loader ci2("d:\\home\\z3.dae", &renderer);
 		ci2.load();
 
 		graphic::camera cam;
@@ -46,7 +46,7 @@ INT WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpstrCmdLine, INT
 			cam.set_position(math::vec<3>(-1000 * cos(angle), 1000 * sin(angle), 0), math::vec<3>(0, 0, 0), math::vec<3>(0, 0, 1));
 			renderer.select(cam);
 
-			ci2.get_model().draw_animated(angle);
+			ci2.get_model().draw_static();
 
 			renderer.finish_frame();
 
