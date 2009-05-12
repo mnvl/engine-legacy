@@ -12,10 +12,12 @@ public:
 	typedef boost::ptr_vector<joint> joints_type;
 	typedef boost::ptr_vector<animation> animations_type;
 	typedef boost::ptr_vector<mesh> meshes_type;
+	typedef boost::ptr_vector<material> materials_type;
 
 	joints_type joints;
 	meshes_type meshes;
 	animations_type animations;
+	materials_type materials_;
 
 	model(renderer *renderer_ptr = 0);
 	virtual ~model();

@@ -12,7 +12,7 @@ class mesh {
 public:
 	struct assigned_material
 	{
-		std::string material_name;
+		material *material_ptr;
 		size_t triangles_count;
 	};
 

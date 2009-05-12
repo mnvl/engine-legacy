@@ -1100,6 +1100,7 @@ namespace collada_elements {
 
 	class material_e: public element {
 	private:
+		std::string id_, name_;
 		std::string instance_effect_url_;
 
 		void process_child(std::string const &child_name, std::string const &child_id, xercesc::DOMElement const *child_ptr)
@@ -1111,15 +1112,18 @@ namespace collada_elements {
 		}
 
 	public:
-		std::string const &get_instance_effect_url() const
+		void init(xercesc::DOMElement const *element_ptr)
 		{
-			return instance_effect_url_;
+			id_ = xerces_get_attribute<std::string>(element_ptr, "id");
+			name_ = xerces_get_attribute<std::string>(element_ptr, "name");
 		}
 
 		void check()
 		{
 			if (instance_effect_url_.empty()) throw std::logic_error("no <instance_effect> url specified for material");
 		}
+
+		graphic::material *build_material() const;
 	};
 
 	class library_materials_e: public element {
@@ -1141,6 +1145,15 @@ namespace collada_elements {
 			if (it != materials_.end()) return *it->second;
 
 			throw std::logic_error("material " + name + " not found");
+		}
+
+		void library_materials_e::build_materials(memory_model *model_ptr) const
+		{
+			for (boost::ptr_map<std::string, material_e *>::const_iterator it = materials_.begin();
+				it != materials_.end(); it++)
+			{
+				model_ptr->materials_.push_back((*it->second)->build_material());
+			}
 		}
 	};
 
@@ -1219,9 +1232,66 @@ namespace collada_elements {
 		}
 	};
 
+	class phong_lambert_blinn_e: public element {
+	private:
+		std::map<std::string, std::string> textures_;
+
+		void process_child(std::string const &child_name, std::string const &child_id, xercesc::DOMElement const *child_ptr)
+		{
+			xercesc::DOMNodeList *textures_list_ptr = child_ptr->getElementsByTagName(xerces_lcp_transcode("texture").c_str());
+			if (textures_list_ptr->getLength() == 0) return;
+			if (textures_list_ptr->getLength() > 1) throw std::logic_error("more than one <texture> elements in effect");
+			textures_.insert(std::make_pair(child_name, xerces_get_attribute<std::string>(textures_list_ptr->item(0), "texture")));
+		}
+
+	public:
+		graphic::material *build_material() const
+		{
+			std::auto_ptr<graphic::material> material_ptr(new graphic::material());
+
+			// TODO: lookup in newparams
+			if (textures_.find("diffuse") != textures_.end())
+			{
+				material_ptr->set_texture(textures_.find("diffuse")->second);
+			}
+
+			if (textures_.find("specular") != textures_.end())
+			{
+				material_ptr->set_texture(textures_.find("specular")->second);
+			}
+
+			return material_ptr.release();
+		}
+	};
+
+	class technique_e: public element {
+	private:
+		boost::scoped_ptr<phong_lambert_blinn_e> material_ptr_;
+
+		void process_child(std::string const &child_name, std::string const &child_id, xercesc::DOMElement const *child_ptr)
+		{
+			if (child_name == "phong" || child_name == "lambert" || child_name == "blinn")
+			{
+				material_ptr_.reset(construct<phong_lambert_blinn_e>(child_ptr));
+			}
+		}
+
+	public:
+		void check()
+		{
+			if (!material_ptr_) throw std::logic_error("material not found in <technique> or unknown material type");
+		}
+
+		graphic::material *build_material() const
+		{
+			return material_ptr_->build_material();
+		}
+	};
+
 	class profile_common_e: public element {
 	private:
 		boost::ptr_map<std::string, newparam_e *> newparams_;
+		boost::scoped_ptr<technique_e> technique_ptr_;
 
 		void process_child(std::string const &child_name, std::string const &child_id, xercesc::DOMElement const *child_ptr)
 		{
@@ -1230,6 +1300,16 @@ namespace collada_elements {
 				std::string const &sid = xerces_get_attribute<std::string>(child_ptr, "sid");
 				newparams_[sid] = construct<newparam_e>(child_ptr);
 			}
+			else if (child_name == "technique")
+			{
+				technique_ptr_.reset(construct<technique_e>(child_ptr));
+			}
+		}
+
+	public:
+		graphic::material *build_material() const
+		{
+			return technique_ptr_->build_material();
 		}
 	};
 
@@ -1246,9 +1326,9 @@ namespace collada_elements {
 		}
 
 	public:
-		profile_common_e const *get_profile_common() const
+		graphic::material *build_material() const
 		{
-			return profile_common_ptr_.get();
+			return profile_common_ptr_->build_material();
 		}
 	};
 
@@ -1371,7 +1451,7 @@ namespace collada_elements {
 			}
 
 			mesh::assigned_material dummy;
-			dummy.material_name = triangles_ptr->get_material();
+			dummy.material_ptr = 0;
 			dummy.triangles_count = triangles_ptr->get_count();
 			mesh_ptr->assigned_materials.push_back(dummy);
 		}
@@ -1399,6 +1479,7 @@ namespace collada_elements {
 			for (mesh::assigned_materials_type::iterator it = joint_ptr->mesh_ptr->assigned_materials.begin();
 				it != joint_ptr->mesh_ptr->assigned_materials.end(); it++)
 			{
+				/*
 				std::string material_symbol = it->material_name;
 
 				std::string material_name = instance_geometry_->
@@ -1406,13 +1487,8 @@ namespace collada_elements {
 					get_technique_common()->
 					get_material_by_symbol(material_symbol);
 
-				material_e const *material_ptr = get_root()->get_materials()->get_material_by_name(material_name);
-
-				effect_e const *effect_ptr = get_root()->get_effects()->get_effect_by_name(material_ptr->get_instance_effect_url().substr(1));
-
-				profile_common_e const *profile_common_ptr = effect_ptr->get_profile_common();
-
 				// TODO: go on
+				*/
 			}
 		}
 		else if (instance_controller_)
@@ -1424,6 +1500,18 @@ namespace collada_elements {
 		for (boost::ptr_vector<node_e>::iterator it = childs_.begin(); it != childs_.end(); it++) {
 			it->build_hierarchy(model_ptr, joint_ptr);
 		}
+	}
+
+	graphic::material *material_e::build_material() const
+	{
+		std::auto_ptr<graphic::material> material_ptr(get_root()->
+			get_effects()->
+			get_effect_by_name(instance_effect_url_.substr(1))->
+			build_material());
+
+		material_ptr->set_name(name_);
+
+		return material_ptr.release();
 	}
 
 	class collada_e: public element, public root_element {
@@ -1512,6 +1600,7 @@ namespace collada_elements {
 			if (controllers_) controllers_->build_joint_influences(model_ptr);
 			geometries_->fix_position_indices(model_ptr);
 			if (animations_) animations_->build_animations(model_ptr);
+			if (materials_) materials_->build_materials(model_ptr);
 		}
 	};
 }
