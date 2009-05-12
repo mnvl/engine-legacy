@@ -1468,6 +1468,8 @@ namespace collada_elements
 		input_e const *position_input = vertices_->get_input("POSITION");
 		source_e const *position_source = get_source(position_input->get_source().substr(1));
 
+		size_t first_index_offset = 0;
+
 		for (boost::ptr_vector<triangles_e>::const_iterator it = triangles_.begin();
 			it != triangles_.end(); it++)
 		{
@@ -1486,6 +1488,13 @@ namespace collada_elements
 			std::vector<size_t>::const_iterator indices_get = indices.begin();
 
 			size_t stride = triangles_ptr->get_stride();
+
+			mesh::triangles dummy;
+			dummy.material_ptr = 0;
+			dummy.triangles_count = triangles_ptr->get_count();
+			dummy.first_index_offset = first_index_offset;
+			dummy.minimal_vertex_index = size_t(-1);
+			dummy.vertices_count = 0;
 
 			for (size_t i = 0, n = triangles_ptr->get_count() * 3; i < n; i++) {
 				size_t position_index;
@@ -1510,18 +1519,24 @@ namespace collada_elements
 
 				std::pair<size_t, bool> vertex_index = vertex_indexer_.choose_index(v);
 
-				if (vertex_index.second) {
+				if (vertex_index.second)
+				{
 					position_index_x_vertex_index_.insert(std::make_pair(position_index, vertex_index.first));
 					mesh_ptr->vertices.push_back(v);
+					dummy.vertices_count++;
+				}
+
+				if (vertex_index.first < dummy.minimal_vertex_index)
+				{
+					dummy.minimal_vertex_index = vertex_index.first;
 				}
 
 				mesh_ptr->indices.push_back(vertex_index.first);
 			}
 
-			mesh::assigned_material dummy;
-			dummy.material_ptr = 0;
-			dummy.triangles_count = triangles_ptr->get_count();
-			mesh_ptr->assigned_materials.push_back(dummy);
+			mesh_ptr->triangles_list.push_back(dummy);
+
+			first_index_offset += triangles_ptr->get_count() * 3;
 		}
 	}
 
@@ -1549,23 +1564,23 @@ namespace collada_elements
 			mesh_e const *mesh_element_ptr = get_root()->get_geometries()->get_geometry_by_id(instance_geometry_->get_url())->get_mesh();
 			boost::ptr_vector<triangles_e> const &triangles = mesh_element_ptr->get_triangles();
 
-			mesh::assigned_materials_type::iterator assigned_material_it = mesh_ptr->assigned_materials.begin();
+			mesh::triangles_list_type::iterator mesh_triangles_it = mesh_ptr->triangles_list.begin();
 			boost::ptr_vector<triangles_e>::const_iterator triangles_it = triangles.begin();
 
-			while (assigned_material_it != mesh_ptr->assigned_materials.end() && triangles_it != triangles.end())
+			while (mesh_triangles_it != mesh_ptr->triangles_list.end() && triangles_it != triangles.end())
 			{
 				std::string const &material_symbol = triangles_it->get_material();
 				std::string const &material_name = instance_geometry_->get_bind_material()->get_technique_common()->get_material_by_symbol(material_symbol);
 
-				assigned_material_it->material_ptr = mesh_ptr->get_model()->get_material_by_name(material_name);
+				mesh_triangles_it->material_ptr = mesh_ptr->get_model()->get_material_by_name(material_name);
 
-				assigned_material_it++;
+				mesh_triangles_it++;
 				triangles_it++;
 			}
 
-			if (assigned_material_it != mesh_ptr->assigned_materials.end() || triangles_it != triangles.end())
+			if (mesh_triangles_it != mesh_ptr->triangles_list.end() || triangles_it != triangles.end())
 			{
-				throw std::logic_error("mismatcing number of <triangles> and assigned_materials in mesh with id = " + instance_geometry_->get_url());
+				throw std::logic_error("mismatching number of <triangles> and triangles_lists in mesh with id = " + instance_geometry_->get_url());
 			}
 		}
 		else if (instance_controller_)

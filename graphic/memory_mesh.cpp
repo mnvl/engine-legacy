@@ -32,16 +32,6 @@ void memory_mesh::transform_vertices(joint const *joint_ptr, std::vector<vertex_
 		result[i].position.set(0, 0, 0);
 	}
 
-	std::vector<math::scalar> factor(vertices.size(), 0.0f);
-
-	for (influences_type::const_iterator it = influences.begin(); it != influences.end(); it++)
-	{
-		for (joint_influence::vertex_weights_type::const_iterator jt = it->vertex_weights.begin(); jt != it->vertex_weights.end(); jt++)
-		{
-			factor[jt->vertex_index] += jt->weight;
-		}
-	}
-
 	for (influences_type::const_iterator it = influences.begin(); it != influences.end(); it++)
 	{
 		for (joint_influence::vertex_weights_type::const_iterator jt = it->vertex_weights.begin(); jt != it->vertex_weights.end(); jt++)
@@ -56,6 +46,18 @@ void memory_mesh::transform_vertices(joint const *joint_ptr, std::vector<vertex_
 
 void memory_mesh::draw_static(joint *joint_ptr) const
 {
+	IDirect3DDevice9 *device_ptr = get_model()->get_renderer()->get_device();
+
+	for (triangles_list_type::const_iterator it = triangles_list.begin();
+		it != triangles_list.end(); it++)
+	{
+		device_ptr->SetFVF(VERTEX_FORMAT);
+		it->material_ptr->select();
+		device_ptr->SetTransform(D3DTS_WORLDMATRIX(0), (D3DMATRIX const *) joint_ptr->matrix.ij);
+
+		device_ptr->DrawIndexedPrimitiveUP(D3DPT_TRIANGLELIST, it->minimal_vertex_index, it->vertices_count,
+			it->triangles_count, &indices[it->first_index_offset], D3DFMT_INDEX16, &vertices[0], sizeof(vertex_t));
+	}
 }
 
 }

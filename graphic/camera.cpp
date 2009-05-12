@@ -4,17 +4,12 @@
 namespace graphic {
 
 camera::camera() {
-   	// Set attributes for the view matrix
 	set_position(math::vec<3>(0,0,0),math::vec<3>(0,0,1),math::vec<3>(0,1,0));
-
-   	// Set attributes for the projection matrix
 	set_perspective_projection(math::PI/4, 1.0f, 1.0f, 10000.0f);
 }
 
-void camera::set_position(math::vec<3> const &eye_pt,math::vec<3> const &lookat_pt,
-	math::vec<3> const &up_dir)
+void camera::set_position(math::vec<3> const &eye_pt,math::vec<3> const &lookat_pt, math::vec<3> const &up_dir)
 {
-	// Set attributes for the view matrix
     eye_point = eye_pt;
     lookat_point = lookat_pt;
     up_direction = up_dir;
@@ -32,7 +27,8 @@ void camera::set_position(math::vec<3> const &eye_pt,math::vec<3> const &lookat_
     billboard_matrix.ij[3][2] = 0.0f;
 }
 
-void camera::set_position(math::vec<3> const &pos,math::vec<3> const &rot) {
+void camera::set_position(math::vec<3> const &pos,math::vec<3> const &rot)
+{
 	math::matrix<3,3> tf;
 	tf.rotation(rot);
 
@@ -42,7 +38,8 @@ void camera::set_position(math::vec<3> const &pos,math::vec<3> const &rot) {
 	set_position(pos, pos + dir, up);
 }
 
-void camera::set_position(math::vec<3> const &pos,const math::quaternion<> &rot) {
+void camera::set_position(math::vec<3> const &pos,const math::quaternion<> &rot)
+{
 	math::matrix<3,3> tf;
 	tf.rotation(rot);
 

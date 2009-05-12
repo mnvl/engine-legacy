@@ -43,7 +43,7 @@ INT WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpstrCmdLine, INT
 			main_window.run_message_loop();
 
 			renderer.begin_frame();
-			cam.set_position(math::vec<3>(10 * cos(angle), 10 * sin(angle), 0), math::vec<3>(0, 0, 0), math::vec<3>(0, 0, 1));
+			cam.set_position(math::vec<3>(100 * cos(angle), 100 * sin(angle), 0), math::vec<3>(0, 0, 0), math::vec<3>(0, 0, 1));
 			renderer.select(cam);
 
 			ci2.get_model().draw_static();

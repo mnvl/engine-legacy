@@ -21,9 +21,6 @@ static_model *static_mesh::get_model()
 
 void static_mesh::draw()
 {
-	IDirect3DDevice9 *device_ptr = get_model()->get_renderer()->get_device();
-
-	// TODO
 }
 
 }

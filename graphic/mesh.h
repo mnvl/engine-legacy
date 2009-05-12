@@ -11,17 +11,20 @@ class model;
 
 class mesh {
 public:
-	struct assigned_material
+	struct triangles
 	{
 		material *material_ptr;
+		size_t first_index_offset;
 		size_t triangles_count;
+		size_t minimal_vertex_index;
+		size_t vertices_count;
 	};
 
 	typedef std::list<joint_influence> influences_type;
-	typedef std::vector<assigned_material> assigned_materials_type;
+	typedef std::vector<triangles> triangles_list_type;
 
 	std::string id, name;
-	assigned_materials_type assigned_materials;
+	triangles_list_type triangles_list;
 	influences_type influences;
 
 	mesh(model *model_ptr = 0);
@@ -31,6 +34,7 @@ public:
 
 	virtual model *get_model() const;
 	virtual void draw();
+
 
 protected:
 	model *model_ptr_;
