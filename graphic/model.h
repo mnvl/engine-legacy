@@ -17,12 +17,16 @@ public:
 	joints_type joints;
 	meshes_type meshes;
 	animations_type animations;
-	materials_type materials_;
+	materials_type materials;
 
 	model(renderer *renderer_ptr = 0);
 	virtual ~model();
 
-	renderer *get_renderer() const { return renderer_ptr_; }
+	renderer *get_renderer() const
+	{
+		return renderer_ptr_;
+	}
+
 	joint *get_joint_by_id(std::string const &name);
 	joint *get_joint_by_name(std::string const &name);
 	mesh *get_mesh_by_id(std::string const &id);

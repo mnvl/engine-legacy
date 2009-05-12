@@ -13,7 +13,8 @@ mesh(m)
 memory_mesh::~memory_mesh() {
 }
 
-void memory_mesh::transform_vertices(joint const *joint_ptr, std::vector<vertex_t> &result) const {
+void memory_mesh::transform_vertices(joint const *joint_ptr, std::vector<vertex_t> &result) const
+{
 	result = vertices;
 
 	if (get_model()->animations.empty())
@@ -53,47 +54,8 @@ void memory_mesh::transform_vertices(joint const *joint_ptr, std::vector<vertex_
 	}
 }
 
-joint_influence *memory_mesh::get_joint_influence_by_name(std::string const &name, bool can_create)
+void memory_mesh::draw_static(joint *joint_ptr) const
 {
-	joint *joint_ptr = get_model()->get_joint_by_name(name);
-
-	for (influences_type::iterator it = influences.begin(); it != influences.end(); it++) {
-		if (it->joint_ptr == joint_ptr) return &*it;
-	}
-
-	if (can_create) {
-		joint_influence dummy;
-		dummy.joint_ptr = joint_ptr;
-		influences.push_back(dummy);
-		return &influences.back();
-	}
-
-	throw std::runtime_error("influence of joint " + joint_ptr->name + " to mesh " + name + " not found");
-}
-
-void memory_mesh::draw_wireframe(renderer *renderer_ptr, joint *joint_ptr, math::scalar time) const
-{
-	std::vector<vertex_t> animated_vertices;
-	transform_vertices(joint_ptr, animated_vertices);
-
-	size_t triangles_count = indices.size() / 3;
-
-	std::vector<index_t> dummy;
-	dummy.reserve(6 * triangles_count);
-
-	for (size_t i = 0; i < triangles_count; i++) {
-		dummy.push_back(indices[3 * i + 0]);
-		dummy.push_back(indices[3 * i + 1]);
-
-		dummy.push_back(indices[3 * i + 1]);
-		dummy.push_back(indices[3 * i + 2]);
-
-		dummy.push_back(indices[3 * i + 2]);
-		dummy.push_back(indices[3 * i + 0]);
-	}
-
-	renderer_ptr->get_device()->DrawIndexedPrimitiveUP(D3DPT_LINELIST, 0, animated_vertices.size(),
-		dummy.size() / 2, &dummy[0], INDEX_FORMAT, &animated_vertices[0], sizeof(vertex_t));
 }
 
 }

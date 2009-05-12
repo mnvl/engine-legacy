@@ -21,6 +21,8 @@ ADD_LIBRARY (graphic STATIC
 	memory_model.h
 	memory_model.cpp
 	
+	static_mesh.h
+	static_mesh.cpp
 	static_model.h
 	static_model.cpp
 	

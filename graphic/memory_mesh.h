@@ -1,8 +1,6 @@
 #pragma once
 
 #include <d3d9.h>
-#include <map>
-#include <list>
 #include <boost/cstdint.hpp>
 #include <math/vec.h>
 #include <math/matrix.h>
@@ -28,7 +26,6 @@ public:
 
 	typedef boost::uint16_t index_t;
 	typedef math::vec<3, index_t> face;
-	typedef std::list<joint_influence> influences_type;
 
 	memory_mesh(memory_model *m);
 	virtual ~memory_mesh();
@@ -40,8 +37,7 @@ public:
 
 	void transform_vertices(joint const *joint_ptr, std::vector<vertex_t> &result) const;
 
-	joint_influence *get_joint_influence_by_name(std::string const &name, bool can_create = false);
-	void draw_wireframe(renderer *renderer_ptr, joint *joint_ptr, math::scalar time = 0) const;
+	void draw_static(joint *joint_ptr) const;
 };
 
 }

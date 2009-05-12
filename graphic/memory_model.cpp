@@ -2,7 +2,13 @@
 #include <graphic/renderer.h>
 #include <graphic/memory_model.h>
 
-namespace graphic {
+namespace graphic
+{
+
+memory_model::memory_model(renderer *renderer_ptr):
+model(renderer_ptr)
+{
+}
 
 void memory_model::cleanup()
 {
@@ -27,30 +33,15 @@ void memory_model::set_animation_time(math::scalar t)
 	}
 }
 
-void memory_model::draw_wireframe(renderer *renderer_ptr, math::scalar time)
+void memory_model::draw_static()
 {
-	D3DMATERIAL9 material;
-
-	material.Ambient.r = 0.0f;
-	material.Ambient.g = 1.0f;
-	material.Ambient.b = 0.0f;
-	material.Ambient.a = 1.0f;
-
-	material.Diffuse = material.Ambient;
-	material.Specular = material.Ambient;
-	material.Emissive = material.Ambient;
-	material.Power = 1.0f;
-
-	renderer_ptr->get_device()->SetMaterial(&material);
-	renderer_ptr->get_device()->SetFVF(memory_mesh::VERTEX_FORMAT);
-
-	set_animation_time(time);
+	set_animation_time(0);
 
 	for (joints_type::iterator it = joints.begin(); it != joints.end(); it++)
 	{
 		if (it->mesh_ptr)
 		{
-			((memory_mesh *) it->mesh_ptr)->draw_wireframe(renderer_ptr, &*it, time);
+			((memory_mesh *) it->mesh_ptr)->draw_static(&*it);
 		}
 	}
 }

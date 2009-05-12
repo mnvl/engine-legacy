@@ -50,7 +50,7 @@ mesh *model::get_mesh_by_name(std::string const &name)
 
 material *model::get_material_by_name(std::string const &name)
 {
-	for (materials_type::iterator it = materials_.begin(); it != materials_.end(); it++) {
+	for (materials_type::iterator it = materials.begin(); it != materials.end(); it++) {
 		if (it->get_name() == name) return &*it;
 	}
 

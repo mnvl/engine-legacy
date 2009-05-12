@@ -22,7 +22,8 @@
 #undef max
 #endif
 
-namespace collada_elements {
+namespace collada_elements
+{
 	using namespace util;
 	using namespace graphic;
 
@@ -922,7 +923,7 @@ namespace collada_elements {
 				joints_source->get(i, joint_name);
 				inverted_bind_matrices_source->get(i, inv_bind_matrix);
 
-				mesh_ptr->get_joint_influence_by_name(joint_name, true)->inverted_bind_matrix = inv_bind_matrix;
+				mesh_ptr->get_joint_influence_by_name(joint_name)->inverted_bind_matrix = inv_bind_matrix;
 			}
 		}
 
@@ -1162,7 +1163,7 @@ namespace collada_elements {
 			if (instance_effect_url_.empty()) throw std::logic_error("no <instance_effect> url specified for material");
 		}
 
-		graphic::material *build_material() const;
+		graphic::material *build_material(memory_model *model_ptr) const;
 	};
 
 	class library_materials_e: public element {
@@ -1193,7 +1194,7 @@ namespace collada_elements {
 			for (boost::ptr_map<std::string, material_e *>::const_iterator it = materials_.begin();
 				it != materials_.end(); it++)
 			{
-				model_ptr->materials_.push_back((*it->second)->build_material());
+				model_ptr->materials.push_back((*it->second)->build_material(model_ptr));
 			}
 		}
 	};
@@ -1349,9 +1350,9 @@ namespace collada_elements {
 		std::string get_surface_filename(std::string const &component_name) const;
 
 	public:
-		graphic::material *build_material() const
+		graphic::material *build_material(memory_model *model_ptr) const
 		{
-			std::auto_ptr<graphic::material> material_ptr(new graphic::material());
+			std::auto_ptr<graphic::material> material_ptr(new graphic::material(model_ptr->get_renderer()));
 
 			std::string const &diffuse_texture = get_surface_filename("diffuse");
 			std::string const &specular_texture = get_surface_filename("specular");
@@ -1393,9 +1394,9 @@ namespace collada_elements {
 		}
 
 	public:
-		graphic::material *build_material() const
+		graphic::material *build_material(memory_model *model_ptr) const
 		{
-			return profile_common_ptr_->build_material();
+			return profile_common_ptr_->build_material(model_ptr);
 		}
 	};
 
@@ -1578,14 +1579,14 @@ namespace collada_elements {
 		}
 	}
 
-	graphic::material *material_e::build_material() const
+	graphic::material *material_e::build_material(memory_model *model_ptr) const
 	{
 		LOG_INFO("material " << name_);
 
 		std::auto_ptr<graphic::material> material_ptr(get_root()->
 			get_effects()->
 			get_effect_by_name(instance_effect_url_.substr(1))->
-			build_material());
+			build_material(model_ptr));
 
 		material_ptr->set_name(name_);
 
@@ -1707,8 +1708,10 @@ namespace collada_elements {
 
 namespace graphic {
 
-collada_loader::collada_loader(std::string const &filename):
-filename_(filename)
+collada_loader::collada_loader(std::string const &filename, renderer *renderer_ptr):
+filename_(filename),
+renderer_ptr_(renderer_ptr),
+model_(renderer_ptr)
 {
 }
 

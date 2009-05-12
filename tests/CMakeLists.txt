@@ -12,9 +12,14 @@ ADD_EXECUTABLE (tests
 TARGET_LINK_LIBRARIES (tests
 	math
 	graphic
+	util
+	platform
 )
 
 TARGET_LINK_LIBRARIES (tests debug
+	d3d9
+	d3dx9d
+	dxerr
 	xerces-c_3D
 	cppunitd
 )

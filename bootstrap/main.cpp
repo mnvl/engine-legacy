@@ -5,6 +5,7 @@
 #include <exception/winapi_error.h>
 #include <platform/window.h>
 #include <graphic/renderer.h>
+#include <util/logger.h>
 
 // REMOVE:
 #include <graphic/collada_loader.h>
@@ -18,26 +19,24 @@ INT WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpstrCmdLine, INT
 		{
 			char buffer[1024];
 			if (!GetModuleFileName(0, buffer, sizeof(buffer))) throw exception::winapi_error();
+
+			strcat(buffer, ".log");
+
+			util::logger::instance().set_file(buffer);
 		}
+
+		LOG_INFO("executable have been built on " << __TIMESTAMP__);
 
 		xercesc::XMLPlatformUtils::Initialize();
 
 		platform::window main_window("engine");
 		graphic::renderer renderer(&main_window);
 
-		graphic::collada_loader ci2("e:\\home\\z1.dae");
+		graphic::collada_loader ci2("d:\\home\\z2.dae", &renderer);
 		ci2.load();
 
 		graphic::camera cam;
 		math::scalar angle = 0;
-
-		//boost::shared_ptr<graphic::material> mat(new graphic::material(&renderer));
-		//mat->set_texture("d:\\home\\z1.bmp");
-
-		graphic::static_model m(&renderer);
-		m.build_from_memory_model(const_cast<graphic::memory_model *>(&ci2.get_model()));
-
-		//m.meshes[0].set_material(mat);
 
 		while (true)
 		{
@@ -47,8 +46,7 @@ INT WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpstrCmdLine, INT
 			cam.set_position(math::vec<3>(10 * cos(angle), 10 * sin(angle), 0), math::vec<3>(0, 0, 0), math::vec<3>(0, 0, 1));
 			renderer.select(cam);
 
-			m.draw();
-			//((graphic::memory_model &) ci2.get_model()).draw_wireframe(&renderer, 0);
+			ci2.get_model().draw_static();
 
 			renderer.finish_frame();
 

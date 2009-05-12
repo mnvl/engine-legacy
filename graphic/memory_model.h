@@ -9,6 +9,8 @@ namespace graphic {
 
 class memory_model: public model {
 public:
+	memory_model(renderer *renderer_ptr = 0);
+
 	void cleanup();
 
 	memory_mesh *get_mesh_by_id(std::string const &id) {
@@ -20,7 +22,7 @@ public:
 	}
 
 	void set_animation_time(math::scalar t);
-	void draw_wireframe(renderer *renderer_ptr, math::scalar time);
+	void draw_static();
 };
 
 }

@@ -33,13 +33,14 @@ public:
 	{
 	}
 
-	math::matrix<4,4> &get_transform_by_sid(std::string const &sid) {
+	math::matrix<4,4> &get_transform_by_sid(std::string const &sid){
 		for (std::vector<transform>::iterator it = transforms.begin(); it != transforms.end(); it++)
 			if (it->sid == sid) return it->matrix;
 		throw std::logic_error("transform sid = " + sid + " not found");
 	}
 
-	void build_frame_transforms() {
+	void build_frame_transforms()
+	{
 		matrix.identity();
 
 		for (std::vector<transform>::reverse_iterator it = transforms.rbegin();
@@ -51,7 +52,9 @@ public:
 		if (parent) matrix *= parent->matrix;
 
 		for (std::vector<joint *>::iterator it = childs.begin(); it != childs.end(); it++)
+		{
 			(*it)->build_frame_transforms();
+		}
 	}
 };
 
