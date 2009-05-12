@@ -923,7 +923,10 @@ namespace collada_elements
 				joints_source->get(i, joint_name);
 				inverted_bind_matrices_source->get(i, inv_bind_matrix);
 
-				mesh_ptr->get_joint_influence_by_name(joint_name)->inverted_bind_matrix = inv_bind_matrix;
+				joint_influence dummy;
+				dummy.joint_ptr = mesh_ptr->get_model()->get_joint_by_name(joint_name);
+				dummy.inverted_bind_matrix = inv_bind_matrix;
+				mesh_ptr->influences.push_back(dummy);
 			}
 		}
 

@@ -46,4 +46,17 @@ void memory_model::draw_static()
 	}
 }
 
+void memory_model::draw_animated(math::scalar t)
+{
+	set_animation_time(t);
+
+	for (joints_type::iterator it = joints.begin(); it != joints.end(); it++)
+	{
+		if (it->mesh_ptr)
+		{
+			((memory_mesh *) it->mesh_ptr)->draw_animated(&*it);
+		}
+	}
+}
+
 }

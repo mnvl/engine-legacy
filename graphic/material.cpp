@@ -48,7 +48,9 @@ void material::set_specular_map(std::string const &filename)
 
 void material::select()
 {
-	HRESULT hr = renderer_ptr_->get_device()->SetTexture(0, texture_ptr_.get());
+	HRESULT hr;
+
+	hr = renderer_ptr_->get_device()->SetTexture(0, texture_ptr_.get());
 	if (FAILED(hr)) throw exception::directx_error(hr);
 
 	hr = renderer_ptr_->get_device()->SetMaterial(&properties_);

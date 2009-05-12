@@ -22,7 +22,9 @@ public:
 	}
 
 	void set_animation_time(math::scalar t);
+
 	void draw_static();
+	void draw_animated(math::scalar t);
 };
 
 }

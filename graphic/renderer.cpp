@@ -4,6 +4,7 @@
 #include <platform/timer.h>
 #include <graphic/camera.h>
 #include <graphic/font.h>
+#include <graphic/material.h>
 #include <graphic/renderer.h>
 
 namespace graphic {
@@ -48,6 +49,9 @@ renderer::renderer(platform::window *window_ptr, int width, int height, bool ful
 	}
 
 	default_font_.reset(new font(this, "Courier New"));
+
+	default_material_.reset(new graphic::material(this));
+	default_material_->set_texture("z1.bmp");
 }
 
 renderer::~renderer() {

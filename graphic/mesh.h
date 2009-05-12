@@ -25,6 +25,7 @@ public:
 
 	std::string id, name;
 	triangles_list_type triangles_list;
+	math::matrix<4,4> bind_shape_matrix;
 	influences_type influences;
 
 	mesh(model *model_ptr = 0);

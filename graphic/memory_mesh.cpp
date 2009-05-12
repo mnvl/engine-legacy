@@ -60,4 +60,32 @@ void memory_mesh::draw_static(joint *joint_ptr) const
 	}
 }
 
+void memory_mesh::draw_animated(joint *joint_ptr) const
+{
+	IDirect3DDevice9 *device_ptr = get_model()->get_renderer()->get_device();
+
+	std::vector<vertex_t> transformed_vertices;
+	transform_vertices(joint_ptr, transformed_vertices);
+
+	for (triangles_list_type::const_iterator it = triangles_list.begin();
+		it != triangles_list.end(); it++)
+	{
+		device_ptr->SetFVF(VERTEX_FORMAT);
+
+		if (it->material_ptr)
+		{
+			it->material_ptr->select();
+		}
+		else
+		{
+			get_model()->get_renderer()->get_default_material()->select();
+		}
+
+		device_ptr->SetTransform(D3DTS_WORLDMATRIX(0), (D3DMATRIX const *) joint_ptr->matrix.ij);
+
+		device_ptr->DrawIndexedPrimitiveUP(D3DPT_TRIANGLELIST, it->minimal_vertex_index, it->vertices_count,
+			it->triangles_count, &indices[it->first_index_offset], D3DFMT_INDEX16, &transformed_vertices[0], sizeof(vertex_t));
+	}
+}
+
 }

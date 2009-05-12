@@ -30,14 +30,13 @@ public:
 	memory_mesh(memory_model *m);
 	virtual ~memory_mesh();
 
-	math::matrix<4,4> bind_shape_matrix;
 	std::vector<vertex_t> vertices;
 	std::vector<index_t> indices;
-	influences_type influences;
 
 	void transform_vertices(joint const *joint_ptr, std::vector<vertex_t> &result) const;
 
 	void draw_static(joint *joint_ptr) const;
+	void draw_animated(joint *joint_ptr) const;
 };
 
 }
