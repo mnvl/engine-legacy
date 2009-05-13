@@ -29,6 +29,7 @@ namespace collada_elements
 
 	typedef joint_influence::vertex_weight vertex_weight;
 
+	class mesh_e;
 	class library_visual_scenes_e;
 	class library_geometries_e;
 	class library_controllers_e;
@@ -38,6 +39,7 @@ namespace collada_elements
 
 	class root_element {
 	public:
+		virtual memory_model *get_model() = 0;
 		virtual library_visual_scenes_e *get_visual_scenes() = 0;
 		virtual library_geometries_e *get_geometries() = 0;
 		virtual library_controllers_e *get_controllers() = 0;
@@ -68,6 +70,7 @@ namespace collada_elements
 		}
 
 		root_element *get_root() const { return root_; }
+		memory_model *get_model() const { return root_->get_model(); }
 		void set_root(root_element *root) { root_ = root; }
 
 		void init(xercesc::DOMElement const *element_ptr) {}
@@ -402,29 +405,6 @@ namespace collada_elements
 		}
 	};
 
-	class instance_controller_e: public element {
-	private:
-		std::string url_;
-		std::string skeleton_;
-
-		void process_child(std::string const &child_name, std::string const &child_id, xercesc::DOMElement const *child_ptr)
-		{
-			if (child_name == "skeleton")
-			{
-				skeleton_ = xerces_get_text(child_ptr).substr(1);
-			}
-		}
-
-	public:
-		std::string const &get_url() const { return url_; }
-		std::string const &get_skeleton() const { return skeleton_; }
-
-		void init(xercesc::DOMElement const *element_ptr)
-		{
-			url_ = xerces_get_attribute<std::string>(element_ptr, "url").substr(1);
-		}
-	};
-
 	class bind_material_e: public element {
 	private:
 		boost::scoped_ptr<technique_common_e> technique_common_ptr_;
@@ -438,9 +418,44 @@ namespace collada_elements
 		}
 
 	public:
+		void bind_mesh_materials(mesh_e const *, memory_mesh *mesh_ptr) const;
+
 		technique_common_e const *get_technique_common() const
 		{
 			return technique_common_ptr_.get();
+		}
+	};
+
+	class instance_controller_e: public element {
+	private:
+		std::string url_;
+		std::string skeleton_;
+		boost::scoped_ptr<bind_material_e> bind_material_ptr_;
+
+		void process_child(std::string const &child_name, std::string const &child_id, xercesc::DOMElement const *child_ptr)
+		{
+			if (child_name == "skeleton")
+			{
+				skeleton_ = xerces_get_text(child_ptr).substr(1);
+			}
+			else if (child_name == "bind_material")
+			{
+				bind_material_ptr_.reset(construct<bind_material_e>(child_ptr));
+			}
+		}
+
+	public:
+		std::string const &get_url() const { return url_; }
+		std::string const &get_skeleton() const { return skeleton_; }
+
+		bind_material_e const *get_bind_material() const
+		{
+			return bind_material_ptr_.get();
+		}
+
+		void init(xercesc::DOMElement const *element_ptr)
+		{
+			url_ = xerces_get_attribute<std::string>(element_ptr, "url").substr(1);
 		}
 	};
 
@@ -530,7 +545,7 @@ namespace collada_elements
 			}
 		}
 
-		void build_hierarchy(memory_model *model_ptr, joint *parent_ptr);
+		void build_hierarchy(joint *parent_ptr);
 
 		node_e const *get_node_by_id(std::string const &id) const
 		{
@@ -561,9 +576,9 @@ namespace collada_elements
 		void check() {
 		}
 
-		void build_hierarchy(memory_model *model_ptr) {
+		void build_hierarchy() {
 			for (boost::ptr_vector<node_e>::iterator it = childs_.begin(); it != childs_.end(); it++) {
-				it->build_hierarchy(model_ptr, 0);
+				it->build_hierarchy(0);
 			}
 		}
 	};
@@ -590,9 +605,9 @@ namespace collada_elements
 			throw std::logic_error("node with id = " + id + " not found");
 		}
 
-		void build_hierarchy(memory_model *model_ptr) {
+		void build_hierarchy() {
 			if (visual_scenes_.size() != 1) throw std::logic_error("expecting one <visual_scene> in <library_visual_scenes>");
-			visual_scenes_.begin()->second->build_hierarchy(model_ptr);
+			visual_scenes_.begin()->second->build_hierarchy();
 		}
 	};
 
@@ -669,6 +684,8 @@ namespace collada_elements
 		{
 			count_ = xerces_get_attribute<size_t>(element_ptr, "count");
 			material_ = xerces_get_attribute<std::string>(element_ptr, "material");
+
+			LOG_DEBUG("triangles count = " << count_ << ", material = " << material_);
 		}
 
 		size_t get_count() const { return count_; }
@@ -822,20 +839,21 @@ namespace collada_elements
 		boost::ptr_vector<geometry_e> geometries_;
 
 		void process_child(std::string const &child_name, std::string const &child_id, xercesc::DOMElement const *child_ptr) {
-			if (child_name == "geometry") {
+			if (child_name == "geometry")
+			{
 				geometries_.push_back(construct<geometry_e>(child_ptr));
 			}
 		}
 
 	public:
-		void build_meshes(memory_model *model_ptr)
+		void build_meshes()
 		{
 			for (boost::ptr_vector<geometry_e>::iterator it = geometries_.begin(); it != geometries_.end(); it++)
 			{
-				LOG_INFO("building mesh id = " << it->get_id() << ", name = " << it->get_name());
+				LOG_DEBUG("building mesh id = " << it->get_id() << ", name = " << it->get_name());
 	
-				model_ptr->meshes.push_back(new memory_mesh(model_ptr));
-				memory_mesh *mesh_ptr = (memory_mesh *) &model_ptr->meshes.back();
+				get_model()->meshes.push_back(new memory_mesh(get_model()));
+				memory_mesh *mesh_ptr = (memory_mesh *) &get_model()->meshes.back();
 
 				mesh_ptr->id = it->get_id();
 				mesh_ptr->name = it->get_name();
@@ -854,9 +872,9 @@ namespace collada_elements
 			throw std::logic_error("geometry id = " + id + " not found");
 		}
 
-		void fix_position_indices(memory_model *model_ptr) {
+		void fix_position_indices() {
 			for (boost::ptr_vector<geometry_e>::iterator it = geometries_.begin(); it != geometries_.end(); it++) {
-				it->fix_position_indices(model_ptr->get_mesh_by_id(it->get_id()));
+				it->fix_position_indices(get_model()->get_mesh_by_id(it->get_id()));
 			}
 		}
 	};
@@ -994,7 +1012,8 @@ namespace collada_elements
 	private:
 		boost::ptr_map<std::string, skin_e *> skins_;
 
-		void process_child(std::string const &child_name, std::string const &child_id, xercesc::DOMElement const *child_ptr) {
+		void process_child(std::string const &child_name, std::string const &child_id, xercesc::DOMElement const *child_ptr)
+		{
 			skins_[xerces_get_attribute<std::string>(child_ptr, "source")] = construct<skin_e>(child_ptr);
 		}
 
@@ -1005,9 +1024,9 @@ namespace collada_elements
 			return skins_.begin()->first.substr(1);
 		}
 
-		void build_joint_influences(memory_model *model_ptr) {
+		void build_joint_influences() {
 			for (boost::ptr_map<std::string, skin_e *>::const_iterator it = skins_.begin(); it != skins_.end(); it++) {
-				memory_mesh *mesh_ptr = model_ptr->get_mesh_by_id(it->first.substr(1));
+				memory_mesh *mesh_ptr = get_model()->get_mesh_by_id(it->first.substr(1));
 				(*it->second)->build_inverted_bind_matrices(mesh_ptr);
 				(*it->second)->build_joint_weights(mesh_ptr);
 			}
@@ -1019,7 +1038,8 @@ namespace collada_elements
 		boost::ptr_map<std::string, controller_e *> controllers_;
 
 		void process_child(std::string const &child_name, std::string const &child_id, xercesc::DOMElement const *child_ptr) {
-			if (child_name == "controller") {
+			if (child_name == "controller")
+			{
 				controllers_[child_id] = construct<controller_e>(child_ptr);
 			}
 		}
@@ -1033,9 +1053,9 @@ namespace collada_elements
 			throw std::logic_error("controller with id = " + id + " not found");
 		}
 
-		void build_joint_influences(memory_model *model_ptr) {
+		void build_joint_influences() {
 			for (boost::ptr_map<std::string, controller_e *>::const_iterator it = controllers_.begin(); it != controllers_.end(); it++) {
-				(*it->second)->build_joint_influences(model_ptr);
+				(*it->second)->build_joint_influences();
 			}
 		}
 	};
@@ -1133,10 +1153,10 @@ namespace collada_elements
 		}
 
 	public:
-		void build_animations(memory_model *model_ptr) {
+		void build_animations() {
 			for (boost::ptr_map<std::string, animation_e *>::iterator it = animations_.begin(); it != animations_.end(); it++) {
-				model_ptr->animations.push_back(new graphic::animation((*it->second)->build_animation(model_ptr)));
-				model_ptr->animations.back().name = it->first;
+				get_model()->animations.push_back(new graphic::animation((*it->second)->build_animation(get_model())));
+				get_model()->animations.back().name = it->first;
 			}
 		}
 	};
@@ -1166,7 +1186,7 @@ namespace collada_elements
 			if (instance_effect_url_.empty()) throw std::logic_error("no <instance_effect> url specified for material");
 		}
 
-		graphic::material *build_material(memory_model *model_ptr) const;
+		material *build_material() const;
 	};
 
 	class library_materials_e: public element {
@@ -1190,14 +1210,14 @@ namespace collada_elements
 			throw std::logic_error("material " + name + " not found");
 		}
 
-		void library_materials_e::build_materials(memory_model *model_ptr) const
+		void library_materials_e::build_materials() const
 		{
-			LOG_INFO("building materials...");
+			LOG_DEBUG("building materials...");
 
 			for (boost::ptr_map<std::string, material_e *>::const_iterator it = materials_.begin();
 				it != materials_.end(); it++)
 			{
-				model_ptr->materials.push_back((*it->second)->build_material(model_ptr));
+				get_model()->materials.push_back((*it->second)->build_material());
 			}
 		}
 	};
@@ -1289,7 +1309,6 @@ namespace collada_elements
 			textures_.insert(std::make_pair(child_name, xerces_get_attribute<std::string>(textures_list_ptr->item(0), "texture")));
 		}
 
-
 	public:
 		std::string get_sampler_name(std::string const &component_name) const
 		{
@@ -1308,6 +1327,8 @@ namespace collada_elements
 		{
 			if (child_name == "phong" || child_name == "lambert" || child_name == "blinn")
 			{
+				if (shader_ptr_) throw std::logic_error("shader for <technique> defined more than one time");
+
 				shader_ptr_.reset(construct<phong_lambert_blinn_e>(child_ptr));
 			}
 		}
@@ -1338,6 +1359,8 @@ namespace collada_elements
 			}
 			else if (child_name == "technique")
 			{
+				if (technique_ptr_) throw std::logic_error("<technique> in <profile_common> defined more than one time");
+
 				technique_ptr_.reset(construct<technique_e>(child_ptr));
 			}
 		}
@@ -1353,31 +1376,31 @@ namespace collada_elements
 		std::string get_surface_filename(std::string const &component_name) const;
 
 	public:
-		graphic::material *build_material(memory_model *model_ptr) const
+		graphic::material *build_material() const
 		{
-			std::auto_ptr<graphic::material> material_ptr(new graphic::material(model_ptr->get_renderer()));
+			std::auto_ptr<graphic::material> material_ptr(new graphic::material(get_model()->get_renderer()));
 
 			std::string const &diffuse_texture = get_surface_filename("diffuse");
 			std::string const &specular_texture = get_surface_filename("specular");
 
 			if (diffuse_texture.size())
 			{
-				LOG_INFO("diffuse_texture = " << diffuse_texture);
+				LOG_DEBUG("diffuse_texture = " << diffuse_texture);
 				material_ptr->set_texture(diffuse_texture);
 			}
 			else
 			{
-				LOG_INFO("no specular_texture");
+				LOG_DEBUG("no diffuse_texture");
 			}
 
 			if (specular_texture.size())
 			{
-				LOG_INFO("specular_texture = " << diffuse_texture);
+				LOG_DEBUG("specular_texture = " << diffuse_texture);
 				material_ptr->set_specular_map(specular_texture);
 			}
 			else
 			{
-				LOG_INFO("no specular_texture");
+				LOG_DEBUG("no specular_texture");
 			}
 
 			return material_ptr.release();
@@ -1397,9 +1420,9 @@ namespace collada_elements
 		}
 
 	public:
-		graphic::material *build_material(memory_model *model_ptr) const
+		graphic::material *build_material() const
 		{
-			return profile_common_ptr_->build_material(model_ptr);
+			return profile_common_ptr_->build_material();
 		}
 	};
 
@@ -1465,6 +1488,32 @@ namespace collada_elements
 			throw std::logic_error("image " + name + " not found");
 		}
 	};
+
+	void bind_material_e::bind_mesh_materials(mesh_e const *mesh_element_ptr, memory_mesh *mesh_ptr) const
+	{
+		boost::ptr_vector<triangles_e> const &triangles = mesh_element_ptr->get_triangles();
+
+		mesh::triangles_list_type::iterator mesh_triangles_it = mesh_ptr->triangles_list.begin();
+		boost::ptr_vector<triangles_e>::const_iterator triangles_it = triangles.begin();
+
+		while (mesh_triangles_it != mesh_ptr->triangles_list.end() && triangles_it != triangles.end())
+		{
+			std::string const &material_symbol = triangles_it->get_material();
+			std::string const &material_name = get_technique_common()->get_material_by_symbol(material_symbol);
+
+			LOG_DEBUG("material_symbol = " << material_symbol << ", material_name = " << material_name);
+
+			mesh_triangles_it->material_ptr = mesh_ptr->get_model()->get_material_by_name(material_name);
+
+			mesh_triangles_it++;
+			triangles_it++;
+		}
+
+		if (mesh_triangles_it != mesh_ptr->triangles_list.end() || triangles_it != triangles.end())
+		{
+			throw std::logic_error("mismatching number of <triangles> and triangles_lists in mesh with id = " + mesh_ptr->id);
+		}
+	}
 
 	void mesh_e::build_mesh(memory_mesh *mesh_ptr)
 	{
@@ -1543,11 +1592,11 @@ namespace collada_elements
 		}
 	}
 
-	void node_e::build_hierarchy(memory_model *model_ptr, joint *parent_ptr)
+	void node_e::build_hierarchy(joint *parent_ptr)
 	{
-		model_ptr->joints.push_back(new joint());
+		get_model()->joints.push_back(new joint());
 
-		joint *joint_ptr = &model_ptr->joints.back();
+		joint *joint_ptr = &get_model()->joints.back();
 		joint_ptr->id = id_;
 		joint_ptr->name = sid_;
 		joint_ptr->parent = parent_ptr;
@@ -1560,51 +1609,38 @@ namespace collada_elements
 
 		if (instance_geometry_)
 		{
-			graphic::memory_mesh *mesh_ptr = model_ptr->get_mesh_by_id(instance_geometry_->get_url());
-
+			graphic::memory_mesh *mesh_ptr = get_model()->get_mesh_by_id(instance_geometry_->get_url());
+			
 			joint_ptr->mesh_ptr = mesh_ptr;
-
 			mesh_e const *mesh_element_ptr = get_root()->get_geometries()->get_geometry_by_id(instance_geometry_->get_url())->get_mesh();
-			boost::ptr_vector<triangles_e> const &triangles = mesh_element_ptr->get_triangles();
 
-			mesh::triangles_list_type::iterator mesh_triangles_it = mesh_ptr->triangles_list.begin();
-			boost::ptr_vector<triangles_e>::const_iterator triangles_it = triangles.begin();
-
-			while (mesh_triangles_it != mesh_ptr->triangles_list.end() && triangles_it != triangles.end())
-			{
-				std::string const &material_symbol = triangles_it->get_material();
-				std::string const &material_name = instance_geometry_->get_bind_material()->get_technique_common()->get_material_by_symbol(material_symbol);
-
-				mesh_triangles_it->material_ptr = mesh_ptr->get_model()->get_material_by_name(material_name);
-
-				mesh_triangles_it++;
-				triangles_it++;
-			}
-
-			if (mesh_triangles_it != mesh_ptr->triangles_list.end() || triangles_it != triangles.end())
-			{
-				throw std::logic_error("mismatching number of <triangles> and triangles_lists in mesh with id = " + instance_geometry_->get_url());
-			}
+			instance_geometry_->get_bind_material()->bind_mesh_materials(mesh_element_ptr, mesh_ptr);
 		}
-		else if (instance_controller_)
+
+		if (instance_controller_)
 		{
 			controller_e const *controller_ptr = get_root()->get_controllers()->get_controller_by_id(instance_controller_->get_url());
-			joint_ptr->mesh_ptr = model_ptr->get_mesh_by_id(controller_ptr->get_skin_source_id());
+
+			joint_ptr->mesh_ptr = get_model()->get_mesh_by_id(controller_ptr->get_skin_source_id());
+			mesh_e const *mesh_element_ptr = get_root()->get_geometries()->get_geometry_by_id(controller_ptr->get_skin_source_id())->get_mesh();
+
+			instance_controller_->get_bind_material()->bind_mesh_materials(mesh_element_ptr, (memory_mesh *) joint_ptr->mesh_ptr);
 		}
 
-		for (boost::ptr_vector<node_e>::iterator it = childs_.begin(); it != childs_.end(); it++) {
-			it->build_hierarchy(model_ptr, joint_ptr);
+		for (boost::ptr_vector<node_e>::iterator it = childs_.begin(); it != childs_.end(); it++)
+		{
+			it->build_hierarchy(joint_ptr);
 		}
 	}
 
-	graphic::material *material_e::build_material(memory_model *model_ptr) const
+	graphic::material *material_e::build_material() const
 	{
-		LOG_INFO("material " << name_);
+		LOG_DEBUG("material " << name_);
 
 		std::auto_ptr<graphic::material> material_ptr(get_root()->
 			get_effects()->
 			get_effect_by_name(instance_effect_url_.substr(1))->
-			build_material(model_ptr));
+			build_material());
 
 		material_ptr->set_name(name_);
 
@@ -1630,6 +1666,7 @@ namespace collada_elements
 
 	class collada_e: public element, public root_element {
 	private:
+		memory_model *current_model_ptr_;
 		boost::scoped_ptr<library_visual_scenes_e> visual_scenes_;
 		boost::scoped_ptr<library_geometries_e> geometries_;
 		boost::scoped_ptr<library_controllers_e> controllers_;
@@ -1671,9 +1708,15 @@ namespace collada_elements
 		}
 
 	public:
-		collada_e()
+		collada_e():
+		current_model_ptr_(0)
 		{
 			set_root(this);
+		}
+
+		memory_model *get_model()
+		{
+			return current_model_ptr_;
 		}
 
 		library_visual_scenes_e *get_visual_scenes()
@@ -1714,12 +1757,24 @@ namespace collada_elements
 
 		void build_model(memory_model *model_ptr)
 		{
-			geometries_->build_meshes(model_ptr);
-			if (materials_) materials_->build_materials(model_ptr);
-			visual_scenes_->build_hierarchy(model_ptr);
-			if (controllers_) controllers_->build_joint_influences(model_ptr);
-			geometries_->fix_position_indices(model_ptr);
-			if (animations_) animations_->build_animations(model_ptr);
+			current_model_ptr_ = model_ptr;
+
+			try
+			{
+				geometries_->build_meshes();
+				if (materials_) materials_->build_materials();
+				visual_scenes_->build_hierarchy();
+				if (controllers_) controllers_->build_joint_influences();
+				geometries_->fix_position_indices();
+				if (animations_) animations_->build_animations();
+			}
+			catch(...)
+			{
+				current_model_ptr_ = 0;
+				throw;
+			}
+
+			current_model_ptr_ = 0;
 		}
 	};
 }

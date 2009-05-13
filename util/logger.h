@@ -49,6 +49,7 @@ private:
 };
 
 #define LOG_MESSAGE(L, M) { util::logger::message(&util::logger::instance(), util::logger::L, __FILE__, __LINE__, __FUNCTION__).stream() << M; }
+#define LOG_DEBUG(M) LOG_MESSAGE(LEVEL_DEBUG, M)
 #define LOG_INFO(M) LOG_MESSAGE(LEVEL_INFO, M)
 
 }
