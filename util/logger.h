@@ -39,7 +39,10 @@ public:
 
 	static logger &instance();
 
+	void set_stdout();
 	void set_file(std::string const &filename);
+	void set_file_by_executable_name();
+
 	void write(std::string const &str);
 
 private:

@@ -29,6 +29,7 @@ public:
 	file_handle(file_handle const &rhs);
 	~file_handle();
 
+	void set_handle(int handle);
 	void open(char const *filename, int flags, int mode = S_IREAD | S_IWRITE);
 	void close();
 

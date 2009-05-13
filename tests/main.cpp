@@ -6,9 +6,12 @@
 #include <cppunit/TestResultCollector.h>
 #include <cppunit/TestRunner.h>
 #include <xercesc/util/PlatformUtils.hpp>
+#include <util/logger.h>
 
 int main(int argc, char* argv[])
 {
+	util::logger::instance().set_file_by_executable_name();
+
 	xercesc::XMLPlatformUtils::Initialize();
 
 	CppUnit::TestResult controller;

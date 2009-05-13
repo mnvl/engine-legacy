@@ -29,7 +29,16 @@ file_handle::~file_handle() {
 	if(is_open()) close();
 }
 
-void file_handle::open(char const *filename, int flags, int mode) {
+void file_handle::set_handle(int handle)
+{
+	if(is_open()) throw std::logic_error("set_handle() called on already opened file");
+
+	handle_ = handle;
+	filename_.erase();
+}
+
+void file_handle::open(char const *filename, int flags, int mode)
+{
 	if(is_open()) throw std::logic_error("open() called on already opened file");
 
 	handle_ = ::open(filename, flags | O_BINARY, mode);
@@ -45,7 +54,7 @@ bool file_handle::is_open() const {
 void file_handle::close() {
 	if(!is_open()) throw std::logic_error("file handle is not open but close() is called");
 
-	::close(handle_);
+	if (handle_ > 2) ::close(handle_);
 	handle_ = -1;
 }
 

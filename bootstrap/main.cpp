@@ -1,4 +1,5 @@
 
+#include <windows.h>
 #include <xercesc/util/PlatformUtils.hpp>
 #include <xercesc/util/XMLString.hpp>
 #include <xercesc/dom/DOM.hpp>
@@ -16,14 +17,7 @@ INT WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpstrCmdLine, INT
 {
 	try
 	{
-		{
-			char buffer[1024];
-			if (!GetModuleFileName(0, buffer, sizeof(buffer))) throw exception::winapi_error();
-
-			strcat(buffer, ".log");
-
-			util::logger::instance().set_file(buffer);
-		}
+		util::logger::instance().set_file_by_executable_name();
 
 		LOG_INFO("executable have been built on " << __TIMESTAMP__);
 
