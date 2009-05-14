@@ -342,17 +342,17 @@
           <input semantic="POSITION" source="#polySurfaceShape2-positions"/>
           <input semantic="NORMAL" source="#polySurfaceShape2-normals"/>
         </vertices>
-        <triangles material="lambert" count="1">
+        <triangles material="phong" count="1">
           <input semantic="VERTEX" source="#polySurfaceShape2-vertices" offset="0"/>
           <input semantic="TEXCOORD" source="#polySurfaceShape2-map1" offset="1" set="0"/>
           <p>1 1 0 0 2 2</p>
         </triangles>
-        <triangles material="phong" count="1">
+        <triangles material="blinn" count="1">
           <input semantic="VERTEX" source="#polySurfaceShape2-vertices" offset="0"/>
           <input semantic="TEXCOORD" source="#polySurfaceShape2-map1" offset="1" set="0"/>
           <p>4 3 3 4 5 5</p>
         </triangles>
-        <triangles material="blinn" count="1">
+        <triangles material="lambert" count="1">
           <input semantic="VERTEX" source="#polySurfaceShape2-vertices" offset="0"/>
           <input semantic="TEXCOORD" source="#polySurfaceShape2-map1" offset="1" set="0"/>
           <p>7 6 6 7 8 8</p>

@@ -180,21 +180,21 @@ class test_collada_loader: public CppUnit::TestFixture {
 			CPPUNIT_ASSERT (mesh2_ptr->indices.size() == 9);
 
 			graphic::mesh::triangles const &t0 = mesh2_ptr->triangles_list[0];
-			CPPUNIT_ASSERT (t0.material_ptr->get_name() == "lambert1");
+			CPPUNIT_ASSERT (t0.material_ptr->get_name() == "phong2");
 			CPPUNIT_ASSERT (t0.triangles_count == 1);
 			CPPUNIT_ASSERT (t0.first_index_offset == 0);
 			CPPUNIT_ASSERT (t0.minimal_vertex_index == 0);
 			CPPUNIT_ASSERT (t0.vertices_count == 3);
 
 			graphic::mesh::triangles const &t1 = mesh2_ptr->triangles_list[1];
-			CPPUNIT_ASSERT (t1.material_ptr->get_name() == "phong2");
+			CPPUNIT_ASSERT (t1.material_ptr->get_name() == "blinn2");
 			CPPUNIT_ASSERT (t1.triangles_count == 1);
 			CPPUNIT_ASSERT (t1.first_index_offset == 3);
 			CPPUNIT_ASSERT (t1.minimal_vertex_index == 3);
 			CPPUNIT_ASSERT (t1.vertices_count == 3);
 
 			graphic::mesh::triangles const &t2 = mesh2_ptr->triangles_list[2];
-			CPPUNIT_ASSERT (t2.material_ptr->get_name() == "blinn2");
+			CPPUNIT_ASSERT (t2.material_ptr->get_name() == "lambert1");
 			CPPUNIT_ASSERT (t2.triangles_count == 1);
 			CPPUNIT_ASSERT (t2.first_index_offset == 6);
 			CPPUNIT_ASSERT (t2.minimal_vertex_index == 6);
