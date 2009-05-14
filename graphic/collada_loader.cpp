@@ -1784,12 +1784,13 @@ namespace collada_elements
 	};
 }
 
-namespace graphic {
+namespace graphic
+{
 
-collada_loader::collada_loader(std::string const &filename, renderer *renderer_ptr):
+collada_loader::collada_loader(std::string const &filename, model *model_ptr, renderer *renderer_ptr):
 filename_(filename),
-renderer_ptr_(renderer_ptr),
-model_(renderer_ptr)
+model_ptr_(model_ptr),
+renderer_ptr_(renderer_ptr)
 {
 }
 
@@ -1821,7 +1822,7 @@ void collada_loader::load() {
 
 		collada_elements::collada_e dummy;
 		dummy.go((xercesc::DOMElement *) root_node);
-		dummy.build_model(&model_);
+		dummy.build_model(model_ptr_);
 
 		LOG_INFO("finished parsing " << filename_);
 	}

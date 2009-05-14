@@ -1,4 +1,5 @@
 
+#include <graphic/memory_model.h>
 #include <graphic/collada_loader.h>
 #include <cppunit/extensions/HelperMacros.h>
 
@@ -12,10 +13,9 @@ class test_collada_loader: public CppUnit::TestFixture {
 
 	void test_plane()
 	{
-		graphic::collada_loader cl("test_collada_loader_plane.xml");
-		cl.load();
+		std::auto_ptr<graphic::memory_model> model_ptr(new graphic::memory_model());
+		graphic::collada_loader("test_collada_loader_plane.xml", model_ptr.get()).load();
 
-		graphic::memory_model const *model_ptr = &cl.get_model();
 		CPPUNIT_ASSERT (model_ptr->meshes.size() == 1);
 		CPPUNIT_ASSERT (model_ptr->joints.size() == 1);
 		CPPUNIT_ASSERT (model_ptr->animations.size() == 0);
@@ -41,10 +41,9 @@ class test_collada_loader: public CppUnit::TestFixture {
 
 	void test_joint()
 	{
-		graphic::collada_loader cl("test_collada_loader_joint.xml");
-		cl.load();
+		std::auto_ptr<graphic::memory_model> model_ptr(new graphic::memory_model());
+		graphic::collada_loader("test_collada_loader_joint.xml", model_ptr.get()).load();
 
-		graphic::memory_model *model_ptr = const_cast<graphic::memory_model *>(&cl.get_model());
 		CPPUNIT_ASSERT (model_ptr->meshes.size() == 1);
 		CPPUNIT_ASSERT (model_ptr->joints.size() == 2);
 		CPPUNIT_ASSERT (model_ptr->animations.size() == 1);
@@ -73,10 +72,9 @@ class test_collada_loader: public CppUnit::TestFixture {
 
 	void test_animation()
 	{
-		graphic::collada_loader cl("test_collada_loader_animation.xml");
-		cl.load();
+		std::auto_ptr<graphic::memory_model> model_ptr(new graphic::memory_model());
+		graphic::collada_loader("test_collada_loader_animation.xml", model_ptr.get()).load();
 
-		graphic::memory_model *model_ptr = const_cast<graphic::memory_model *>(&cl.get_model());
 		CPPUNIT_ASSERT (model_ptr->meshes.size() == 1);
 		CPPUNIT_ASSERT (model_ptr->joints.size() == 4);
 		CPPUNIT_ASSERT (model_ptr->animations.size() == 1);
@@ -116,10 +114,9 @@ class test_collada_loader: public CppUnit::TestFixture {
 
 	void test_materials()
 	{
-		graphic::collada_loader cl("test_collada_loader_materials.xml");
-		cl.load();
+		std::auto_ptr<graphic::memory_model> model_ptr(new graphic::memory_model());
+		graphic::collada_loader("test_collada_loader_materials.xml", model_ptr.get()).load();
 
-		graphic::memory_model const *model_ptr = &cl.get_model();
 		CPPUNIT_ASSERT (model_ptr->meshes.size() == 2);
 		CPPUNIT_ASSERT (model_ptr->joints.size() == 2);
 		CPPUNIT_ASSERT (model_ptr->animations.size() == 0);
