@@ -12,11 +12,13 @@ model(renderer_ptr)
 
 void memory_model::cleanup()
 {
+	/*
 	meshes_type::iterator it = meshes.begin();
 	while (it != meshes.end()) {
-		if (((memory_mesh *) &*it)->indices.empty()) it = meshes.erase(it);
+		if (((memory_mesh *) &*it)->indices_.empty()) it = meshes.erase(it);
 		else it++;
 	}
+	*/
 }
 
 void memory_model::set_animation_time(math::scalar t)

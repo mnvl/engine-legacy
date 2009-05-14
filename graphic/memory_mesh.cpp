@@ -10,12 +10,23 @@ mesh(m)
 {
 }
 
-memory_mesh::~memory_mesh() {
+memory_mesh::~memory_mesh()
+{
+}
+
+void memory_mesh::set_vertex_buffer(vertex_t *vertices, size_t count)
+{
+	vertices_.assign(vertices, vertices + count);
+}
+
+void memory_mesh::set_index_buffer(index_t *indices, size_t count)
+{
+	indices_.assign(indices, indices + count);
 }
 
 void memory_mesh::transform_vertices(joint const *joint_ptr, std::vector<vertex_t> &result) const
 {
-	result = vertices;
+	result = vertices_;
 
 	if (get_model()->animations.empty())
 	{
@@ -27,7 +38,7 @@ void memory_mesh::transform_vertices(joint const *joint_ptr, std::vector<vertex_
 		return;
 	}
 
-	for (size_t i = 0; i < vertices.size(); i++)
+	for (size_t i = 0; i < vertices_.size(); i++)
 	{
 		result[i].position.set(0, 0, 0);
 	}
@@ -37,7 +48,7 @@ void memory_mesh::transform_vertices(joint const *joint_ptr, std::vector<vertex_
 		for (joint_influence::vertex_weights_type::const_iterator jt = it->vertex_weights.begin(); jt != it->vertex_weights.end(); jt++)
 		{
 			result[jt->vertex_index].position +=
-				((vertices[jt->vertex_index].position * bind_shape_matrix) *
+				((vertices_[jt->vertex_index].position * bind_shape_matrix) *
 				it->inverted_bind_matrix * it->joint_ptr->matrix) *
 				jt->weight;
 		}
@@ -65,7 +76,7 @@ void memory_mesh::draw_static(joint *joint_ptr) const
 		device_ptr->SetTransform(D3DTS_WORLDMATRIX(0), (D3DMATRIX const *) joint_ptr->matrix.ij);
 
 		device_ptr->DrawIndexedPrimitiveUP(D3DPT_TRIANGLELIST, it->minimal_vertex_index, it->vertices_count,
-			it->triangles_count, &indices[it->first_index_offset], D3DFMT_INDEX16, &vertices[0], sizeof(vertex_t));
+			it->triangles_count, &indices_[it->first_index_offset], D3DFMT_INDEX16, &vertices_[0], sizeof(vertex_t));
 	}
 }
 
@@ -93,7 +104,7 @@ void memory_mesh::draw_animated(joint *joint_ptr) const
 		device_ptr->SetTransform(D3DTS_WORLDMATRIX(0), (D3DMATRIX const *) joint_ptr->matrix.ij);
 
 		device_ptr->DrawIndexedPrimitiveUP(D3DPT_TRIANGLELIST, it->minimal_vertex_index, it->vertices_count,
-			it->triangles_count, &indices[it->first_index_offset], D3DFMT_INDEX16, &transformed_vertices[0], sizeof(vertex_t));
+			it->triangles_count, &indices_[it->first_index_offset], D3DFMT_INDEX16, &transformed_vertices[0], sizeof(vertex_t));
 	}
 }
 

@@ -1520,6 +1520,9 @@ namespace collada_elements
 		input_e const *position_input = vertices_->get_input("POSITION");
 		source_e const *position_source = get_source(position_input->get_source().substr(1));
 
+		std::vector<mesh::vertex_t> vertex_buffer;
+		std::vector<mesh::index_t> index_buffer;
+
 		size_t first_index_offset = 0;
 
 		for (boost::ptr_vector<triangles_e>::const_iterator it = triangles_.begin();
@@ -1550,7 +1553,7 @@ namespace collada_elements
 
 			for (size_t i = 0, n = triangles_ptr->get_count() * 3; i < n; i++) {
 				size_t position_index;
-				memory_mesh::vertex_t v;
+				mesh::vertex_t v;
 
 				for (size_t j = 0; j < stride; j++) {
 					if (j == position_input->get_offset()) {
@@ -1574,7 +1577,7 @@ namespace collada_elements
 				if (vertex_index.second)
 				{
 					position_index_x_vertex_index_.insert(std::make_pair(position_index, vertex_index.first));
-					mesh_ptr->vertices.push_back(v);
+					vertex_buffer.push_back(v);
 					dummy.vertices_count++;
 				}
 
@@ -1583,13 +1586,16 @@ namespace collada_elements
 					dummy.minimal_vertex_index = vertex_index.first;
 				}
 
-				mesh_ptr->indices.push_back(vertex_index.first);
+				index_buffer.push_back(vertex_index.first);
 			}
 
 			mesh_ptr->triangles_list.push_back(dummy);
 
 			first_index_offset += triangles_ptr->get_count() * 3;
 		}
+
+		mesh_ptr->set_vertex_buffer(&vertex_buffer[0], vertex_buffer.size());
+		mesh_ptr->set_index_buffer(&index_buffer[0], index_buffer.size());
 	}
 
 	void node_e::build_hierarchy(joint *parent_ptr)

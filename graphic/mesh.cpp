@@ -13,6 +13,11 @@ mesh::~mesh()
 {
 }
 
+model *mesh::get_model() const
+{
+	return model_ptr_;
+}
+
 joint_influence *mesh::get_joint_influence_by_name(std::string const &name)
 {
 	joint *joint_ptr = get_model()->get_joint_by_name(name);
@@ -23,12 +28,6 @@ joint_influence *mesh::get_joint_influence_by_name(std::string const &name)
 	}
 
 	throw std::runtime_error("influence of joint " + joint_ptr->name + " to mesh " + name + " not found");
-}
-
-
-model *mesh::get_model() const
-{
-	return model_ptr_;
 }
 
 void mesh::draw()
