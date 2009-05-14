@@ -120,45 +120,86 @@ class test_collada_loader: public CppUnit::TestFixture {
 		cl.load();
 
 		graphic::memory_model const *model_ptr = &cl.get_model();
-		CPPUNIT_ASSERT (model_ptr->meshes.size() == 1);
-		CPPUNIT_ASSERT (model_ptr->joints.size() == 1);
+		CPPUNIT_ASSERT (model_ptr->meshes.size() == 2);
+		CPPUNIT_ASSERT (model_ptr->joints.size() == 2);
 		CPPUNIT_ASSERT (model_ptr->animations.size() == 0);
 
 		CPPUNIT_ASSERT (model_ptr->joints[0].mesh_ptr == &model_ptr->meshes[0]);
+		CPPUNIT_ASSERT (model_ptr->joints[1].mesh_ptr == &model_ptr->meshes[1]);
 
 		graphic::material const &m0 = model_ptr->materials[0];
+		CPPUNIT_ASSERT (m0.get_name() == "blinn1");
 		CPPUNIT_ASSERT (m0.get_texture_name() == "file2.tga");
 
 		graphic::material const &m1 = model_ptr->materials[1];
-		CPPUNIT_ASSERT (m1.get_texture_name() == "file1.tga");
+		CPPUNIT_ASSERT (m1.get_name() == "blinn2");
+		CPPUNIT_ASSERT (m1.get_texture_name() == "file4.tga");
 
 		graphic::material const &m2 = model_ptr->materials[2];
-		CPPUNIT_ASSERT (m2.get_texture_name() == "file3.tga");
+		CPPUNIT_ASSERT (m2.get_name() == "lambert1");
+		CPPUNIT_ASSERT (m2.get_texture_name() == "file1.tga");
 
-		graphic::memory_mesh const *mesh_ptr = (graphic::memory_mesh const *) &model_ptr->meshes.front();
-		CPPUNIT_ASSERT (mesh_ptr->vertices.size() == 9);
-		CPPUNIT_ASSERT (mesh_ptr->indices.size() == 9);
+		graphic::material const &m3 = model_ptr->materials[3];
+		CPPUNIT_ASSERT (m3.get_name() == "phong1");
+		CPPUNIT_ASSERT (m3.get_texture_name() == "file3.tga");
 
-		graphic::mesh::triangles const &t0 = mesh_ptr->triangles_list[0];
-		CPPUNIT_ASSERT (t0.material_ptr->get_name() == "lambert1");
-		CPPUNIT_ASSERT (t0.triangles_count == 1);
-		CPPUNIT_ASSERT (t0.first_index_offset == 0);
-		CPPUNIT_ASSERT (t0.minimal_vertex_index == 0);
-		CPPUNIT_ASSERT (t0.vertices_count == 3);
+		graphic::material const &m4 = model_ptr->materials[4];
+		CPPUNIT_ASSERT (m4.get_name() == "phong2");
+		CPPUNIT_ASSERT (m4.get_texture_name() == "file5.tga");
 
-		graphic::mesh::triangles const &t1 = mesh_ptr->triangles_list[1];
-		CPPUNIT_ASSERT (t1.material_ptr->get_name() == "phong1");
-		CPPUNIT_ASSERT (t1.triangles_count == 1);
-		CPPUNIT_ASSERT (t1.first_index_offset == 3);
-		CPPUNIT_ASSERT (t1.minimal_vertex_index == 3);
-		CPPUNIT_ASSERT (t1.vertices_count == 3);
+		{
+			graphic::memory_mesh const *mesh1_ptr = (graphic::memory_mesh const *) &model_ptr->meshes[0];
+			CPPUNIT_ASSERT (mesh1_ptr->vertices.size() == 9);
+			CPPUNIT_ASSERT (mesh1_ptr->indices.size() == 9);
 
-		graphic::mesh::triangles const &t2 = mesh_ptr->triangles_list[2];
-		CPPUNIT_ASSERT (t2.material_ptr->get_name() == "blinn1");
-		CPPUNIT_ASSERT (t2.triangles_count == 1);
-		CPPUNIT_ASSERT (t2.first_index_offset == 6);
-		CPPUNIT_ASSERT (t2.minimal_vertex_index == 6);
-		CPPUNIT_ASSERT (t2.vertices_count == 3);
+			graphic::mesh::triangles const &t0 = mesh1_ptr->triangles_list[0];
+			CPPUNIT_ASSERT (t0.material_ptr->get_name() == "lambert1");
+			CPPUNIT_ASSERT (t0.triangles_count == 1);
+			CPPUNIT_ASSERT (t0.first_index_offset == 0);
+			CPPUNIT_ASSERT (t0.minimal_vertex_index == 0);
+			CPPUNIT_ASSERT (t0.vertices_count == 3);
+
+			graphic::mesh::triangles const &t1 = mesh1_ptr->triangles_list[1];
+			CPPUNIT_ASSERT (t1.material_ptr->get_name() == "phong1");
+			CPPUNIT_ASSERT (t1.triangles_count == 1);
+			CPPUNIT_ASSERT (t1.first_index_offset == 3);
+			CPPUNIT_ASSERT (t1.minimal_vertex_index == 3);
+			CPPUNIT_ASSERT (t1.vertices_count == 3);
+
+			graphic::mesh::triangles const &t2 = mesh1_ptr->triangles_list[2];
+			CPPUNIT_ASSERT (t2.material_ptr->get_name() == "blinn1");
+			CPPUNIT_ASSERT (t2.triangles_count == 1);
+			CPPUNIT_ASSERT (t2.first_index_offset == 6);
+			CPPUNIT_ASSERT (t2.minimal_vertex_index == 6);
+			CPPUNIT_ASSERT (t2.vertices_count == 3);
+		}
+
+		{
+			graphic::memory_mesh const *mesh2_ptr = (graphic::memory_mesh const *) &model_ptr->meshes[1];
+			CPPUNIT_ASSERT (mesh2_ptr->vertices.size() == 9);
+			CPPUNIT_ASSERT (mesh2_ptr->indices.size() == 9);
+
+			graphic::mesh::triangles const &t0 = mesh2_ptr->triangles_list[0];
+			CPPUNIT_ASSERT (t0.material_ptr->get_name() == "lambert1");
+			CPPUNIT_ASSERT (t0.triangles_count == 1);
+			CPPUNIT_ASSERT (t0.first_index_offset == 0);
+			CPPUNIT_ASSERT (t0.minimal_vertex_index == 0);
+			CPPUNIT_ASSERT (t0.vertices_count == 3);
+
+			graphic::mesh::triangles const &t1 = mesh2_ptr->triangles_list[1];
+			CPPUNIT_ASSERT (t1.material_ptr->get_name() == "phong2");
+			CPPUNIT_ASSERT (t1.triangles_count == 1);
+			CPPUNIT_ASSERT (t1.first_index_offset == 3);
+			CPPUNIT_ASSERT (t1.minimal_vertex_index == 3);
+			CPPUNIT_ASSERT (t1.vertices_count == 3);
+
+			graphic::mesh::triangles const &t2 = mesh2_ptr->triangles_list[2];
+			CPPUNIT_ASSERT (t2.material_ptr->get_name() == "blinn2");
+			CPPUNIT_ASSERT (t2.triangles_count == 1);
+			CPPUNIT_ASSERT (t2.first_index_offset == 6);
+			CPPUNIT_ASSERT (t2.minimal_vertex_index == 6);
+			CPPUNIT_ASSERT (t2.vertices_count == 3);
+		}
 	}
 };
 
