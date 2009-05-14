@@ -23,20 +23,20 @@ class test_collada_loader: public CppUnit::TestFixture {
 		CPPUNIT_ASSERT (model_ptr->joints[0].mesh_ptr == &model_ptr->meshes[0]);
 
 		graphic::memory_mesh const *mesh_ptr = (graphic::memory_mesh const *) &model_ptr->meshes.front();
-		CPPUNIT_ASSERT (mesh_ptr->vertices_.size() == 4);
-		CPPUNIT_ASSERT (mesh_ptr->indices_.size() == 6);
+		CPPUNIT_ASSERT (mesh_ptr->get_vertex_buffer().size() == 4);
+		CPPUNIT_ASSERT (mesh_ptr->get_index_buffer().size() == 6);
 
-		CPPUNIT_ASSERT ((mesh_ptr->vertices_[0].position - math::vec<3>(-0.5f, 0.0f,  0.5f)).length_sq() < math::EPSILON);
-		CPPUNIT_ASSERT ((mesh_ptr->vertices_[1].position - math::vec<3>( 0.5f, 0.0f,  0.5f)).length_sq() < math::EPSILON);
-		CPPUNIT_ASSERT ((mesh_ptr->vertices_[2].position - math::vec<3>(-0.5f, 0.0f, -0.5f)).length_sq() < math::EPSILON);
-		CPPUNIT_ASSERT ((mesh_ptr->vertices_[3].position - math::vec<3>( 0.5f, 0.0f, -0.5f)).length_sq() < math::EPSILON);
+		CPPUNIT_ASSERT ((mesh_ptr->get_vertex_buffer()[0].position - math::vec<3>(-0.5f, 0.0f,  0.5f)).length_sq() < math::EPSILON);
+		CPPUNIT_ASSERT ((mesh_ptr->get_vertex_buffer()[1].position - math::vec<3>( 0.5f, 0.0f,  0.5f)).length_sq() < math::EPSILON);
+		CPPUNIT_ASSERT ((mesh_ptr->get_vertex_buffer()[2].position - math::vec<3>(-0.5f, 0.0f, -0.5f)).length_sq() < math::EPSILON);
+		CPPUNIT_ASSERT ((mesh_ptr->get_vertex_buffer()[3].position - math::vec<3>( 0.5f, 0.0f, -0.5f)).length_sq() < math::EPSILON);
 
-		CPPUNIT_ASSERT (mesh_ptr->indices_[0] == 0);
-		CPPUNIT_ASSERT (mesh_ptr->indices_[1] == 1);
-		CPPUNIT_ASSERT (mesh_ptr->indices_[2] == 2);
-		CPPUNIT_ASSERT (mesh_ptr->indices_[3] == 2);
-		CPPUNIT_ASSERT (mesh_ptr->indices_[4] == 1);
-		CPPUNIT_ASSERT (mesh_ptr->indices_[5] == 3);
+		CPPUNIT_ASSERT (mesh_ptr->get_index_buffer()[0] == 0);
+		CPPUNIT_ASSERT (mesh_ptr->get_index_buffer()[1] == 1);
+		CPPUNIT_ASSERT (mesh_ptr->get_index_buffer()[2] == 2);
+		CPPUNIT_ASSERT (mesh_ptr->get_index_buffer()[3] == 2);
+		CPPUNIT_ASSERT (mesh_ptr->get_index_buffer()[4] == 1);
+		CPPUNIT_ASSERT (mesh_ptr->get_index_buffer()[5] == 3);
 	}
 
 	void test_joint()
@@ -149,8 +149,8 @@ class test_collada_loader: public CppUnit::TestFixture {
 
 		{
 			graphic::memory_mesh const *mesh1_ptr = (graphic::memory_mesh const *) &model_ptr->meshes[0];
-			CPPUNIT_ASSERT (mesh1_ptr->vertices_.size() == 9);
-			CPPUNIT_ASSERT (mesh1_ptr->indices_.size() == 9);
+			CPPUNIT_ASSERT (mesh1_ptr->get_vertex_buffer().size() == 9);
+			CPPUNIT_ASSERT (mesh1_ptr->get_index_buffer().size() == 9);
 
 			graphic::mesh::triangles const &t0 = mesh1_ptr->triangles_list[0];
 			CPPUNIT_ASSERT (t0.material_ptr->get_name() == "lambert1");
@@ -176,8 +176,8 @@ class test_collada_loader: public CppUnit::TestFixture {
 
 		{
 			graphic::memory_mesh const *mesh2_ptr = (graphic::memory_mesh const *) &model_ptr->meshes[1];
-			CPPUNIT_ASSERT (mesh2_ptr->vertices_.size() == 9);
-			CPPUNIT_ASSERT (mesh2_ptr->indices_.size() == 9);
+			CPPUNIT_ASSERT (mesh2_ptr->get_vertex_buffer().size() == 9);
+			CPPUNIT_ASSERT (mesh2_ptr->get_index_buffer().size() == 9);
 
 			graphic::mesh::triangles const &t0 = mesh2_ptr->triangles_list[0];
 			CPPUNIT_ASSERT (t0.material_ptr->get_name() == "phong2");

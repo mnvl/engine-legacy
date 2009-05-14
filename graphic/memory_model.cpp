@@ -10,15 +10,11 @@ model(renderer_ptr)
 {
 }
 
-void memory_model::cleanup()
+mesh *memory_model::create_mesh()
 {
-	/*
-	meshes_type::iterator it = meshes.begin();
-	while (it != meshes.end()) {
-		if (((memory_mesh *) &*it)->indices_.empty()) it = meshes.erase(it);
-		else it++;
-	}
-	*/
+	std::auto_ptr<memory_mesh> mesh_ptr(new memory_mesh(this));
+	meshes.push_back(mesh_ptr);
+	return &meshes.back();
 }
 
 void memory_model::set_animation_time(math::scalar t)
