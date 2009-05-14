@@ -13,7 +13,7 @@ class renderer;
 
 class memory_mesh: public mesh {
 public:
-	static DWORD const VERTEX_FORMAT = D3DFVF_XYZ | D3DFVF_TEX2;
+	static DWORD const VERTEX_FORMAT = D3DFVF_XYZ | D3DFVF_NORMAL | D3DFVF_TEX2;
 	static D3DFORMAT const INDEX_FORMAT = D3DFMT_INDEX16;
 
 #pragma pack(push, 1)

@@ -49,9 +49,7 @@ renderer::renderer(platform::window *window_ptr, int width, int height, bool ful
 	}
 
 	default_font_.reset(new font(this, "Courier New"));
-
 	default_material_.reset(new graphic::material(this));
-	default_material_->set_texture("z1.bmp");
 }
 
 renderer::~renderer() {
