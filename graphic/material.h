@@ -57,6 +57,11 @@ public:
 		return name_;
 	}
 
+	std::string const &get_texture_name() const
+	{
+		return texture_name_;
+	}
+
 	void set_texture(std::string const &filename);
 	void set_specular_map(std::string const &filename);
 
