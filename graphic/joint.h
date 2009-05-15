@@ -20,6 +20,7 @@ public:
 		math::matrix<4,4> matrix;
 	};
 
+	size_t index;
 	std::string id, name;
 	joint *parent;
 	std::vector<joint *> childs;
@@ -27,7 +28,8 @@ public:
 	mutable math::matrix<4,4> matrix;
 	mesh *mesh_ptr;
 
-	joint():
+	joint(size_t i):
+	index(i),
 	parent(0),
 	mesh_ptr(0)
 	{

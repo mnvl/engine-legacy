@@ -20,10 +20,12 @@ public:
 	};
 
 	typedef std::vector<triangles> triangles_list_type;
+	typedef std::vector<math::matrix<4,4> > inverted_bind_matrices_type;
 
 	std::string id, name;
 	triangles_list_type triangles_list;
 	math::matrix<4,4> bind_shape_matrix;
+	inverted_bind_matrices_type inverted_bind_matrices;
 
 	mesh(model *model_ptr = 0);
 	virtual ~mesh();

@@ -907,13 +907,14 @@ namespace collada_elements
 				joints_source->get(i, joint_name);
 				inverted_bind_matrices_source->get(i, inv_bind_matrix);
 
-				// TODO:
-				/*
-				joint_influence dummy;
-				dummy.joint_ptr = mesh_ptr->get_model()->get_joint_by_name(joint_name);
-				dummy.inverted_bind_matrix = inv_bind_matrix;
-				mesh_ptr->influences.push_back(dummy);
-				*/
+				size_t joint_index = mesh_ptr->get_model()->get_joint_by_name(joint_name)->index;
+
+				if (mesh_ptr->inverted_bind_matrices.size() <= joint_index)
+				{
+					mesh_ptr->inverted_bind_matrices.resize(joint_index + 1);
+				}
+
+				mesh_ptr->inverted_bind_matrices[joint_index] = inv_bind_matrix;
 			}
 		}
 
@@ -940,6 +941,15 @@ namespace collada_elements
 
 			size_t position_index = 0;
 
+			std::vector<unsigned> joint_index_transform(joints_source->get_size());
+
+			for (size_t i = 0; i < joints_source->get_size(); i++)
+			{
+				std::string joint_name;
+				joints_source->get(i, joint_name);
+				joint_index_transform[i] = mesh_ptr->get_model()->get_joint_by_name(joint_name)->index;
+			}
+
 			for (std::vector<size_t>::const_iterator it = vcount.begin(); it != vcount.end(); it++)
 			{
 				math::vec<4, unsigned> joint_indices(0, 0, 0, 0);
@@ -953,7 +963,7 @@ namespace collada_elements
 					{
 						if (offset == joints_input->get_offset())
 						{
-							joint_indices.i[i] = *v_get;
+							joint_indices.i[i] = joint_index_transform.at(*v_get);
 						}
 
 						if (offset == weights_input->get_offset())
@@ -1583,9 +1593,7 @@ namespace collada_elements
 
 	void node_e::build_hierarchy(joint *parent_ptr)
 	{
-		get_model()->joints.push_back(new joint());
-
-		joint *joint_ptr = &get_model()->joints.back();
+		joint *joint_ptr = get_model()->create_joint();
 		joint_ptr->id = id_;
 		joint_ptr->name = sid_;
 		joint_ptr->parent = parent_ptr;

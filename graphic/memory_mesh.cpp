@@ -105,9 +105,10 @@ void memory_mesh::transform_vertices(joint const *joint_ptr, std::vector<vertex_
 
 		for (size_t j = 0; j < 4; j++)
 		{
-			// TODO:
+			size_t joint_index = indices.i[j];
+
 			pos += ((vertices_[i].position * bind_shape_matrix) *
-				/* it->inverted_bind_matrix * */ model_ptr_->joints[indices.i[j]].matrix) *
+				inverted_bind_matrices[joint_index] * model_ptr_->joints[joint_index].matrix) *
 				factors.i[j];
 
 		}

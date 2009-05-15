@@ -12,6 +12,12 @@ model::~model()
 {
 }
 
+joint *model::create_joint()
+{
+	joints.push_back(new joint(joints.size()));
+	return &joints.back();
+}
+
 joint *model::get_joint_by_id(std::string const &id)
 {
 	for (joints_type::iterator it = joints.begin(); it != joints.end(); it++) {
