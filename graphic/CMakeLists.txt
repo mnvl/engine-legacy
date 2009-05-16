@@ -1,8 +1,13 @@
 
 ADD_LIBRARY (graphic STATIC
+    vertex.h
+    vertex.cpp
+
+    texture.h
+
 	font.h
 	font.cpp
-	
+
 	material.h
 	material.cpp
 
@@ -19,12 +24,12 @@ ADD_LIBRARY (graphic STATIC
 	memory_mesh.cpp
 	memory_model.h
 	memory_model.cpp
-	
+
 	static_mesh.h
 	static_mesh.cpp
 	static_model.h
 	static_model.cpp
-	
+
 	collada_loader.h
 	collada_loader.cpp
 
