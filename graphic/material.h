@@ -1,6 +1,7 @@
 #pragma once
 
 #include <math/vec.h>
+#include <graphic/texture.h>
 #include <graphic/renderer.h>
 
 namespace graphic {
@@ -59,11 +60,10 @@ public:
 
 	std::string const &get_texture_name() const
 	{
-		return texture_name_;
+		return texture_ptr_->get_filename();
 	}
 
 	void set_texture(std::string const &filename);
-	void set_specular_map(std::string const &filename);
 
 	void select();
 
@@ -73,11 +73,7 @@ private:
 	renderer *renderer_ptr_;
 	D3DMATERIAL9 properties_;
 
-	std::string texture_name_;
-	boost::intrusive_ptr<IDirect3DTexture9> texture_ptr_;
-
-	std::string specular_map_name_;
-	boost::intrusive_ptr<IDirect3DTexture9> specular_map_ptr_;
+	std::auto_ptr<texture> texture_ptr_;
 };
 
 }

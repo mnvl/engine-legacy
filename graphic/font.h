@@ -5,7 +5,8 @@
 #include <boost/intrusive_ptr.hpp>
 #include <util/boost_com_intrusive_ptr.h>
 
-namespace graphic {
+namespace graphic
+{
 
 class renderer;
 

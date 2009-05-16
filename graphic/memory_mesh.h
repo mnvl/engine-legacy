@@ -56,13 +56,13 @@ public:
 
 private:
 	#pragma  pack(push, 1)
-	struct vertex_weights 
+	struct vertex_weights
 	{
 		math::vec<4, unsigned> joints;
 		math::vec<4> factors;
 	};
 	#pragma pack(pop)
-	
+
 	std::vector<vertex_t> vertices_;
 	std::vector<index_t> indices_;
 	std::vector<vertex_weights> weights_;

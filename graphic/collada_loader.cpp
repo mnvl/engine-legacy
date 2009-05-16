@@ -1382,14 +1382,16 @@ namespace collada_elements
 
 			if (diffuse_texture.size())
 			{
-				LOG_DEBUG("diffuse_texture = " << diffuse_texture);
+				LOG_DEBUG("texture = " << diffuse_texture);
 				material_ptr->set_texture(diffuse_texture);
 			}
 			else
 			{
-				LOG_DEBUG("no diffuse_texture");
+				LOG_DEBUG("no texture");
 			}
 
+			// NOT IMPLEMENTED
+			/*
 			if (specular_texture.size())
 			{
 				LOG_DEBUG("specular_texture = " << diffuse_texture);
@@ -1399,6 +1401,7 @@ namespace collada_elements
 			{
 				LOG_DEBUG("no specular_texture");
 			}
+			*/
 
 			return material_ptr.release();
 		}
