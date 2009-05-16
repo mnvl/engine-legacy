@@ -21,6 +21,11 @@ void memory_mesh::set_vertices_count(size_t count)
 	weights_.resize(count);
 }
 
+size_t memory_mesh::get_vertices_count()
+{
+	return vertices_.size();
+}
+
 void memory_mesh::set_indices_count(size_t count)
 {
 	indices_.resize(count);
@@ -110,8 +115,9 @@ void memory_mesh::transform_vertices(joint const *joint_ptr, std::vector<vertex_
 			pos += ((vertices_[i].position * bind_shape_matrix) *
 				inverted_bind_matrices[joint_index] * model_ptr_->joints[joint_index].matrix) *
 				factors.i[j];
-
 		}
+
+		result[i].position = pos;
 	}
 }
 

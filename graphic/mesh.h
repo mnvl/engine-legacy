@@ -33,6 +33,7 @@ public:
 	virtual model *get_model() const;
 
 	virtual void set_vertices_count(size_t count) = 0;
+	virtual size_t get_vertices_count() = 0;
 	virtual void set_indices_count(size_t count) = 0;
 	virtual void lock() = 0;
 	virtual void set_positions(math::vec<3> const *buffer) = 0;

@@ -38,6 +38,7 @@ public:
 	}
 
 	virtual void set_vertices_count(size_t count);
+	virtual size_t get_vertices_count();
 	virtual void set_indices_count(size_t count);
 	virtual void lock();
 	virtual void set_positions(math::vec<3> const *buffer);

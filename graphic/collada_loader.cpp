@@ -739,14 +739,32 @@ namespace collada_elements
 	};
 
 	class mesh_e: public sources_list_e {
+	public:
+		typedef std::set<std::pair<size_t, size_t> > position_index_to_vertex_index_type;
+
+		void check() {
+			if (!vertices_) throw std::logic_error("no <vertices> found");
+			if (triangles_.empty()) throw std::logic_error("no <triangles> found");
+		}
+
+		void build_mesh(mesh *mesh_ptr);
+
+		boost::ptr_vector<triangles_e> const &get_triangles() const
+		{
+			return triangles_;
+		}
+
+		position_index_to_vertex_index_type const &get_position_index_to_vertex_index_mapping()
+		{
+			return position_index_to_vertex_index_;
+		}
+
 	private:
 		boost::scoped_ptr<vertices_e> vertices_;
 		boost::ptr_vector<triangles_e> triangles_;
 
 		vertex_indexer vertex_indexer_;
-
-		typedef std::set<std::pair<size_t, size_t> > position_index_x_vertex_index_type;
-		position_index_x_vertex_index_type position_index_x_vertex_index_;
+		position_index_to_vertex_index_type position_index_to_vertex_index_;
 
 		void process_child(std::string const &child_name, std::string const &child_id, xercesc::DOMElement const *child_ptr) {
 			sources_list_e::process_child(child_name, child_id, child_ptr);
@@ -759,19 +777,6 @@ namespace collada_elements
 			{
 				triangles_.push_back(construct<triangles_e>(child_ptr));
 			}
-		}
-
-	public:
-		void check() {
-			if (!vertices_) throw std::logic_error("no <vertices> found");
-			if (triangles_.empty()) throw std::logic_error("no <triangles> found");
-		}
-
-		void build_mesh(mesh *mesh_ptr);
-
-		boost::ptr_vector<triangles_e> const &get_triangles() const
-		{
-			return triangles_;
 		}
 	};
 
@@ -920,6 +925,9 @@ namespace collada_elements
 
 		void build_joint_weights(mesh *mesh_ptr)
 		{
+			mesh_e *mesh_element_ptr = get_root()->get_geometries()->get_geometry_by_id(mesh_ptr->id)->get_mesh();
+			mesh_e::position_index_to_vertex_index_type const &position_index_to_vertex_index = mesh_element_ptr->get_position_index_to_vertex_index_mapping();
+
 			input_e const *joints_input = vertex_weights_->get_input("JOINT");
 			input_e const *weights_input = vertex_weights_->get_input("WEIGHT");
 
@@ -936,8 +944,8 @@ namespace collada_elements
 			std::vector<math::vec<4, unsigned> > joint_indices_buffer;
 			std::vector<math::vec<4> > joint_weights_buffer;
 
-			joint_indices_buffer.resize(vcount.size());
-			joint_weights_buffer.resize(vcount.size());
+			joint_indices_buffer.resize(mesh_ptr->get_vertices_count());
+			joint_weights_buffer.resize(mesh_ptr->get_vertices_count());
 
 			size_t position_index = 0;
 
@@ -975,9 +983,17 @@ namespace collada_elements
 					}
 				}
 
-				// TODO: for all vertices coresponding to this position
-				joint_indices_buffer[position_index] = joint_indices;
-				joint_weights_buffer[position_index] = joint_weights;
+				// for all vertices coresponding to this position
+				mesh_e::position_index_to_vertex_index_type::const_iterator it =
+					position_index_to_vertex_index.lower_bound(std::make_pair(position_index, 0));
+
+				while (it != position_index_to_vertex_index.end() && it->first == position_index)
+				{
+					joint_indices_buffer[it->second] = joint_indices;
+					joint_weights_buffer[it->second] = joint_weights;
+
+					it++;
+				}
 
 				position_index++;
 			}
@@ -1559,7 +1575,7 @@ namespace collada_elements
 
 				if (vertex_index.second)
 				{
-					position_index_x_vertex_index_.insert(std::make_pair(position_index, vertex_index.first));
+					position_index_to_vertex_index_.insert(std::make_pair(position_index, vertex_index.first));
 
 					positions_buffer.push_back(v.position);
 					normals_buffer.push_back(v.normal);
