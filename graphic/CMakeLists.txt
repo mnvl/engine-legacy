@@ -7,7 +7,6 @@ ADD_LIBRARY (graphic STATIC
 	material.cpp
 
     joint.h
-    joint_influence.h
     sampler.h
     sampler.cpp
     animation.h
