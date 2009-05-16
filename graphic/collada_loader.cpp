@@ -27,8 +27,6 @@ namespace collada_elements
 	using namespace util;
 	using namespace graphic;
 
-	typedef joint_influence::vertex_weight vertex_weight;
-
 	class mesh_e;
 	class library_visual_scenes_e;
 	class library_geometries_e;
@@ -694,9 +692,27 @@ namespace collada_elements
 	};
 
 	class vertex_indexer {
+	public:
+		struct vertex_t
+		{
+			math::vec<3> position;
+			math::vec<3> normal;
+			math::vec<2> texcoords;
+		};
+
+		std::pair<size_t, bool> choose_index(vertex_t const &v)
+		{
+			vertex_x_index_type::const_iterator it = vertex_x_index_.find(v);
+			if (it != vertex_x_index_.end()) return std::pair<size_t, bool>(it->second, false);
+
+			size_t index = vertex_x_index_.size();
+			vertex_x_index_.insert(std::make_pair(v, index));
+			return std::pair<size_t, bool>(index, true);
+		}
+
 	private:
 		struct vertex_less {
-			bool operator ()(mesh::vertex_t const &lhs, mesh::vertex_t const &rhs) {
+			bool operator ()(vertex_t const &lhs, vertex_t const &rhs) {
 				if ((lhs.position - rhs.position).length_sq() > math::EPSILON)
 				{
 					if (lhs.position <= rhs.position) return true;
@@ -718,18 +734,8 @@ namespace collada_elements
 			}
 		};
 
-		typedef std::map<mesh::vertex_t, size_t, vertex_less> vertex_x_index_type;
+		typedef std::map<vertex_t, size_t, vertex_less> vertex_x_index_type;
 		vertex_x_index_type vertex_x_index_;
-
-	public:
-		std::pair<size_t, bool> choose_index(mesh::vertex_t const &v) {
-			vertex_x_index_type::const_iterator it = vertex_x_index_.find(v);
-			if (it != vertex_x_index_.end()) return std::pair<size_t, bool>(it->second, false);
-
-			size_t index = vertex_x_index_.size();
-			vertex_x_index_.insert(std::make_pair(v, index));
-			return std::pair<size_t, bool>(index, true);
-		}
 	};
 
 	class mesh_e: public sources_list_e {
@@ -763,29 +769,6 @@ namespace collada_elements
 
 		void build_mesh(mesh *mesh_ptr);
 
-		void fix_position_indices(mesh *mesh_ptr)
-		{
-			for (mesh::influences_type::iterator mesh_it = mesh_ptr->influences.begin();
-				mesh_it != mesh_ptr->influences.end(); mesh_it++)
-			{
-				std::vector<vertex_weight> weights;
-				weights.swap(mesh_it->vertex_weights);
-
-				for (std::vector<vertex_weight>::const_iterator it = weights.begin(); it != weights.end(); it++)
-				{
-					position_index_x_vertex_index_type::const_iterator jt = position_index_x_vertex_index_.lower_bound(std::make_pair(it->vertex_index, 0));
-					
-					while (jt != position_index_x_vertex_index_.end() && jt->first == it->vertex_index)
-					{
-						joint_influence::vertex_weight dummy = *it;
-						dummy.vertex_index = jt->second;
-						mesh_it->vertex_weights.push_back(dummy);
-						jt++;
-					}
-				}
-			}
-		}
-
 		boost::ptr_vector<triangles_e> const &get_triangles() const
 		{
 			return triangles_;
@@ -818,17 +801,7 @@ namespace collada_elements
 			if (!mesh_ptr_) throw std::logic_error("<mesh> not found in <geometry>");
 		}
 
-		void build_mesh(mesh *mesh_ptr)
-		{
-			return mesh_ptr_->build_mesh(mesh_ptr);
-		}
-
-		void fix_position_indices(mesh *mesh_ptr)
-		{
-			return mesh_ptr_->fix_position_indices(mesh_ptr);
-		}
-
-		mesh_e const *get_mesh() const
+		mesh_e *get_mesh() const
 		{
 			return mesh_ptr_.get();
 		}
@@ -857,7 +830,7 @@ namespace collada_elements
 				mesh_ptr->id = it->get_id();
 				mesh_ptr->name = it->get_name();
 
-				it->build_mesh(mesh_ptr);
+				it->get_mesh()->build_mesh(mesh_ptr);
 			}
 		}
 
@@ -869,12 +842,6 @@ namespace collada_elements
 			}
 
 			throw std::logic_error("geometry id = " + id + " not found");
-		}
-
-		void fix_position_indices() {
-			for (boost::ptr_vector<geometry_e>::iterator it = geometries_.begin(); it != geometries_.end(); it++) {
-				it->fix_position_indices(get_model()->get_mesh_by_id(it->get_id()));
-			}
 		}
 	};
 
@@ -940,10 +907,13 @@ namespace collada_elements
 				joints_source->get(i, joint_name);
 				inverted_bind_matrices_source->get(i, inv_bind_matrix);
 
+				// TODO:
+				/*
 				joint_influence dummy;
 				dummy.joint_ptr = mesh_ptr->get_model()->get_joint_by_name(joint_name);
 				dummy.inverted_bind_matrix = inv_bind_matrix;
 				mesh_ptr->influences.push_back(dummy);
+				*/
 			}
 		}
 
@@ -962,48 +932,50 @@ namespace collada_elements
 
 			std::vector<size_t>::const_iterator v_get = v.begin();
 
-			typedef std::map<size_t, std::vector<joint_influence::vertex_weight> > weights_type;
-			weights_type weights;
+			std::vector<math::vec<4, unsigned> > joint_indices_buffer;
+			std::vector<math::vec<4> > joint_weights_buffer;
+
+			joint_indices_buffer.resize(vcount.size());
+			joint_weights_buffer.resize(vcount.size());
 
 			size_t position_index = 0;
 
 			for (std::vector<size_t>::const_iterator it = vcount.begin(); it != vcount.end(); it++)
 			{
+				math::vec<4, unsigned> joint_indices(0, 0, 0, 0);
+				math::vec<4> joint_weights(0, 0, 0, 0);
+
+				if (*it > 4) throw std::runtime_error("joints influenting more than 4 positions are not supported");
+
 				for (size_t i = 0; i < *it; i++)
 				{
-					size_t joint_index;
-					float weight;
-
 					for (size_t offset = 0; offset < stride; offset++)
 					{
 						if (offset == joints_input->get_offset())
 						{
-							joint_index = *v_get;
+							joint_indices.i[i] = *v_get;
 						}
 
 						if (offset == weights_input->get_offset())
 						{
-							weights_source->get(*v_get, weight);
+							weights_source->get(*v_get, joint_weights.i[i]);
 						}
 
 						v_get++;
 					}
-
-					joint_influence::vertex_weight dummy;
-					dummy.vertex_index = position_index;
-					dummy.weight = weight;
-					weights[joint_index].push_back(dummy);
 				}
+
+				// TODO: for all vertices coresponding to this position
+				joint_indices_buffer[position_index] = joint_indices;
+				joint_weights_buffer[position_index] = joint_weights;
 
 				position_index++;
 			}
 
-			for (weights_type::iterator it = weights.begin(); it != weights.end(); it++) {
-				std::string joint_name;
-				joints_source->get(it->first, joint_name);
-
-				mesh_ptr->get_joint_influence_by_name(joint_name)->vertex_weights.swap(it->second);
-			}
+			mesh_ptr->lock();
+			mesh_ptr->set_joint_indices(&joint_indices_buffer[0]);
+			mesh_ptr->set_joint_weights(&joint_weights_buffer[0]);
+			mesh_ptr->unlock();
 		}
 	};
 
@@ -1519,8 +1491,10 @@ namespace collada_elements
 		input_e const *position_input = vertices_->get_input("POSITION");
 		source_e const *position_source = get_source(position_input->get_source().substr(1));
 
-		std::vector<mesh::vertex_t> vertex_buffer;
-		std::vector<mesh::index_t> index_buffer;
+		std::vector<math::vec<3> > positions_buffer;
+		std::vector<math::vec<3> > normals_buffer;
+		std::vector<math::vec<2> > texcoords_buffer;
+		std::vector<unsigned> index_buffer;
 
 		size_t first_index_offset = 0;
 
@@ -1552,7 +1526,7 @@ namespace collada_elements
 
 			for (size_t i = 0, n = triangles_ptr->get_count() * 3; i < n; i++) {
 				size_t position_index;
-				mesh::vertex_t v;
+				vertex_indexer::vertex_t v;
 
 				for (size_t j = 0; j < stride; j++) {
 					if (j == position_input->get_offset()) {
@@ -1576,7 +1550,11 @@ namespace collada_elements
 				if (vertex_index.second)
 				{
 					position_index_x_vertex_index_.insert(std::make_pair(position_index, vertex_index.first));
-					vertex_buffer.push_back(v);
+
+					positions_buffer.push_back(v.position);
+					normals_buffer.push_back(v.normal);
+					texcoords_buffer.push_back(v.texcoords);
+
 					dummy.vertices_count++;
 				}
 
@@ -1593,8 +1571,14 @@ namespace collada_elements
 			first_index_offset += triangles_ptr->get_count() * 3;
 		}
 
-		mesh_ptr->set_vertex_buffer(&vertex_buffer[0], vertex_buffer.size());
-		mesh_ptr->set_index_buffer(&index_buffer[0], index_buffer.size());
+		mesh_ptr->set_vertices_count(positions_buffer.size());
+		mesh_ptr->set_indices_count(index_buffer.size());
+		mesh_ptr->lock();
+		mesh_ptr->set_positions(&positions_buffer[0]);
+		mesh_ptr->set_normals(&normals_buffer[0]);
+		mesh_ptr->set_texcoords(&texcoords_buffer[0]);
+		mesh_ptr->set_face_indices(&index_buffer[0]);
+		mesh_ptr->unlock();
 	}
 
 	void node_e::build_hierarchy(joint *parent_ptr)
@@ -1770,7 +1754,6 @@ namespace collada_elements
 				if (materials_) materials_->build_materials();
 				visual_scenes_->build_hierarchy();
 				if (controllers_) controllers_->build_joint_influences();
-				geometries_->fix_position_indices();
 				if (animations_) animations_->build_animations();
 			}
 			catch(...)

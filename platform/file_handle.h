@@ -8,6 +8,8 @@
 #include <string>
 #include <stdexcept>
 
+#pragma warning(disable: 4996)
+
 namespace platform {
 
 class file_handle {

@@ -1,4 +1,5 @@
 
+#include <boost/numeric/conversion/cast.hpp>
 #include <graphic/renderer.h>
 #include <graphic/memory_model.h>
 #include <graphic/memory_mesh.h>
@@ -14,14 +15,71 @@ memory_mesh::~memory_mesh()
 {
 }
 
-void memory_mesh::set_vertex_buffer(vertex_t *vertices, size_t count)
+void memory_mesh::set_vertices_count(size_t count)
 {
-	vertices_.assign(vertices, vertices + count);
+	vertices_.resize(count);
+	weights_.resize(count);
 }
 
-void memory_mesh::set_index_buffer(index_t *indices, size_t count)
+void memory_mesh::set_indices_count(size_t count)
 {
-	indices_.assign(indices, indices + count);
+	indices_.resize(count);
+}
+
+void memory_mesh::lock()
+{
+}
+
+void memory_mesh::set_positions(math::vec<3> const *buffer)
+{
+	for (std::vector<vertex_t>::iterator it = vertices_.begin(); it != vertices_.end(); it++)
+	{
+		it->position = *buffer++;
+	}
+}
+
+void memory_mesh::set_normals(math::vec<3> const *buffer)
+{
+	for (std::vector<vertex_t>::iterator it = vertices_.begin(); it != vertices_.end(); it++)
+	{
+		it->normal = *buffer++;
+	}
+}
+
+void memory_mesh::set_texcoords(math::vec<2> const *buffer)
+{
+	for (std::vector<vertex_t>::iterator it = vertices_.begin(); it != vertices_.end(); it++)
+	{
+		it->texcoords = *buffer++;
+	}
+}
+
+void memory_mesh::set_joint_indices(math::vec<4, unsigned> const *buffer)
+{
+	for (std::vector<vertex_weights>::iterator it = weights_.begin(); it != weights_.end(); it++)
+	{
+		it->joints = *buffer++;
+	}
+}
+
+void memory_mesh::set_joint_weights(math::vec<4> const *buffer)
+{
+	for (std::vector<vertex_weights>::iterator it = weights_.begin(); it != weights_.end(); it++)
+	{
+		it->factors = *buffer++;
+	}
+}
+
+void memory_mesh::set_face_indices(unsigned *buffer)
+{
+	for (std::vector<index_t>::iterator it = indices_.begin(); it != indices_.end(); it++)
+	{
+		*it = boost::numeric_cast<index_t>(*buffer++);
+	}
+}
+
+void memory_mesh::unlock()
+{
 }
 
 void memory_mesh::transform_vertices(joint const *joint_ptr, std::vector<vertex_t> &result) const
@@ -40,17 +98,18 @@ void memory_mesh::transform_vertices(joint const *joint_ptr, std::vector<vertex_
 
 	for (size_t i = 0; i < vertices_.size(); i++)
 	{
-		result[i].position.set(0, 0, 0);
-	}
+		math::vec<3> pos(0, 0, 0);
 
-	for (influences_type::const_iterator it = influences.begin(); it != influences.end(); it++)
-	{
-		for (joint_influence::vertex_weights_type::const_iterator jt = it->vertex_weights.begin(); jt != it->vertex_weights.end(); jt++)
+		math::vec<4, unsigned> const &indices = weights_[i].joints;
+		math::vec<4> const &factors = weights_[i].factors;
+
+		for (size_t j = 0; j < 4; j++)
 		{
-			result[jt->vertex_index].position +=
-				((vertices_[jt->vertex_index].position * bind_shape_matrix) *
-				it->inverted_bind_matrix * it->joint_ptr->matrix) *
-				jt->weight;
+			// TODO:
+			pos += ((vertices_[i].position * bind_shape_matrix) *
+				/* it->inverted_bind_matrix * */ model_ptr_->joints[indices.i[j]].matrix) *
+				factors.i[j];
+
 		}
 	}
 }
