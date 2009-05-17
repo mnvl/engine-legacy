@@ -12,7 +12,7 @@ public:
 	HWND get_handle() const throw() { return handle_; }
 
 	void create(char const *title);
-	void run_message_loop();
+	bool run_message_loop();
 	LRESULT process_message(UINT uMsg, WPARAM wParam, LPARAM lParam);
 
 private:

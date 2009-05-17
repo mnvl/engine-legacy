@@ -46,11 +46,16 @@ void window::create(char const *title) {
 	if(!handle_) throw exception::winapi_error();
 }
 
-void window::run_message_loop() {
+bool window::run_message_loop() {
 	MSG msg;
-	while (PeekMessage(&msg, 0, 0, 0, PM_REMOVE)) {
+
+	while (PeekMessage(&msg, 0, 0, 0, PM_REMOVE))
+	{
+		if(msg.message == WM_QUIT) return false;
 		DispatchMessage(&msg);
 	}
+
+	return true;
 }
 
 LRESULT window::dispatch_message(HWND hWnd,UINT uMsg,WPARAM wParam,LPARAM lParam) {
@@ -70,6 +75,12 @@ LRESULT window::dispatch_message(HWND hWnd,UINT uMsg,WPARAM wParam,LPARAM lParam
 }
 
 LRESULT window::process_message(UINT uMsg, WPARAM wParam, LPARAM lParam) {
+	switch (uMsg) {
+	case WM_CLOSE:
+		PostQuitMessage(0);
+		break;
+	}
+
 	return DefWindowProc(handle_, uMsg, wParam, lParam);
 }
 

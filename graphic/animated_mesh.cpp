@@ -37,9 +37,11 @@ void animated_mesh::draw(joint *joint_ptr)
     for (joint_index_transform_type::const_iterator it = joint_index_transform.begin();
          it != joint_index_transform.end(); it++)
     {
-        math::matrix<4,4> m = bind_shape_matrix * inverted_bind_matrices[*it] * get_model()->joints[*it].matrix;
-        m.transpose_inplace();
-        joint_matrix_array.push_back(m);
+		math::matrix<4,4> t = bind_shape_matrix *
+			inverted_bind_matrices[*it] *
+			get_model()->joints[*it].matrix;
+
+        joint_matrix_array.push_back(t);
     }
 
     hr = shader_ptr->get()->SetMatrixArray("joint_matrix_array", (D3DXMATRIX const *) &joint_matrix_array[0], joint_matrix_array.size());

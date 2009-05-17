@@ -10,8 +10,8 @@
 
 // REMOVE:
 #include <graphic/collada_loader.h>
-#include <graphic/memory_model.h>
 #include <graphic/animated_model.h>
+#include <graphic/memory_model.h>
 #include <graphic/camera.h>
 
 INT WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpstrCmdLine, INT nShowCmd)
@@ -26,7 +26,7 @@ INT WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpstrCmdLine, INT
 
 		platform::window main_window("engine");
 		graphic::renderer renderer(&main_window);
-		graphic::memory_model model(&renderer);
+		graphic::animated_model model(&renderer);
 		graphic::collada_loader("z1.dae", &model, &renderer).load();
 
 		graphic::camera cam;
@@ -34,12 +34,10 @@ INT WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpstrCmdLine, INT
 
         model.set_animation_time(0);
 
-		while (true)
+		while (main_window.run_message_loop())
 		{
-			main_window.run_message_loop();
-
 			renderer.begin_frame();
-			cam.set_position(math::vec<3>(500 * cos(angle), 500 * sin(angle), 0), math::vec<3>(0, 0, 0), math::vec<3>(0, 0, 1));
+			cam.set_position(math::vec<3>(500 * cos(angle), 500 * sin(angle), 250), math::vec<3>(0, 0, 250), math::vec<3>(0, 0, 250));
 			renderer.select(cam);
 
 			model.draw();

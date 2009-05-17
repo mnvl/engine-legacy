@@ -24,7 +24,7 @@ public:
 
         ID3DXEffect *effect_ptr;
         ID3DXBuffer *compilation_errors_ptr;
-        hr = D3DXCreateEffectFromFile(renderer_ptr_->get_device(), filename.c_str(), 0, 0, D3DXSHADER_DEBUG, 0,
+        hr = D3DXCreateEffectFromFile(renderer_ptr_->get_device(), filename.c_str(), 0, 0, D3DXSHADER_DEBUG | D3DXSHADER_SKIPOPTIMIZATION, 0,
             &effect_ptr, &compilation_errors_ptr);
 
         if (compilation_errors_ptr && compilation_errors_ptr->GetBufferSize() > 0)

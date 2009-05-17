@@ -190,7 +190,6 @@ void basic_static_mesh<T>::draw_triangles_list()
 	for (triangles_list_type::const_iterator it = triangles_list.begin();
 		it != triangles_list.end(); it++)
 	{
-
 		if (it->material_ptr)
 		{
 			it->material_ptr->select();

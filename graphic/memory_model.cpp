@@ -19,7 +19,7 @@ mesh *memory_model::create_mesh()
 
 void memory_model::draw()
 {
-	if (animations.size()) draw_animated();
+	if (true || animations.size()) draw_animated();
 	else draw_static();
 }
 
