@@ -13,7 +13,7 @@ class renderer;
 class memory_mesh: public mesh {
 public:
     typedef vertex_pnt vertex_t;
-	typedef boost::uint16_t index_t;
+	typedef boost::uint32_t index_t;
 
 	memory_mesh(memory_model *m);
 	virtual ~memory_mesh();
@@ -34,9 +34,9 @@ public:
 	virtual void lock();
 	virtual void set_positions(math::vec<3> const *buffer);
 	virtual void set_normals(math::vec<3> const *buffer);
-	virtual void set_texcoords(math::vec<2> const *buffer);
 	virtual void set_joint_indices(math::vec<8, unsigned> const *buffer);
 	virtual void set_joint_weights(math::vec<8> const *buffer);
+	virtual void set_texcoords(math::vec<2> const *buffer);
 	virtual void set_face_indices(unsigned *buffer);
 	virtual void unlock();
 

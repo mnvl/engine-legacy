@@ -38,9 +38,9 @@ public:
 	virtual void lock() = 0;
 	virtual void set_positions(math::vec<3> const *buffer) = 0;
 	virtual void set_normals(math::vec<3> const *buffer) = 0;
-	virtual void set_texcoords(math::vec<2> const *buffer) = 0;
 	virtual void set_joint_indices(math::vec<8, unsigned> const *buffer) = 0;
 	virtual void set_joint_weights(math::vec<8> const *buffer) = 0;
+	virtual void set_texcoords(math::vec<2> const *buffer) = 0;
 	virtual void set_face_indices(unsigned *buffer) = 0;
 	virtual void unlock() = 0;
 

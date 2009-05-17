@@ -51,14 +51,6 @@ void memory_mesh::set_normals(math::vec<3> const *buffer)
 	}
 }
 
-void memory_mesh::set_texcoords(math::vec<2> const *buffer)
-{
-	for (std::vector<vertex_t>::iterator it = vertices_.begin(); it != vertices_.end(); it++)
-	{
-		it->texcoords = *buffer++;
-	}
-}
-
 void memory_mesh::set_joint_indices(math::vec<8, unsigned> const *buffer)
 {
 	for (std::vector<vertex_weights>::iterator it = weights_.begin(); it != weights_.end(); it++)
@@ -72,6 +64,14 @@ void memory_mesh::set_joint_weights(math::vec<8> const *buffer)
 	for (std::vector<vertex_weights>::iterator it = weights_.begin(); it != weights_.end(); it++)
 	{
 		it->factors = *buffer++;
+	}
+}
+
+void memory_mesh::set_texcoords(math::vec<2> const *buffer)
+{
+	for (std::vector<vertex_t>::iterator it = vertices_.begin(); it != vertices_.end(); it++)
+	{
+		it->texcoords = *buffer++;
 	}
 }
 
@@ -144,7 +144,7 @@ void memory_mesh::draw_static(joint *joint_ptr) const
 		device_ptr->SetTransform(D3DTS_WORLDMATRIX(0), (D3DMATRIX const *) joint_ptr->matrix.ij);
 
 		device_ptr->DrawIndexedPrimitiveUP(D3DPT_TRIANGLELIST, it->minimal_vertex_index, it->vertices_count,
-			it->triangles_count, &indices_[it->first_index_offset], D3DFMT_INDEX16, &vertices_[0], sizeof(vertex_t));
+			it->triangles_count, &indices_[it->first_index_offset], D3DFMT_INDEX32, &vertices_[0], sizeof(vertex_t));
 	}
 }
 
@@ -174,7 +174,7 @@ void memory_mesh::draw_animated(joint *joint_ptr) const
 		device_ptr->SetTransform(D3DTS_WORLDMATRIX(0), (D3DMATRIX const *) joint_ptr->matrix.ij);
 
 		device_ptr->DrawIndexedPrimitiveUP(D3DPT_TRIANGLELIST, it->minimal_vertex_index, it->vertices_count,
-			it->triangles_count, &indices_[it->first_index_offset], D3DFMT_INDEX16, &transformed_vertices[0], sizeof(vertex_t));
+			it->triangles_count, &indices_[it->first_index_offset], D3DFMT_INDEX32, &transformed_vertices[0], sizeof(vertex_t));
 	}
 }
 

@@ -25,7 +25,7 @@ INT WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpstrCmdLine, INT
 
 		platform::window main_window("engine");
 		graphic::renderer renderer(&main_window);
-		graphic::memory_model model(&renderer);
+		graphic::static_model model(&renderer);
 		graphic::collada_loader("z1.dae", &model, &renderer).load();
 
 		graphic::camera cam;

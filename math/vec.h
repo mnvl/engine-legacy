@@ -603,6 +603,18 @@ public:
 	}
 
 	// векторное сложение, вычетание, умножение, деление
+    vec_type &operator =(const vec_type &v) {
+        std::copy(v.i, v.i + arity, i);
+        return *this;
+    }
+
+    template<class T>
+    vec_type &operator =(const vec<arity, T> &v) {
+        for (size_t index = 0; index < arity; index++)
+            i[index] = (scalar_type) v.i[index];
+        returen *this;
+    }
+
 	vec_type &operator +=(const vec_type &v) {
 		add(*this, *this, v);
 		return *this;

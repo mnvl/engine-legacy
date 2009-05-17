@@ -21,8 +21,8 @@ struct vertex_pnjwt
 {
 	math::vec<3> position;
 	math::vec<3> normal;
-	math::vec<4> joints;
-	math::vec<4, boost::uint8_t> weights;
+	math::vec<8> joints;
+	math::vec<8, boost::uint8_t> weights;
 	math::vec<2> texcoords;
 };
 #pragma pack(pop)
