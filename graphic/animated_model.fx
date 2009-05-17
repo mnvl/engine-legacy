@@ -44,12 +44,10 @@ VS_OUTPUT VS(const VS_INPUT i, uniform int count)
 			position += mul(i.position, joint_matrix_array[indices1[index]]) * weights1[index];
 		}
 
-		count = count - 4;
-
 		int indices2[4] = (int[4]) i.joints2;
 		float weights2[4] = (float[4]) i.weights2;
 
-		for (int index = 0;  index < count; index++)
+		for (int index = 0;  index < count - 4; index++)
 	    {
 			position += mul(i.position, joint_matrix_array[indices2[index]]) * weights2[index];
 		}
