@@ -1,10 +1,8 @@
 
-float4 MaterialDiffuse : MATERIALDIFFUSE = {0.8f, 0.8f, 0.8f, 1.0f};
-
 static const int MAX_MATRICES = 26;
 
-float4x3    mWorldMatrixArray[MAX_MATRICES] : WORLDMATRIXARRAY;
 float4x4    mViewProj : VIEWPROJECTION;
+float4x3    joint_matrix_array[MAX_MATRICES] : WORLDMATRIXARRAY;
 
 struct VS_INPUT
 {
@@ -20,7 +18,6 @@ struct VS_INPUT
 struct VS_OUTPUT
 {
     float4  Pos     : POSITION;
-    float4  Diffuse : COLOR;
     float2  Tex0    : TEXCOORD0;
 };
 
@@ -46,14 +43,14 @@ VS_OUTPUT VShade(VS_INPUT i, uniform int joints_count_1, uniform int joints_coun
     // and accumulate the weights to calculate the last weight
     for (int index = 0;  index < joints_count_1; index++)
     {
-        Pos += mul(i.Pos, mWorldMatrixArray[IndexArray1[index]]) * BlendWeightsArray1[index];
-        Normal += mul(i.Normal, mWorldMatrixArray[IndexArray1[index]]) * BlendWeightsArray1[index];
+        Pos += mul(i.Pos, joint_matrix_array[IndexArray1[index]]) * BlendWeightsArray1[index];
+        Normal += mul(i.Normal, joint_matrix_array[IndexArray1[index]]) * BlendWeightsArray1[index];
     }
 
     for (int index = 0;  index < joints_count_2; index++)
     {
-        Pos += mul(i.Pos, mWorldMatrixArray[IndexArray2[index]]) * BlendWeightsArray2[index];
-        Normal += mul(i.Normal, mWorldMatrixArray[IndexArray2[index]]) * BlendWeightsArray2[index];
+        Pos += mul(i.Pos, joint_matrix_array[IndexArray2[index]]) * BlendWeightsArray2[index];
+        Normal += mul(i.Normal, joint_matrix_array[IndexArray2[index]]) * BlendWeightsArray2[index];
     }
     
     // transform position from world space into view and then projection space
@@ -61,10 +58,6 @@ VS_OUTPUT VShade(VS_INPUT i, uniform int joints_count_1, uniform int joints_coun
 
     // normalize normals
     Normal = normalize(Normal);
-
-    // Shade (Ambient + etc.)
-    o.Diffuse.xyz = MaterialDiffuse.xyz;
-    o.Diffuse.w = 1.0f;
 
     // copy the input texture coordinate through
     o.Tex0  = i.Tex0.xy;
@@ -82,67 +75,13 @@ VertexShader vsArray[8] = { compile vs_2_0 VShade(1, 0),
                             compile vs_2_0 VShade(4, 4),
                           };
 
-technique t1
+
+int CurNumBones = 8;
+
+technique t0
 {
     pass p0
     {
-        VertexShader = (vsArray[0]);
+        VertexShader = (vsArray[CurNumBones]);
     }
 }
-
-technique t2
-{
-    pass p0
-    {
-        VertexShader = (vsArray[1]);
-    }
-}
-
-technique t3
-{
-    pass p0
-    {
-        VertexShader = (vsArray[2]);
-    }
-}
-
-technique t4
-{
-    pass p0
-    {
-        VertexShader = (vsArray[3]);
-    }
-}
-
-technique t5
-{
-    pass p0
-    {
-        VertexShader = (vsArray[4]);
-    }
-}
-
-technique t6
-{
-    pass p0
-    {
-        VertexShader = (vsArray[5]);
-    }
-}
-
-technique t7
-{
-    pass p0
-    {
-        VertexShader = (vsArray[6]);
-    }
-}
-
-technique t8
-{
-    pass p0
-    {
-        VertexShader = (vsArray[7]);
-    }
-}
-
