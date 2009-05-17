@@ -36,6 +36,8 @@ public:
 	virtual joint *create_joint();
 	virtual mesh *create_mesh() = 0;
 
+    virtual void draw();
+
 protected:
 	renderer *renderer_ptr_;
 };

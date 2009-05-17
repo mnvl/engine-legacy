@@ -63,4 +63,15 @@ material *model::get_material_by_name(std::string const &name)
 	throw std::runtime_error("material with name = " + name + " not found");
 }
 
+void model::draw()
+{
+	for (joints_type::iterator it = joints.begin(); it != joints.end(); it++)
+	{
+		if (it->mesh_ptr)
+		{
+			((memory_mesh *) it->mesh_ptr)->draw_static(&*it);
+		}
+	}
+}
+
 }

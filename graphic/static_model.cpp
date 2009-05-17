@@ -14,16 +14,11 @@ static_model::~static_model()
 {
 }
 
-void static_model::build_from_memory_model(memory_model *model_ptr)
+mesh *static_model::create_mesh()
 {
-}
-
-void static_model::draw()
-{
-	for (meshes_type::iterator it = meshes.begin(); it != meshes.end(); it++)
-	{
-		it->draw();
-	}
+	std::auto_ptr<static_mesh> mesh_ptr(new static_mesh(this));
+	meshes.push_back(mesh_ptr);
+	return &meshes.back();
 }
 
 }

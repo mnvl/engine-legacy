@@ -20,7 +20,7 @@ public:
 	~basic_static_mesh();
 
 	virtual static_model *get_model();
-	virtual void draw();
+	virtual void draw(joint *joint_ptr);
 
 	virtual void set_vertices_count(size_t count);
 	virtual size_t get_vertices_count();

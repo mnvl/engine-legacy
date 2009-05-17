@@ -12,7 +12,8 @@ public:
 	static_model(renderer *renderer_ptr);
 	~static_model();
 
-	void build_from_memory_model(memory_model *model_ptr);
+	mesh *create_mesh();
+
 	void draw();
 };
 

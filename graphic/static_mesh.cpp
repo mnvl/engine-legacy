@@ -1,5 +1,6 @@
 
 #include <exception/directx_error.h>
+#include <graphic/renderer.h>
 #include <graphic/static_model.h>
 #include <graphic/static_mesh.h>
 
@@ -29,17 +30,41 @@ static_model *basic_static_mesh<T>::get_model()
 }
 
 template<class T>
-void basic_static_mesh<T>::draw()
+void basic_static_mesh<T>::draw(joint *joint_ptr)
 {
+    renderer *renderer_ptr = get_model()->get_renderer();
+    resource_manager *resource_manager_ptr = renderer_ptr->get_resource_manager();
+	IDirect3DDevice9 *device_ptr = renderer_ptr->get_device();
+
+	device_ptr->SetVertexDeclaration(resource_manager_ptr->get_vertex_decl<vertex_t>());
+
+	for (triangles_list_type::const_iterator it = triangles_list.begin();
+		it != triangles_list.end(); it++)
+	{
+
+		if (it->material_ptr)
+		{
+			it->material_ptr->select();
+		}
+		else
+		{
+			resource_manager_ptr->get_default_material()->select();
+		}
+
+		device_ptr->SetTransform(D3DTS_WORLDMATRIX(0), (D3DMATRIX const *) joint_ptr->matrix.ij);
+
+		device_ptr->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, it->minimal_vertex_index, it->vertices_count,
+			it->first_index_offset, it->triangles_count);
+	}
 }
 
 template<class T>
 void basic_static_mesh<T>::set_vertices_count(size_t count)
 {
-    IDirect3DVertexBuffer *vb;
-    HRESULT hr = get_model()->get_device()->CreateVertexBuffer(count * sizeof(vertex_t), 0, 0, D3DPOOL_MANAGED, &vb, 0);
+    IDirect3DVertexBuffer9 *vb;
+    HRESULT hr = get_model()->get_renderer()->get_device()->CreateVertexBuffer(count * sizeof(vertex_t), 0, 0, D3DPOOL_MANAGED, &vb, 0);
     if (FAILED(hr)) throw exception::directx_error(hr);
-    vertex_buffer_ptr_.reset(vb);
+    vertex_buffer_.reset(vb);
     vb->Release();
 
     vertices_count_ = count;
@@ -54,10 +79,10 @@ size_t basic_static_mesh<T>::get_vertices_count()
 template<class T>
 void basic_static_mesh<T>::set_indices_count(size_t count)
 {
-    IDirect3DIndexBuffer *vb;
-    HRESULT hr = get_model()->get_device()->CreateIndexBuffer(count * sizeof(index_t), 0, D3DFMT_INDEX32, D3DPOOL_MANAGED, &ib, 0);
+    IDirect3DIndexBuffer9 *ib;
+    HRESULT hr = get_model()->get_renderer()->get_device()->CreateIndexBuffer(count * sizeof(index_t), 0, D3DFMT_INDEX32, D3DPOOL_MANAGED, &ib, 0);
     if (FAILED(hr)) throw exception::directx_error(hr);
-    index_buffer_ptr_.reset(vb);
+    index_buffer_.reset(ib);
     ib->Release();
 
     indices_count_ = count;
@@ -68,10 +93,10 @@ void basic_static_mesh<T>::lock()
 {
     HRESULT hr;
 
-    hr = vertex_buffer_ptr_->Lock(0, 0, &vertex_buffer_locked_, 0);
+    hr = vertex_buffer_->Lock(0, 0, (void **) &vertex_buffer_locked_, 0);
     if (FAILED(hr)) throw exception::directx_error(hr);
 
-    hr = index_buffer_ptr_->Lock(0, 0, &index_buffer_locked_, 0);
+    hr = index_buffer_->Lock(0, 0, (void **) &index_buffer_locked_, 0);
     if (FAILED(hr)) throw exception::directx_error(hr);
 }
 
@@ -93,7 +118,7 @@ void basic_static_mesh<T>::set_normals(math::vec<3> const *buffer)
 
     for (size_t i = 0; i < vertices_count_; i++, p++, buffer++)
     {
-        p->normals = *buffer;
+        p->normal = *buffer;
     }
 }
 
@@ -147,7 +172,7 @@ void basic_static_mesh<T>::set_face_indices(unsigned *buffer)
 {
     index_t *p = index_buffer_locked_;
 
-    for (size_t i = 0; i < indices_count; i++, p++, buffer++)
+    for (size_t i = 0; i < indices_count_; i++, p++, buffer++)
     {
         *p = *buffer;
     }
@@ -158,11 +183,11 @@ void basic_static_mesh<T>::unlock()
 {
     HRESULT hr;
 
-    hr = vertex_buffer_ptr_->Unlock();
+    hr = vertex_buffer_->Unlock();
     if (FAILED(hr)) throw exception::directx_error(hr);
     vertex_buffer_locked_ = 0;
 
-    hr = index_buffer_ptr->Unlock();
+    hr = index_buffer_->Unlock();
     if (FAILED(hr)) throw exception::directx_error(hr);
     index_buffer_locked_ = 0;
 }

@@ -44,7 +44,7 @@ public:
 	virtual void set_face_indices(unsigned *buffer) = 0;
 	virtual void unlock() = 0;
 
-	virtual void draw();
+	virtual void draw(joint *joint_ptr);
 
 protected:
 	model *model_ptr_;

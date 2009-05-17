@@ -588,7 +588,7 @@ public:
 	scalar_type i[arity];
 
     void null() {
-        std::fill(i, i+arity, 0);
+        std::fill(i, i+arity, scalar_type(0));
     }
 
 	// скалярное умножение, деление
@@ -612,7 +612,7 @@ public:
     vec_type &operator =(const vec<arity, T> &v) {
         for (size_t index = 0; index < arity; index++)
             i[index] = (scalar_type) v.i[index];
-        returen *this;
+        return *this;
     }
 
 	vec_type &operator +=(const vec_type &v) {

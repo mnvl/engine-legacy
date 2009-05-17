@@ -18,7 +18,7 @@ model *mesh::get_model() const
 	return model_ptr_;
 }
 
-void mesh::draw()
+void mesh::draw(joint *joint_ptr)
 {
 }
 
