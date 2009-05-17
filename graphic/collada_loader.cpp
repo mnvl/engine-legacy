@@ -901,6 +901,12 @@ namespace collada_elements
 		{
 			mesh_ptr->bind_shape_matrix = bind_shape_matrix_;
 
+            {
+                math::matrix<4,4> t;
+                t.identity();
+                mesh_ptr->inverted_bind_matrices.resize(get_model()->joints.size(), t);
+            }
+
 			source_e const *joints_source = get_source(joints_->get_input("JOINT")->get_source().substr(1));
 			source_e const *inverted_bind_matrices_source = get_source(joints_->get_input("INV_BIND_MATRIX")->get_source().substr(1));
 
@@ -913,12 +919,6 @@ namespace collada_elements
 				inverted_bind_matrices_source->get(i, inv_bind_matrix);
 
 				size_t joint_index = mesh_ptr->get_model()->get_joint_by_name(joint_name)->index;
-
-				if (mesh_ptr->inverted_bind_matrices.size() <= joint_index)
-				{
-					mesh_ptr->inverted_bind_matrices.resize(joint_index + 1);
-				}
-
 				mesh_ptr->inverted_bind_matrices[joint_index] = inv_bind_matrix;
 			}
 		}
@@ -949,13 +949,13 @@ namespace collada_elements
 
 			size_t position_index = 0;
 
-			std::vector<unsigned> joint_index_transform(joints_source->get_size());
+			mesh_ptr->joint_index_transform.resize(joints_source->get_size());
 
 			for (size_t i = 0; i < joints_source->get_size(); i++)
 			{
 				std::string joint_name;
 				joints_source->get(i, joint_name);
-				joint_index_transform[i] = mesh_ptr->get_model()->get_joint_by_name(joint_name)->index;
+				mesh_ptr->joint_index_transform[i] = mesh_ptr->get_model()->get_joint_by_name(joint_name)->index;
 			}
 
 			for (std::vector<size_t>::const_iterator it = vcount.begin(); it != vcount.end(); it++)
@@ -975,7 +975,7 @@ namespace collada_elements
 					{
 						if (offset == joints_input->get_offset())
 						{
-							index = joint_index_transform.at(*v_get);
+							index = *v_get;
 						}
 
 						if (offset == weights_input->get_offset())
@@ -990,7 +990,7 @@ namespace collada_elements
                     {
                         if (j > 7)
                         {
-                            throw std::logic_error("joints influenting more than 4 positions not supported (in mesh id = "
+                            throw std::logic_error("joints influenting more than 8 positions not supported (in mesh id = "
                                 + mesh_ptr->id + ")");
                         }
 

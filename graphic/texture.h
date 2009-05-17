@@ -21,11 +21,14 @@ public:
 	{
 		filename_ = filename;
 
-		IDirect3DTexture9 *texture_ptr;
-		HRESULT hr = D3DXCreateTextureFromFile(renderer_ptr_->get_device(), filename.c_str(), &texture_ptr);
-		if (FAILED(hr)) throw exception::directx_error(hr);
-		texture_ptr_.reset(texture_ptr);
-		texture_ptr->Release();
+        if (renderer_ptr_)
+        {
+            IDirect3DTexture9 *texture_ptr;
+            HRESULT hr = D3DXCreateTextureFromFile(renderer_ptr_->get_device(), filename.c_str(), &texture_ptr);
+            if (FAILED(hr)) throw exception::directx_error(hr);
+            texture_ptr_.reset(texture_ptr);
+            texture_ptr->Release();
+        }
 	}
 
 	std::string const &get_filename() const

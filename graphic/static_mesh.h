@@ -16,10 +16,10 @@ public:
 	typedef T vertex_t;
 	typedef boost::uint32_t index_t;
 
-	basic_static_mesh(static_model *model_ptr);
+	basic_static_mesh(model *model_ptr);
 	~basic_static_mesh();
 
-	virtual static_model *get_model();
+	static_model *get_model();
 	virtual void draw(joint *joint_ptr);
 
 	virtual void set_vertices_count(size_t count);
@@ -34,7 +34,7 @@ public:
 	virtual void set_face_indices(unsigned *buffer);
 	virtual void unlock();
 
-private:
+protected:
     size_t vertices_count_;
 	boost::intrusive_ptr<IDirect3DVertexBuffer9> vertex_buffer_;
     vertex_t *vertex_buffer_locked_;
@@ -42,6 +42,8 @@ private:
     size_t indices_count_;
 	boost::intrusive_ptr<IDirect3DIndexBuffer9> index_buffer_;
     index_t *index_buffer_locked_;
+
+    void draw_triangles_list();
 };
 
 typedef basic_static_mesh<> static_mesh;

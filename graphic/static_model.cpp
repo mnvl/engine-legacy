@@ -3,7 +3,8 @@
 #include <exception/directx_error.h>
 #include <graphic/static_model.h>
 
-namespace graphic {
+namespace graphic
+{
 
 static_model::static_model(renderer *renderer_ptr):
 model(renderer_ptr)

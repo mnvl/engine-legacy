@@ -110,7 +110,7 @@ void memory_mesh::transform_vertices(joint const *joint_ptr, std::vector<vertex_
 
 		for (size_t j = 0; j < 8; j++)
 		{
-			size_t joint_index = indices.i[j];
+			size_t joint_index = joint_index_transform[indices.i[j]];
 
 			pos += ((vertices_[i].position * bind_shape_matrix) *
 				inverted_bind_matrices[joint_index] * model_ptr_->joints[joint_index].matrix) *
@@ -127,10 +127,11 @@ void memory_mesh::draw_static(joint *joint_ptr) const
     resource_manager *resource_manager_ptr = renderer_ptr->get_resource_manager();
 	IDirect3DDevice9 *device_ptr = renderer_ptr->get_device();
 
+    device_ptr->SetVertexDeclaration(resource_manager_ptr->get_vertex_decl<vertex_t>());
+
 	for (triangles_list_type::const_iterator it = triangles_list.begin();
 		it != triangles_list.end(); it++)
 	{
-		device_ptr->SetVertexDeclaration(resource_manager_ptr->get_vertex_decl<vertex_t>());
 
 		if (it->material_ptr)
 		{

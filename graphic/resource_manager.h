@@ -37,6 +37,11 @@ public:
         return pnjwt_decl_.get();
     }
 
+    shader *get_animated_model_shader() const
+    {
+        return animated_model_shader_ptr_.get();
+    }
+
 private:
     renderer *renderer_ptr_;
 

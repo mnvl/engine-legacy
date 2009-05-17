@@ -11,7 +11,7 @@ template static_mesh;
 template pnjwt_static_mesh;
 
 template<class T>
-basic_static_mesh<T>::basic_static_mesh(static_model *model_ptr):
+basic_static_mesh<T>::basic_static_mesh(model *model_ptr):
     mesh(model_ptr),
     vertex_buffer_locked_(0),
     index_buffer_locked_(0)
@@ -36,29 +36,14 @@ void basic_static_mesh<T>::draw(joint *joint_ptr)
     resource_manager *resource_manager_ptr = renderer_ptr->get_resource_manager();
 	IDirect3DDevice9 *device_ptr = renderer_ptr->get_device();
 
+    device_ptr->SetTransform(D3DTS_WORLDMATRIX(0), (D3DMATRIX const *) joint_ptr->matrix.ij);
+
 	device_ptr->SetVertexDeclaration(resource_manager_ptr->get_vertex_decl<vertex_t>());
     device_ptr->SetStreamSource(0, vertex_buffer_.get(), 0, sizeof(vertex_t));
 
     device_ptr->SetIndices(index_buffer_.get());
 
-	for (triangles_list_type::const_iterator it = triangles_list.begin();
-		it != triangles_list.end(); it++)
-	{
-
-		if (it->material_ptr)
-		{
-			it->material_ptr->select();
-		}
-		else
-		{
-			resource_manager_ptr->get_default_material()->select();
-		}
-
-		device_ptr->SetTransform(D3DTS_WORLDMATRIX(0), (D3DMATRIX const *) joint_ptr->matrix.ij);
-
-		device_ptr->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, it->minimal_vertex_index, it->vertices_count,
-			it->first_index_offset, it->triangles_count);
-	}
+    draw_triangles_list();
 }
 
 template<class T>
@@ -193,6 +178,31 @@ void basic_static_mesh<T>::unlock()
     hr = index_buffer_->Unlock();
     if (FAILED(hr)) throw exception::directx_error(hr);
     index_buffer_locked_ = 0;
+}
+
+template<class T>
+void basic_static_mesh<T>::draw_triangles_list()
+{
+    renderer *renderer_ptr = get_model()->get_renderer();
+    resource_manager *resource_manager_ptr = renderer_ptr->get_resource_manager();
+	IDirect3DDevice9 *device_ptr = renderer_ptr->get_device();
+
+	for (triangles_list_type::const_iterator it = triangles_list.begin();
+		it != triangles_list.end(); it++)
+	{
+
+		if (it->material_ptr)
+		{
+			it->material_ptr->select();
+		}
+		else
+		{
+			resource_manager_ptr->get_default_material()->select();
+		}
+
+		device_ptr->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, it->minimal_vertex_index, it->vertices_count,
+			it->first_index_offset, it->triangles_count);
+	}
 }
 
 }

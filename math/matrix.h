@@ -16,7 +16,7 @@ namespace math {
 	template<class T> inline void mul(vec<3,T> &r,const vec<3,T> &v,const matrix<4,4,T> &m);
 	template<class T> inline void mul(vec<4,T> &r,const vec<3,T> &v,const matrix<4,4,T> &m);
 	template<class T> inline void mul(vec<4,T> &r,const vec<4,T> &v,const matrix<4,4,T> &m);
-	
+
 	template<int M,int N,int K,class T> inline void
 	mul(matrix<M,K,T> &result,const matrix<M,N,T> &left,const matrix<N,K,T> &right);
 
