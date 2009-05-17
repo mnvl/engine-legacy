@@ -123,12 +123,14 @@ void memory_mesh::transform_vertices(joint const *joint_ptr, std::vector<vertex_
 
 void memory_mesh::draw_static(joint *joint_ptr) const
 {
-	IDirect3DDevice9 *device_ptr = get_model()->get_renderer()->get_device();
+    renderer *renderer_ptr = get_model()->get_renderer();
+    resource_manager *resource_manager_ptr = renderer_ptr->get_resource_manager();
+	IDirect3DDevice9 *device_ptr = renderer_ptr->get_device();
 
 	for (triangles_list_type::const_iterator it = triangles_list.begin();
 		it != triangles_list.end(); it++)
 	{
-		device_ptr->SetFVF(VERTEX_FORMAT);
+		device_ptr->SetVertexDeclaration(resource_manager_ptr->get_vertex_decl<vertex_t>());
 
 		if (it->material_ptr)
 		{
@@ -136,7 +138,7 @@ void memory_mesh::draw_static(joint *joint_ptr) const
 		}
 		else
 		{
-			get_model()->get_renderer()->get_resource_manager()->get_default_material()->select();
+			resource_manager_ptr->get_default_material()->select();
 		}
 
 		device_ptr->SetTransform(D3DTS_WORLDMATRIX(0), (D3DMATRIX const *) joint_ptr->matrix.ij);
@@ -148,7 +150,9 @@ void memory_mesh::draw_static(joint *joint_ptr) const
 
 void memory_mesh::draw_animated(joint *joint_ptr) const
 {
-	IDirect3DDevice9 *device_ptr = get_model()->get_renderer()->get_device();
+    renderer *renderer_ptr = get_model()->get_renderer();
+    resource_manager *resource_manager_ptr = renderer_ptr->get_resource_manager();
+	IDirect3DDevice9 *device_ptr = renderer_ptr->get_device();
 
 	std::vector<vertex_t> transformed_vertices;
 	transform_vertices(joint_ptr, transformed_vertices);
@@ -156,7 +160,7 @@ void memory_mesh::draw_animated(joint *joint_ptr) const
 	for (triangles_list_type::const_iterator it = triangles_list.begin();
 		it != triangles_list.end(); it++)
 	{
-		device_ptr->SetFVF(VERTEX_FORMAT);
+		device_ptr->SetVertexDeclaration(resource_manager_ptr->get_vertex_decl<vertex_t>());
 
 		if (it->material_ptr)
 		{
@@ -164,7 +168,7 @@ void memory_mesh::draw_animated(joint *joint_ptr) const
 		}
 		else
 		{
-			get_model()->get_renderer()->get_resource_manager()->get_default_material()->select();
+			resource_manager_ptr->get_default_material()->select();
 		}
 
 		device_ptr->SetTransform(D3DTS_WORLDMATRIX(0), (D3DMATRIX const *) joint_ptr->matrix.ij);

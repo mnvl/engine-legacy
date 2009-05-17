@@ -3,6 +3,7 @@
 #include <boost/cstdint.hpp>
 #include <graphic/mesh.h>
 #include <graphic/model.h>
+#include <graphic/vertex.h>
 
 namespace graphic {
 
@@ -11,17 +12,7 @@ class renderer;
 
 class memory_mesh: public mesh {
 public:
-	static DWORD const VERTEX_FORMAT = D3DFVF_XYZ | D3DFVF_NORMAL | D3DFVF_TEX2;
-	static D3DFORMAT const INDEX_FORMAT = D3DFMT_INDEX16;
-
-	#pragma pack(push, 1)
-	struct vertex_t {
-		math::vec<3> position;
-		math::vec<3> normal;
-		math::vec<2> texcoords;
-	};
-	#pragma pack(pop)
-
+    typedef vertex_pnt vertex_t;
 	typedef boost::uint16_t index_t;
 
 	memory_mesh(memory_model *m);

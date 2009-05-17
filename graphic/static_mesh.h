@@ -1,8 +1,9 @@
 #pragma once
 
-#include <graphic/mesh.h>
-#include <graphic/memory_mesh.h>
+#include <boost/cstdint.hpp>
 #include <util/boost_com_intrusive_ptr.h>
+#include <graphic/vertex.h>
+#include <graphic/mesh.h>
 
 namespace graphic {
 
@@ -10,10 +11,8 @@ class static_model;
 
 class static_mesh: public mesh {
 public:
-	static DWORD const VERTEX_FORMAT = memory_mesh::VERTEX_FORMAT;
-	static D3DFORMAT const INDEX_FORMAT = memory_mesh::INDEX_FORMAT;
-	typedef memory_mesh::vertex_t vertex_t;
-	typedef memory_mesh::index_t index_t;
+	typedef vertex_pnt vertex_t;
+	typedef boost::uint16_t index_t;
 
 	static_mesh(static_model *model_ptr);
 	~static_mesh();
