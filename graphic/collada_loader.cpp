@@ -941,8 +941,8 @@ namespace collada_elements
 
 			std::vector<size_t>::const_iterator v_get = v.begin();
 
-			std::vector<math::vec<4, unsigned> > joint_indices_buffer;
-			std::vector<math::vec<4> > joint_weights_buffer;
+			std::vector<math::vec<8, unsigned> > joint_indices_buffer;
+			std::vector<math::vec<8> > joint_weights_buffer;
 
 			joint_indices_buffer.resize(mesh_ptr->get_vertices_count());
 			joint_weights_buffer.resize(mesh_ptr->get_vertices_count());
@@ -960,27 +960,45 @@ namespace collada_elements
 
 			for (std::vector<size_t>::const_iterator it = vcount.begin(); it != vcount.end(); it++)
 			{
-				math::vec<4, unsigned> joint_indices(0, 0, 0, 0);
-				math::vec<4> joint_weights(0, 0, 0, 0);
+				math::vec<8, unsigned> joint_indices;
+				math::vec<8> joint_weights;
 
-				if (*it > 4) throw std::runtime_error("joints influenting more than 4 positions are not supported");
+                joint_indices.null();
+                joint_weights.null();
 
-				for (size_t i = 0; i < *it; i++)
+				for (size_t i = 0, j = 0; i < *it; i++)
 				{
+                    unsigned index = 0;
+                    math::scalar weight = 0;
+
 					for (size_t offset = 0; offset < stride; offset++)
 					{
 						if (offset == joints_input->get_offset())
 						{
-							joint_indices.i[i] = joint_index_transform.at(*v_get);
+							index = joint_index_transform.at(*v_get);
 						}
 
 						if (offset == weights_input->get_offset())
 						{
-							weights_source->get(*v_get, joint_weights.i[i]);
+							weights_source->get(*v_get, weight);
 						}
 
 						v_get++;
 					}
+
+                    if (weight > math::EPSILON)
+                    {
+                        if (j > 7)
+                        {
+                            throw std::logic_error("joints influenting more than 4 positions not supported (in mesh id = "
+                                + mesh_ptr->id + ")");
+                        }
+
+                        joint_indices.i[j] = index;
+                        joint_weights.i[j] = weight;
+
+                        j++;
+                    }
 				}
 
 				// for all vertices coresponding to this position

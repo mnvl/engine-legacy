@@ -59,7 +59,7 @@ void memory_mesh::set_texcoords(math::vec<2> const *buffer)
 	}
 }
 
-void memory_mesh::set_joint_indices(math::vec<4, unsigned> const *buffer)
+void memory_mesh::set_joint_indices(math::vec<8, unsigned> const *buffer)
 {
 	for (std::vector<vertex_weights>::iterator it = weights_.begin(); it != weights_.end(); it++)
 	{
@@ -67,7 +67,7 @@ void memory_mesh::set_joint_indices(math::vec<4, unsigned> const *buffer)
 	}
 }
 
-void memory_mesh::set_joint_weights(math::vec<4> const *buffer)
+void memory_mesh::set_joint_weights(math::vec<8> const *buffer)
 {
 	for (std::vector<vertex_weights>::iterator it = weights_.begin(); it != weights_.end(); it++)
 	{
@@ -105,10 +105,10 @@ void memory_mesh::transform_vertices(joint const *joint_ptr, std::vector<vertex_
 	{
 		math::vec<3> pos(0, 0, 0);
 
-		math::vec<4, unsigned> const &indices = weights_[i].joints;
-		math::vec<4> const &factors = weights_[i].factors;
+		math::vec<8, unsigned> const &indices = weights_[i].joints;
+		math::vec<8> const &factors = weights_[i].factors;
 
-		for (size_t j = 0; j < 4; j++)
+		for (size_t j = 0; j < 8; j++)
 		{
 			size_t joint_index = indices.i[j];
 
@@ -136,7 +136,7 @@ void memory_mesh::draw_static(joint *joint_ptr) const
 		}
 		else
 		{
-			get_model()->get_renderer()->get_default_material()->select();
+			get_model()->get_renderer()->get_resource_manager()->get_default_material()->select();
 		}
 
 		device_ptr->SetTransform(D3DTS_WORLDMATRIX(0), (D3DMATRIX const *) joint_ptr->matrix.ij);
@@ -164,7 +164,7 @@ void memory_mesh::draw_animated(joint *joint_ptr) const
 		}
 		else
 		{
-			get_model()->get_renderer()->get_default_material()->select();
+			get_model()->get_renderer()->get_resource_manager()->get_default_material()->select();
 		}
 
 		device_ptr->SetTransform(D3DTS_WORLDMATRIX(0), (D3DMATRIX const *) joint_ptr->matrix.ij);

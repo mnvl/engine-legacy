@@ -36,6 +36,9 @@ ADD_LIBRARY (graphic STATIC
 	camera.h
 	camera.cpp
 
+    resource_manager.h
+    resource_manager.cpp
+
 	renderer.h
 	renderer.cpp
 )

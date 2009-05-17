@@ -7,7 +7,8 @@
 #include <graphic/material.h>
 #include <graphic/renderer.h>
 
-namespace graphic {
+namespace graphic
+{
 
 renderer::renderer(platform::window *window_ptr, int width, int height, bool fullscreen):
 	window_ptr_(window_ptr),
@@ -48,8 +49,7 @@ renderer::renderer(platform::window *window_ptr, int width, int height, bool ful
 		device_ptr->Release();
 	}
 
-	default_font_.reset(new font(this, "Courier New"));
-	default_material_.reset(new graphic::material(this));
+    resource_manager_.reset(new resource_manager(this));
 }
 
 renderer::~renderer() {
@@ -79,7 +79,7 @@ void renderer::finish_frame()
 
 		RECT rc = { 0, 0, width_, height_ };
 
-		default_font_->get_font()->DrawText(0, buffer, strlen(buffer), &rc, DT_LEFT | DT_TOP, D3DCOLOR_XRGB(255, 255, 255));
+		get_resource_manager()->get_default_font()->get()->DrawText(0, buffer, strlen(buffer), &rc, DT_LEFT | DT_TOP, D3DCOLOR_XRGB(255, 255, 255));
 	}
 
 	hr = device_ptr_->EndScene();

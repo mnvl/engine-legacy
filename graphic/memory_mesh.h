@@ -44,8 +44,8 @@ public:
 	virtual void set_positions(math::vec<3> const *buffer);
 	virtual void set_normals(math::vec<3> const *buffer);
 	virtual void set_texcoords(math::vec<2> const *buffer);
-	virtual void set_joint_indices(math::vec<4, unsigned> const *buffer);
-	virtual void set_joint_weights(math::vec<4> const *buffer);
+	virtual void set_joint_indices(math::vec<8, unsigned> const *buffer);
+	virtual void set_joint_weights(math::vec<8> const *buffer);
 	virtual void set_face_indices(unsigned *buffer);
 	virtual void unlock();
 
@@ -58,8 +58,8 @@ private:
 	#pragma  pack(push, 1)
 	struct vertex_weights
 	{
-		math::vec<4, unsigned> joints;
-		math::vec<4> factors;
+		math::vec<8, unsigned> joints;
+		math::vec<8> factors;
 	};
 	#pragma pack(pop)
 

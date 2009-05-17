@@ -23,5 +23,4 @@ TARGET_LINK_LIBRARIES (bootstrap
 	platform
 	util
 	graphic
-	scene
 )

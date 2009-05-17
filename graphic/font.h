@@ -15,7 +15,7 @@ public:
 	font(renderer *renderer, std::string const &face_name, int height = 16);
 	~font();
 
-	ID3DXFont *get_font() const { return font_ptr_.get(); }
+	ID3DXFont *get() const { return font_ptr_.get(); }
 
 private:
 	boost::intrusive_ptr<ID3DXFont> font_ptr_;

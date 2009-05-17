@@ -1,6 +1,7 @@
 #pragma once
 
 #include <iosfwd>
+#include <algorithm>
 #include <math/scalar.h>
 
 namespace math {
@@ -585,6 +586,10 @@ public:
 	typedef int mask_type;
 
 	scalar_type i[arity];
+
+    void null() {
+        std::fill(i, i+arity, 0);
+    }
 
 	// скалярное умножение, деление
 	vec_type &operator *=(const scalar_type k) {

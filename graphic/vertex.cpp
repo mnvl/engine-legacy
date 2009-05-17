@@ -6,7 +6,7 @@
 namespace graphic
 {
 
-D3DVERTEXELEMENT9 *vertex_traits<vertex_pnt>::get_vertex_descr()
+D3DVERTEXELEMENT9 *vertex_traits<vertex_pnt>::get_descr()
 {
 	static D3DVERTEXELEMENT9 descr[] = {
 		{ 0, offsetof(vertex_pnt, position), D3DDECLTYPE_FLOAT3, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_POSITION, 0 },
@@ -18,7 +18,7 @@ D3DVERTEXELEMENT9 *vertex_traits<vertex_pnt>::get_vertex_descr()
 	return descr;
 }
 
-D3DVERTEXELEMENT9 *vertex_traits<vertex_pnjwt>::get_vertex_descr()
+D3DVERTEXELEMENT9 *vertex_traits<vertex_pnjwt>::get_descr()
 {
 	static D3DVERTEXELEMENT9 descr[] = {
 		{ 0, offsetof(vertex_pnjwt, position), D3DDECLTYPE_FLOAT3, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_POSITION, 0 },

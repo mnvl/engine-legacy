@@ -7,9 +7,6 @@
 namespace graphic
 {
 
-template <class T>
-class vertex_traits;
-
 #pragma pack(push, 1)
 struct vertex_pnt
 {
@@ -18,12 +15,6 @@ struct vertex_pnt
 	math::vec<2> texcoords;
 };
 #pragma pack(pop)
-
-template<>
-class vertex_traits<vertex_pnt>
-{
-	static D3DVERTEXELEMENT9 *get_vertex_descr();
-};
 
 #pragma pack(push, 1)
 struct vertex_pnjwt
@@ -36,10 +27,19 @@ struct vertex_pnjwt
 };
 #pragma pack(pop)
 
+template <class T>
+struct vertex_traits;
+
 template<>
-class vertex_traits<vertex_pnjwt>
+struct vertex_traits<vertex_pnt>
 {
-	static D3DVERTEXELEMENT9 *get_vertex_descr();
+	static D3DVERTEXELEMENT9 *get_descr();
+};
+
+template<>
+struct vertex_traits<vertex_pnjwt>
+{
+	static D3DVERTEXELEMENT9 *get_descr();
 };
 
 }
