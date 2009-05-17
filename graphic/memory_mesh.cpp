@@ -91,16 +91,6 @@ void memory_mesh::transform_vertices(joint const *joint_ptr, std::vector<vertex_
 {
 	result = vertices_;
 
-	if (get_model()->animations.empty())
-	{
-		for (std::vector<vertex_t>::iterator it = result.begin(); it != result.end(); it++)
-		{
-			it->position = it->position * joint_ptr->matrix;
-		}
-
-		return;
-	}
-
 	for (size_t i = 0; i < vertices_.size(); i++)
 	{
 		math::vec<3> pos(0, 0, 0);

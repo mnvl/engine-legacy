@@ -17,6 +17,12 @@ mesh *memory_model::create_mesh()
 	return &meshes.back();
 }
 
+void memory_model::draw()
+{
+	if (animations.size()) draw_animated();
+	else draw_static();
+}
+
 void memory_model::draw_static()
 {
 	set_animation_time(0);
@@ -30,10 +36,8 @@ void memory_model::draw_static()
 	}
 }
 
-void memory_model::draw_animated(math::scalar t)
+void memory_model::draw_animated()
 {
-	set_animation_time(t);
-
 	for (joints_type::iterator it = joints.begin(); it != joints.end(); it++)
 	{
 		if (it->mesh_ptr)

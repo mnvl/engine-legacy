@@ -21,8 +21,9 @@ public:
 
 	mesh *create_mesh();
 
+	virtual void draw();
 	void draw_static();
-	void draw_animated(math::scalar t);
+	void draw_animated();
 };
 
 }

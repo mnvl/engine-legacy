@@ -1,8 +1,8 @@
 
 static const int MAX_MATRICES = 26;
-
-float4x4    mViewProj : VIEWPROJECTION;
-float4x3    joint_matrix_array[MAX_MATRICES] : WORLDMATRIXARRAY;
+int maximal_influenting_joint_index = 7;
+float4x4 view_projection_matrix : VIEWPROJECTION;
+float4x3 joint_matrix_array[MAX_MATRICES] : WORLDMATRIXARRAY;
 
 struct VS_INPUT
 {
@@ -54,10 +54,7 @@ VS_OUTPUT VShade(VS_INPUT i, uniform int joints_count_1, uniform int joints_coun
     }
     
     // transform position from world space into view and then projection space
-    o.Pos = mul(float4(Pos.xyz, 1.0f), mViewProj);
-
-    // normalize normals
-    Normal = normalize(Normal);
+    o.Pos = mul(float4(Pos.xyz, 1.0f), view_projection_matrix);
 
     // copy the input texture coordinate through
     o.Tex0  = i.Tex0.xy;
@@ -65,23 +62,22 @@ VS_OUTPUT VShade(VS_INPUT i, uniform int joints_count_1, uniform int joints_coun
     return o;
 }
 
-VertexShader vsArray[8] = { compile vs_2_0 VShade(1, 0), 
-                            compile vs_2_0 VShade(2, 0),
-                            compile vs_2_0 VShade(3, 0),
-                            compile vs_2_0 VShade(4, 0),
-                            compile vs_2_0 VShade(4, 1),
-                            compile vs_2_0 VShade(4, 2),
-                            compile vs_2_0 VShade(4, 3),
-                            compile vs_2_0 VShade(4, 4),
-                          };
-
-
-int CurNumBones = 8;
+VertexShader vertex_shaders_array[8] =
+{
+	compile vs_2_0 VShade(1, 0), 
+    compile vs_2_0 VShade(2, 0),
+    compile vs_2_0 VShade(3, 0),
+    compile vs_2_0 VShade(4, 0),
+    compile vs_2_0 VShade(4, 1),
+    compile vs_2_0 VShade(4, 2),
+    compile vs_2_0 VShade(4, 3),
+    compile vs_2_0 VShade(4, 4),
+};
 
 technique t0
 {
     pass p0
     {
-        VertexShader = (vsArray[CurNumBones]);
+        VertexShader = (vertex_shaders_array[maximal_influenting_joint_index]);
     }
 }

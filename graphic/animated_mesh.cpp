@@ -28,6 +28,9 @@ void animated_mesh::draw(joint *joint_ptr)
 	IDirect3DDevice9 *device_ptr = renderer_ptr->get_device();
     shader *shader_ptr = resource_manager_ptr->get_animated_model_shader();
 
+	math::matrix<4,4> view_projection_matrix = renderer_ptr->get_view_matrix() * renderer_ptr->get_projection_matrix();
+	shader_ptr->get()->SetMatrix("view_projection_matrix", (D3DXMATRIX const *) &view_projection_matrix);
+
     std::vector<math::matrix<4,4> > joint_matrix_array;
     joint_matrix_array.reserve(joint_index_transform.size());
 
@@ -41,8 +44,6 @@ void animated_mesh::draw(joint *joint_ptr)
 
     hr = shader_ptr->get()->SetMatrixArray("joint_matrix_array", (D3DXMATRIX const *) &joint_matrix_array[0], joint_matrix_array.size());
     if (FAILED(hr)) throw exception::directx_error(hr);
-
-    device_ptr->SetTransform(D3DTS_WORLDMATRIX(0), (D3DMATRIX const *) &joint_ptr->matrix);
 
 	device_ptr->SetVertexDeclaration(resource_manager_ptr->get_vertex_decl<vertex_t>());
     device_ptr->SetStreamSource(0, vertex_buffer_.get(), 0, sizeof(vertex_t));

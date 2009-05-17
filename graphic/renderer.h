@@ -5,6 +5,7 @@
 #include <d3dx9.h>
 #include <boost/scoped_ptr.hpp>
 #include <boost/intrusive_ptr.hpp>
+#include <math/matrix.h>
 #include <util/boost_com_intrusive_ptr.h>
 #include <platform/window.h>
 #include <graphic/resource_manager.h>
@@ -25,6 +26,8 @@ public:
 
 	IDirect3DDevice9 *get_device() const { return device_ptr_.get(); }
     resource_manager *get_resource_manager() const { return resource_manager_.get(); }
+	math::matrix<4,4> const &get_view_matrix() const { return view_matrix_; }
+	math::matrix<4,4> const &get_projection_matrix() const { return projection_matrix_; }
 
 	void select(camera const &c);
 
@@ -32,6 +35,9 @@ private:
 	platform::window *window_ptr_;
 	int width_, height_;
 	bool fullscreen_;
+
+	math::matrix<4,4> view_matrix_;
+	math::matrix<4,4> projection_matrix_;
 
 	boost::intrusive_ptr<IDirect3D9> direct3d_ptr_;
 	boost::intrusive_ptr<IDirect3DDevice9> device_ptr_;

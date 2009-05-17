@@ -95,8 +95,11 @@ void renderer::finish_frame()
 
 void renderer::select(camera const &c)
 {
-	device_ptr_->SetTransform(D3DTS_VIEW, (D3DMATRIX const *) &c.get_view_matrix());
-	device_ptr_->SetTransform(D3DTS_PROJECTION, (D3DMATRIX const *) &c.get_projection_matrix());
+	view_matrix_ = c.get_view_matrix();
+	device_ptr_->SetTransform(D3DTS_VIEW, (D3DMATRIX const *) &view_matrix_);
+
+	projection_matrix_ = c.get_projection_matrix();
+	device_ptr_->SetTransform(D3DTS_PROJECTION, (D3DMATRIX const *) &projection_matrix_);
 }
 
 }
