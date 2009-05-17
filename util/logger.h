@@ -43,6 +43,7 @@ public:
 	void set_file(std::string const &filename);
 	void set_file_by_executable_name();
 
+    void write(char const *buffer, size_t length);
 	void write(std::string const &str);
 
 private:
@@ -54,5 +55,6 @@ private:
 #define LOG_MESSAGE(L, M) { util::logger::message(&util::logger::instance(), util::logger::L, __FILE__, __LINE__, __FUNCTION__).stream() << M; }
 #define LOG_DEBUG(M) LOG_MESSAGE(LEVEL_DEBUG, M)
 #define LOG_INFO(M) LOG_MESSAGE(LEVEL_INFO, M)
+#define LOG_WARNING(M) LOG_MESSAGE(LEVEL_WARNING, M)
 
 }

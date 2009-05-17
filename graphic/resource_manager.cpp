@@ -2,6 +2,7 @@
 #include <exception/directx_error.h>
 #include <graphic/font.h>
 #include <graphic/material.h>
+#include <graphic/shader.h>
 #include <graphic/renderer.h>
 #include <graphic/resource_manager.h>
 
@@ -28,6 +29,8 @@ resource_manager::resource_manager(renderer *renderer_ptr):
         pnjwt_decl_.reset(decl_ptr);
     }
 
+    animated_model_shader_ptr_.reset(new shader(renderer_ptr));
+    animated_model_shader_ptr_->load_from_file("animated_model.fx");
 }
 
 resource_manager::~resource_manager()

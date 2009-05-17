@@ -1,7 +1,8 @@
 #pragma once
 
-#include <list>
+#include <vector>
 #include <boost/shared_ptr.hpp>
+#include <math/matrix.h>
 #include <graphic/material.h>
 
 namespace graphic {

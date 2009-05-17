@@ -71,6 +71,11 @@ void logger::set_file_by_executable_name()
 	set_file(buffer);
 }
 
+void logger::write(char const *buffer, size_t length)
+{
+    file_.write(buffer, length);
+}
+
 void logger::write(std::string const &str)
 {
 	file_.write(str.c_str(), str.size());

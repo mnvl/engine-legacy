@@ -12,6 +12,7 @@ namespace graphic
 class font;
 class material;
 class renderer;
+class shader;
 
 class resource_manager {
 public:
@@ -44,6 +45,8 @@ private:
 
     boost::intrusive_ptr<IDirect3DVertexDeclaration9> pnt_decl_;
     boost::intrusive_ptr<IDirect3DVertexDeclaration9> pnjwt_decl_;
+
+    boost::scoped_ptr<shader> animated_model_shader_ptr_;
 };
 
 }

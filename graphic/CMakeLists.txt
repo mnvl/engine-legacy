@@ -30,6 +30,11 @@ ADD_LIBRARY (graphic STATIC
 	static_model.h
 	static_model.cpp
 
+    animated_mesh.h
+    animated_mesh.cpp
+    animated_model.h
+    animated_model.cpp
+
 	collada_loader.h
 	collada_loader.cpp
 
