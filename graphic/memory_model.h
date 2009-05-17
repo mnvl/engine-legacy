@@ -14,14 +14,12 @@ public:
 	memory_mesh *get_mesh_by_id(std::string const &id) {
 		return (memory_mesh *) model::get_mesh_by_id(id);
 	}
-	
+
 	memory_mesh *get_mesh_by_name(std::string const &name) {
 		return (memory_mesh *) model::get_mesh_by_name(name);
 	}
 
 	mesh *create_mesh();
-
-	void set_animation_time(math::scalar t);
 
 	void draw_static();
 	void draw_animated(math::scalar t);

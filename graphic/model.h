@@ -36,6 +36,7 @@ public:
 	virtual joint *create_joint();
 	virtual mesh *create_mesh() = 0;
 
+    virtual void set_animation_time(math::scalar t);
     virtual void draw();
 
 protected:

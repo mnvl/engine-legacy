@@ -31,6 +31,8 @@ INT WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpstrCmdLine, INT
 		graphic::camera cam;
 		math::scalar angle = 0;
 
+        model.set_animation_time(0);
+
 		while (true)
 		{
 			main_window.run_message_loop();

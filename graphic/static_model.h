@@ -13,8 +13,6 @@ public:
 	~static_model();
 
 	mesh *create_mesh();
-
-	void draw();
 };
 
 }

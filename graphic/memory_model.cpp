@@ -17,20 +17,6 @@ mesh *memory_model::create_mesh()
 	return &meshes.back();
 }
 
-void memory_model::set_animation_time(math::scalar t)
-{
-	for (animations_type::iterator it = animations.begin(); it != animations.end(); it++)
-	{
-		it->set_time(t);
-	}
-
-	for (joints_type::iterator it = joints.begin(); it != joints.end(); it++) {
-		if (it->parent == 0) {
-			it->build_frame_transforms();
-		}
-	}
-}
-
 void memory_model::draw_static()
 {
 	set_animation_time(0);

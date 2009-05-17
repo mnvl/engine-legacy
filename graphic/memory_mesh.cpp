@@ -157,11 +157,11 @@ void memory_mesh::draw_animated(joint *joint_ptr) const
 	std::vector<vertex_t> transformed_vertices;
 	transform_vertices(joint_ptr, transformed_vertices);
 
+	device_ptr->SetVertexDeclaration(resource_manager_ptr->get_vertex_decl<vertex_t>());
+
 	for (triangles_list_type::const_iterator it = triangles_list.begin();
 		it != triangles_list.end(); it++)
 	{
-		device_ptr->SetVertexDeclaration(resource_manager_ptr->get_vertex_decl<vertex_t>());
-
 		if (it->material_ptr)
 		{
 			it->material_ptr->select();

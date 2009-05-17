@@ -37,6 +37,9 @@ void basic_static_mesh<T>::draw(joint *joint_ptr)
 	IDirect3DDevice9 *device_ptr = renderer_ptr->get_device();
 
 	device_ptr->SetVertexDeclaration(resource_manager_ptr->get_vertex_decl<vertex_t>());
+    device_ptr->SetStreamSource(0, vertex_buffer_.get(), 0, sizeof(vertex_t));
+
+    device_ptr->SetIndices(index_buffer_.get());
 
 	for (triangles_list_type::const_iterator it = triangles_list.begin();
 		it != triangles_list.end(); it++)

@@ -6,6 +6,7 @@
 
 namespace graphic {
 
+class joint;
 class model;
 
 class mesh {
