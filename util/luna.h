@@ -112,4 +112,20 @@ private:
 	}
 };
 
+#define LUNA_CLASS() \
+	static char const LUNA_CLASS_NAME[]; \
+	static util::luna::thunk<A> LUNA_METHODS[]; \
+
+#define LUNA_DECLARATION_BEGIN(name) \
+	char const name::LUNA_CLASS_NAME[] = #name; \
+	typedef name LUNA_DECLARATION_CLASS; \
+	util::luna::thunk<name> name::LUNA_METHODS[] = { \
+
+#define LUNA_METHOD(method) \
+	{ #method, &LUNA_DECLARATION_CLASS::method } \
+
+#define LUNA_DECLARATION_END() \
+	,{ 0, 0 } \
+}; \
+
 }

@@ -7,8 +7,7 @@ namespace
 
 class A {
 public:
-	static char const LUNA_CLASS_NAME[];
-	static util::luna::thunk<A> LUNA_METHODS[];
+	LUNA_CLASS();
 
 	A(lua_State *L)
 	{
@@ -26,13 +25,9 @@ private:
 	std::string name_;
 };
 
-char const A::LUNA_CLASS_NAME[] = "A";
-
-util::luna::thunk<A> A::LUNA_METHODS[] =
-{
-	{ "get_name",	&A::get_name },
-	{ 0, 0 }
-};
+LUNA_DECLARATION_BEGIN(A)
+	LUNA_METHOD(get_name)
+LUNA_DECLARATION_END();
 
 }
 
