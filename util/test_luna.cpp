@@ -7,7 +7,8 @@ namespace
 
 class A {
 public:
-	static char const CLASS_NAME[];
+	static char const LUNA_CLASS_NAME[];
+	static util::luna::thunk<A> LUNA_METHODS[];
 
 	A(lua_State *L)
 	{
@@ -15,12 +16,9 @@ public:
 		lua_pop(L, 1);
 	}
 
-	static int get_name(lua_State *L)
+	int get_name(lua_State *L)
 	{
-		A *a = (A *) lua_touserdata(L, -1);
-		lua_pop(L, 1);
-
-		lua_pushstring(L, a->name_.c_str());
+		lua_pushstring(L, name_.c_str());
 		return 1;
 	}
 
@@ -28,7 +26,13 @@ private:
 	std::string name_;
 };
 
-char const A::CLASS_NAME[] = "A";
+char const A::LUNA_CLASS_NAME[] = "A";
+
+util::luna::thunk<A> A::LUNA_METHODS[] =
+{
+	{ "get_name",	&A::get_name },
+	{ 0, 0 }
+};
 
 }
 

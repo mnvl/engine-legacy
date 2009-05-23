@@ -14,6 +14,13 @@ namespace util
 
 class luna {
 public:
+	template <class T>
+	struct thunk
+	{
+		char const *name;
+		int (T::*method)(lua_State *L);
+	};
+
     luna();
     ~luna();
 
@@ -23,10 +30,10 @@ public:
         lua_newtable(L_);
         int table = lua_gettop(L_);
 
-        luaL_newmetatable(L_, T::CLASS_NAME);
+        luaL_newmetatable(L_, T::LUNA_CLASS_NAME);
         int metatable = lua_gettop(L_);
 
-        lua_pushstring(L_, T::CLASS_NAME);
+        lua_pushstring(L_, T::LUNA_CLASS_NAME);
         lua_pushvalue(L_, table);
         lua_settable(L_, LUA_GLOBALSINDEX);
 
@@ -42,13 +49,17 @@ public:
         lua_pushcfunction(L_, instantiate_class<T>);
         lua_settable(L_, table);
 
-		lua_pushstring(L_, "get_name");
-		lua_pushcfunction(L_, T::get_name);
-        lua_settable(L_, table);
-
         lua_pushstring(L_, "__gc");
         lua_pushcfunction(L_, destroy_class_instance<T>);
         lua_settable(L_, metatable);
+
+		for (thunk<T> *method = T::LUNA_METHODS; method->name != 0; method++)
+		{
+			lua_pushlightuserdata(L_, method);
+			lua_pushstring(L_, method->name);
+			lua_pushcclosure(L_, call_instance_method<T>, 1);
+			lua_settable(L_, metatable);
+		}
 
         lua_pop(L_, 2);
     }
@@ -76,7 +87,7 @@ private:
 
 		new (buffer) T(L);
 
-        luaL_getmetatable(L, T::CLASS_NAME);
+        luaL_getmetatable(L, T::LUNA_CLASS_NAME);
         lua_setmetatable(L, 1);
 
         return 1;
@@ -88,6 +99,17 @@ private:
         reinterpret_cast<T *>(lua_touserdata(L, -1))->~T();
         return 0;
     }
+
+	template <class T>
+	static int call_instance_method(lua_State *L)
+	{
+		T *instance_ptr = reinterpret_cast<T *>(lua_touserdata(L, 1));
+		lua_remove(L, 1);
+
+		thunk<T> *thunk_ptr = reinterpret_cast<thunk<T> *>(lua_touserdata(L, lua_upvalueindex(1)));
+
+		return (instance_ptr->*(thunk_ptr->method))(L);
+	}
 };
 
 }
