@@ -15,6 +15,15 @@ public:
 		lua_pop(L, 1);
 	}
 
+	static int get_name(lua_State *L)
+	{
+		A *a = (A *) lua_touserdata(L, -1);
+		lua_pop(L, 1);
+
+		lua_pushstring(L, a->name_.c_str());
+		return 1;
+	}
+
 private:
 	std::string name_;
 };
@@ -33,9 +42,10 @@ class test_luna: public CppUnit::TestFixture {
 		util::luna l;
 		l.register_class<A>();
 		l.execute_string(
-			"a = A::new(\"bebe\")"
-			"result = a.get_name()"
+			"a = A:new(\"bebe\")\n"
+			"result = a:get_name()\n"
 		);
+		CPPUNIT_ASSERT(l.get_global_string("result") == "bebe");
 	}
 };
 

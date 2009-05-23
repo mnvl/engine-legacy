@@ -28,7 +28,7 @@ public:
 
         lua_pushstring(L_, T::CLASS_NAME);
         lua_pushvalue(L_, table);
-        lua_settable(L_, metatable);
+        lua_settable(L_, LUA_GLOBALSINDEX);
 
         lua_pushstring(L_, "__metatable");
         lua_pushvalue(L_, table);
@@ -42,6 +42,10 @@ public:
         lua_pushcfunction(L_, instantiate_class<T>);
         lua_settable(L_, table);
 
+		lua_pushstring(L_, "get_name");
+		lua_pushcfunction(L_, T::get_name);
+        lua_settable(L_, table);
+
         lua_pushstring(L_, "__gc");
         lua_pushcfunction(L_, destroy_class_instance<T>);
         lua_settable(L_, metatable);
@@ -50,6 +54,14 @@ public:
     }
 
 	void execute_string(std::string const &str);
+
+	std::string get_global_string(std::string const &name)
+	{
+		lua_getglobal(L_, name.c_str());
+		std::string result = lua_tostring(L_, -1);
+		lua_pop(L_, 1);
+		return result;
+	}
 
 private:
     lua_State *L_;
