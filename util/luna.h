@@ -53,12 +53,12 @@ public:
         lua_pushcfunction(L_, destroy_class_instance<T>);
         lua_settable(L_, metatable);
 
-		for (thunk<T> *method = T::LUNA_METHODS; method->name != 0; method++)
+		for (thunk<T> const *method = T::LUNA_METHODS; method->name != 0; method++)
 		{
-			lua_pushlightuserdata(L_, method);
 			lua_pushstring(L_, method->name);
+			lua_pushlightuserdata(L_, (void *) method);
 			lua_pushcclosure(L_, call_instance_method<T>, 1);
-			lua_settable(L_, metatable);
+			lua_settable(L_, table);
 		}
 
         lua_pop(L_, 2);
