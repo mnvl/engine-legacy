@@ -13,11 +13,13 @@ window::window(char const *title):
 	if (title) create(title);
 }
 
+/*
 window::window(lua_State *L)
 {
     create(lua_tostring(L, -1));
-    lua_pop(L, 1);
+	lua_pop(L, 1);
 }
+*/
 
 window::~window() {
 	if (handle_) {

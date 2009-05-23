@@ -6,6 +6,8 @@ ADD_EXECUTABLE (tests
 	${ENGINE_SOURCE_DIR}/math/test_intersection.cpp
 	${ENGINE_SOURCE_DIR}/math/test_matrix.cpp
 
+	${ENGINE_SOURCE_DIR}/util/test_luna.cpp
+
 	main.cpp
 )
 
@@ -20,6 +22,7 @@ TARGET_LINK_LIBRARIES (tests debug
 	d3d9
 	d3dx9d
 	dxerr
+    luad
 	xerces-c_3D
 	cppunitd
 )

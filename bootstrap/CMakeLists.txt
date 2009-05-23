@@ -1,8 +1,5 @@
 
 ADD_EXECUTABLE (bootstrap WIN32
-    lua_global.h
-    lua_global.cpp
-
 	main.cpp
 )
 

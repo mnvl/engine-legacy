@@ -4,10 +4,6 @@
 #include <xercesc/util/XMLString.hpp>
 #include <xercesc/dom/DOM.hpp>
 #include <util/logger.h>
-#include <bootstrap/lua_global.h>
-#include <platform/window.h>
-
-using namespace bootstrap;
 
 INT WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpstrCmdLine, INT nShowCmd)
 {
@@ -17,9 +13,6 @@ INT WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpstrCmdLine, INT
 		LOG_INFO("executable have been built on " << __TIMESTAMP__);
 
 		xercesc::XMLPlatformUtils::Initialize();
-
-        lua_global::instance().register_class<platform::window>();
-        lua_global::instance().run();
 
 		xercesc::XMLPlatformUtils::Terminate();
 	}

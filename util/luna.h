@@ -7,13 +7,15 @@ extern "C"
     #include <lauxlib.h>
 }
 
-namespace bootstrap
+#include <string>
+
+namespace util
 {
 
-class lua_global {
+class luna {
 public:
-    lua_global();
-    ~lua_global();
+    luna();
+    ~luna();
 
     template <class T>
     void register_class()
@@ -26,7 +28,7 @@ public:
 
         lua_pushstring(L_, T::CLASS_NAME);
         lua_pushvalue(L_, table);
-        lua_settable(L_, LUA_GLOBALSINDEX);
+        lua_settable(L_, metatable);
 
         lua_pushstring(L_, "__metatable");
         lua_pushvalue(L_, table);
@@ -38,7 +40,7 @@ public:
 
         lua_pushstring(L_, "new");
         lua_pushcfunction(L_, instantiate_class<T>);
-        lua_settable(L_, metatable);
+        lua_settable(L_, table);
 
         lua_pushstring(L_, "__gc");
         lua_pushcfunction(L_, destroy_class_instance<T>);
@@ -47,9 +49,7 @@ public:
         lua_pop(L_, 2);
     }
 
-    void run();
-
-    static lua_global &instance();
+	void execute_string(std::string const &str);
 
 private:
     lua_State *L_;
@@ -58,11 +58,14 @@ private:
     static int instantiate_class(lua_State *L)
     {
         void *buffer = lua_newuserdata (L, sizeof(T));
-        new (buffer) T(L);
-        int table = lua_gettop(L);
+
+		// to use class:new instead of class.new...
+		lua_replace(L, 1);
+
+		new (buffer) T(L);
 
         luaL_getmetatable(L, T::CLASS_NAME);
-        lua_settable(L, table);
+        lua_setmetatable(L, 1);
 
         return 1;
     }
