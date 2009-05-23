@@ -5,10 +5,18 @@
 
 namespace platform {
 
+char const window::CLASS_NAME[] = "window";
+
 window::window(char const *title):
 	handle_(0)
 {
 	if (title) create(title);
+}
+
+window::window(lua_State *L)
+{
+    create(lua_tostring(L, -1));
+    lua_pop(L, 1);
 }
 
 window::~window() {
@@ -38,7 +46,7 @@ void window::create(char const *title) {
 	wc.lpszClassName = class_name;
 	wc.hIconSm = 0;
 	if(!RegisterClassEx(&wc)) throw exception::winapi_error();
-	
+
 	// создать окно
 	CreateWindowEx(0, wc.lpszClassName, title, WS_OVERLAPPED|WS_VISIBLE|WS_SYSMENU,
 		CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT,

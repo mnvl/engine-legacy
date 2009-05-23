@@ -3,50 +3,23 @@
 #include <xercesc/util/PlatformUtils.hpp>
 #include <xercesc/util/XMLString.hpp>
 #include <xercesc/dom/DOM.hpp>
-#include <exception/winapi_error.h>
-#include <platform/window.h>
-#include <graphic/renderer.h>
 #include <util/logger.h>
+#include <bootstrap/lua_global.h>
+#include <platform/window.h>
 
-// REMOVE:
-#include <graphic/collada_loader.h>
-#include <graphic/animated_model.h>
-#include <graphic/memory_model.h>
-#include <graphic/camera.h>
+using namespace bootstrap;
 
 INT WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpstrCmdLine, INT nShowCmd)
 {
 	try
 	{
 		util::logger::instance().set_file_by_executable_name();
-
 		LOG_INFO("executable have been built on " << __TIMESTAMP__);
 
 		xercesc::XMLPlatformUtils::Initialize();
 
-		platform::window main_window("engine");
-		graphic::renderer renderer(&main_window);
-		graphic::animated_model model(&renderer);
-		graphic::collada_loader("z1.dae", &model, &renderer).load();
-
-		graphic::camera cam;
-		math::scalar angle = 0;
-
-        model.set_animation_time(0);
-
-		while (main_window.run_message_loop())
-		{
-			renderer.begin_frame();
-			cam.set_position(math::vec<3>(500 * cos(angle), 500 * sin(angle), 250), math::vec<3>(0, 0, 250), math::vec<3>(0, 0, 250));
-			renderer.select(cam);
-
-			model.draw();
-
-			renderer.finish_frame();
-
-			angle += 0.01f;
-			if (angle > 2 * math::PI) angle = 0;
-		}
+        lua_global::instance().register_class<platform::window>();
+        lua_global::instance().run();
 
 		xercesc::XMLPlatformUtils::Terminate();
 	}

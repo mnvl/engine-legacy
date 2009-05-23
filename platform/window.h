@@ -1,11 +1,15 @@
 #pragma once
 
+#include <bootstrap/lua_global.h>
 #include <windows.h>
 
 namespace platform {
 
 class window {
 public:
+    static char const CLASS_NAME[];
+
+    window(lua_State *L);
 	window(char const *title = 0);
 	~window();
 
