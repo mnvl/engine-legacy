@@ -5,7 +5,9 @@
 
 namespace platform {
 
-char const window::CLASS_NAME[] = "window";
+LUNA_DECLARATION_BEGIN(window)
+	LUNA_METHOD(run_message_loop)
+LUNA_DECLARATION_END()
 
 window::window(char const *title):
 	handle_(0)
@@ -13,13 +15,11 @@ window::window(char const *title):
 	if (title) create(title);
 }
 
-/*
 window::window(lua_State *L)
 {
     create(lua_tostring(L, -1));
 	lua_pop(L, 1);
 }
-*/
 
 window::~window() {
 	if (handle_) {
@@ -56,16 +56,19 @@ void window::create(char const *title) {
 	if(!handle_) throw exception::winapi_error();
 }
 
-bool window::run_message_loop() {
+int window::run_message_loop(lua_State *L) {
 	MSG msg;
+
+	bool result = true;
 
 	while (PeekMessage(&msg, 0, 0, 0, PM_REMOVE))
 	{
-		if(msg.message == WM_QUIT) return false;
+		if(msg.message == WM_QUIT) result = false;
 		DispatchMessage(&msg);
 	}
 
-	return true;
+	lua_pushboolean(L, result);
+	return 1;
 }
 
 LRESULT window::dispatch_message(HWND hWnd,UINT uMsg,WPARAM wParam,LPARAM lParam) {

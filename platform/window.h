@@ -1,16 +1,15 @@
 #pragma once
 
 #include <windows.h>
+#include <util/luna.h>
 
 namespace platform {
 
 class window {
 public:
-    static char const CLASS_NAME[];
+	LUNA_CLASS(window);
 
-    /*
 	window(lua_State *L);
-	*/
 
 	window(char const *title = 0);
 	~window();
@@ -18,7 +17,7 @@ public:
 	HWND get_handle() const throw() { return handle_; }
 
 	void create(char const *title);
-	bool run_message_loop();
+	int run_message_loop(lua_State *L);
 	LRESULT process_message(UINT uMsg, WPARAM wParam, LPARAM lParam);
 
 private:
