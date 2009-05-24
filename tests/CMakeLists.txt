@@ -20,7 +20,6 @@ TARGET_LINK_LIBRARIES (tests debug
 	d3d9
 	d3dx9d
 	dxerr
-    lua5.1
 	xerces-c_static_3D
 	cppunitd
 )
