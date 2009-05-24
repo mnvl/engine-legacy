@@ -1,6 +1,15 @@
 
+ADD_DEFINITIONS (-DXERCES_STATIC_LIBRARY)
+
 ADD_EXECUTABLE (bootstrap WIN32
 	main.cpp
+)
+
+TARGET_LINK_LIBRARIES (bootstrap
+	math
+	platform
+	util
+	graphic
 )
 
 TARGET_LINK_LIBRARIES (bootstrap
@@ -10,13 +19,7 @@ TARGET_LINK_LIBRARIES (bootstrap
 
 TARGET_LINK_LIBRARIES (bootstrap debug
 	d3dx9d
-	xerces-c_3D
-    luad
-)
-
-TARGET_LINK_LIBRARIES (bootstrap
-	math
-	platform
-	util
-	graphic
+	xerces-c_static_3D
+    lua5.1
+    libluabindd
 )

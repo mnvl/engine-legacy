@@ -3,22 +3,13 @@
 #include <exception/winapi_error.h>
 #include <platform/window.h>
 
-namespace platform {
-
-LUNA_DECLARATION_BEGIN(window)
-	LUNA_METHOD(run_message_loop)
-LUNA_DECLARATION_END()
+namespace platform
+{
 
 window::window(char const *title):
 	handle_(0)
 {
 	if (title) create(title);
-}
-
-window::window(lua_State *L)
-{
-    create(lua_tostring(L, -1));
-	lua_pop(L, 1);
 }
 
 window::~window() {
@@ -29,11 +20,9 @@ window::~window() {
 }
 
 void window::create(char const *title) {
-	// получить название класса
 	char class_name[sizeof(window *)*2+1];
 	sprintf(class_name,"%p",this);
 
-	// зарегестрировать класс окна
 	WNDCLASSEX wc;
 	wc.cbSize = sizeof(wc);
 	wc.style = 0;
@@ -49,33 +38,27 @@ void window::create(char const *title) {
 	wc.hIconSm = 0;
 	if(!RegisterClassEx(&wc)) throw exception::winapi_error();
 
-	// создать окно
 	CreateWindowEx(0, wc.lpszClassName, title, WS_OVERLAPPED|WS_VISIBLE|WS_SYSMENU,
 		CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT,
 		0, 0, wc.hInstance, 0);
 	if(!handle_) throw exception::winapi_error();
 }
 
-int window::run_message_loop(lua_State *L) {
+bool window::run_message_loop() {
 	MSG msg;
-
-	bool result = true;
 
 	while (PeekMessage(&msg, 0, 0, 0, PM_REMOVE))
 	{
-		if(msg.message == WM_QUIT) result = false;
+		if(msg.message == WM_QUIT) return false;
 		DispatchMessage(&msg);
 	}
 
-	lua_pushboolean(L, result);
-	return 1;
+	return true;
 }
 
 LRESULT window::dispatch_message(HWND hWnd,UINT uMsg,WPARAM wParam,LPARAM lParam) {
-	// получить указатель на объект
 	window *self = reinterpret_cast<window *>(GetWindowLong(hWnd,GWL_USERDATA));
 
-	// если он еще не записан
 	if(!self) {
 		char class_name[sizeof(window *)*2+1];
 		GetClassName(hWnd,class_name,sizeof(class_name)/sizeof(class_name[0]));

@@ -3,9 +3,10 @@
 #include <xercesc/util/PlatformUtils.hpp>
 #include <xercesc/util/XMLString.hpp>
 #include <xercesc/dom/DOM.hpp>
+#include <luabind/lua_include.hpp>
+#include <luabind/luabind.hpp>
 #include <platform/window.h>
 #include <util/logger.h>
-#include <util/luna.h>
 
 INT WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpstrCmdLine, INT nShowCmd)
 {
@@ -16,6 +17,7 @@ INT WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpstrCmdLine, INT
 
 		xercesc::XMLPlatformUtils::Initialize();
 
+/*
 		util::luna l;
 		l.register_class<platform::window>();
 		l.execute_string
@@ -24,6 +26,7 @@ INT WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpstrCmdLine, INT
 			"while (x:run_message_loop()) do\n"
 			"end\n"
 		);
+*/
 
 		xercesc::XMLPlatformUtils::Terminate();
 	}
