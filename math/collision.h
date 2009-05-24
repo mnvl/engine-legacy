@@ -76,7 +76,7 @@ namespace math {
 			S discriminant_sqrt = sqrt(discriminant);
 			S t1 = (-B + discriminant_sqrt) / (2 * A);
 			S t2 = (-B - discriminant_sqrt) / (2 * A);
-			
+
 			if(t1>0) {
 				if(t2>0) ci.time = std::min(t1,t2);
 				else ci.time = t1;
@@ -138,7 +138,7 @@ namespace math {
 		}
 
 		collision_info<N, S> ci0;
-		
+
 		collide(sphere<N, S>(l.A, 0), s, vel, ci0);
 		if (ci.worse_than(ci0)) {
 			ci = ci0;
