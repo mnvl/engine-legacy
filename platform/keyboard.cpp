@@ -96,7 +96,7 @@ void keyboard::update() {
 	}
 }
 
-char keyboard::get_character_by_key(int key) {
+char keyboard::get_character_by_key(key_t key) {
 	static char table[SAMPLE_BUFFER_SIZE+1]={
 		0,	    //					0
 		0,	    // DIK_ESCAPE		1

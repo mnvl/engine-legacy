@@ -16,6 +16,8 @@ TARGET_LINK_LIBRARIES (bootstrap
 TARGET_LINK_LIBRARIES (bootstrap
 	d3d9
 	dxerr
+    dinput8
+    dxguid
 )
 
 TARGET_LINK_LIBRARIES (bootstrap debug

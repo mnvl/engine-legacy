@@ -28,4 +28,9 @@ void input::create() {
 	mouse_.reset(new mouse(this));
 }
 
+void input::update() {
+    keyboard_->update();
+    mouse_->update();
+}
+
 }

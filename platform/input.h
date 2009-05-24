@@ -36,6 +36,8 @@ public:
         return mouse_.get();
     }
 
+    void update();
+
 private:
     window *window_;
     boost::intrusive_ptr<IDirectInput8> driver_;

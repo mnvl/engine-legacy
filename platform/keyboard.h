@@ -3,6 +3,7 @@
 #include <dinput.h>
 #include <boost/intrusive_ptr.hpp>
 #include <util/boost_com_intrusive_ptr.h>
+#include <platform/window.h>
 
 namespace platform
 {
@@ -11,7 +12,7 @@ class input;
 
 class keyboard {
 public:
-	enum {
+	enum key_t {
 		KEY_ESCAPE			= DIK_ESCAPE,
 		KEY_1				= DIK_1,
 		KEY_2				= DIK_2,
@@ -107,13 +108,17 @@ public:
 		KEY_DELETE			= DIK_DELETE
 	};
 
-	static char get_character_by_key(int key);
+	static char get_character_by_key(key_t key);
 
     keyboard(input *input_ptr);
     ~keyboard();
 
     void update();
-    bool is_key_pressed(int key);
+
+    bool is_key_pressed(key_t key)
+    {
+        return (state_[key] & 0x80) != 0;
+    }
 
 private:
 	static size_t const SAMPLE_BUFFER_SIZE=256;
