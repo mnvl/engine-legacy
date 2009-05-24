@@ -1,6 +1,9 @@
 
 ADD_EXECUTABLE (bootstrap WIN32
 	main.cpp
+    bind_math.cpp
+    bind_platform.cpp
+    bind_graphic.cpp
 )
 
 TARGET_LINK_LIBRARIES (bootstrap

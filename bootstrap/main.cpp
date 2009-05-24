@@ -16,6 +16,13 @@ extern "C"
 #include <graphic/renderer.h>
 #include <util/logger.h>
 
+namespace bootstrap
+{
+void bind_math(lua_State *L);
+void bind_platform(lua_State *L);
+void bind_graphic(lua_State *L);
+}
+
 INT WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpstrCmdLine, INT nShowCmd)
 {
 	try
@@ -28,25 +35,9 @@ INT WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpstrCmdLine, INT
         lua_State *L = luaL_newstate();
         luaL_openlibs(L);
         luabind::open(L);
-
-        {
-            using namespace luabind;
-
-            module(L, "platform")
-            [
-                class_<platform::window>("window")
-                .def(constructor<char const *>())
-                .def("run_message_loop", &platform::window::run_message_loop)
-            ];
-
-            module(L, "graphic")
-            [
-                class_<graphic::renderer>("renderer")
-                .def(constructor<platform::window *>())
-                .def("begin_frame", &graphic::renderer::begin_frame)
-                .def("finish_frame", &graphic::renderer::finish_frame)
-            ];
-        }
+        bootstrap::bind_math(L);
+        bootstrap::bind_platform(L);
+        bootstrap::bind_graphic(L);
 
         if (luaL_dofile(L, "main.lua") != 0)
         {

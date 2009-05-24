@@ -93,7 +93,7 @@ void renderer::finish_frame()
 	while (!frame_times_.empty() && (current_time - frame_times_.front()) > 1.0) frame_times_.pop_front();
 }
 
-void renderer::select(camera const &c)
+void renderer::set_view_projection_from_camera(camera const &c)
 {
 	view_matrix_ = c.get_view_matrix();
 	device_ptr_->SetTransform(D3DTS_VIEW, (D3DMATRIX const *) &view_matrix_);

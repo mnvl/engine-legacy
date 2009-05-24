@@ -1,4 +1,5 @@
 
+#include <graphic/collada_loader.h>
 #include <graphic/model.h>
 
 namespace graphic {
@@ -16,6 +17,11 @@ joint *model::create_joint()
 {
 	joints.push_back(new joint(joints.size()));
 	return &joints.back();
+}
+
+void model::load_from_collada(std::string const &filename)
+{
+    collada_loader(filename, this, renderer_ptr_).load();
 }
 
 joint *model::get_joint_by_id(std::string const &id)

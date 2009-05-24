@@ -27,46 +27,10 @@ private:
 public:
 	camera();
 
-   	math::vec<3> const &GetEyePosition() const {
-		return eye_point;
-	}
-    
-	math::vec<3> const &GetLookatPosition() const {
-		return lookat_point;
-	}
-
-    math::vec<3> const &GetUpVec() const {
-		return up_direction;
-	}
-    
-	math::vec<3> const &GetViewDir() const {
-		return view_dir;
-	}
-
-    math::vec<3> const &GetCross() const {
-		return cross_dir;
-	}
-
-    math::scalar GetFOV() const {
-		return field_of_view;
-	}
-
-    math::scalar GetAspect() const {
-		return aspect_ratio;
-	}
-
-   	 math::scalar GetNearPlane() const {
-		return near_plane;
-	}
-
-   	math::scalar GetFarPlane() const {
-		return far_plane;
-	}
-
     math::matrix<4,4> const &get_view_matrix() const {
 		return view_matrix;
 	}
-    
+
     math::matrix<4,4> const &get_projection_matrix() const {
 		return projection_matrix;
 	}

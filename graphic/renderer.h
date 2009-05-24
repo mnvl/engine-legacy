@@ -29,7 +29,7 @@ public:
 	math::matrix<4,4> const &get_view_matrix() const { return view_matrix_; }
 	math::matrix<4,4> const &get_projection_matrix() const { return projection_matrix_; }
 
-	void select(camera const &c);
+	void set_view_projection_from_camera(camera const &c);
 
 private:
 	platform::window *window_ptr_;

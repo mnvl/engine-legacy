@@ -35,6 +35,7 @@ public:
 
 	virtual joint *create_joint();
 	virtual mesh *create_mesh() = 0;
+    virtual void load_from_collada(std::string const &filename);
 
     virtual void set_animation_time(math::scalar t);
     virtual void draw();
