@@ -20,7 +20,7 @@ function main:run()
     self.input = platform.input(self.window)
 
     self.camera:set_perspective_projection(1.0, 4/3, 1.0, 1000.0)
-    self.camera:set_position(math.vec3f(10, 1, 0), math.vec3f(0, 1, 0), math.vec3f(0, 1, 0))
+    self.camera:set_position(math.vec3f(10, 2, 0), math.vec3f(0, 1, 0), math.vec3f(0, 1, 0))
 
     ground = graphic.static_model(self.renderer)
     ground:load_from_collada("ground.dae")

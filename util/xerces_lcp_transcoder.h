@@ -7,7 +7,8 @@
 #include <boost/scoped_array.hpp>
 #include <boost/lexical_cast.hpp>
 
-namespace util {
+namespace util
+{
 
 inline std::string xerces_lcp_transcode(XMLCh const *str) {
 	// TODO: free using XMLString::release
