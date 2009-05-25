@@ -49,12 +49,14 @@ INT WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpstrCmdLine, INT
 	}
 	catch(std::exception const &error)
 	{
+        LOG_CRITICAL("exception caught: " << error.what());
 		MessageBox(0, error.what(), 0, MB_OK);
 		return 1;
 	}
 	catch (xercesc::XMLException const &error)
 	{
 		char* message = xercesc::XMLString::transcode(error.getMessage());
+        LOG_CRITICAL("exception caught: " << message);
 		MessageBox(0, message, 0, MB_OK);
         xercesc::XMLString::release(&message);
 		return 1;
@@ -62,10 +64,13 @@ INT WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpstrCmdLine, INT
 	catch (xercesc::DOMException const &error)
 	{
 		char* message = xercesc::XMLString::transcode(error.msg);
+        LOG_CRITICAL("exception caught: " << message);
 		MessageBox(0, message, 0, MB_OK);
         xercesc::XMLString::release(&message);
 		return 1;
     }
+
+    LOG_INFO("terminated with success");
 
 	return 0;
 }
