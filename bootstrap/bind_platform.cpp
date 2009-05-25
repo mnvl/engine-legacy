@@ -31,7 +31,8 @@ void bind_platform(lua_State *L)
         ]
         .def("is_key_pressed", &keyboard::is_key_pressed),
 
-        class_<mouse>("mouse"),
+        class_<mouse>("mouse")
+        .def("get_delta", &mouse::get_delta),
 
         class_<input>("input")
         .def(constructor<window *>())

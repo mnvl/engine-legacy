@@ -32,13 +32,20 @@ void bind_math(lua_State *L)
         .def_readwrite("y", &vec3f_t::y)
         .def_readwrite("z", &vec3f_t::z),
 
+        class_<matrix3x3f_t>("matrix3x3f")
+        .def(constructor<>())
+        .def("identity", (void (matrix3x3f_t::*)()) &matrix3x3f_t::identity)
+        .def("rotation_v3f", (void (matrix3x3f_t::*)(vec3f_t const &)) &matrix3x3f_t::rotation)
+        .def("rotation_v3f_f", (void (matrix3x3f_t::*)(vec3f_t const &, math::scalar)) &matrix3x3f_t::rotation)
+        .def("rotate_v3f", (void (matrix3x3f_t::*)(vec3f_t const &)) &matrix3x3f_t::rotate)
+        .def("rotate_v3f_f", (void (matrix3x3f_t::*)(vec3f_t const &, math::scalar)) &matrix3x3f_t::rotate),
+
+        class_<matrix4x4f_t>("matrix4x4f"),
+
         def("add_v3f_v3f", (vec3f_t (*)(vec3f_t const &, vec3f_t const &)) operator +),
         def("sub_v3f_v3f", (vec3f_t (*)(vec3f_t const &, vec3f_t const &)) operator -),
         def("mul_v3f_f", (vec3f_t (*)(vec3f_t const &, math::scalar)) operator *),
-
-        class_<matrix3x3f_t>("matrix3x3f"),
-
-        class_<matrix4x4f_t>("matrix4x4f")
+        def("mul_v3f_m3x3f", (vec3f_t (*)(vec3f_t const &, matrix3x3f_t const &)) operator *)
     ];
 }
 

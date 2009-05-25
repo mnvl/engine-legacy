@@ -58,8 +58,16 @@ void mouse::create() {
     dipdw.diph.dwHow        = DIPH_DEVICE;
     dipdw.dwData            = SAMPLE_BUFFER_SIZE; // Arbitary buffer size
 
-    if (FAILED(hr = device_->SetProperty(DIPROP_BUFFERSIZE, &dipdw.diph ) ) )
-        throw exception::directx_error(hr);
+    hr = device_->SetProperty(DIPROP_BUFFERSIZE, &dipdw.diph);
+    if (FAILED(hr)) throw exception::directx_error(hr);
+
+    dipdw.diph.dwSize       = sizeof(DIPROPDWORD);
+    dipdw.diph.dwHeaderSize = sizeof(DIPROPHEADER);
+    dipdw.diph.dwObj        = 0;
+    dipdw.diph.dwHow        = DIPH_DEVICE;
+    dipdw.dwData            = DIPROPAXISMODE_REL; //or ABS here
+    hr = device_->SetProperty(DIPROP_AXISMODE, &dipdw.diph);
+    if (FAILED(hr)) throw exception::directx_error(hr);
 
     // Acquire the newly created device
     device_->Acquire();
