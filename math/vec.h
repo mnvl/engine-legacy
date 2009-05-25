@@ -58,14 +58,12 @@ namespace math {
 template<class T>
 class math::vec<2,T> {
 public:
-	// типы и константы
 	typedef T scalar_type;
 	typedef size_t size_type;
 	static const size_type arity = 2;
 	typedef vec<arity,scalar_type> vec_type;
 	typedef size_type mask_type;
 
-	// данные
 	#pragma pack(push,1)
 	union {
 		struct {
@@ -88,7 +86,6 @@ public:
 	};
 	#pragma pack(pop)
 
-	// конструкторы
 	vec() {
 	}
 
@@ -110,9 +107,8 @@ public:
 	x(x0), y(y0) {
 	}
 
-	// присваивание
 	void set(scalar_type x0, scalar_type y0) {
-		x = x0; 
+		x = x0;
 		y = y0;
 	}
 
@@ -126,12 +122,10 @@ public:
 		return *this;
 	}
 
-	// унарные операции
 	vec_type operator -() const {
 		return vec_type(-x, -y);
 	}
 
-	// скалярное умножение, деление
 	vec_type &operator *=(const scalar_type k) {
 		mul(*this, *this, k);
 		return *this;
@@ -142,7 +136,6 @@ public:
 		return *this;
 	}
 
-	// векторное сложение, вычетание, умножение, деление
 	vec_type &operator +=(const vec_type &v) {
 		add(*this, *this, v);
 		return *this;
@@ -163,7 +156,6 @@ public:
 		return *this;
 	}
 
-	// длина
 	scalar_type length_sq() const {
 		return dot_product(*this, *this);
 	}
@@ -176,18 +168,15 @@ public:
 		return abs(x) + abs(y);
 	}
 
-	// нормализация
 	void normalize() {
 		scalar_type l = length();
 		if(abs(l) > 0) *this /= l;
 	}
 
-	// обратить
 	void negate() {
 		operator *=(scalar_type(-1));
 	}
 
-	// маски
 	mask_type segment() const {
 		mask_type mask=0;
 		mask += (x > 0) << 0;
@@ -210,19 +199,16 @@ public:
 		y = mask & (1<<1) ? v1.y : v2.y;
 	}
 
-	// коллинеарность
 	bool collinear(const vec_type &v) const {
 		return abs(x*v.y - y*v.x) < EPSILON;
 	}
 
-	// перевести в полярные координаты
 	void to_polar(scalar_type &modulus, scalar_type &angle) const;
 };
 
 template<class T>
 class math::vec<3,T> {
 public:
-	// типы и константы
 	typedef T scalar_type;
 	typedef size_t size_type;
 	static const size_type arity = 3;
@@ -230,7 +216,6 @@ public:
 	typedef vec<arity,scalar_type> vec_type;
 	typedef size_type mask_type;
 
-	// данные
 	#pragma pack(push,1)
 	union {
 		struct {
@@ -249,7 +234,6 @@ public:
 	};
 	#pragma pack(pop)
 
-	// конструкторы
 	vec() {
 	}
 
@@ -284,7 +268,6 @@ public:
 	}
 	#endif
 
-	// унарные операторы
 	void neg() {
 		x = -x;
 		y = -y;
@@ -295,7 +278,6 @@ public:
 		return vec_type(-x, -y, -z);
 	}
 
-	// присваивание
 	vec_type &operator =(const vec_type &v) {
 		x = v.x;
 		y = v.y;
@@ -312,7 +294,6 @@ public:
 	}
 	#endif
 
-	// приведение
 	#if defined(D3DVECTOR_DEFINED)
 	operator D3DVECTOR() const {
 		D3DVECTOR v={float(x),float(y),float(z)};
@@ -320,7 +301,6 @@ public:
 	}
 	#endif
 
-	// скалярное умножение, деление
 	vec_type &operator *=(const scalar_type k) {
 		mul(*this, *this, k);
 		return *this;
@@ -331,7 +311,6 @@ public:
 		return *this;
 	}
 
-	// векторное сложение, вычетание, умножение, деление
 	vec_type &operator +=(const vec_type &v) {
 		add(*this, *this, v);
 		return *this;
@@ -352,7 +331,6 @@ public:
 		return *this;
 	}
 
-	// длина
 	scalar_type length_sq() const {
 		return dot_product(*this, *this);
 	}
@@ -361,18 +339,15 @@ public:
 		return sqrt(length_sq());
 	}
 
-	// нормализация
 	void normalize() {
 		scalar_type l = length();
 		if(abs(l) > 0) *this /= l;
 	}
 
-	// обратить
 	void negate() {
 		operator *=(scalar_type(-1));
 	}
 
-	// маски
 	mask_type segment() const {
 		mask_type mask=0;
 		mask += (x > 0) << 0;
@@ -399,21 +374,18 @@ public:
 		z = mask & (1 << 2) ? v1.z : v2.z;
 	}
 
-	// преобразовать в представление ось-угол поворота
 	void to_axis_angle(vec_type &axis, scalar_type &angle) const;
 };
 
 template<class T>
 class math::vec<4,T> {
 public:
-	// типы и константы
 	typedef T scalar_type;
 	typedef size_t size_type;
 	static const size_type arity = 4;
 	typedef vec<arity,scalar_type> vec_type;
 	typedef size_type mask_type;
 
-	// данные
 	#pragma pack(push,1)
 	union {
 		struct {
@@ -432,7 +404,6 @@ public:
 	};
 	#pragma pack(pop)
 
-	// конструкторы
 	vec() {
 	}
 
@@ -464,8 +435,7 @@ public:
 		z = z0;
 		w = w0;
 	}
-	
-	// присваивание
+
 	vec_type &operator =(const vec_type &v) {
 		x = v.x;
 		y = v.y;
@@ -484,7 +454,6 @@ public:
 	}
 	#endif
 
-	// приведение
 	#if defined(D3DCOLORVALUE_DEFINED)
 	operator D3DCOLORVALUE() const {
 		D3DCOLORVALUE c={float(r),float(g),float(b),float(a)};
@@ -492,7 +461,6 @@ public:
 	}
 	#endif
 
-	// скалярное умножение, деление
 	vec_type &operator *=(const scalar_type k) {
 		mul(*this, *this, k);
 		return *this;
@@ -503,7 +471,6 @@ public:
 		return *this;
 	}
 
-	// векторное сложение, вычетание, умножение, деление
 	vec_type &operator +=(const vec_type &v) {
 		add(*this, *this, v);
 		return *this;
@@ -524,7 +491,6 @@ public:
 		return *this;
 	}
 
-	// длина
 	scalar_type length_sq() const {
 		return dot_product(*this, *this);
 	}
@@ -533,18 +499,15 @@ public:
 		return sqrt(length_sq());
 	}
 
-	// нормализация
 	void normalize() {
 		scalar_type l=length();
 		if(abs(l) > 0) *this /= l;
 	}
 
-	// обратить
 	void negate() {
 		operator *=(scalar_type(-1));
 	}
 
-	// маски
 	mask_type segment() const {
 		mask_type mask=0;
 		mask += (x > 0) << 0;
@@ -591,7 +554,6 @@ public:
         std::fill(i, i+arity, scalar_type(0));
     }
 
-	// скалярное умножение, деление
 	vec_type &operator *=(const scalar_type k) {
 		mul(*this, *this, k);
 		return *this;
@@ -602,7 +564,6 @@ public:
 		return *this;
 	}
 
-	// векторное сложение, вычетание, умножение, деление
     vec_type &operator =(const vec_type &v) {
         std::copy(v.i, v.i + arity, i);
         return *this;
@@ -635,7 +596,6 @@ public:
 		return *this;
 	}
 
-	// длина
 	scalar_type length_sq() const {
 		return dot_product(*this, *this);
 	}
@@ -644,7 +604,6 @@ public:
 		return sqrt(length_sq());
 	}
 
-	// нормализация
 	void normalize() {
 		scalar_type l=length();
 		if(abs(l) > 0) *this /= l;
@@ -673,7 +632,7 @@ operator /(const math::vec<N,T> &lhs,T rhs) {
 }
 
 template<int N,class T> inline math::vec<N,T>
-operator +(const math::vec<N,T> &lhs,const math::vec<N,T> &rhs) {
+operator +(const math::vec<N,T> &lhs, const math::vec<N,T> &rhs) {
 	math::vec<N,T> res;
 	math::add(res, lhs, rhs);
 	return res;
@@ -687,7 +646,7 @@ operator -(const math::vec<N,T> &lhs,const math::vec<N,T> &rhs) {
 }
 
 template<int N,class T> inline math::vec<N,T>
-operator *(const math::vec<N,T> &lhs,const math::vec<N,T> &rhs) {
+operator *(const math::vec<N,T> &lhs, const math::vec<N,T> &rhs) {
 	math::vec<N,T> res;
 	math::mul(res, lhs, rhs);
 	return res;

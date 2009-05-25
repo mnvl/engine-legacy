@@ -56,6 +56,11 @@ void logger::set_stdout()
 	file_.set_handle(1);
 }
 
+void logger::set_stderr()
+{
+    file_.set_handle(2);
+}
+
 void logger::set_file(std::string const &filename)
 {
 	file_.open(filename.c_str(), O_WRONLY | O_CREAT);

@@ -40,9 +40,9 @@ public:
 	void set_orthographic_projection(math::scalar width,math::scalar height,math::scalar fNearPlane,
 		math::scalar fFarPlane);
 
-   	void set_position(math::vec<3> const &eye_pt,math::vec<3> const &lookat_pt,math::vec<3> const &up_dir);
-	void set_position(math::vec<3> const &pos,math::vec<3> const &rot);
-	void set_position(math::vec<3> const &pos,const math::quaternion<> &rot);
+   	void set_eye_lookat_up(math::vec<3> const &eye_pt, math::vec<3> const &lookat_pt, math::vec<3> const &up_dir);
+	void set_position_rotation(math::vec<3> const &pos, math::vec<3> const &rot);
+	void set_position_quaternion(math::vec<3> const &pos, const math::quaternion<> &rot);
 };
 
 }

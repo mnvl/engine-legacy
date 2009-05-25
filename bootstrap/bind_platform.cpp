@@ -5,7 +5,7 @@
 #include <platform/keyboard.h>
 #include <platform/mouse.h>
 #include <platform/input.h>
-
+#include <platform/timer.h>
 
 namespace bootstrap
 {
@@ -37,7 +37,11 @@ void bind_platform(lua_State *L)
         .def(constructor<window *>())
         .def("get_keyboard", &input::get_keyboard)
         .def("get_mouse", &input::get_mouse)
-        .def("update", &input::update)
+        .def("update", &input::update),
+
+        class_<timer>("timer")
+        .def(constructor<>())
+        .def("get_current_value", &timer::get_current_value)
     ];
 }
 

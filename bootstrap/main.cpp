@@ -27,8 +27,7 @@ INT WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpstrCmdLine, INT
 {
 	try
 	{
-		util::logger::instance().set_file_by_executable_name();
-		LOG_INFO("executable have been built on " << __TIMESTAMP__);
+		util::logger::instance().set_stderr();
 
 		xercesc::XMLPlatformUtils::Initialize();
 
@@ -39,7 +38,7 @@ INT WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpstrCmdLine, INT
         bootstrap::bind_platform(L);
         bootstrap::bind_graphic(L);
 
-        if (luaL_dofile(L, "main.lua") != 0)
+        if (luaL_dofile(L, lpstrCmdLine) != 0)
         {
             throw std::runtime_error(lua_tostring(L, -1));
         }

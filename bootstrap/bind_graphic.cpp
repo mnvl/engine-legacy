@@ -19,7 +19,8 @@ void bind_graphic(lua_State *L)
         class_<camera>("camera")
         .def(constructor<>())
         .def("set_perspective_projection", &camera::set_perspective_projection)
-        .def("set_position", (void (camera::*)(math::vec<3> const &, math::vec<3> const &, math::vec<3> const &)) &camera::set_position),
+        .def("set_eye_lookat_up", &camera::set_eye_lookat_up)
+        .def("set_position_rotation", &camera::set_position_rotation),
 
         class_<model>("model")
         .def("load_from_collada", &model::load_from_collada)
