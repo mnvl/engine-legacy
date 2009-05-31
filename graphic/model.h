@@ -35,7 +35,10 @@ public:
 
 	virtual joint *create_joint();
 	virtual mesh *create_mesh() = 0;
-    virtual void load_from_collada(std::string const &filename);
+
+    void load_from_collada(std::string const &filename);
+    void load_from_raw_i16_heightfield(std::string const &filename, size_t nrows, size_t ncols,
+        math::vec<3> const &scale, std::string const &texture_name);
 
     virtual void set_animation_time(math::scalar t);
     virtual void draw();

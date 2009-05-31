@@ -1,5 +1,6 @@
 
 #include <graphic/collada_loader.h>
+#include <graphic/heightfield_loader.h>
 #include <graphic/model.h>
 
 namespace graphic {
@@ -22,6 +23,12 @@ joint *model::create_joint()
 void model::load_from_collada(std::string const &filename)
 {
     collada_loader(filename, this, renderer_ptr_).load();
+}
+
+void load_from_raw_i16_heightfield(std::string const &filename, size_t nrows, size_t ncols,
+    math::vec<3> const &scale, std::string const &texture_name)
+{
+    heightfield_loader(filename, this, renderer).load_raw<boost::int16_t>(nrows, ncols, scale, texture_name);
 }
 
 joint *model::get_joint_by_id(std::string const &id)
