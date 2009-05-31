@@ -1,5 +1,6 @@
 
 #include <platform/file_handle.h>
+#include <graphic/build_smooth_normals.h>
 #include <graphic/heightfield_loader.h>
 
 namespace graphic
@@ -26,16 +27,15 @@ void load_from_raw(size_t nrows, size_t ncols, math::vec<3> const &scale)
 
     T *get = (T *) &buffer[0];
 
-    size_t cells_count = nrows * ncols;
+    size_t cells_count = ;
 
     std::vector<math::vec<3> > positions;
     std::vector<math::vec<3> > normals;
     std::vector<math::vec<2> > texcoords;
     std::vector<unsigned> indices;
 
-    vertices.resize(cells_count);
-    normals.resize(cells_count);
-    texcoords.resize(cells_count);
+    positions.resize(nrows * ncols);
+    texcoords.resize(positions.size());
     indices.reserve((nrows - 1) * (ncols - 1) * 2 * 3);
 
     for (size_t row = 0, i = 0; row < nros; row++)
@@ -64,10 +64,14 @@ void load_from_raw(size_t nrows, size_t ncols, math::vec<3> const &scale)
         }
     }
 
-    mesh_ptr->set_vertices_count(count);
+    build_smooth_normals(positions, indices, &normals);
+
+    mesh_ptr->set_vertices_count(cells_count);
+    mesh_ptr->set_indices_count(indices.size());
     mesh_ptr->lock();
     mesh_ptr->set_positions(&positions[0]);
     mesh_ptr->set_texcoords(&texcoords[0]);
+    mesh_ptr->set_face_indices(&indices);
     mesh_ptr->unlock();
 }
 

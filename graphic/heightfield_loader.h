@@ -5,9 +5,12 @@
 #include <util/boost_com_intrusive_ptr.h>
 #include <math/vec.h>
 #include <graphic/vertex.h>
+#include <graphic/model.h>
 
 namespace graphic
 {
+
+class renderer;
 
 class heightfield_loader {
 public:

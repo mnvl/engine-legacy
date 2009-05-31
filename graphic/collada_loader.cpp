@@ -1644,7 +1644,7 @@ namespace collada_elements
 		if (instance_geometry_)
 		{
 			mesh *mesh_ptr = get_model()->get_mesh_by_id(instance_geometry_->get_url());
-			
+
 			joint_ptr->mesh_ptr = mesh_ptr;
 			mesh_e const *mesh_element_ptr = get_root()->get_geometries()->get_geometry_by_id(instance_geometry_->get_url())->get_mesh();
 

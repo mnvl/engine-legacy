@@ -49,4 +49,7 @@ ADD_LIBRARY (graphic STATIC
 
 	renderer.h
 	renderer.cpp
+
+    build_smooth_normals.h
+    build_smooth_normals.cpp
 )

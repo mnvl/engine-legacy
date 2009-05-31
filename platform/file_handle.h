@@ -6,6 +6,7 @@
 #include <errno.h>
 #include <string.h>
 #include <string>
+#include <vector>
 #include <stdexcept>
 
 #pragma warning(disable: 4996)

@@ -91,7 +91,7 @@ void file_handle::read_string(std::string &str) {
 }
 
 void file_handle::write_string(std::string const &str) {
-	write(str.c_str(), string.size());
+	write(str.c_str(), str.size());
 }
 
 file_handle::stat_t file_handle::stat() const {
@@ -99,7 +99,7 @@ file_handle::stat_t file_handle::stat() const {
     if(fstat(handle_, &st) < 0)
 			throw error("error retreiving stats for " + filename_, errno);
 
-	return buffer.st_size;
+	return st;
 }
 
 void file_handle::read_all(std::vector<char> &buffer)
