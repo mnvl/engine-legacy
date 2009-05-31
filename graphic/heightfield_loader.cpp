@@ -1,4 +1,5 @@
 
+#include <boost/cstdint.hpp>
 #include <platform/file_handle.h>
 #include <graphic/build_smooth_normals.h>
 #include <graphic/heightfield_loader.h>
@@ -18,16 +19,15 @@ heightfield_loader::~heightfield_loader()
 }
 
 template<class T>
-void load_from_raw(size_t nrows, size_t ncols, math::vec<3> const &scale)
+void heightfield_loader::load_from_raw(size_t nrows, size_t ncols,
+    math::vec<3> const &scale, std::string const &texture_name)
 {
     std::vector<char> buffer;
-    platform::file_handle(filename_).read_all(buffer);
+    platform::file_handle(filename_.c_str(), O_RDONLY).read_all(buffer);
 
     mesh *mesh_ptr = model_ptr_->create_mesh();
 
     T *get = (T *) &buffer[0];
-
-    size_t cells_count = ;
 
     std::vector<math::vec<3> > positions;
     std::vector<math::vec<3> > normals;
@@ -38,7 +38,7 @@ void load_from_raw(size_t nrows, size_t ncols, math::vec<3> const &scale)
     texcoords.resize(positions.size());
     indices.reserve((nrows - 1) * (ncols - 1) * 2 * 3);
 
-    for (size_t row = 0, i = 0; row < nros; row++)
+    for (size_t row = 0, i = 0; row < nrows; row++)
     {
         for (size_t col = 0; col < ncols; col++, i++)
         {
@@ -66,13 +66,29 @@ void load_from_raw(size_t nrows, size_t ncols, math::vec<3> const &scale)
 
     build_smooth_normals(positions, indices, &normals);
 
-    mesh_ptr->set_vertices_count(cells_count);
+    mesh_ptr->set_vertices_count(positions.size());
     mesh_ptr->set_indices_count(indices.size());
     mesh_ptr->lock();
     mesh_ptr->set_positions(&positions[0]);
     mesh_ptr->set_texcoords(&texcoords[0]);
-    mesh_ptr->set_face_indices(&indices);
+    mesh_ptr->set_face_indices(&indices[0]);
     mesh_ptr->unlock();
+
+    std::auto_ptr<material> material_ptr(new material(renderer_ptr_));
+    material_ptr->set_name(texture_name + " material");
+    material_ptr->set_texture(texture_name);
+    model_ptr_->materials.push_back(material_ptr);
+
+    mesh::triangles t;
+    t.material_ptr = &model_ptr_->materials.back();
+    t.first_index_offset = 0;
+    t.triangles_count = indices.size() / 3;
+    t.minimal_vertex_index = 0;
+    t.vertices_count = positions.size();
+    mesh_ptr->triangles_list.push_back(t);
 }
+
+template void heightfield_loader::load_from_raw<boost::int16_t>(size_t nrows, size_t ncols,
+    math::vec<3> const &scale, std::string const &texture_name);
 
 }

@@ -26,7 +26,7 @@ public:
 	~heightfield_loader();
 
     template<class T>
-	void load_from_raw(size_t nrows, size_t ncols, math::vec<3> const &scale);
+	void load_from_raw(size_t nrows, size_t ncols, math::vec<3> const &scale, std::string const &texture_name);
 
 private:
 	std::string filename_;
