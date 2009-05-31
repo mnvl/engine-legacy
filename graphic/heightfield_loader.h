@@ -4,6 +4,7 @@
 #include <boost/cstdint.hpp>
 #include <util/boost_com_intrusive_ptr.h>
 #include <math/vec.h>
+#include <math/matrix.h>
 #include <graphic/vertex.h>
 #include <graphic/model.h>
 
@@ -26,7 +27,8 @@ public:
 	~heightfield_loader();
 
     template<class T>
-	void load_from_raw(size_t nrows, size_t ncols, math::vec<3> const &scale, std::string const &texture_name);
+	void load_from_raw(math::matrix<4, 4> const &tf, size_t nrows, size_t ncols,
+		math::vec<3> const &scale, std::string const &texture_name);
 
 private:
 	std::string filename_;

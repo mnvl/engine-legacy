@@ -25,6 +25,7 @@ void bind_graphic(lua_State *L)
         class_<model>("model")
         .def("load_from_collada", &model::load_from_collada)
         .def("load_from_raw_i16_heightfield", &model::load_from_raw_i16_heightfield)
+		.def("load_from_raw_u16_heightfield", &model::load_from_raw_u16_heightfield)
         .def("set_animation_time", &model::set_animation_time)
         .def("draw", &model::draw),
 

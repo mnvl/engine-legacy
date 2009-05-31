@@ -27,7 +27,7 @@ INT WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpstrCmdLine, INT
 {
 	try
 	{
-		util::logger::instance().set_stderr();
+		util::logger::instance().set_file("bootstrap.log");
 
 		xercesc::XMLPlatformUtils::Initialize();
 

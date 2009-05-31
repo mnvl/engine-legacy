@@ -19,7 +19,7 @@ heightfield_loader::~heightfield_loader()
 }
 
 template<class T>
-void heightfield_loader::load_from_raw(size_t nrows, size_t ncols,
+void heightfield_loader::load_from_raw(math::matrix<4,4> const &tf, size_t nrows, size_t ncols,
     math::vec<3> const &scale, std::string const &texture_name)
 {
     std::vector<char> buffer;
@@ -40,13 +40,13 @@ void heightfield_loader::load_from_raw(size_t nrows, size_t ncols,
 
     for (size_t row = 0, i = 0; row < nrows; row++)
     {
-        for (size_t col = 0; col < ncols; col++, i++)
+        for (size_t col = 0; col < ncols; col++, i++, get++)
         {
             positions[i] = math::vec<3>(row * scale.x / nrows,
                 *get * scale.y, col * scale.z / ncols);
 
-            texcoords[i] = math::vec<2>(math::scalar(row) / math::scalar(nrows),
-                math::scalar(col) / math::scalar(ncols));
+            texcoords[i] = math::vec<2>(math::scalar(col) / math::scalar(ncols),
+                math::scalar(row) / math::scalar(nrows));
         }
     }
 
@@ -70,6 +70,7 @@ void heightfield_loader::load_from_raw(size_t nrows, size_t ncols,
     mesh_ptr->set_indices_count(indices.size());
     mesh_ptr->lock();
     mesh_ptr->set_positions(&positions[0]);
+	mesh_ptr->set_normals(&normals[0]);
     mesh_ptr->set_texcoords(&texcoords[0]);
     mesh_ptr->set_face_indices(&indices[0]);
     mesh_ptr->unlock();
@@ -86,9 +87,16 @@ void heightfield_loader::load_from_raw(size_t nrows, size_t ncols,
     t.minimal_vertex_index = 0;
     t.vertices_count = positions.size();
     mesh_ptr->triangles_list.push_back(t);
+
+	joint *joint_ptr = model_ptr_->create_joint();
+	joint_ptr->transforms.push_back(joint::transform("tf", tf));
+	joint_ptr->mesh_ptr = mesh_ptr;
 }
 
-template void heightfield_loader::load_from_raw<boost::int16_t>(size_t nrows, size_t ncols,
+template void heightfield_loader::load_from_raw<boost::int16_t>(math::matrix<4,4> const &tf, size_t nrows, size_t ncols,
+    math::vec<3> const &scale, std::string const &texture_name);
+
+template void heightfield_loader::load_from_raw<boost::uint16_t>(math::matrix<4,4> const &tf, size_t nrows, size_t ncols,
     math::vec<3> const &scale, std::string const &texture_name);
 
 }

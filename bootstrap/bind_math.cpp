@@ -40,7 +40,9 @@ void bind_math(lua_State *L)
         .def("rotate_v3f", (void (matrix3x3f_t::*)(vec3f_t const &)) &matrix3x3f_t::rotate)
         .def("rotate_v3f_f", (void (matrix3x3f_t::*)(vec3f_t const &, math::scalar)) &matrix3x3f_t::rotate),
 
-        class_<matrix4x4f_t>("matrix4x4f"),
+        class_<matrix4x4f_t>("matrix4x4f")
+		.def(constructor<>())
+		.def("identity", (void (matrix4x4f_t::*)()) &matrix4x4f_t::identity),
 
         def("add_v3f_v3f", (vec3f_t (*)(vec3f_t const &, vec3f_t const &)) operator +),
         def("sub_v3f_v3f", (vec3f_t (*)(vec3f_t const &, vec3f_t const &)) operator -),

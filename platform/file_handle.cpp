@@ -72,14 +72,13 @@ void file_handle::read(void *buffer, size_t length) {
 
 void file_handle::write(void const *buffer, size_t length) {
 	if(!is_open()) throw std::logic_error("file handle is not open but write() is called");
-
-	int bytes_read = ::write(handle_, buffer, length);
-
-	if(bytes_read != length) throw error("error writing to file " + filename_, errno);
+	long bytes_written = ::write(handle_, buffer, length);
+	if(bytes_written != length) throw error("error writing to file " + filename_, errno);
 }
 
 void file_handle::lseek(offset_type offset, int origin) {
-	if(!is_open()) throw std::logic_error("file handle is not open but lseek() is called");
+	if(!is_open())
+		throw std::logic_error("file handle is not open but lseek() is called");
 
 	if(::lseek(handle_, offset, origin) < 0)
 		throw error("error seeking in file " + filename_, errno);
