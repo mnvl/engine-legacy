@@ -85,21 +85,27 @@ void file_handle::lseek(offset_type offset, int origin) {
 		throw error("error seeking in file " + filename_, errno);
 }
 
-void file_handle::read_string(std::string &string) {
-	string.clear();
-	for(char ch; read(&ch, sizeof(ch)), ch != 0; string += ch);
+void file_handle::read_string(std::string &str) {
+	str.clear();
+	for(char ch; read(&ch, sizeof(ch)), ch != 0; str += ch);
 }
 
-void file_handle::write_string(std::string const &string) {
-	write(string.c_str(), string.size());
+void file_handle::write_string(std::string const &str) {
+	write(str.c_str(), string.size());
 }
 
-file_handle::size_type file_handle::get_file_size() const {
-	struct stat buffer;
-	if(fstat(handle_, &buffer) < 0)
+file_handle::stat_t file_handle::stat() const {
+    stat_t st;
+    if(fstat(handle_, &st) < 0)
 			throw error("error retreiving stats for " + filename_, errno);
 
 	return buffer.st_size;
+}
+
+void file_handle::read_all(std::vector<char> &buffer)
+{
+    buffer.resize(stat().st_size);
+    read(&buffer[0], buffer.size());
 }
 
 }

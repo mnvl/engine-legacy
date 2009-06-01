@@ -24,6 +24,7 @@ public:
 
 	typedef size_t size_type;
 	typedef long offset_type;
+    typedef struct stat stat_t;
 
 	file_handle();
 	explicit file_handle(int handle);
@@ -41,10 +42,12 @@ public:
 	void write(void const *buffer, size_type length);
 	void lseek(offset_type offset, int origin);
 
-	void read_string(std::string &string);
-	void write_string(std::string const &string);
+	void read_string(std::string &str);
+	void write_string(std::string const &str);
 
-	size_type get_file_size() const;
+    stat_t stat() const;
+
+    void read_all(std::vector<char> &buffer);
 
 private:
 	int handle_;

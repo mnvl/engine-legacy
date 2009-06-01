@@ -38,6 +38,9 @@ ADD_LIBRARY (graphic STATIC
 	collada_loader.h
 	collada_loader.cpp
 
+    heightfield_loader.h
+    heightfield_loader.cpp
+
 	camera.h
 	camera.cpp
 
