@@ -15,7 +15,7 @@ namespace math {
 	inline scalar sign(scalar s) {
 		return s > 0 ? scalar(1) : scalar(-1);
 	}
-	
+
 	inline scalar abs(scalar s) {
 		return s > 0 ? s : -s;
 	}

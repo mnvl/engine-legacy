@@ -16,10 +16,12 @@ ADD_LIBRARY (math STATIC
 	ray.h
 	sphere.h
 	vec.h
+    heightfield.h
 
 	euler_angles.cpp
 	matrix.cpp
 	obb.cpp
 	random.cpp
 	vec.cpp
+    heightfield.cpp
 )
