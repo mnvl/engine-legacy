@@ -1,8 +1,3 @@
 
-ADD_LIBRARY (util STATIC
-	logger.h
-	logger.cpp
-
-	boost_com_intrusive_ptr.h
-	xerces_lcp_transcoder.h
-)
+FILE (GLOB UTIL_SOURCES *.h *.cpp)
+ADD_LIBRARY (util STATIC ${UTIL_SOURCES})

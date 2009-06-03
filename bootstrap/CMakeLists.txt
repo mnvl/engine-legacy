@@ -1,10 +1,6 @@
 
-ADD_EXECUTABLE (bootstrap WIN32
-	main.cpp
-    bind_math.cpp
-    bind_platform.cpp
-    bind_graphic.cpp
-)
+FILE (GLOB BOOTSTRAP_SOURCES *.h *.cpp)
+ADD_EXECUTABLE (bootstrap WIN32 ${BOOTSTRAP_SOURCES})
 
 TARGET_LINK_LIBRARIES (bootstrap
 	math
