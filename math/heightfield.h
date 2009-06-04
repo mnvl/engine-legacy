@@ -15,10 +15,9 @@ public:
     heightfield(matrix<4,4> const &tf, size_t nrows, size_t ncols, vec<3> const &scale, value_type const *heights);
     ~heightfield();
 
-    scalar at(int row, int col)
+    math::scalar at(int row, int col)
     {
-        return vec<3>(row / nrows * scale_.x, heights_.at[row * nrows_ + col], col / ncols * scale_.z)
-            * local_to_world_;
+        return heights_.at(row * nrows_ + col);
     }
 
     // world to local transform aplyed on point, so we supply all three components of point

@@ -1,4 +1,5 @@
 
+#include <boost/cstdint.hpp>
 #include <math/heightfield.h>
 
 namespace math
@@ -11,7 +12,7 @@ local_to_world_(tf),
 nrows_(nrows),
 ncols_(ncols),
 scale_(scale),
-heights_(heights_, nrows * ncols)
+heights_(heights, heights + nrows * ncols)
 {
     local_to_world_.inverse(world_to_local_);
 }
@@ -26,30 +27,36 @@ scalar heightfield<T>::y_at(vec<3> const &point)
 {
     vec<3> point_local = point * world_to_local_;
 
-    int row = int(point_local.x * nrows_);
-    int col = int(point_local.z * ncols_);
+    int row = int(point_local.x * nrows_ / scale_.x);
+    int col = int(point_local.z * ncols_ / scale_.z);
 
-    if (row < 0 || row_ >= nrows_ || col_ < 0 || col_ >= ncols_)
+    if (row < 0 || row >= (int) nrows_ || col < 0 || col >= (int) ncols_)
         return 0;
 
     scalar u = point.x - scalar(row);
     scalar v = point.z - scalar(col);
+    scalar uv = u + v;
 
-    scalar inv_u = scalar(1) - u;
-    scalar inv_v = scalar(1) - v;
-
-    scalar y1, y2;
-
-    if (square(x) + square(z) > scalar(1))
+    if (uv < EPSILON)
     {
-        y1 = at(row, col) * u + at(row + 1, col) * inv_u;
-        y2 = at(row, col) * v + at(row, col + 1) * inv_v;
+        return at(row, col);
+    }
+    else if (uv <= scalar(1))
+    {
+        scalar inv_uv = scalar(1) - uv;
+
+        scalar y1 = at(row, col) * inv_uv + at(row, col + 1) * uv;
+        scalar y2 = at(row, col) * inv_uv + at(row + 1, col) * uv;
+
+        return scale_.y * (y1 + (y2 - y1) * v / uv);
     }
     else
     {
-        y1 = at(row + 1, col + 1) * inv_u + at(row + 1, col) * u;
-        y2 = at(row + 1, col + 1) * inv_v + at(row, col + 1) * v;
+        return 0;
     }
 }
+
+template class heightfield<boost::uint8_t>;
+template class heightfield<boost::uint16_t>;
 
 }
