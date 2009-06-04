@@ -27,32 +27,47 @@ scalar heightfield<T>::y_at(vec<3> const &point)
 {
     vec<3> point_local = point * world_to_local_;
 
-    int row = int(point_local.x * nrows_ / scale_.x);
-    int col = int(point_local.z * ncols_ / scale_.z);
+    int col = int(point_local.x * nrows_ / scale_.x);
+    int row = int(point_local.z * ncols_ / scale_.z);
 
     if (row < 0 || row >= (int) nrows_ || col < 0 || col >= (int) ncols_)
         return 0;
 
-    scalar u = point.x - scalar(row);
-    scalar v = point.z - scalar(col);
+    scalar u = point.x - scalar(col);
+    scalar v = point.z - scalar(row);
     scalar uv = u + v;
 
     if (uv < EPSILON)
     {
         return at(row, col);
     }
-    else if (uv <= scalar(1))
+    
+	if (uv <= scalar(1))
     {
-        scalar inv_uv = scalar(1) - uv;
+		scalar y = at(row, col) * (scalar(1) - uv);
 
-        scalar y1 = at(row, col) * inv_uv + at(row, col + 1) * uv;
-        scalar y2 = at(row, col) * inv_uv + at(row + 1, col) * uv;
+        scalar y1 = y + at(row, col + 1) * uv;
+        scalar y2 = y + at(row + 1, col) * uv;
 
-        return scale_.y * (y1 + (y2 - y1) * v / uv);
+        return scale_.y * (y1 + (y2 - y1) * u / uv);
     }
     else
     {
-        return 0;
+		u = scalar(1) - u;
+		v = scalar(1) - v;
+		uv = u + v;
+
+		if (uv < EPSILON)
+		{
+			return at(row + 1, col + 1);
+		}
+
+		scalar y = at(row, col) * (scalar(1) - uv);
+
+		scalar y1 = y + at(row, col + 1) * uv;
+        scalar y2 = y + at(row + 1, col) * uv;
+
+        return scale_.y * (y1 + (y2 - y1) * v / uv);
     }
 }
 

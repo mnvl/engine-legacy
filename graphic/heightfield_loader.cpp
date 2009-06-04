@@ -42,8 +42,8 @@ void heightfield_loader::load_from_raw(math::matrix<4,4> const &tf, size_t nrows
     {
         for (size_t col = 0; col < ncols; col++, i++, get++)
         {
-            positions[i] = math::vec<3>(row * scale.x / nrows,
-                *get * scale.y, col * scale.z / ncols);
+            positions[i] = math::vec<3>(col * scale.z / ncols,
+                *get * scale.y, row * scale.x / nrows);
 
             texcoords[i] = math::vec<2>(math::scalar(col) / math::scalar(ncols),
                 math::scalar(row) / math::scalar(nrows));

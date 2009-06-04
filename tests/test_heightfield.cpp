@@ -20,14 +20,15 @@ class test_heightfield: public CppUnit::TestFixture {
         math::matrix<4,4> tf;
         tf.identity();
 
-        math::heightfield<unsigned char> hf(tf, 4, 4, math::vec<3>(3, 1, 3), heights);
+        math::heightfield<unsigned char> hf(tf, 3, 3, math::vec<3>(3, 1, 3), heights);
 
-        printf ("%f\n", hf.y_at(math::vec<3>(.0f, 0, .5f)));
-
-        CPPUNIT_ASSERT(abs(hf.y_at(math::vec<3>(.0f, 0, .0f)) - 5.00f) < math::EPSILON);
-        CPPUNIT_ASSERT(abs(hf.y_at(math::vec<3>(.5f, 0, .0f)) - 7.50f) < math::EPSILON);
-        CPPUNIT_ASSERT(abs(hf.y_at(math::vec<3>(.0f, 0, .5f)) - 3.00f) < math::EPSILON);
-        CPPUNIT_ASSERT(abs(hf.y_at(math::vec<3>(.5f, 0, .5f)) - 4.75f) < math::EPSILON);
+        CPPUNIT_ASSERT(abs(hf.y_at(math::vec<3>( .0f, 0,  .0f)) -  5.00f) < math::EPSILON);
+        CPPUNIT_ASSERT(abs(hf.y_at(math::vec<3>( .5f, 0,  .0f)) -  3.00f) < math::EPSILON);
+        CPPUNIT_ASSERT(abs(hf.y_at(math::vec<3>( .0f, 0,  .5f)) -  7.50f) < math::EPSILON);
+        CPPUNIT_ASSERT(abs(hf.y_at(math::vec<3>( .5f, 0,  .5f)) -  5.50f) < math::EPSILON);
+		CPPUNIT_ASSERT(abs(hf.y_at(math::vec<3>(1.0f, 0, 0.0f)) - 10.00f) < math::EPSILON);
+		CPPUNIT_ASSERT(abs(hf.y_at(math::vec<3>(0.0f, 0, 1.0f)) -  1.00f) < math::EPSILON);
+		CPPUNIT_ASSERT(abs(hf.y_at(math::vec<3>(1.0f, 0, 1.0f)) -  4.00f) < math::EPSILON);
     }
 };
 

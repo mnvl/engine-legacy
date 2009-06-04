@@ -17,7 +17,7 @@ public:
 
     math::scalar at(int row, int col)
     {
-        return heights_.at(row * nrows_ + col);
+        return heights_.at(row * ncols_ + col);
     }
 
     // world to local transform aplyed on point, so we supply all three components of point
