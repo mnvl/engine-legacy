@@ -71,7 +71,11 @@ void heightfield_loader::load_from_raw(math::matrix<4,4> const &tf, size_t nrows
     }
 
 	LOG_DEBUG("building smooth normals...");
+#if 0
     build_smooth_normals(positions, indices, &normals);
+#else
+    normals.resize(positions.size());
+#endif
 
 	LOG_DEBUG("building mesh...");
 

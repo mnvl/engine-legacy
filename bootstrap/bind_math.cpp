@@ -1,9 +1,11 @@
 
+#include <boost/cstdint.hpp>
 #include <luabind/lua_include.hpp>
 #include <luabind/luabind.hpp>
 #include <luabind/operator.hpp>
 #include <math/vec.h>
 #include <math/matrix.h>
+#include <math/heightfield.h>
 
 namespace bootstrap
 {
@@ -18,6 +20,7 @@ void bind_math(lua_State *L)
     typedef vec<4> vec4f_t;
     typedef matrix<3,3> matrix3x3f_t;
     typedef matrix<4,4> matrix4x4f_t;
+    typedef heightfield<boost::uint16_t> heightfield_u16_t;
 
     module(L, "math")
     [
@@ -43,6 +46,11 @@ void bind_math(lua_State *L)
         class_<matrix4x4f_t>("matrix4x4f")
 		.def(constructor<>())
 		.def("identity", (void (matrix4x4f_t::*)()) &matrix4x4f_t::identity),
+
+        class_<heightfield_u16_t>("heightfield_u16")
+        .def(constructor<matrix4x4f_t const &, size_t, size_t, vec3f_t const &>())
+        .def("load_from_raw_file", &heightfield_u16_t::load_from_raw_file)
+        .def("y_at", &heightfield_u16_t::y_at),
 
         def("add_v3f_v3f", (vec3f_t (*)(vec3f_t const &, vec3f_t const &)) operator +),
         def("sub_v3f_v3f", (vec3f_t (*)(vec3f_t const &, vec3f_t const &)) operator -),
