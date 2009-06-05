@@ -26,7 +26,7 @@ void build_smooth_normals(std::vector<math::vec<3> > const &positions, std::vect
 
     for (size_t i = 0; i < positions.size(); i++)
     {
-		(*normals)[i] = math::normalize((*normals)[i] / adjacent_faces_count[i]);
+		(*normals)[i] /= adjacent_faces_count[i];
     }
 }
 

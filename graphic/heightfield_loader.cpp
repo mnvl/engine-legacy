@@ -1,6 +1,7 @@
 
 #include <boost/cstdint.hpp>
 #include <platform/file_handle.h>
+#include <util/logger.h>
 #include <graphic/build_smooth_normals.h>
 #include <graphic/heightfield_loader.h>
 
@@ -22,6 +23,9 @@ template<class T>
 void heightfield_loader::load_from_raw(math::matrix<4,4> const &tf, size_t nrows, size_t ncols,
     math::vec<3> const &scale, std::string const &texture_name)
 {
+	LOG_INFO("importing heightfield from raw file " << filename_ << ", nrows = "
+		<< nrows << ", ncols = " << ncols);
+
     std::vector<char> buffer;
     platform::file_handle(filename_.c_str(), O_RDONLY).read_all(buffer);
 
@@ -38,33 +42,38 @@ void heightfield_loader::load_from_raw(math::matrix<4,4> const &tf, size_t nrows
     texcoords.resize(positions.size());
     indices.reserve((nrows - 1) * (ncols - 1) * 2 * 3);
 
+	LOG_DEBUG("building vertex buffer...");
     for (size_t row = 0, i = 0; row < nrows; row++)
     {
         for (size_t col = 0; col < ncols; col++, i++, get++)
         {
-            positions[i] = math::vec<3>(col * scale.z / ncols,
-                *get * scale.y, row * scale.x / nrows);
+            positions[i] = math::vec<3>(col * scale.x / ncols,
+                *get * scale.y, row * scale.z / nrows);
 
             texcoords[i] = math::vec<2>(math::scalar(col) / math::scalar(ncols),
                 math::scalar(row) / math::scalar(nrows));
         }
     }
 
+	LOG_DEBUG("building index buffer...");
     for (size_t row = 1; row < nrows; row++)
     {
         for (size_t col = 1; col < ncols; col++)
         {
+			indices.push_back((row - 1) * ncols + (col - 0));
             indices.push_back((row - 1) * ncols + (col - 1));
-            indices.push_back((row - 1) * ncols + (col - 0));
             indices.push_back((row - 0) * ncols + (col - 0));
 
+			indices.push_back((row - 0) * ncols + (col - 1));
             indices.push_back((row - 0) * ncols + (col - 0));
-            indices.push_back((row - 0) * ncols + (col - 1));
             indices.push_back((row - 1) * ncols + (col - 1));
         }
     }
 
+	LOG_DEBUG("building smooth normals...");
     build_smooth_normals(positions, indices, &normals);
+
+	LOG_DEBUG("building mesh...");
 
     mesh_ptr->set_vertices_count(positions.size());
     mesh_ptr->set_indices_count(indices.size());
@@ -75,11 +84,13 @@ void heightfield_loader::load_from_raw(math::matrix<4,4> const &tf, size_t nrows
     mesh_ptr->set_face_indices(&indices[0]);
     mesh_ptr->unlock();
 
+	LOG_DEBUG("setting material and texture (" << texture_name << ")...");
     std::auto_ptr<material> material_ptr(new material(renderer_ptr_));
     material_ptr->set_name(texture_name + " material");
     material_ptr->set_texture(texture_name);
     model_ptr_->materials.push_back(material_ptr);
 
+	LOG_DEBUG("adding triangle lists and joints...");
     mesh::triangles t;
     t.material_ptr = &model_ptr_->materials.back();
     t.first_index_offset = 0;
@@ -91,6 +102,8 @@ void heightfield_loader::load_from_raw(math::matrix<4,4> const &tf, size_t nrows
 	joint *joint_ptr = model_ptr_->create_joint();
 	joint_ptr->transforms.push_back(joint::transform("tf", tf));
 	joint_ptr->mesh_ptr = mesh_ptr;
+
+	LOG_DEBUG("heightfield imported successfully");
 }
 
 template void heightfield_loader::load_from_raw<boost::int16_t>(math::matrix<4,4> const &tf, size_t nrows, size_t ncols,
