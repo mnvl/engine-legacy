@@ -50,6 +50,7 @@ public:
 
     void test_raytrace()
     {
+		math::collision_info<3> ci = hf_->raytrace(math::line<3>(math::vec<3>(1, 100, 1), math::vec<3>(2, -100, 2)));
     }
 };
 

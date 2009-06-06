@@ -79,8 +79,8 @@ collision_info<3> heightfield<T>::raytrace(line<3> const &l)
     vec<3> const &v = l1.A;
     vec<3> dv = l1.B - l1.A;
 
-    int kx1 = std::max(int(l1.A.x), 0), kx2 = std::min(int(l1.B.x), int(ncols_) - 1);
-    int kz1 = std::max(int(l1.A.z), 0), kz2 = std::min(int(l1.B.z), int(nrows_) - 1);
+    int kx1 = int(l1.A.x), kx2 = int(l1.B.z);
+    int kz1 = int(l1.A.z), kz2 = int(l1.B.z);
 
     int kx = kx1;
     scalar tx = (kx - v.x) / dv.x;
@@ -109,15 +109,18 @@ collision_info<3> heightfield<T>::raytrace(line<3> const &l)
             tz = (kz - v.z) / dv.z;
         }
 
-        scalar y1 = at(kx + 0, kz + 0);
-        scalar y2 = at(kx + 1, kz + 0);
-        scalar y3 = at(kx + 1, kz + 1);
-        scalar y4 = at(kx + 0, kz + 1);
+		int col = int(p1.x);
+		int row = int(p1.z);
+
+        scalar y1 = at(col + 0, row + 0);
+        scalar y2 = at(col + 1, row + 0);
+        scalar y3 = at(col + 1, row + 1);
+        scalar y4 = at(col + 0, row + 1);
 
         scalar ymin = std::min(std::min(y1, y2), std::min(y3, y4));
         scalar ymax = std::max(std::max(y1, y2), std::max(y3, y4));
 
-        if (p.y < ymin && p1.y < ymin || p.y > ymax && p1.y > ymax) {
+        if ((p.y < ymin && p1.y < ymin) || (p.y > ymax && p1.y > ymax)) {
             p = p1;
             continue;
         }
