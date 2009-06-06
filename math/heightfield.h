@@ -1,7 +1,9 @@
 #pragma once
 
 #include <math/vec.h>
+#include <math/line.h>
 #include <math/matrix.h>
+#include <math/collision.h>
 #include <vector>
 
 namespace math
@@ -15,14 +17,16 @@ public:
     heightfield(matrix<4,4> const &tf, size_t nrows, size_t ncols, vec<3> const &scale);
     ~heightfield();
 
-    math::scalar at(int row, int col)
+    scalar at(int row, int col)
     {
-        return heights_.at(row * ncols_ + col);
+        return heights_.at(row * ncols_ + col) * scale_.y;
     }
 
     // world to local transform aplyed on point, so we supply all three components of point
-    // returns 0 if point is outside heightfield
+    // result is undefined if point is outside heightfield bounds
     scalar y_at(vec<3> const &point);
+
+    collision_info<3> raytrace(line<3> const &l);
 
     void load_from_buffer(value_type const *heights);
     void load_from_raw_file(std::string const &name);

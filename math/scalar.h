@@ -55,6 +55,6 @@ namespace math {
 		while(x < low) x += period;
 		while(x > high) x -= period;
 		return x;
-	} 
+	}
 }
 
