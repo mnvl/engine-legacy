@@ -58,11 +58,11 @@ public:
 		}
 
 		{
-			math::contact_info<3> ci = hf_->trace(math::ray<3>(math::vec<3>(-1, 3.0f, 0.5f), math::vec<3>(1, 0, 0)));
+			math::contact_info<3> ci = hf_->trace(math::ray<3>(math::vec<3>(-1, 5, 0.5f), math::vec<3>(1, 0, 0)));
 			CPPUNIT_ASSERT (ci.happened == true);
 			CPPUNIT_ASSERT (ci.penetrated == false);
-			CPPUNIT_ASSERT ((ci.position - math::vec<3>(1.55f, 5.1f, 1.55f)).length_sq() < 0.01f);
-			CPPUNIT_ASSERT ((ci.normal - math::vec<3>(-0.57f, 0.57f, -0.57f)).length_sq() < 0.01f);
+			CPPUNIT_ASSERT ((ci.position - math::vec<3>(0.62f, 5.0f, 0.5f)).length_sq() < 0.01f);
+			CPPUNIT_ASSERT ((ci.normal - math::vec<3>(0.62f, 0.15f, -0.78f)).length_sq() < 0.01f);
 		}
     }
 };

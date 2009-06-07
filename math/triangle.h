@@ -249,15 +249,15 @@ public:
     bool contains_on_plane(const vec_type &v) const {
         vec_type BA = B - A;
         scalar_type s1 = (v - A) & BA;
-        if(s1<0 || s1>BA.length_sq()) return false;
+        if (s1 < 0 || s1 > BA.length_sq()) return false;
 
         vec_type CB = C - B;
         scalar_type s2 = (v - B) & CB;
-        if(s2<0 || s2>CB.length_sq()) return false;
+        if ( s2 < 0 || s2 > CB.length_sq()) return false;
 
         vec_type AC = A - C;
         scalar_type s3 = (v - C) & AC;
-        return s3>=0 && s3<=AC.length_sq();
+        return s3 >= 0 && s3 <= AC.length_sq();
     }
 
 	bool contains(vec_type const &v) const {
