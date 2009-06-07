@@ -20,6 +20,7 @@ void bind_math(lua_State *L)
     typedef vec<4> vec4f_t;
     typedef matrix<3,3> matrix3x3f_t;
     typedef matrix<4,4> matrix4x4f_t;
+	typedef ray<3> ray3f_t;
     typedef heightfield<boost::uint16_t> heightfield_u16_t;
 
     module(L, "math")
@@ -47,10 +48,15 @@ void bind_math(lua_State *L)
 		.def(constructor<>())
 		.def("identity", (void (matrix4x4f_t::*)()) &matrix4x4f_t::identity),
 
+		class_<ray3f_t>("ray3f")
+		.def(constructor<>())
+		.def(constructor<vec3f_t const &, vec3f_t const &>()),
+
         class_<heightfield_u16_t>("heightfield_u16")
         .def(constructor<matrix4x4f_t const &, size_t, size_t, vec3f_t const &>())
         .def("load_from_raw_file", &heightfield_u16_t::load_from_raw_file)
-        .def("y_at", &heightfield_u16_t::y_at),
+        .def("y_at", &heightfield_u16_t::y_at)
+		.def("trace", &heightfield_u16_t::trace),
 
         def("add_v3f_v3f", (vec3f_t (*)(vec3f_t const &, vec3f_t const &)) operator +),
         def("sub_v3f_v3f", (vec3f_t (*)(vec3f_t const &, vec3f_t const &)) operator -),
