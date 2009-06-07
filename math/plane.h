@@ -49,9 +49,12 @@ public:
 			|| contains(r);
 	}
 
+	bool contains(vec_type const &p) const {
+		return abs(A * p.x + B * p.y + C * p.z + D) < EPSILON;
+	}
+
 	bool contains(const ray_type &r) const {
-		return abs(A*r.direction.x + B*r.direction.y + C*r.direction.z)<EPSILON
-			&& abs(A*r.origin.x + B*r.origin.y + C*r.origin.z + D)<EPSILON;
+		return abs(A*r.direction.x + B*r.direction.y + C*r.direction.z) < EPSILON && contains(r.origin);
 	}
 
 	bool parallel(const ray_type &r) const {

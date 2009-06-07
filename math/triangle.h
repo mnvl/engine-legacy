@@ -245,8 +245,8 @@ public:
         mul(C, vec_type(C), tf);
     }
 
-    // intersections
-    bool contains(const vec_type &v) const {
+    // only for points on triangles plane
+    bool contains_on_plane(const vec_type &v) const {
         vec_type BA = B - A;
         scalar_type s1 = (v - A) & BA;
         if(s1<0 || s1>BA.length_sq()) return false;
@@ -260,8 +260,12 @@ public:
         return s3>=0 && s3<=AC.length_sq();
     }
 
+	bool contains(vec_type const &v) const {
+		return get_plane().contains(v) && contains_on_plane(v);
+	}
+
     bool trace(const ray_type &r,scalar_type &t,vec_type &v,scalar_type t_min = 0, scalar_type t_max = 1) const {
-        return get_plane().trace(r,t,v,t_min,t_max) && contains(v);
+        return get_plane().trace(r,t,v,t_min,t_max) && contains_on_plane(v);
     }
 
     bool trace(const ray_type &r,scalar_type t_min = 0,scalar_type t_max = 1) const {

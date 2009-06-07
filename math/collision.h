@@ -14,17 +14,17 @@ namespace math {
 	static scalar const COLLISION_EPSILON = 0.001f;
 
 	template<int N, class S = math::scalar>
-	struct collision_info {
+	struct contact_info {
 		static int const arity = N;
 		typedef S scalar_type;
 		typedef vec<arity, scalar_type> vec_type;
-		typedef collision_info<arity, scalar_type> collision_info_type;
+		typedef contact_info<arity, scalar_type> contact_info_type;
 
 		bool happened, penetrated;
 		vec_type position, normal;
 		scalar_type time, penetration_depth;
 
-		bool worse_than(collision_info_type const &ci) const {
+		bool worse_than(contact_info_type const &ci) const {
 			if (ci.happened == false) return false;
 			if (happened == false) return true;
 			if (penetrated == false && ci.penetrated == true) return true;
@@ -34,7 +34,7 @@ namespace math {
 	};
 
 	template<int N, class S>
-	bool collide(sphere<N, S> const &s1, sphere<N, S> const &s2, vec<N, S> const &vel, collision_info<2, S> &ci) {
+	bool collide(sphere<N, S> const &s1, sphere<N, S> const &s2, vec<N, S> const &vel, contact_info<2, S> &ci) {
 		// |x1 - x2| = R1 + R2
 		// x2(t) = x2 + v * t
 		// |x1 - x2 - v*t| = R1 + R2
@@ -93,7 +93,7 @@ namespace math {
 	}
 
 	template<int N, class S>
-	bool collide(line<N, S> const &l, sphere<N, S> const &s, vec<N, S> const &vel, collision_info<2, S> &ci) {
+	bool collide(line<N, S> const &l, sphere<N, S> const &s, vec<N, S> const &vel, contact_info<2, S> &ci) {
 		vec<N, S> p1, p2;
 
 		if (intersect(l, s, p1, p2) == 2) {
@@ -137,7 +137,7 @@ namespace math {
 			}
 		}
 
-		collision_info<N, S> ci0;
+		contact_info<N, S> ci0;
 
 		collide(sphere<N, S>(l.A, 0), s, vel, ci0);
 		if (ci.worse_than(ci0)) {
@@ -153,7 +153,7 @@ namespace math {
 	}
 
 	template<class S>
-	bool collide(obb<2, S> const &o, sphere<2, S> const &s, vec<2, S> const &vel, collision_info<2, S> &ci, bool not_from_inside = true) {
+	bool collide(obb<2, S> const &o, sphere<2, S> const &s, vec<2, S> const &vel, contact_info<2, S> &ci, bool not_from_inside = true) {
 		ci.happened = false;
 
 		if (vel.length_sq() < EPSILON) return false;
@@ -162,7 +162,7 @@ namespace math {
 			for (size_t i = 0; i < obb<2, S>::sides_count; i++) {
 				vec<2, S> vertex = o.get_vertex(i), normal = o.get_normal(i);
 
-				collision_info<2, S> ci0;
+				contact_info<2, S> ci0;
 				ci0.penetration_depth = -((s.centre - vertex) & normal) + s.radius;
 
 				if (ci0.penetration_depth > 0) {
@@ -181,7 +181,7 @@ namespace math {
 		for (size_t i = 0; i < obb<2, S>::sides_count; i++) {
 			line<2, S> side = o.get_side(i);
 
-			collision_info<2, S> ci0;
+			contact_info<2, S> ci0;
 			collide(side, s, vel, ci0);
 
 			if (ci.worse_than(ci0)) {
@@ -193,7 +193,7 @@ namespace math {
 	}
 
 	template<int N, class S>
-	bool collide(aabb<N, S> const &a, sphere<N, S> const &s, vec<N, S> const &vel, collision_info<N, S> &ci, bool not_from_inside = true) {
+	bool collide(aabb<N, S> const &a, sphere<N, S> const &s, vec<N, S> const &vel, contact_info<N, S> &ci, bool not_from_inside = true) {
 		return collide(obb<N, S>(a), s, vel, ci, not_from_inside);
 	}
 }

@@ -71,7 +71,7 @@ scalar heightfield<T>::y_at(vec<3> const &point)
 }
 
 template<class T>
-collision_info<3> heightfield<T>::trace(ray<3> const &r, scalar max_distance)
+contact_info<3> heightfield<T>::trace(ray<3> const &r, scalar max_distance)
 {
     // x0 + dx * t = x(t)
     // t(x) = (x - x0) / dx = x * 1 / dx - x0 / dx
@@ -83,19 +83,54 @@ collision_info<3> heightfield<T>::trace(ray<3> const &r, scalar max_distance)
     vec<3> const &v0 = l.A;
     vec<3> dv = l.B - l.A;
 
+	if (abs(dv.x) < EPSILON && abs(dv.z) < EPSILON) {
+		scalar y = y_at(r.origin);
+
+		if (y * r.direction.y > 0)
+		{
+			contact_info<3> ci;
+			ci.happened = true;
+            ci.penetrated = false;
+			ci.position.set(r.origin.x, y, r.origin.z);
+
+			int col = int(ci.position.x), row = int(ci.position.z);
+
+	        vec<3> v1 = vec<3>(scalar(row + 0), at(row + 0, col + 0), scalar(col + 0));
+		    vec<3> v2 = vec<3>(scalar(row + 0), at(row + 0, col + 1), scalar(col + 1));
+			vec<3> v3 = vec<3>(scalar(row + 1), at(row + 1, col + 1), scalar(col + 1));
+			vec<3> v4 = vec<3>(scalar(row + 1), at(row + 1, col + 0), scalar(col + 0));
+	
+			triangle<3> tri1(v1, v2, v4);
+			triangle<3> tri2(v3, v4, v2);
+
+			if (tri1.contains_on_plane(ci.position)) ci.normal = tri1.get_normal();
+			else ci.normal = tri2.get_normal();
+
+			ci.time = (ci.position - r.origin).length() / r.direction.length();
+
+			return ci;
+		}
+		else
+		{
+			contact_info<3> ci;
+			ci.happened = false;
+			return ci;
+		}
+	}
+
     scalar tx = -v0.x / dv.x, tz = -v0.z / dv.z;
-    scalar inv_dx = 1 / dv.x, inv_dz = 1 / dv.z;
+	scalar inv_dx = abs(dv.x) > EPSILON ? 1 / dv.x : 0, inv_dz = abs(dv.z) > EPSILON ? 1 / dv.z : 0;
 
-	if (tx < 0) tx += (floor(-tx / inv_dx) + 1) * inv_dx;
-    if (tz < 0) tz += (floor(-tz / inv_dz) + 1) * inv_dz;
+	if (tx < 0) tx += (1 + floor(-tx / inv_dx)) * inv_dx;
+    if (tz < 0) tz += (1 + floor(-tz / inv_dz)) * inv_dz;
 
-	vec<3> prev_p, next_p = v0 + dv * std::min(tx, tz);
+	vec<3> prev_p, next_p = v0;
 
-    while (tx <= 1 || tz <= 1)
+    while ((tx <= 1 || inv_dx == 0) && (tz <= 1 || inv_dz == 0))
     {
         prev_p = next_p;
 
-        if (tx < tz)
+        if ((inv_dx && !inv_dz) || tx < tz)
         {
             next_p = v0 + dv * tx;
             tx += inv_dx;
@@ -108,8 +143,10 @@ collision_info<3> heightfield<T>::trace(ray<3> const &r, scalar max_distance)
 
 		if ((prev_p - next_p).length_sq() < math::EPSILON) continue;
 
-		int col = std::min(int(prev_p.x), int(next_p.x)),
-			row = std::min(int(prev_p.z), int(next_p.z));
+		int col = std::min(std::max(0, int(prev_p.x)), int(next_p.x)),
+			row = std::min(std::max(0, int(prev_p.z)), int(next_p.z));
+
+		if (col == ncols_ - 1 || row == nrows_ - 1) break;
 
         scalar y1 = at(row + 0, col + 0);
         scalar y2 = at(row + 0, col + 1);
@@ -130,12 +167,12 @@ collision_info<3> heightfield<T>::trace(ray<3> const &r, scalar max_distance)
         triangle<3> tri1(v1, v2, v4);
         triangle<3> tri2(v3, v4, v2);
 
-        scalar trace_t1, trace_t2;
+        scalar trace_t1 = 2, trace_t2 = 2;
         vec<3> trace_p1, trace_p2;
 
         if (tri1.trace(ray<3>(v0, dv), trace_t1, trace_p1) || tri2.trace(ray<3>(v0, dv), trace_t2, trace_p2))
         {
-            collision_info<3> ci;
+            contact_info<3> ci;
 
             ci.happened = true;
             ci.penetrated = false;
@@ -144,18 +181,20 @@ collision_info<3> heightfield<T>::trace(ray<3> const &r, scalar max_distance)
             {
                 ci.position = trace_p1;
                 ci.normal = tri1.get_normal();
+				ci.time = trace_t1;
             }
             else
             {
                 ci.position = trace_p2;
                 ci.normal = tri2.get_normal();
+				ci.time = trace_t2;
             }
 
             return ci;
         }
     }
 
-    collision_info<3> ci;
+    contact_info<3> ci;
     ci.happened = false;
     return ci;
 }

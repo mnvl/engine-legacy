@@ -22,10 +22,9 @@ public:
         hf_.reset(new hf_t(tf, 3, 3, math::vec<3>(3, 1, 3)));
 
         static boost::uint8_t const heights[] = {
-            5,  10,  11,
-            1,   4,  15,
-            10,  8,  17,
-            16, 12,  30
+             5, 10, 11,
+             1,  4,  5,
+            10,  5,  5
         };
 
         hf_->load_from_buffer(heights);
@@ -50,7 +49,21 @@ public:
 
     void test_raytrace()
     {
-		math::collision_info<3> ci = hf_->trace(math::ray<3>(math::vec<3>(0, 10, 0), math::vec<3>(1, -100, 1)));
+		{
+			math::contact_info<3> ci = hf_->trace(math::ray<3>(math::vec<3>(1.5, 10, 1.5), math::vec<3>(1, -100, 1)));
+			CPPUNIT_ASSERT (ci.happened == true);
+			CPPUNIT_ASSERT (ci.penetrated == false);
+			CPPUNIT_ASSERT ((ci.position - math::vec<3>(1.55f, 5.1f, 1.55f)).length_sq() < 0.01f);
+			CPPUNIT_ASSERT ((ci.normal - math::vec<3>(-0.57f, 0.57f, -0.57f)).length_sq() < 0.01f);
+		}
+
+		{
+			math::contact_info<3> ci = hf_->trace(math::ray<3>(math::vec<3>(-1, 3.0f, 0.5f), math::vec<3>(1, 0, 0)));
+			CPPUNIT_ASSERT (ci.happened == true);
+			CPPUNIT_ASSERT (ci.penetrated == false);
+			CPPUNIT_ASSERT ((ci.position - math::vec<3>(1.55f, 5.1f, 1.55f)).length_sq() < 0.01f);
+			CPPUNIT_ASSERT ((ci.normal - math::vec<3>(-0.57f, 0.57f, -0.57f)).length_sq() < 0.01f);
+		}
     }
 };
 

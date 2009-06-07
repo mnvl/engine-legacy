@@ -20,7 +20,7 @@ class test_collisions: public CppUnit::TestFixture {
 		l.A.set(-100, 0);
 		l.B.set(100, 0);
 
-		math::collision_info<2> ci;
+		math::contact_info<2> ci;
 		math::collide(l, sph, math::vec<2>(-2, -1), ci);
 
 		assert(ci.happened == true);
@@ -36,7 +36,7 @@ class test_collisions: public CppUnit::TestFixture {
 		l.A.set(0, 0);
 		l.B.set(0, 1);
 
-		math::collision_info<2> ci;
+		math::contact_info<2> ci;
 		math::collide(l, sph, math::vec<2>(-1, 0), ci);
 
 		assert(ci.happened == true);
@@ -54,7 +54,7 @@ class test_collisions: public CppUnit::TestFixture {
 		s.centre.set(10, 10);
 		s.radius = 1;
 
-		math::collision_info<2> ci;
+		math::contact_info<2> ci;
 		math::collide(l, s, math::vec<2>(-1, -1), ci);
 
 		assert ((ci.position - math::vec<2>(1, 2)).length() < math::EPSILON);
@@ -71,7 +71,7 @@ class test_collisions: public CppUnit::TestFixture {
 		sph.centre.set(0.5, 10);
 		sph.radius = 1;
 
-		math::collision_info<2> ci;
+		math::contact_info<2> ci;
 		math::collide(obb, sph, math::vec<2>(0, -1), ci);
 
 		assert ((ci.position - math::vec<2>(0.5, 1)).length() < math::EPSILON);
@@ -89,7 +89,7 @@ class test_collisions: public CppUnit::TestFixture {
 		sph.centre.set(10, 0.5f);
 		sph.radius = 1;
 
-		math::collision_info<2> ci;
+		math::contact_info<2> ci;
 
 		math::collide(obb, sph, math::vec<2>(-1.0f, -0.01f), ci);
 
