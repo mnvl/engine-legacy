@@ -46,7 +46,7 @@ public:
         B=b;
         C=c;
     }
-	
+
     // Graphic Gems III, ed. David Kirk. V.1 Triangles Revisited, pp. 215-218
     // the normal of the triangle
     vec_type get_normal() const {

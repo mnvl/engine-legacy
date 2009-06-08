@@ -71,92 +71,93 @@ scalar heightfield<T>::y_at(vec<3> const &point)
 }
 
 template<class T>
-collision_info<3> heightfield<T>::raytrace(line<3> const &l)
+collision_info<3> heightfield<T>::trace(ray<3> const &r, scalar max_distance)
 {
-    math::line<3> l1(l.A * world_to_local_, l.B * world_to_local_);
-    if (l1.A >= l1.B) std::swap(l1.A, l1.B);
+    // x0 + dx * t = x(t)
+    // t(x) = (x - x0) / dx = x * 1 / dx - x0 / dx
 
-    vec<3> const &v = l1.A;
-    vec<3> dv = l1.B - l1.A;
+    line<3> l(r.origin * world_to_local_,
+		(r.origin + normalize(r.direction) * max_distance) * world_to_local_);
+    if (l.A >= l.B) std::swap(l.A, l.B);
 
-    int kx1 = int(l1.A.x), kx2 = int(l1.B.z);
-    int kz1 = int(l1.A.z), kz2 = int(l1.B.z);
+    vec<3> const &v0 = l.A;
+    vec<3> dv = l.B - l.A;
 
-    int kx = kx1;
-    scalar tx = (kx - v.x) / dv.x;
+    scalar tx = -v0.x / dv.x, tz = -v0.z / dv.z;
+    scalar inv_dx = 1 / dv.x, inv_dz = 1 / dv.z;
 
-    int kz = kz1;
-    scalar tz = (kz - v.z) / dv.z;
+	if (tx < 0) tx += (floor(-tx / inv_dx) + 1) * inv_dx;
+    if (tz < 0) tz += (floor(-tz / inv_dz) + 1) * inv_dz;
 
-    vec<3> p = v;
+	vec<3> prev_p, next_p = v0 + dv * std::min(tx, tz);
 
-    while (kx <= kx2 && kz <= kz2)
+    while (tx <= 1 || tz <= 1)
     {
-        vec<3> p1;
+        prev_p = next_p;
 
         if (tx < tz)
         {
-            p1 = v + tx * dv;
-
-            kx++;
-            tx = (kx - v.x) / dv.x;
+            next_p = v0 + dv * tx;
+            tx += inv_dx;
         }
         else
         {
-            p1 = v + tz * dv;
-
-            kz++;
-            tz = (kz - v.z) / dv.z;
+            next_p = v0 + dv * tz;
+            tz += inv_dz;
         }
 
-		int col = int(p1.x);
-		int row = int(p1.z);
+		if ((prev_p - next_p).length_sq() < math::EPSILON) continue;
 
-        scalar y1 = at(col + 0, row + 0);
-        scalar y2 = at(col + 1, row + 0);
-        scalar y3 = at(col + 1, row + 1);
-        scalar y4 = at(col + 0, row + 1);
+		int col = std::min(int(prev_p.x), int(next_p.x)),
+			row = std::min(int(prev_p.z), int(next_p.z));
+
+        scalar y1 = at(row + 0, col + 0);
+        scalar y2 = at(row + 0, col + 1);
+        scalar y3 = at(row + 1, col + 1);
+        scalar y4 = at(row + 1, col + 0);
 
         scalar ymin = std::min(std::min(y1, y2), std::min(y3, y4));
         scalar ymax = std::max(std::max(y1, y2), std::max(y3, y4));
 
-        if ((p.y < ymin && p1.y < ymin) || (p.y > ymax && p1.y > ymax)) {
-            p = p1;
+        if ((prev_p.y < ymin && next_p.y < ymin) || (next_p.y > ymax && next_p.y > ymax))
             continue;
-        }
 
-        vec<3> v1(scalar(kx + 0), y1, scalar(kz + 0));
-        vec<3> v2(scalar(kx + 1), y2, scalar(kz + 0));
-        vec<3> v3(scalar(kx + 1), y3, scalar(kz + 1));
-        vec<3> v4(scalar(kx + 0), y4, scalar(kz + 1));
+        vec<3> v1 = vec<3>(scalar(row + 0), y1, scalar(col + 0));
+        vec<3> v2 = vec<3>(scalar(row + 0), y2, scalar(col + 1));
+        vec<3> v3 = vec<3>(scalar(row + 1), y3, scalar(col + 1));
+        vec<3> v4 = vec<3>(scalar(row + 1), y4, scalar(col + 0));
 
-        ray<3> const &r = line<3>(p, p1).ray();
+        triangle<3> tri1(v1, v2, v4);
+        triangle<3> tri2(v3, v4, v2);
 
-        triangle<3> T1(v1, v2, v4);
-        triangle<3> T2(v1, v2, v4);
+        scalar trace_t1, trace_t2;
+        vec<3> trace_p1, trace_p2;
 
-        scalar t1, t2;
-        vec<3> c1, c2;
-        if (T1.trace(r, t1, c1, 0, 1) || T2.trace(r, t2, c2, 0, 1))
+        if (tri1.trace(ray<3>(v0, dv), trace_t1, trace_p1) || tri2.trace(ray<3>(v0, dv), trace_t2, trace_p2))
         {
             collision_info<3> ci;
+
             ci.happened = true;
             ci.penetrated = false;
 
-            if (t1 < t2)
+            if (trace_t1 < trace_t2)
             {
-                ci.position = c1;
-                ci.normal = T1.get_normal();
+                ci.position = trace_p1;
+                ci.normal = tri1.get_normal();
             }
             else
             {
-                ci.position = c2;
-                ci.normal = T2.get_normal();
+                ci.position = trace_p2;
+                ci.normal = tri2.get_normal();
             }
+
+            return ci;
         }
     }
 
-    return collision_info<3>();
+    collision_info<3> ci;
+    ci.happened = false;
+    return ci;
 }
 
 template<class T>

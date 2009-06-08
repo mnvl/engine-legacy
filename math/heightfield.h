@@ -26,7 +26,7 @@ public:
     // result is undefined if point is outside heightfield bounds
     scalar y_at(vec<3> const &point);
 
-    collision_info<3> raytrace(line<3> const &l);
+    collision_info<3> trace(ray<3> const &r, scalar max_distance = 1000.0f);
 
     void load_from_buffer(value_type const *heights);
     void load_from_raw_file(std::string const &name);
