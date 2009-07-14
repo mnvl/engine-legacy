@@ -1,5 +1,5 @@
 
-#define BOOST_TEST_MODULE test_collision
+#define BOOST_TEST_MODULE test_intersection
 #include <boost/test/included/unit_test.hpp>
 #include <math/intersection.h>
 

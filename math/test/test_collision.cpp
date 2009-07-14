@@ -3,7 +3,7 @@
 #include <boost/test/included/unit_test.hpp>
 #include <math/collision.h>
 
-BOOST_AUTO_TEST_SUITE(test_collision)
+BOOST_AUTO_TEST_SUITE (test_collision)
 
 BOOST_AUTO_TEST_CASE (test_sphere_line_collision_1)
 {
