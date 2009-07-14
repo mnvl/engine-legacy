@@ -1,0 +1,18 @@
+
+package service;
+
+enum message_id_t
+{
+	HANDSHAKE = 1;
+	HANDSHAKE_REPLY = 2;
+};
+
+message handshake
+{
+	required uint32 protocol_version = 1;
+};
+
+message handshake_reply
+{
+	required bool is_supported = 1;
+};
