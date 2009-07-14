@@ -1,8 +1,9 @@
 
-#include <boost/test/minimal.hpp>
+#define BOOST_TEST_MAIN
+#include <boost/test/unit_test.hpp>
 #include <math/triangle.h>
 
-int test_main(int argc, char *argv[])
+BOOST_AUTO_TEST_CASE (test_triangle_trace)
 {
 	math::triangle<3> tri(math::vec<3>(0, 1, 0), math::vec<3>(0, 3, 1), math::vec<3>(1, 3, 0));
 	math::scalar t;

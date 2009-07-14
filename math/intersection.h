@@ -73,7 +73,7 @@ namespace math {
 
 	template<int N, class S>
 	int intersect(line<N, S> const &l, sphere<N, S> const &s, vec<N, S> &p1, vec<N, S> &p2) {
-		switch(intersect(l.ray(), s, p1, p2)) {
+		switch(intersect(l.get_ray(), s, p1, p2)) {
 			case 0: return 0;
 			case 1: return int(intersect(l, p1));
 			case 2: return int(intersect(l, p1)) + int(intersect(l, p2));

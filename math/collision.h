@@ -120,7 +120,7 @@ namespace math {
 
 		ci.position = s.centre + l_norm_v * s.radius;
 
-		if (!intersect(ray<N, S>(ci.position, l_norm_v * abs(l_vel)), l.ray(), ci.time)) {
+		if (!intersect(ray<N, S>(ci.position, l_norm_v * abs(l_vel)), l.get_ray(), ci.time)) {
 			ci.happened = false;
 		} else if (ci.time < 0) {
 			ci.happened = false;
