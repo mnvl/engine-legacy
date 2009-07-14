@@ -5,6 +5,10 @@
 #include <math/vec.h>
 #include <math/quaternion.h>
 
+#if defined(minor)
+#undef minor
+#endif
+
 namespace math {
 	template<int N,int M,class T=scalar> class matrix;
 	template<class T> class matrix<3,3,T>;

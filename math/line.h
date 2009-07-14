@@ -34,7 +34,7 @@ public:
         return B - A;
     }
 
-    ray_type ray() const {
+    ray_type get_ray() const {
         return ray_type(A, direction());
     }
 

@@ -569,8 +569,8 @@ public:
         return *this;
     }
 
-    template<class T>
-    vec_type &operator =(const vec<arity, T> &v) {
+    template<class X>
+    vec_type &operator =(const vec<arity, X> &v) {
         for (size_t index = 0; index < arity; index++)
             i[index] = (scalar_type) v.i[index];
         return *this;

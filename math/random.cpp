@@ -24,16 +24,30 @@ On a Vax 11/780, this random number generator can produce a number in
 13 microseconds (FORTRAN version - JB). 
 -------------------------------------------------------------------------*/
 
+#include <boost/cstdint.hpp>
+
+#if defined(WIN32)
 #include <windows.h>
+#else
+#include <time.h>
+#include <sys/types.h>
+#include <unistd.h>
+#endif
+
 #include <stdexcept>
 #include <math/random.h>
 
 math::random::random() {
-	__int64 ij;
+	boost::int64_t ij;
 	int kl;
 
+#if defined(WIN32)
 	QueryPerformanceCounter((LARGE_INTEGER *) &ij);
 	kl=GetCurrentThreadId();
+#else
+	ij = clock();
+	kl = getpid();
+#endif
 
 	set_seed(int(ij%ij_max), kl%kl_max);
 }

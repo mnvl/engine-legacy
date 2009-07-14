@@ -17,7 +17,7 @@ namespace math {
 	template<class T = scalar> class quaternion_lerper;
 	template<class T = scalar> class quaternion_slerper;
 
-	template<class T> inline vec<3,T> 
+	template<class T> inline vec<3,T>
 	ortho_project_on_sphere(T x , T y);
 
 	template<class T> inline quaternion<T> 
@@ -37,6 +37,7 @@ public:
 	// типы и константы
 	typedef T scalar_type;
 	typedef vec<3,T> vec_type;
+	typedef matrix<3,3,T> matrix_type;
 	typedef quaternion<T> quaternion_type;
 
 	// данные
@@ -142,7 +143,7 @@ public:
     	*/
    	void normalize() {
         	scalar_type m = magnitude();
-        	if(m < limits_type::round_error()) {
+        	if(m < EPSILON) {
             		stabilize_length();
             		m = magnitude();
         	}
@@ -283,8 +284,8 @@ public:
           For numerical stability we find first the greatest component of quaternion
           and than search others from this one
 	*/
-	template <int M, int N, class T>
-   	void set_unit(matrix<M, N, T> const &m)
+	template <int M, int N, class X>
+   	void set_unit(matrix<M, N, X> const &m)
    	{
        	scalar_type tr = m.ij[0][0] + m.ij[1][1] + m.ij[2][2];	// trace of martix
        	if (tr > 0) {	// if trace positive than "w" is biggest component
@@ -316,8 +317,8 @@ public:
      martix must contain only rotation (not scale or shear)
      the result quaternion length is numerical stable 
     */
-	template <int M, int N, class T>
-  	void set(matrix<M, N, T> const &m) {
+	template <int M, int N, class X>
+  	void set(matrix<M, N, X> const &m) {
        	scalar_type tr = m.ij[0][0] + m.ij[1][1] + m.ij[2][2]; // trace of martix
        	if (tr > 0){  // if trace positive than "w" is biggest component
            		set(m.ij[1][2] - m.ij[2][1], m.ij[2][0] - m.ij[0][2], m.ij[0][1] - m.ij[1][0], tr + 1);
@@ -348,7 +349,7 @@ public:
        	set(c.x, c.y, c.z, from & to);
        	normalize();    // if "from" or "to" not unit, normalize quat
        	w += 1;		// reducing angle to halfangle
-       	if(w <= limits_type::round_error()) // angle close to PI
+       	if(w <= EPSILON) // angle close to PI
        	{
      		if((from.z*from.z) > (from.x*from.x))
           		set(0, from.z, - from.y, w); //from*vector3(1,0,0) 
