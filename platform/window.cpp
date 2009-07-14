@@ -1,4 +1,3 @@
-#if defined(WIN32)
 
 #include <stdio.h>
 #include <exception/winapi_error.h>
@@ -82,5 +81,3 @@ LRESULT window::process_message(UINT uMsg, WPARAM wParam, LPARAM lParam) {
 }
 
 }
-
-#endif

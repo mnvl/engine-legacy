@@ -1,4 +1,3 @@
-#if defined(WIN32)
 
 #include <exception/directx_error.h>
 #include <platform/input.h>
@@ -163,5 +162,3 @@ char keyboard::get_character_by_key(key_t key) {
 }
 
 }
-
-#endif
