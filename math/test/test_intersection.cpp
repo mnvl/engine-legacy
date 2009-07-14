@@ -3,7 +3,7 @@
 #include <boost/test/included/unit_test.hpp>
 #include <math/intersection.h>
 
-BOOST_AUTO_TEST_SUITE(test_intersection)
+BOOST_AUTO_TEST_SUITE (test_intersection)
 
 BOOST_AUTO_TEST_CASE (ray_ray_intersection)
 {
@@ -41,4 +41,4 @@ BOOST_AUTO_TEST_CASE (test_sphere_line_intersection_1)
 	BOOST_ASSERT ((p1 - math::vec<2>(0, 0)).length() < math::EPSILON);
 }
 
-BOOST_AUTO_TEST_SUITE_END()
+BOOST_AUTO_TEST_SUITE_END ()

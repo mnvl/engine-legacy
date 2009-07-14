@@ -1,0 +1,2 @@
+
+ADD_TESTS (proto ${Boost_LIBRARIES} ${PROTOBUF_LIBRARY})
