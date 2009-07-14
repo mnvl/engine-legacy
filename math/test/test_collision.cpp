@@ -1,6 +1,6 @@
 
-#define BOOST_TEST_MAIN
-#include <boost/test/unit_test.hpp>
+#define BOOST_TEST_MODULE test_collision
+#include <boost/test/included/unit_test.hpp>
 #include <math/collision.h>
 
 BOOST_AUTO_TEST_SUITE(test_collision)

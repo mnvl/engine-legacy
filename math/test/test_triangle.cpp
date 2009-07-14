@@ -1,7 +1,9 @@
 
-#define BOOST_TEST_MAIN
-#include <boost/test/unit_test.hpp>
+#define BOOST_TEST_MODULE test_triangle
+#include <boost/test/included/unit_test.hpp>
 #include <math/triangle.h>
+
+BOOST_AUTO_TEST_SUITE(test_triangle)
 
 BOOST_AUTO_TEST_CASE (test_triangle_trace)
 {
@@ -11,5 +13,6 @@ BOOST_AUTO_TEST_CASE (test_triangle_trace)
 	bool result = tri.trace(math::ray<3>(math::vec<3>(-1, 2, 0), math::vec<3>(10, 0, 0)), t, v);
 	BOOST_CHECK (result == true);
 	BOOST_CHECK ((math::vec<3>(0.5f, 2, 0) - v).length_sq() < math::EPSILON);
-	return 0;
 }
+
+BOOST_AUTO_TEST_SUITE_END()

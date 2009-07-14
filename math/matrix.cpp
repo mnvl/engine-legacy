@@ -73,11 +73,11 @@ math::matrix<3,3,T>::rotation(scalar_type alpha,scalar_type beta,scalar_type gam
 	ij[0][0] = cb*cg;
 	ij[0][1] = cb*sg;
 	ij[0][2] = -sb;
-	
+
 	ij[1][0] = sa_sb*cg - ca*sg;
 	ij[1][1] = sa_sb*sg + ca*cg;
 	ij[1][2] = sa*cb;
-	
+
 	ij[2][0] = ca_sb*cg + sa*sg;
 	ij[2][1] = ca_sb*sg - sa*cg;
 	ij[2][2] = ca*cb;
