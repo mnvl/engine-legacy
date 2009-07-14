@@ -1,3 +1,4 @@
+#if defined(WIN32)
 
 #include <exception/directx_error.h>
 #include <platform/input.h>
@@ -106,3 +107,5 @@ void mouse::update() {
 }
 
 }
+
+#endif

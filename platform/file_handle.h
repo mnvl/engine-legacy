@@ -4,6 +4,11 @@
 #include <io.h>
 #endif
 
+#if defined(__linux__)
+#include <sys/types.h>
+#define O_BINARY 0
+#endif
+
 #include <fcntl.h>
 #include <sys/stat.h>
 #include <errno.h>

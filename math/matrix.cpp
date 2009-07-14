@@ -1,9 +1,6 @@
 
 #include <math/matrix.h>
 
-template class math::matrix<3,3>;
-template class math::matrix<4,4>;
-
 template<class T> void
 math::matrix<3,3,T>::identity() {
 	ij[0][0]=1;	ij[0][1]=0;	ij[0][2]=0;
@@ -625,3 +622,5 @@ math::matrix<4,4,T>::decompose(point_type &scale,point_type &shear,point_type &r
  	return true;
 }
 
+template class math::matrix<3,3>;
+template class math::matrix<4,4>;

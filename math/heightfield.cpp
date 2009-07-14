@@ -99,7 +99,7 @@ contact_info<3> heightfield<T>::trace(ray<3> const &r, scalar max_distance)
 		    vec<3> v2 = vec<3>(scalar(row + 0), at(row + 0, col + 1), scalar(col + 1));
 			vec<3> v3 = vec<3>(scalar(row + 1), at(row + 1, col + 1), scalar(col + 1));
 			vec<3> v4 = vec<3>(scalar(row + 1), at(row + 1, col + 0), scalar(col + 0));
-	
+
 			triangle<3> tri1(v1, v2, v4);
 			triangle<3> tri2(v3, v4, v2);
 
