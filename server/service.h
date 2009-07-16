@@ -5,6 +5,7 @@
 #include <boost/shared_ptr.hpp>
 #include <boost/enable_shared_from_this.hpp>
 #include <boost/thread/thread.hpp>
+#include "handler.h"
 
 namespace server
 {
@@ -16,7 +17,7 @@ class service:
 		public boost::enable_shared_from_this<service>
 {
 public:
-	service();
+	service(handler *handler_ptr);
 	~service();
 
 	void start(std::string const &host_name, std::string const &service_name, size_t nthreads);
@@ -24,6 +25,7 @@ public:
 	void wait();
 
 private:
+	handler *handler_;
 	boost::asio::io_service io_service_;
 	boost::asio::ip::tcp::acceptor acceptor_;
 	boost::thread_group threads_;

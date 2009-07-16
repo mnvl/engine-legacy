@@ -1,46 +1,83 @@
 
 #include <stdint.h>
+#include <iosfwd>
 #include <boost/bind.hpp>
+#include "header.h"
 #include "service.h"
 #include "connection.h"
 
 namespace server
 {
 
-connection::connection(boost::asio::io_service &io_service):
-strand_(io_service),
-socket_(io_service)
+connection::connection(handler *handler, boost::asio::io_service &io_service):
+	handler_(handler),
+	strand_(io_service),
+	socket_(io_service)
 {
 }
 
 void connection::start()
 {
-	read();
+	read(boost::shared_ptr<boost::asio::streambuf>(new boost::asio::streambuf(sizeof(header))));
 }
 
-void connection::read()
+void connection::read(boost::shared_ptr<boost::asio::streambuf> const &buffer)
 {
-	boost::shared_ptr<boost::asio::streambuf> buffer(new boost::asio::streambuf());
-
 	boost::asio::async_read(socket_, *buffer,
-		boost::bind(connection::read_completed, boost::ref(*buffer)),
-		strand_.wrap(boost::bind(&connection::handle_read, shared_from_this(),
-				buffer, boost::asio::placeholders::error)));
+		strand_.wrap(boost::bind(&connection::handle_read, shared_from_this(), buffer,
+				boost::asio::placeholders::bytes_transferred, boost::asio::placeholders::error)));
 }
 
-bool connection::read_completed(boost::asio::streambuf &buffer)
+void connection::write(boost::shared_ptr<boost::asio::streambuf> const &buffer)
 {
-	return false;
+	boost::asio::async_write(socket_, *buffer,
+		strand_.wrap(boost::bind(&connection::handle_write, shared_from_this(), buffer,
+				boost::asio::placeholders::bytes_transferred, boost::asio::placeholders::error)));
 }
 
 void connection::handle_read(boost::shared_ptr<boost::asio::streambuf> const &buffer,
-		boost::system::error_code const &error)
+	size_t bytes_transferred, boost::system::error_code const &error)
 {
 	if (error)
 	{
+		handler_->error(this, error);
+		return;
 	}
-	else
+
+	std::istream is(buffer.get());
+
+	header h;
+	if (!is.read((char *) &h, sizeof(h)))
 	{
+		read(buffer);
+		return;
+	}
+
+	if (h.len < buffer->size())
+	{
+		read(buffer);
+		return;
+	}
+
+	try
+	{
+		handler_->process(this, h.id, h.len - sizeof(header), is);
+	}
+	catch(close_connection const &)
+	{
+		return;
+	}
+
+	buffer->consume(h.len);
+	read(buffer);
+}
+
+void connection::handle_write(boost::shared_ptr<boost::asio::streambuf> const &buffer,
+	size_t bytes_transferred, boost::system::error_code const &error)
+{
+	if (error)
+	{
+		handler_->error(this, error);
 	}
 }
 

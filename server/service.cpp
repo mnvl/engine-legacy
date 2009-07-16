@@ -6,8 +6,9 @@
 namespace server
 {
 
-service::service():
-acceptor_(io_service_)
+service::service(handler *handler_ptr):
+	handler_(handler_ptr),
+	acceptor_(io_service_)
 {
 }
 
@@ -46,7 +47,7 @@ void service::wait()
 
 void service::schedule_accept()
 {
-	boost::shared_ptr<connection> connection_ptr(new connection(io_service_));
+	boost::shared_ptr<connection> connection_ptr(new connection(handler_, io_service_));
 
    	acceptor_.async_accept(connection_ptr->socket(),
 		boost::bind(&service::handle_accept, this, connection_ptr, boost::asio::placeholders::error));

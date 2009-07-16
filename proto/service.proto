@@ -1,12 +1,7 @@
 
 package service;
 
-enum message_id_t
-{
-	HANDSHAKE = 1;
-	HANDSHAKE_REPLY = 2;
-};
-
+// handshake is first message sent from client to server
 message handshake
 {
 	required uint32 protocol_version = 1;
