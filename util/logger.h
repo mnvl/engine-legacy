@@ -42,7 +42,6 @@ public:
 	void set_stdout();
     void set_stderr();
 	void set_file(std::string const &filename);
-	void set_file_by_executable_name();
 
     void write(char const *buffer, size_t length);
 	void write(std::string const &str);
