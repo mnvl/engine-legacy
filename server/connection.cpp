@@ -1,5 +1,4 @@
 
-#include <stdint.h>
 #include <iosfwd>
 #include <boost/bind.hpp>
 #include "header.h"
