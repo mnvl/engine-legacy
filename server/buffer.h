@@ -71,7 +71,9 @@ public:
 		write_ = data_ + w;
 	}
 
+	void *read_ptr() const { return read_; }
 	size_t read_offset() const { return read_ - data_; }
+	void *write_ptr() const { return write_; }
 	size_t write_offset() const { return write_ - data_; }
 	size_t write_bytes_available() const { return size_ - write_offset(); }
 
