@@ -2,19 +2,22 @@
 #
 # Use as FIND_PACKAGE(ProtocolBuffers)
 #
+# PROTOBUF_ROOT may be set to protobuf location on non-unix
+# platforms.
+#
 #  PROTOBUF_FOUND - system has the protocol buffers library
-#  PROTOBUF_INCLUDE_DIR - the zip include directory
-#  PROTOBUF_LIBRARY - Link this to use the zip library
+#  PROTOBUF_INCLUDE_DIR - the protobuf include directory
+#  PROTOBUF_LIBRARY - Link this to use the protobuf library
 #  PROTOBUF_PROTOC_EXECUTABLE - executable protobuf compiler
 #
 # And the following command
 #
-#  WRAP_PROTO(VAR input1 input2 input3..)
+#  PROTOBUF_COMPILE(VAR input1 input2 input3..)
 #
 # Which will run protoc on the input files and set VAR to the names of the 
 # created .cc files, ready to be added to ADD_EXECUTABLE/ADD_LIBRARY. E.g,
 #
-#  WRAP_PROTO(PROTO_SRC myproto.proto external.proto)
+#  PROTOBUF_COMPILE(PROTO_SRC myproto.proto external.proto)
 #  ADD_EXECUTABLE(server ${server_SRC} {PROTO_SRC})
 #
 # Author: Esben Mose Hansen <[EMAIL PROTECTED]>, (C) Ange Optimization ApS 2008
@@ -27,16 +30,26 @@ IF (PROTOBUF_LIBRARY AND PROTOBUF_INCLUDE_DIR AND PROTOBUF_PROTOC_EXECUTABLE)
   SET(PROTOBUF_FOUND TRUE)
 ELSE (PROTOBUF_LIBRARY AND PROTOBUF_INCLUDE_DIR AND PROTOBUF_PROTOC_EXECUTABLE)
 
-  FIND_PATH(PROTOBUF_INCLUDE_DIR stubs/common.h
-    /usr/include/google/protobuf
+  FIND_PATH(PROTOBUF_INCLUDE_DIR google/protobuf/stubs/common.h
+	${PROTOBUF_ROOT}/src
+    /usr/include
   )
 
-  FIND_LIBRARY(PROTOBUF_LIBRARY NAMES protobuf
+  FIND_LIBRARY(PROTOBUF_LIBRARY
+    NAMES
+    protobuf
+    libprotobuf
     PATHS
+    ${PROTOBUF_ROOT}/vsprojects/Debug
+	${PROTOBUF_ROOT}/vsprojects/Release
     ${GNUWIN32_DIR}/lib
   )
 
-  FIND_PROGRAM(PROTOBUF_PROTOC_EXECUTABLE protoc)
+  FIND_PROGRAM(PROTOBUF_PROTOC_EXECUTABLE protoc
+    PATHS
+    ${PROTOBUF_ROOT}/vsprojects/Debug
+	${PROTOBUF_ROOT}/vsprojects/Release
+  )
 
   INCLUDE(FindPackageHandleStandardArgs)
   FIND_PACKAGE_HANDLE_STANDARD_ARGS(protobuf DEFAULT_MSG PROTOBUF_INCLUDE_DIR 
@@ -53,8 +66,8 @@ to use protocol buffers library")
 ENDIF (PROTOBUF_LIBRARY AND PROTOBUF_INCLUDE_DIR AND PROTOBUF_PROTOC_EXECUTABLE)
 
 IF (PROTOBUF_FOUND)
-  # Define the WRAP_PROTO function
-  FUNCTION(WRAP_PROTO VAR)
+  # Define the PROTOBUF_COMPILE function
+  FUNCTION(PROTOBUF_COMPILE VAR)
     IF (NOT ARGN)
       MESSAGE(SEND_ERROR "Error: WRAP PROTO called without any proto files")
       RETURN()
@@ -81,5 +94,5 @@ IF (PROTOBUF_FOUND)
 
     SET(${VAR} ${${VAR}} PARENT_SCOPE)
 
-  ENDFUNCTION(WRAP_PROTO)
+  ENDFUNCTION(PROTOBUF_COMPILE)
 ENDIF(PROTOBUF_FOUND)
