@@ -29,18 +29,15 @@ struct echo_fixture: public server::handler
 		service.wait();
 	}
 
-	void process(server::connection *connection_ptr, uint16_t id, size_t len, std::istream &is)
+	void process(server::connection *connection_ptr, uint16_t id, server::buffer &in)
 	{
-		std::vector<char> message(len);
-		is.read(&message[0], len);
+		std::vector<char> message(in.read_bytes_available());
+		in.read(&message[0], message.size());
 
-		BOOST_ASSERT (!is.bad());
+		boost::shared_ptr<server::buffer> out(new server::buffer());
+		out->write(&message[0], message.size());
 
-		boost::shared_ptr<boost::asio::streambuf> buffer(new boost::asio::streambuf(sizeof(server::header)));
-		std::ostream os(buffer.get());
-		os.write(&message[0], len);
-
-		connection_ptr->write(buffer);
+		connection_ptr->write(out);
 	}
 
 	void error(server::connection *connection_ptr, boost::system::error_code const &error)

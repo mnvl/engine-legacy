@@ -26,13 +26,14 @@ public:
 	void write(boost::shared_ptr<buffer> const &buffer_ptr);
 
 private:
-	static size_t const READ_BYTES = 1024;
+	static size_t const MINIMAL_READ_BYTES = 1024;
 
 	handler *handler_;
 	boost::asio::io_service::strand strand_;
 	boost::asio::ip::tcp::socket socket_;
 
 	void read(boost::shared_ptr<buffer> const &buffer_ptr);
+	bool is_read_completed(boost::shared_ptr<buffer> const &buffer_ptr, size_t bytes_transferred);
 	void handle_read(boost::shared_ptr<buffer> const &buffer_ptr,
 		size_t bytes_transferred, boost::system::error_code const &error);
 	void handle_write(boost::shared_ptr<buffer> const &buffer_ptr,
