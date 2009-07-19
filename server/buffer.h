@@ -68,16 +68,13 @@ public:
 	{
 		if (size_ != SIZE_1) throw std::bad_alloc();
 
-		size_t r = read_offset();
-		size_t w = write_offset();
-
 		char *data = (char *) realloc(data_, SIZE_2);
 		if (!data) throw std::bad_alloc();
 
+		read_ = (read_ - data_) + data;
+		write_ = (write_ - data_) + data;
 		data_ = data;
 		size_ = SIZE_2;
-		read_ = data_ + r;
-		write_ = data_ + w;
 	}
 
 	void *read_ptr() const { return read_; }
@@ -101,7 +98,7 @@ public:
 
 	void write(void const *buffer, size_t size)
 	{
-		if (write_offset() + size > size_) enlarge();
+		if (write_offset() + size >= size_) enlarge();
 
 		memcpy(write_, buffer, size);
 		write_ += size;
@@ -117,7 +114,7 @@ public:
 
 private:
 	static size_t const SIZE_1 = 4096;
-	static size_t const SIZE_2 = 65536;
+	static size_t const SIZE_2 = SIZE_1 + 65536;
 
 	size_t size_;
 	char *data_;

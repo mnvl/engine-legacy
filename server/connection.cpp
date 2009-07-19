@@ -22,15 +22,12 @@ void connection::start()
 
 void connection::read(boost::shared_ptr<buffer> const &buffer_ptr)
 {
-	if (buffer_ptr->write_bytes_available() < MINIMAL_READ_BYTES)
+	if (buffer_ptr->write_bytes_available() < MINIMAL_ASYNC_READ_BUFFER_SIZE)
 	{
 		buffer_ptr->enlarge();
 	}
 
-	boost::asio::async_read(socket_,
-		boost::asio::buffer(buffer_ptr->write_ptr(), buffer_ptr->write_bytes_available()),
-		boost::bind(&connection::is_read_completed, shared_from_this(), buffer_ptr,
-			boost::asio::placeholders::bytes_transferred),
+	socket_.async_read_some(boost::asio::buffer(buffer_ptr->write_ptr(), buffer_ptr->write_bytes_available()),
 		strand_.wrap(boost::bind(&connection::handle_read, shared_from_this(), buffer_ptr,
 				boost::asio::placeholders::bytes_transferred, boost::asio::placeholders::error)));
 }
@@ -43,32 +40,21 @@ void connection::write(boost::shared_ptr<buffer> const &buffer_ptr)
 				boost::asio::placeholders::bytes_transferred, boost::asio::placeholders::error)));
 }
 
-bool connection::is_read_completed(boost::shared_ptr<buffer> const &buffer_ptr, size_t bytes_transferred)
-{
-	buffer_ptr->seek_write(bytes_transferred);
-
-	if (buffer_ptr->read_bytes_available() < sizeof(header))
-	{
-		return false;
-	}
-
-	header *h = (header *) buffer_ptr->read_ptr();
-
-	if (h->len - sizeof(header) > buffer_ptr->read_bytes_available())
-	{
-		return false;
-	}
-
-	return true;
-}
-
 void connection::handle_read(boost::shared_ptr<buffer> const &buffer_ptr,
 	size_t bytes_transferred, boost::system::error_code const &error)
 {
 	if (error)
 	{
-		handler_->error(this, error);
-		return;
+		return handler_->error(this, error);
+	}
+
+	buffer_ptr->seek_write(bytes_transferred);
+
+	if (bytes_transferred == 0 ||
+		buffer_ptr->read_bytes_available() < sizeof(header) ||
+		reinterpret_cast<header *>(buffer_ptr->read_ptr())->len > buffer_ptr->read_bytes_available())
+	{
+		return read(buffer_ptr);
 	}
 
 	header h;

@@ -16,9 +16,11 @@ char const SERVICE[] = "17171";
 struct echo_fixture: public server::handler
 {
 	server::service service;
+	bool completed;
 
 	echo_fixture():
-		service(this)
+		service(this),
+		completed(false)
     {
 		service.start(HOST, SERVICE, 4);
 	}
@@ -32,17 +34,28 @@ struct echo_fixture: public server::handler
 	void process(server::connection *connection_ptr, boost::uint16_t id, server::buffer &in)
 	{
 		std::vector<char> message(in.read_bytes_available());
-		in.read(&message[0], message.size());
+		if (message.size()) in.read(&message[0], message.size());
+		for (size_t j = 0; j < message.size(); j++) BOOST_ASSERT(message[j] == (char) j);
 
 		boost::shared_ptr<server::buffer> out(new server::buffer());
-		out->write(&message[0], message.size());
+
+		{
+			server::header h;
+			h.id = id;
+			h.len = sizeof(h) + message.size();
+			out->write(&h, sizeof(h));
+		}
+
+		if (message.size()) out->write(&message[0], message.size());
 
 		connection_ptr->write(out);
+
+		completed = true;
 	}
 
 	void error(server::connection *connection_ptr, boost::system::error_code const &error)
 	{
-		BOOST_ASSERT (false);
+		BOOST_ASSERT (completed);
 	}
 };
 
@@ -50,26 +63,59 @@ struct echo_fixture: public server::handler
 
 void test_echo()
 {
+	static size_t const MESSAGE_SIZE[] = {
+		0,
+		1,
+		41,
+		2650,
+		4091,
+		4092,
+		4093,
+		4095,
+		4096,
+		4097,
+		20123,
+		30132,
+		40213,
+		50312,
+		65530,
+		65531
+	};
+
 	echo_fixture fixture;
 
-	for (size_t i = 0; i < 10; i++)
+	for (size_t i = 0; i < sizeof(MESSAGE_SIZE) / sizeof(MESSAGE_SIZE[0]); i++)
 	{
-		std::vector<char> message(rand() % 4096);
-		for (size_t j = 0; j < message.size(); j++) message[j] = (char) rand();
+		std::vector<char> message(MESSAGE_SIZE[i]);
+		for (size_t j = 0; j < message.size(); j++) message[j] = (char) j;
+
+		printf("%d\n", message.size());
 
 		boost::asio::ip::tcp::iostream stream(HOST, SERVICE);
 
 		{
 			server::header header;
-			header.id = 0;
+			header.id = i;
 			header.len = message.size() + sizeof(header);
 			stream.write((char const *) &header, sizeof(header));
 		}
 
-		stream.write(&message[0], message.size());
+		if (message.size())
+		{
+			stream.write(&message[0], message.size());
+		}
 
 		std::vector<char> reply(message.size());
-		stream.read(&reply[0], message.size());
+
+		{
+			server::header h;
+			stream.read((char *) &h, sizeof(h));
+
+			BOOST_ASSERT (h.id == i);
+			BOOST_ASSERT (h.len == sizeof(h) + message.size());
+		}
+
+		if (message.size()) stream.read(&reply[0], message.size());
 
 		BOOST_ASSERT (message == reply);
 	}
