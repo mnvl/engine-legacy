@@ -1,7 +1,7 @@
 
-#include <iosfwd>
-#include <boost/test/included/unit_test.hpp>
 #include <boost/asio.hpp>
+#include <boost/test/included/unit_test.hpp>
+#include <iosfwd>
 #include <server/header.h>
 #include <server/handler.h>
 #include <server/connection.h>
@@ -29,7 +29,7 @@ struct echo_fixture: public server::handler
 		service.wait();
 	}
 
-	void process(server::connection *connection_ptr, uint16_t id, server::buffer &in)
+	void process(server::connection *connection_ptr, boost::uint16_t id, server::buffer &in)
 	{
 		std::vector<char> message(in.read_bytes_available());
 		in.read(&message[0], message.size());
@@ -55,7 +55,7 @@ void test_echo()
 	for (size_t i = 0; i < 10; i++)
 	{
 		std::vector<char> message(rand() % 4096);
-		for (size_t j = 0; j < message.size(); j++) message[i] = (char) rand();
+		for (size_t j = 0; j < message.size(); j++) message[j] = (char) rand();
 
 		boost::asio::ip::tcp::iostream stream(HOST, SERVICE);
 

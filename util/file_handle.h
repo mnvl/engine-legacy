@@ -19,7 +19,7 @@
 
 #pragma warning(disable: 4996)
 
-namespace platform {
+namespace util {
 
 class file_handle {
 public:

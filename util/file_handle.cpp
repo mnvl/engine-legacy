@@ -1,7 +1,7 @@
 
-#include <platform/file_handle.h>
+#include <util/file_handle.h>
 
-namespace platform
+namespace util
 {
 
 file_handle::file_handle():

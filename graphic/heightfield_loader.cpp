@@ -1,6 +1,6 @@
 
 #include <boost/cstdint.hpp>
-#include <platform/file_handle.h>
+#include <util/file_handle.h>
 #include <util/logger.h>
 #include <graphic/build_smooth_normals.h>
 #include <graphic/heightfield_loader.h>
@@ -27,7 +27,7 @@ void heightfield_loader::load_from_raw(math::matrix<4,4> const &tf, size_t nrows
 		<< nrows << ", ncols = " << ncols);
 
     std::vector<char> buffer;
-    platform::file_handle(filename_.c_str(), O_RDONLY).read_all(buffer);
+    util::file_handle(filename_.c_str(), O_RDONLY).read_all(buffer);
 
     mesh *mesh_ptr = model_ptr_->create_mesh();
 

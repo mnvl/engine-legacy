@@ -1,7 +1,7 @@
 #pragma once
 
 #include <sstream>
-#include <platform/file_handle.h>
+#include <util/file_handle.h>
 
 namespace util
 {
@@ -47,7 +47,7 @@ public:
 	void write(std::string const &str);
 
 private:
-	platform::file_handle file_;
+	util::file_handle file_;
 
 	static char const *get_level_text(level_t level);
 };
