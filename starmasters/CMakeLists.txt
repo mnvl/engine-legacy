@@ -1,2 +1,3 @@
 
+ADD_SUBDIRECTORY (model)
 ADD_SUBDIRECTORY (proto)
