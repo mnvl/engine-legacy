@@ -89,8 +89,6 @@ void test_echo()
 		std::vector<char> message(MESSAGE_SIZE[i]);
 		for (size_t j = 0; j < message.size(); j++) message[j] = (char) j;
 
-		printf("%d\n", message.size());
-
 		boost::asio::ip::tcp::iostream stream(HOST, SERVICE);
 
 		{
