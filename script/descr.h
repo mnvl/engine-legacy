@@ -25,6 +25,11 @@ public:
 		return it->second;
 	}
 
+	std::string const &name() const
+	{
+		return name_;
+	}
+
 private:
 	typedef boost::unordered_map<std::string, size_t> name_index_t;
 

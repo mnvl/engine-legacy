@@ -1,10 +1,14 @@
 #pragma once
 
+extern "C"
+{
+#include <lua.h>
+}
+
 #include <vector>
 #include <boost/variant.hpp>
 #include <boost/shared_ptr.hpp>
 #include <boost/enable_shared_from_this.hpp>
-#include <luabind/lua_include.hpp>
 #include "descr.h"
 
 namespace script
@@ -69,9 +73,19 @@ public:
 		return at(descr_->index_by_name(name));
 	}
 
+	static void bind(lua_State *L);
+	void push(lua_State *L); // pushes shared ptr to stack
+	static boost::shared_ptr<table> &get(lua_State *L, int narg);
+
 private:
+	static char const METATABLE_NAME[];
+
 	descr const *descr_;
 	fields_t fields_;
+
+	static int lua_gc(lua_State *L);
+	static int lua_index(lua_State *L);
+	static int lua_newindex(lua_State *L);
 };
 
 }
