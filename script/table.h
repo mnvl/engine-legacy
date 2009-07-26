@@ -1,14 +1,10 @@
 #pragma once
 
-extern "C"
-{
-#include <lua.h>
-}
-
 #include <vector>
-#include <boost/variant.hpp>
+#include <lua.hpp>
 #include <boost/shared_ptr.hpp>
 #include <boost/enable_shared_from_this.hpp>
+#include "value.h"
 #include "descr.h"
 
 namespace script
@@ -17,8 +13,6 @@ namespace script
 class table: public boost::enable_shared_from_this<table>
 {
 public:
-	typedef boost::shared_ptr<table> table_ptr_t;
-	typedef boost::variant<double, std::string, lua_CFunction, table_ptr_t> value_t;
 	typedef std::vector<value_t> fields_t;
 
 	table(descr const *table_descr);

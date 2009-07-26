@@ -1,2 +1,2 @@
 
-ADD_TESTS (math util script ${Boost_LIBRARIES})
+ADD_TESTS (math util script ${ENGINE_LIBRARIES})
