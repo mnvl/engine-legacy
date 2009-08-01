@@ -1,7 +1,7 @@
 
 #define BOOST_TEST_MODULE test_proto
 #include <boost/test/included/unit_test.hpp>
-#include <build/starmasters/proto/service.pb.h>
+#include <starmasters/proto/service.pb.h>
 
 // just to test linking against proto library
 BOOST_AUTO_TEST_SUITE (test_proto)
