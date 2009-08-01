@@ -1,2 +1,2 @@
 
-ADD_TESTS (starmasters_proto ${Boost_LIBRARIES} ${PROTOBUF_LIBRARY})
+MAKE_TESTS_FROM_SOURCES (starmasters_proto ${Boost_LIBRARIES} ${PROTOBUF_LIBRARY})

@@ -6,7 +6,23 @@
 
 BOOST_AUTO_TEST_SUITE (test_collada_loader)
 
-BOOST_AUTO_TEST_CASE (test_plane)
+namespace
+{
+struct Fixture
+{
+    Fixture()
+    {
+        xercesc::XMLPlatformUtils::Initialize();
+    }
+
+    ~Fixture()
+    {
+        xercesc::XMLPlatformUtils::Terminate();
+    }
+};
+}
+
+BOOST_FIXTURE_TEST_CASE (test_plane, Fixture)
 {
     std::auto_ptr<graphic::memory_model> model_ptr(new graphic::memory_model());
     graphic::collada_loader("test_collada_loader_plane.xml", model_ptr.get()).load();
@@ -34,7 +50,7 @@ BOOST_AUTO_TEST_CASE (test_plane)
     BOOST_ASSERT (mesh_ptr->get_index_buffer()[5] == 3);
 }
 
-BOOST_AUTO_TEST_CASE (test_joint)
+BOOST_FIXTURE_TEST_CASE (test_joint, Fixture)
 {
     std::auto_ptr<graphic::memory_model> model_ptr(new graphic::memory_model());
     graphic::collada_loader("test_collada_loader_joint.xml", model_ptr.get()).load();
@@ -65,7 +81,7 @@ BOOST_AUTO_TEST_CASE (test_joint)
     BOOST_ASSERT (abs(vertices2[0].position.y - 1.0f) < 0.1f);
 }
 
-BOOST_AUTO_TEST_CASE (test_animation)
+BOOST_FIXTURE_TEST_CASE (test_animation, Fixture)
 {
     std::auto_ptr<graphic::memory_model> model_ptr(new graphic::memory_model());
     graphic::collada_loader("test_collada_loader_animation.xml", model_ptr.get()).load();
@@ -107,7 +123,7 @@ BOOST_AUTO_TEST_CASE (test_animation)
     BOOST_ASSERT((vertices2[3].position - math::vec<3>(2.0f, 0.0f, -0.3f)).length_sq() < 0.1f);
 }
 
-BOOST_AUTO_TEST_CASE (test_materials)
+BOOST_FIXTURE_TEST_CASE (test_materials, Fixture)
 {
     std::auto_ptr<graphic::memory_model> model_ptr(new graphic::memory_model());
     graphic::collada_loader("test_collada_loader_materials.xml", model_ptr.get()).load();

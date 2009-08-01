@@ -1,2 +1,2 @@
 
-ADD_TESTS (math util ${Boost_LIBRARIES})
+MAKE_TESTS_FROM_SOURCES (math util ${Boost_LIBRARIES})
