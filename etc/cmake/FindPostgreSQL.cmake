@@ -53,7 +53,6 @@ if(POSTGRESQL_DIR_SEARCH)
   file(TO_CMAKE_PATH ${POSTGRESQL_DIR_SEARCH} POSTGRESQL_DIR_SEARCH)
 endif(POSTGRESQL_DIR_SEARCH)
 
-
 if(WIN32)
   set(POSTGRESQL_DIR_SEARCH
     ${POSTGRESQL_DIR_SEARCH}
@@ -72,10 +71,17 @@ if(WIN32)
     "D:/Program Files/postgresql/*"
   )
 endif(WIN32)
+  
+if(UNIX)
+  set(POSTGRESQL_DIR_SEARCH
+    "/usr/include"
+    "/usr/local/include")
+endif(UNIX)
 
 # Add in some path suffixes. These will have to be updated whenever a new PostgreSQL version comes out.
 set(SUFFIX_FOR_INCLUDE_PATH
   include
+  postgresql
 )
 
 set(SUFFIX_FOR_LIBRARY_PATH
@@ -96,6 +102,7 @@ find_path(POSTGRESQL_INCLUDE_DIR NAMES libpq-fe.h PATH_SUFFIXES ${SUFFIX_FOR_INC
 
 find_library(POSTGRESQL_LIBPQ_PATH
   NAMES
+  pq
   libpq
   PATHS
   ${POSTGRESQL_DIR_SEARCH})
