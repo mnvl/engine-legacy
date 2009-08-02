@@ -1,4 +1,4 @@
-# Find the LIBPQXX installation or build tree.
+# Find the PostgreSQL installation or build tree.
 # The following variables are set if LIBPQXX is found.  If LIBPQXX is not
 # found, LIBPQXX_FOUND is set to false.
 #  LIBPQXX_FOUND         - Set to true when LIBPQXX is found.
@@ -18,9 +18,9 @@
 # If you have installed LIBPQXX in a non-standard location.
 # Then you have three options. 
 # In the following comments, it is assumed that <Your Path>
-# points to the root directory of the include directory of LIBPQXX. e.g
-# If you have put LIBPQXX in C:\development\libpqxx then <Your Path> is
-# "C:/development/libpqxx" and in this directory there will be two
+# points to the root directory of the include directory of postgresql. e.g
+# If you have put postgresql in C:\development\postgresql then <Your Path> is
+# "C:/development/postgresql" and in this directory there will be two
 # directories called "include" and "lib".
 # 1) After CMake runs, set LIBPQXX_INCLUDE_DIR to <Your Path>/LIBPQXX<-version>
 # 2) Use CMAKE_INCLUDE_PATH to set a path to <Your Path>/LIBPQXX<-version>. This will allow FIND_PATH()
@@ -40,45 +40,31 @@
 # LINK_DIRECTORIES(${LIBPQXX_LIBRARY_DIRS})
 #
 # In Windows, we make the assumption that, if the LIBPQXX files are installed, the default directory
-# will be C:\LIBPQXX or C:\Program Files\LIBPQXX.
+# will be C:\postgresql or C:\Program Files\postgresql.
 
-set(LIBPQXX_INCLUDE_PATH_DESCRIPTION "top-level directory containing the LIBPQXX include directories. E.g /usr/local/include/libpqxx-2.6.8 or C:/libpqxx-2.6.8")
+set(LIBPQXX_INCLUDE_PATH_DESCRIPTION "top-level directory containing the LIBPQXX include directories.")
 set(LIBPQXX_INCLUDE_DIR_MESSAGE "Set the LIBPQXX_INCLUDE_DIR cmake cache entry to the ${LIBPQXX_INCLUDE_PATH_DESCRIPTION}")
 set(LIBPQXX_LIBRARY_PATH_DESCRIPTION "top-level directory containing the LIBPQXX libraries.")
 set(LIBPQXX_LIBRARY_DIR_MESSAGE "Set the LIBPQXX_LIBRARY_DIR cmake cache entry to the ${LIBPQXX_LIBRARY_PATH_DESCRIPTION}")
-
 
 set(LIBPQXX_DIR_SEARCH $ENV{LIBPQXX_ROOT})
 if(LIBPQXX_DIR_SEARCH)
   file(TO_CMAKE_PATH ${LIBPQXX_DIR_SEARCH} LIBPQXX_DIR_SEARCH)
 endif(LIBPQXX_DIR_SEARCH)
 
-
-if(WIN32)
-  set(LIBPQXX_DIR_SEARCH
-    ${LIBPQXX_DIR_SEARCH}
-    C:/postgresql
-    D:/postgresql
-    "C:Program Files/libpqxx"
-    "D:Program Files/libpqxx"
-  )
-endif(WIN32)
-
-# Add in some path suffixes. These will have to be updated whenever a new LIBPQXX version comes out.
+# Add in some path suffixes. These will have to be updated whenever a new PostgreSQL version comes out.
 set(SUFFIX_FOR_INCLUDE_PATH
- libpqxx
- libpqxx-3.0
- libpqxx-2.6.9
- libpqxx-2.6.8
+  include
 )
 
 set(SUFFIX_FOR_LIBRARY_PATH
+  lib
 )
 
 #
 # Look for an installation.
 #
-find_path(LIBPQXX_INCLUDE_DIR NAMES /include/pqxx/connection.hxx PATH_SUFFIXES ${SUFFIX_FOR_INCLUDE_PATH} PATHS
+find_path(LIBPQXX_INCLUDE_DIR NAMES pqxx/pqxx PATH_SUFFIXES ${SUFFIX_FOR_INCLUDE_PATH} PATHS
 
   # Look in other places.
   ${LIBPQXX_DIR_SEARCH}
@@ -87,26 +73,16 @@ find_path(LIBPQXX_INCLUDE_DIR NAMES /include/pqxx/connection.hxx PATH_SUFFIXES $
   DOC "The ${LIBPQXX_INCLUDE_DIR_MESSAGE}"
 )
 
-# Assume we didn't find it.
-set(LIBPQXX_FOUND 0)
+find_library(LIBPQXX_LIBRARIES
+  NAMES
+  libpqxx_static
+  PATH_SUFFIXES
+  ${SUFFIX_FOR_LIBRARY_PATH}
+  PATHS
+  ${LIBPQXX_DIR_SEARCH})
 
-# Now try to get the include and library path.
-if(LIBPQXX_INCLUDE_DIR)
-
-  if(EXISTS "${LIBPQXX_INCLUDE_DIR}")
-    set(LIBPQXX_INCLUDE_DIRS
-      ${LIBPQXX_INCLUDE_DIR}/include
-    )
-    set(LIBPQXX_FOUND 1)
-  endif(EXISTS "${LIBPQXX_INCLUDE_DIR}")
-
-  if(EXISTS "${LIBPQXX_INCLUDE_DIR}")
-    SET(LIBPQXX_LIBRARY_DIRS
-      ${LIBPQXX_INCLUDE_DIR}/lib
-    )
-  endif(EXISTS "${LIBPQXX_INCLUDE_DIR}")
-
-endif(LIBPQXX_INCLUDE_DIR)
+INCLUDE(FindPackageHandleStandardArgs)
+FIND_PACKAGE_HANDLE_STANDARD_ARGS(LibPqxx DEFAULT_MSG LIBPQXX_INCLUDE_DIR LIBPQXX_LIBRARIES)
 
 if(NOT LIBPQXX_FOUND)
   if(NOT LIBPQXX_FIND_QUIETLY)
