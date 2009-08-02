@@ -20,12 +20,9 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE
 // OR OTHER DEALINGS IN THE SOFTWARE.
 
-extern "C"
-{
-	#include "lua.h"
-	#include "lualib.h"
-	#include "lauxlib.h"
-}
+#include "lua.h"
+#include "lualib.h"
+#include "lauxlib.h"
 
 #include <iostream>
 #include <luabind/luabind.hpp>
@@ -35,7 +32,7 @@ void greet()
     std::cout << "hello world!\n";
 }
 
-extern "C" int init(lua_State* L)
+extern int init(lua_State* L)
 {
     using namespace luabind;
 

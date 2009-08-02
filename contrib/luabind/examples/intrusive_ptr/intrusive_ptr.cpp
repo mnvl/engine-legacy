@@ -1,11 +1,8 @@
 #include <iostream>
 
-extern "C"
-{
-	#include "lua.h"
-	#include "lauxlib.h"
-	#include "lualib.h"
-}
+#include "lua.h"
+#include "lauxlib.h"
+#include "lualib.h"
 
 bool dostring(lua_State* L, const char* str)
 {

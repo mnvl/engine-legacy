@@ -11,7 +11,7 @@ namespace std
 #define LUABIND_DONT_COPY_STRINGS
 //#define LUABIND_NOT_THREADSAFE
 
-extern "C"
+extern
 {
 	#include "lua.h"
 	#include "lauxlib.h"
