@@ -16,10 +16,8 @@ namespace std
 
 #include <luabind/luabind.hpp>
 
-class A {};
-
 // luabind function
-float f1(int a, float b, const char* str, A* c)
+float f1(int a, float b, const char* str)
 {
 	return 3.14f;
 }
@@ -27,15 +25,21 @@ float f1(int a, float b, const char* str, A* c)
 // empty function
 int f2(lua_State* L)
 {
-	return 0;
+	int a = (int) lua_tonumber(L, 1);
+	float b = (float) lua_tonumber(L, 2);
+	const char *str = lua_tostring(L, 3);
+
+	lua_pushnumber(L, 3.14f);
+
+	return 1;
 }
 
 using namespace luabind;
 
 int main()
 {
-	const int num_calls = 100000;
-	const int loops = 10;
+	const int num_calls = 1000000;
+	const int loops = 2;
 
 	using namespace luabind;
 
@@ -43,12 +47,9 @@ int main()
 	open(L);
 
 	module(L)
-		[
-			class_<A>("A")
-			.def(constructor<>()),
-
-			def("test1", &f1)
-		 ];
+	[
+		def("test1", &f1)
+	];
 
 	lua_pushstring(L, "test2");
 	lua_pushcclosure(L, &f2, 0);
@@ -61,20 +62,17 @@ int main()
 	{
 		// benchmark luabind
 		std::clock_t start1 = std::clock();
-		luaL_dostring(L, "a = A()\n"
-									"for i = 1, 100000 do\n"
-										"test1(5, 4.6, 'foo', a)\n"
-									"end");
+		luaL_dostring(L, "for i = 1, 1000000 do\n"
+							"test1(5, 4.6, 'foo')\n"
+						 "end");
 
 		std::clock_t end1 = std::clock();
 
-
 		// benchmark empty binding
 		std::clock_t start2 = std::clock();
-		luaL_dostring(L, "a = A()\n"
-									"for i = 1, 100000 do\n"
-										"test2(5, 4.6, 'foo', a)\n"
-									"end");
+		luaL_dostring(L, "for i = 1, 1000000 do\n"
+							"test2(5, 4.6, 'foo')\n"
+						 "end");
 
 		std::clock_t end2 = std::clock();
 		total1 += end1 - start1;
