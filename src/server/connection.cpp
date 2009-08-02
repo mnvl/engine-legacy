@@ -1,6 +1,7 @@
 
 #include <iosfwd>
 #include <boost/bind.hpp>
+#include <boost/thread/locks.hpp>
 #include "header.h"
 #include "service.h"
 #include "connection.h"
@@ -34,10 +35,33 @@ void Connection::read(boost::shared_ptr<Buffer> const &buffer_ptr)
 
 void Connection::write(boost::shared_ptr<Buffer> const &buffer_ptr)
 {
+	bool no_write_in_progress = false;
+
+	{
+		boost::unique_lock<boost::mutex> lock(write_queue_mutex_);
+		no_write_in_progress = write_queue_.empty();
+		write_queue_.push_back(buffer_ptr);
+	}
+
+	if (no_write_in_progress)
+	{
+		schedule_write();
+	}
+}
+
+void Connection::schedule_write()
+{
+	boost::shared_ptr<Buffer> buffer_ptr;
+
+	{
+		boost::unique_lock<boost::mutex> lock(write_queue_mutex_);
+		buffer_ptr = write_queue_.front();
+	}
+
 	boost::asio::async_write(socket_,
 		boost::asio::buffer(buffer_ptr->read_ptr(), buffer_ptr->read_bytes_available()),
-		strand_.wrap(boost::bind(&Connection::handle_write, shared_from_this(), buffer_ptr,
-				boost::asio::placeholders::bytes_transferred, boost::asio::placeholders::error)));
+		strand_.wrap(boost::bind(&Connection::handle_write, shared_from_this(),
+		boost::asio::placeholders::bytes_transferred, boost::asio::placeholders::error)));
 }
 
 void Connection::handle_read(boost::shared_ptr<Buffer> const &buffer_ptr,
@@ -79,9 +103,25 @@ void Connection::handle_read(boost::shared_ptr<Buffer> const &buffer_ptr,
 	read(buffer_ptr);
 }
 
-void Connection::handle_write(boost::shared_ptr<Buffer> const &buffer_ptr,
-	size_t bytes_transferred, boost::system::error_code const &error)
+void Connection::handle_write(size_t bytes_transferred, boost::system::error_code const &error)
 {
+	boost::shared_ptr<Buffer> buffer_ptr;
+
+	bool more_writes_pending;
+
+	{
+		boost::unique_lock<boost::mutex> lock(write_queue_mutex_);
+		buffer_ptr = write_queue_.front();
+		write_queue_.pop_front();
+
+		more_writes_pending = !write_queue_.empty();
+	}
+
+	if (more_writes_pending)
+	{
+		schedule_write();
+	}
+
 	if (error)
 	{
 		handler_->error(this, error);

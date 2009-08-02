@@ -13,19 +13,19 @@ namespace
 char const HOST[] = "127.0.0.1";
 char const SERVICE[] = "17171";
 
-struct echo_fixture: public server::Handler
+struct EchoFixture: public server::Handler
 {
 	server::Service service;
 	bool completed;
 
-	echo_fixture():
+	EchoFixture():
 		service(this),
 		completed(false)
     {
 		service.start(HOST, SERVICE, 4);
 	}
 
-	~echo_fixture()
+	~EchoFixture()
 	{
 		service.stop();
 		service.wait();
@@ -82,7 +82,7 @@ void test_echo()
 		65531
 	};
 
-	echo_fixture fixture;
+	EchoFixture fixture;
 
 	for (size_t i = 0; i < sizeof(MESSAGE_SIZE) / sizeof(MESSAGE_SIZE[0]); i++)
 	{
