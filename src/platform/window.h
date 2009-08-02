@@ -4,10 +4,10 @@
 
 namespace platform {
 
-class window {
+class Window {
 public:
-	window(char const *title = 0);
-	~window();
+	Window(char const *title = 0);
+	~Window();
 
 	HWND get_handle() const throw() { return handle_; }
 

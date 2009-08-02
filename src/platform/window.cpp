@@ -6,21 +6,21 @@
 namespace platform
 {
 
-window::window(char const *title):
+Window::Window(char const *title):
 	handle_(0)
 {
 	if (title) create(title);
 }
 
-window::~window() {
+Window::~Window() {
 	if (handle_) {
 		DestroyWindow(handle_);
 		handle_ = 0;
 	}
 }
 
-void window::create(char const *title) {
-	char class_name[sizeof(window *)*2+1];
+void Window::create(char const *title) {
+	char class_name[sizeof(Window *)*2+1];
 	sprintf(class_name,"%p",this);
 
 	WNDCLASSEX wc;
@@ -44,7 +44,7 @@ void window::create(char const *title) {
 	if(!handle_) throw exception::winapi_error();
 }
 
-bool window::run_message_loop() {
+bool Window::run_message_loop() {
 	MSG msg;
 
 	while (PeekMessage(&msg, 0, 0, 0, PM_REMOVE))
@@ -56,11 +56,11 @@ bool window::run_message_loop() {
 	return true;
 }
 
-LRESULT window::dispatch_message(HWND hWnd,UINT uMsg,WPARAM wParam,LPARAM lParam) {
-	window *self = reinterpret_cast<window *>(GetWindowLong(hWnd,GWL_USERDATA));
+LRESULT Window::dispatch_message(HWND hWnd,UINT uMsg,WPARAM wParam,LPARAM lParam) {
+	Window *self = reinterpret_cast<Window *>(GetWindowLong(hWnd,GWL_USERDATA));
 
 	if(!self) {
-		char class_name[sizeof(window *)*2+1];
+		char class_name[sizeof(Window *)*2+1];
 		GetClassName(hWnd,class_name,sizeof(class_name)/sizeof(class_name[0]));
 		sscanf(class_name,"%p",&self);
 		SetWindowLong(hWnd,GWL_USERDATA,reinterpret_cast<LONG>(self));
@@ -70,7 +70,7 @@ LRESULT window::dispatch_message(HWND hWnd,UINT uMsg,WPARAM wParam,LPARAM lParam
 	return self->process_message(uMsg,wParam,lParam);
 }
 
-LRESULT window::process_message(UINT uMsg, WPARAM wParam, LPARAM lParam) {
+LRESULT Window::process_message(UINT uMsg, WPARAM wParam, LPARAM lParam) {
 	switch (uMsg) {
 	case WM_CLOSE:
 		PostQuitMessage(0);

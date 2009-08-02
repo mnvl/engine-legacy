@@ -13,9 +13,9 @@ namespace
 char const HOST[] = "127.0.0.1";
 char const SERVICE[] = "17171";
 
-struct echo_fixture: public server::handler
+struct echo_fixture: public server::Handler
 {
-	server::service service;
+	server::Service service;
 	bool completed;
 
 	echo_fixture():
@@ -31,13 +31,13 @@ struct echo_fixture: public server::handler
 		service.wait();
 	}
 
-	void process(server::connection *connection_ptr, boost::uint16_t id, server::buffer &in)
+	void process(server::Connection *connection_ptr, boost::uint16_t id, server::Buffer &in)
 	{
 		std::vector<char> message(in.read_bytes_available());
 		if (message.size()) in.read(&message[0], message.size());
 		for (size_t j = 0; j < message.size(); j++) BOOST_ASSERT(message[j] == (char) j);
 
-		boost::shared_ptr<server::buffer> out(new server::buffer());
+		boost::shared_ptr<server::Buffer> out(new server::Buffer());
 
 		{
 			server::header h;
@@ -53,7 +53,7 @@ struct echo_fixture: public server::handler
 		completed = true;
 	}
 
-	void error(server::connection *connection_ptr, boost::system::error_code const &error)
+	void error(server::Connection *connection_ptr, boost::system::error_code const &error)
 	{
 		BOOST_ASSERT (completed);
 	}

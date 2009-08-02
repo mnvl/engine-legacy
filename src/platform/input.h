@@ -11,12 +11,12 @@
 namespace platform
 {
 
-class input {
+class Input {
 public:
-	input(window *window_ptr);
-    ~input();
+	Input(Window *window_ptr);
+    ~Input();
 
-    window *get_window() const
+    Window *get_window() const
     {
         return window_;
     }
@@ -26,12 +26,12 @@ public:
         return driver_.get();
     }
 
-    keyboard *get_keyboard() const
+    Keyboard *get_keyboard() const
     {
         return keyboard_.get();
     }
 
-    mouse *get_mouse() const
+    Mouse *get_mouse() const
     {
         return mouse_.get();
     }
@@ -39,11 +39,11 @@ public:
     void update();
 
 private:
-    window *window_;
+    Window *window_;
     boost::intrusive_ptr<IDirectInput8> driver_;
 
-    boost::scoped_ptr<keyboard> keyboard_;
-    boost::scoped_ptr<mouse> mouse_;
+    boost::scoped_ptr<Keyboard> keyboard_;
+    boost::scoped_ptr<Mouse> mouse_;
 
 	void create();
 };

@@ -18,7 +18,7 @@ class material;
 
 class renderer {
 public:
-	renderer(platform::window *window_ptr, int width = 800, int height = 600, bool fullscreen = false);
+	renderer(platform::Window *window_ptr, int width = 800, int height = 600, bool fullscreen = false);
 	~renderer();
 
 	void begin_frame();
@@ -32,7 +32,7 @@ public:
 	void set_view_projection_from_camera(camera const &c);
 
 private:
-	platform::window *window_ptr_;
+	platform::Window *window_ptr_;
 	int width_, height_;
 	bool fullscreen_;
 

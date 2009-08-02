@@ -10,28 +10,28 @@
 namespace server
 {
 
-class connection;
+class Connection;
 
-class service:
+class Service:
 		public boost::noncopyable,
-		public boost::enable_shared_from_this<service>
+		public boost::enable_shared_from_this<Service>
 {
 public:
-	service(handler *handler_ptr);
-	~service();
+	Service(Handler *handler_ptr);
+	~Service();
 
 	void start(std::string const &host_name, std::string const &service_name, size_t nthreads);
 	void stop();
 	void wait();
 
 private:
-	handler *handler_;
+	Handler *handler_;
 	boost::asio::io_service io_service_;
 	boost::asio::ip::tcp::acceptor acceptor_;
 	boost::thread_group threads_;
 
 	void schedule_accept();
-	void handle_accept(boost::shared_ptr<connection> const &connection_ptr,
+	void handle_accept(boost::shared_ptr<Connection> const &connection_ptr,
 		boost::system::error_code const &error);
 };
 

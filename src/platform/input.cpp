@@ -5,16 +5,16 @@
 namespace platform
 {
 
-input::input(window *window_ptr):
+Input::Input(Window *window_ptr):
 	window_(window_ptr)
 {
     create();
 }
 
-input::~input() {
+Input::~Input() {
 }
 
-void input::create() {
+void Input::create() {
 	HRESULT hr;
 
 	IDirectInput8 *di;
@@ -24,11 +24,11 @@ void input::create() {
 	driver_.reset(di);
     di->Release();
 
-	keyboard_.reset(new keyboard(this));
-	mouse_.reset(new mouse(this));
+	keyboard_.reset(new Keyboard(this));
+	mouse_.reset(new Mouse(this));
 }
 
-void input::update() {
+void Input::update() {
     keyboard_->update();
     mouse_->update();
 }

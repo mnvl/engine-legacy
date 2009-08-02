@@ -8,7 +8,7 @@
 namespace server
 {
 
-class buffer
+class Buffer
 {
 public:
 	struct end_of_data: public std::exception
@@ -19,7 +19,7 @@ public:
 		}
 	};
 
-	buffer():
+	Buffer():
 		data_((char *) malloc(size_)),
 		size_(SIZE_1),
 		read_(data_),
@@ -28,7 +28,7 @@ public:
 		if (!data_) throw std::bad_alloc();
 	}
 
-	buffer(buffer const &rhs):
+	Buffer(Buffer const &rhs):
 		data_((char *) malloc(rhs.size_)),
 		size_(rhs.size_),
 		read_(rhs.read_offset() + data_),
@@ -38,7 +38,7 @@ public:
 		memcpy(data_, rhs.data_, rhs.write_offset());
 	}
 
-	void swap(buffer &rhs)
+	void swap(Buffer &rhs)
 	{
 		std::swap(data_, rhs.data_);
 		std::swap(size_, rhs.size_);
@@ -46,17 +46,17 @@ public:
 		std::swap(write_, rhs.write_);
 	}
 
-	buffer &operator =(buffer const &rhs)
+	Buffer &operator =(Buffer const &rhs)
 	{
 		if (&rhs != this)
 		{
-			buffer(rhs).swap(*this);
+			Buffer(rhs).swap(*this);
 		}
 
 		return *this;
 	}
 
-	~buffer()
+	~Buffer()
 	{
 		if (data_)
 		{

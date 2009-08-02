@@ -8,17 +8,15 @@
 namespace server
 {
 
-class connection;
+class Connection;
 
-class close_connection
-{
-};
-
-class handler
+class Handler
 {
 public:
-	virtual void process(connection *connection_ptr, boost::uint16_t id, buffer &buf) = 0;
-	virtual void error(connection *connection_ptr, boost::system::error_code const &error) = 0;
+	class CloseConnection {};
+
+	virtual void process(Connection *connection_ptr, boost::uint16_t id, Buffer &buf) = 0;
+	virtual void error(Connection *connection_ptr, boost::system::error_code const &error) = 0;
 };
 
 }

@@ -8,9 +8,9 @@
 namespace platform
 {
 
-class input;
+class Input;
 
-class keyboard {
+class Keyboard {
 public:
 	enum key_t {
 		KEY_ESCAPE			= DIK_ESCAPE,
@@ -110,8 +110,8 @@ public:
 
 	static char get_character_by_key(key_t key);
 
-    keyboard(input *input_ptr);
-    ~keyboard();
+    Keyboard(Input *input_ptr);
+    ~Keyboard();
 
     void update();
 
@@ -123,7 +123,7 @@ public:
 private:
 	static size_t const SAMPLE_BUFFER_SIZE=256;
 
-	input *input_;
+	Input *input_;
 	boost::intrusive_ptr<IDirectInputDevice8> device_;
 	BYTE state_[SAMPLE_BUFFER_SIZE];
 

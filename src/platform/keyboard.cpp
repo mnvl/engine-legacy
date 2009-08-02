@@ -6,18 +6,18 @@
 namespace platform
 {
 
-keyboard::keyboard(input *input_ptr):
+Keyboard::Keyboard(Input *input_ptr):
 	input_(input_ptr)
 {
 	memset(state_, 0, sizeof(state_));
 	create();
 }
 
-keyboard::~keyboard() {
+Keyboard::~Keyboard() {
 	device_->Unacquire();
 }
 
-void keyboard::create() {
+void Keyboard::create() {
 	HRESULT hr;
 
 	// Obtain an interface to the system keyboard device.
@@ -68,7 +68,7 @@ void keyboard::create() {
 	device_->Acquire();
 }
 
-void keyboard::update() {
+void Keyboard::update() {
 	HRESULT hr;
 
 	// Get the input's device state, and put the state in dims
@@ -96,7 +96,7 @@ void keyboard::update() {
 	}
 }
 
-char keyboard::get_character_by_key(key_t key) {
+char Keyboard::get_character_by_key(key_t key) {
 	static char table[SAMPLE_BUFFER_SIZE+1]={
 		0,	    //					0
 		0,	    // DIK_ESCAPE		1

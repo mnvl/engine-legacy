@@ -6,17 +6,17 @@
 namespace server
 {
 
-service::service(handler *handler_ptr):
+Service::Service(Handler *handler_ptr):
 	handler_(handler_ptr),
 	acceptor_(io_service_)
 {
 }
 
-service::~service()
+Service::~Service()
 {
 }
 
-void service::start(std::string const &host_name, std::string const &service_name, size_t nthreads)
+void Service::start(std::string const &host_name, std::string const &service_name, size_t nthreads)
 {
 	boost::asio::ip::tcp::resolver resolver(io_service_);
 	boost::asio::ip::tcp::resolver::query query(host_name, service_name);
@@ -35,25 +35,25 @@ void service::start(std::string const &host_name, std::string const &service_nam
 	}
 }
 
-void service::stop()
+void Service::stop()
 {
 	io_service_.stop();
 }
 
-void service::wait()
+void Service::wait()
 {
 	threads_.join_all();
 }
 
-void service::schedule_accept()
+void Service::schedule_accept()
 {
-	boost::shared_ptr<connection> connection_ptr(new connection(handler_, io_service_));
+	boost::shared_ptr<Connection> connection_ptr(new Connection(handler_, io_service_));
 
    	acceptor_.async_accept(connection_ptr->socket(),
-		boost::bind(&service::handle_accept, this, connection_ptr, boost::asio::placeholders::error));
+		boost::bind(&Service::handle_accept, this, connection_ptr, boost::asio::placeholders::error));
 }
 
-void service::handle_accept(boost::shared_ptr<connection> const &connection_ptr,
+void Service::handle_accept(boost::shared_ptr<Connection> const &connection_ptr,
 	boost::system::error_code const &error)
 {
 	schedule_accept();

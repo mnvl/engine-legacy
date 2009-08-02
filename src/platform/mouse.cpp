@@ -6,17 +6,17 @@
 namespace platform
 {
 
-mouse::mouse(input *input_ptr):
+Mouse::Mouse(Input *input_ptr):
 	input_(input_ptr)
 {
 	create();
 }
 
-mouse::~mouse() {
+Mouse::~Mouse() {
 	device_->Unacquire();
 }
 
-void mouse::create() {
+void Mouse::create() {
 	HRESULT hr;
 
     // Obtain an interface to the system mouse device.
@@ -73,7 +73,7 @@ void mouse::create() {
     device_->Acquire();
 }
 
-void mouse::update() {
+void Mouse::update() {
     HRESULT       hr;
     DIMOUSESTATE2 dims2;      // DirectInput mouse state structure
 

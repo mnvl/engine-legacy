@@ -6,9 +6,9 @@
 
 namespace platform {
 
-class timer {
+class Timer {
 public:
-	timer() {
+	Timer() {
 		LARGE_INTEGER frequency;
 		if (!QueryPerformanceFrequency(&frequency))
 			throw exception::winapi_error();
@@ -16,7 +16,7 @@ public:
 		performance_frequency_ = frequency.QuadPart;
 	}
 
-	~timer() {
+	~Timer() {
 	}
 
 	double get_current_value() const {
@@ -27,8 +27,8 @@ public:
 		return double(counter.QuadPart) / double(performance_frequency_);
 	}
 
-	static timer &singleton() {
-		static timer instance;
+	static Timer &singleton() {
+		static Timer instance;
 		return instance;
 	}
 

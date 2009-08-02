@@ -8,12 +8,12 @@
 namespace platform
 {
 
-class input;
+class Input;
 
-class mouse {
+class Mouse {
 public:
-	mouse(input *input_ptr);
-    ~mouse();
+	Mouse(Input *input_ptr);
+    ~Mouse();
 
 	void update();
 
@@ -25,7 +25,7 @@ public:
 private:
 	static const int SAMPLE_BUFFER_SIZE = 256;
 
-	input *input_;
+	Input *input_;
 	boost::intrusive_ptr<IDirectInputDevice8> device_;
 
 	DIMOUSESTATE2 state_;
