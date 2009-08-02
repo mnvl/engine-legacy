@@ -66,7 +66,7 @@ if(WIN32)
     C:/postgresql/postgresql-snapshot
     D:/postgresql/postgresql-snapshot
     "C:/Program Files/postgresql"
-    "C:/Program Files/postgresql/8.4"
+    "C:/Program Files/postgresql/*"
     "D:/Program Files/postgresql"
     "D:/Program Files/postgresql/*"
   )
@@ -91,21 +91,31 @@ set(SUFFIX_FOR_LIBRARY_PATH
 #
 # Look for an installation.
 #
-find_path(POSTGRESQL_INCLUDE_DIR NAMES libpq-fe.h PATH_SUFFIXES ${SUFFIX_FOR_INCLUDE_PATH} PATHS
-
-  # Look in other places.
+find_path(POSTGRESQL_INCLUDE_DIR
+  NAMES
+  libpq-fe.h
+  
+  PATH_SUFFIXES
+  ${SUFFIX_FOR_INCLUDE_PATH}
+  
+  PATHS
   ${POSTGRESQL_DIR_SEARCH}
 
-  # Help the user find it if we cannot.
-  DOC "The ${POSTGRESQL_INCLUDE_DIR_MESSAGE}"
+  DOC
+  "The ${POSTGRESQL_INCLUDE_DIR_MESSAGE}"
 )
 
 find_library(POSTGRESQL_LIBPQ_PATH
   NAMES
   pq
   libpq
+  
+  PATH_SUFFIXES
+  ${SUFFIX_FOR_LIBRARY_PATH}
+
   PATHS
-  ${POSTGRESQL_DIR_SEARCH})
+  ${POSTGRESQL_DIR_SEARCH}
+)
 
 INCLUDE(FindPackageHandleStandardArgs)
 FIND_PACKAGE_HANDLE_STANDARD_ARGS(PostgreSQL DEFAULT_MSG POSTGRESQL_INCLUDE_DIR POSTGRESQL_LIBPQ_PATH)
