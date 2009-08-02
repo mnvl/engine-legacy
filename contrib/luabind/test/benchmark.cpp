@@ -1,5 +1,7 @@
+
 #include <iostream>
 #include <ctime>
+#include <boost/lexical_cast.hpp>
 
 namespace std
 {
@@ -34,12 +36,17 @@ int f2(lua_State* L)
 	return 1;
 }
 
+struct A
+{
+	int x1;
+	float x2;
+};
+
 using namespace luabind;
 
 int main()
 {
-	const int num_calls = 1000000;
-	const int loops = 2;
+	static const int ncycles = 10000000;
 
 	using namespace luabind;
 
@@ -48,47 +55,33 @@ int main()
 
 	module(L)
 	[
-		def("test1", &f1)
+		def("test1", &f1),
+
+		class_<A>("A")
+		.def(constructor<>())
+		.def_readwrite("x1", &A::x1)
+		.def_readwrite("x2", &A::x2)
 	];
 
 	lua_pushstring(L, "test2");
 	lua_pushcclosure(L, &f2, 0);
 	lua_settable(L, LUA_GLOBALSINDEX);
 
-	std::clock_t total1 = 0;
-	std::clock_t total2 = 0;
+	std::clock_t t1 = std::clock();
+	luaL_dostring(L, "for i = 1, 10000000 do test1(5, 4.6, 'foo') end");
+	std::clock_t t2 = std::clock();
+	luaL_dostring(L, "for i = 1, 10000000 do test2(5, 4.6, 'foo') end");
+	std::clock_t t3 = std::clock();
+	luaL_dostring(L, "a = A()\nfor i = 1, 1000000 do a.x1 = i a.x2 = i end");
+	std::clock_t t4 = std::clock();
 
-	for (int i = 0; i < loops; ++i)
-	{
-		// benchmark luabind
-		std::clock_t start1 = std::clock();
-		luaL_dostring(L, "for i = 1, 1000000 do\n"
-							"test1(5, 4.6, 'foo')\n"
-						 "end");
+	double delta1 = double(t2 - t1) / CLOCKS_PER_SEC;
+	double delta2 = double(t3 - t2) / CLOCKS_PER_SEC;
+	double delta3 = double(t4 - t3) / CLOCKS_PER_SEC;
 
-		std::clock_t end1 = std::clock();
-
-		// benchmark empty binding
-		std::clock_t start2 = std::clock();
-		luaL_dostring(L, "for i = 1, 1000000 do\n"
-							"test2(5, 4.6, 'foo')\n"
-						 "end");
-
-		std::clock_t end2 = std::clock();
-		total1 += end1 - start1;
-		total2 += end2 - start2;
-	}
-
-
-	double time1 = double(total1) / (double)CLOCKS_PER_SEC;
-	double time2 = double(total2) / (double)CLOCKS_PER_SEC;
-
-#ifdef LUABIND_NO_ERROR_CHECKING
-	std::cout << "without error-checking\n";
-#endif
-	std::cout << "luabind:\t" << time1 * 1000000 / num_calls / loops << " microseconds per call\n"
-		<< "empty:\t" << time2 * 1000000 / num_calls / loops << " microseconds per call\n"
-		<< "diff:\t" << ((time1 - time2) * 1000000 / num_calls / loops) << " microseconds\n\n";
+	std::cout << "luabind calls: " << ncycles / delta1 << " per sec\n";
+	std::cout << "naked calls: " << ncycles / delta2 << " per sec\n";
+	std::cout << "member accesses: " << ncycles / delta3 << " per sec\n";
 
 	lua_close(L);
 }
