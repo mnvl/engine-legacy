@@ -6,36 +6,36 @@
 
 namespace graphic {
 
-memory_mesh::memory_mesh(memory_model *m):
-mesh(m)
+MemoryMesh::MemoryMesh(MemoryModel *m):
+Mesh(m)
 {
 }
 
-memory_mesh::~memory_mesh()
+MemoryMesh::~MemoryMesh()
 {
 }
 
-void memory_mesh::set_vertices_count(size_t count)
+void MemoryMesh::set_vertices_count(size_t count)
 {
 	vertices_.resize(count);
 	weights_.resize(count);
 }
 
-size_t memory_mesh::get_vertices_count()
+size_t MemoryMesh::get_vertices_count()
 {
 	return vertices_.size();
 }
 
-void memory_mesh::set_indices_count(size_t count)
+void MemoryMesh::set_indices_count(size_t count)
 {
 	indices_.resize(count);
 }
 
-void memory_mesh::lock()
+void MemoryMesh::lock()
 {
 }
 
-void memory_mesh::set_positions(math::vec<3> const *buffer)
+void MemoryMesh::set_positions(math::vec<3> const *buffer)
 {
 	for (std::vector<vertex_t>::iterator it = vertices_.begin(); it != vertices_.end(); it++)
 	{
@@ -43,7 +43,7 @@ void memory_mesh::set_positions(math::vec<3> const *buffer)
 	}
 }
 
-void memory_mesh::set_normals(math::vec<3> const *buffer)
+void MemoryMesh::set_normals(math::vec<3> const *buffer)
 {
 	for (std::vector<vertex_t>::iterator it = vertices_.begin(); it != vertices_.end(); it++)
 	{
@@ -51,7 +51,7 @@ void memory_mesh::set_normals(math::vec<3> const *buffer)
 	}
 }
 
-void memory_mesh::set_joint_indices(math::vec<8, unsigned> const *buffer)
+void MemoryMesh::set_joint_indices(math::vec<8, unsigned> const *buffer)
 {
 	for (std::vector<vertex_weights>::iterator it = weights_.begin(); it != weights_.end(); it++)
 	{
@@ -59,7 +59,7 @@ void memory_mesh::set_joint_indices(math::vec<8, unsigned> const *buffer)
 	}
 }
 
-void memory_mesh::set_joint_weights(math::vec<8> const *buffer)
+void MemoryMesh::set_joint_weights(math::vec<8> const *buffer)
 {
 	for (std::vector<vertex_weights>::iterator it = weights_.begin(); it != weights_.end(); it++)
 	{
@@ -67,7 +67,7 @@ void memory_mesh::set_joint_weights(math::vec<8> const *buffer)
 	}
 }
 
-void memory_mesh::set_texcoords(math::vec<2> const *buffer)
+void MemoryMesh::set_texcoords(math::vec<2> const *buffer)
 {
 	for (std::vector<vertex_t>::iterator it = vertices_.begin(); it != vertices_.end(); it++)
 	{
@@ -75,7 +75,7 @@ void memory_mesh::set_texcoords(math::vec<2> const *buffer)
 	}
 }
 
-void memory_mesh::set_face_indices(unsigned *buffer)
+void MemoryMesh::set_face_indices(unsigned *buffer)
 {
 	for (std::vector<index_t>::iterator it = indices_.begin(); it != indices_.end(); it++)
 	{
@@ -83,11 +83,11 @@ void memory_mesh::set_face_indices(unsigned *buffer)
 	}
 }
 
-void memory_mesh::unlock()
+void MemoryMesh::unlock()
 {
 }
 
-void memory_mesh::transform_vertices(joint const *joint_ptr, std::vector<vertex_t> &result) const
+void MemoryMesh::transform_vertices(Joint const *joint_ptr, std::vector<vertex_t> &result) const
 {
 	result = vertices_;
 
@@ -113,10 +113,10 @@ void memory_mesh::transform_vertices(joint const *joint_ptr, std::vector<vertex_
 	}
 }
 
-void memory_mesh::draw_static(joint *joint_ptr) const
+void MemoryMesh::draw_static(Joint *joint_ptr) const
 {
-    renderer *renderer_ptr = get_model()->get_renderer();
-    resource_manager *resource_manager_ptr = renderer_ptr->get_resource_manager();
+    Renderer *renderer_ptr = get_model()->get_renderer();
+    ResourceManager *resource_manager_ptr = renderer_ptr->get_resource_manager();
 	IDirect3DDevice9 *device_ptr = renderer_ptr->get_device();
 
     device_ptr->SetVertexDeclaration(resource_manager_ptr->get_vertex_decl<vertex_t>());
@@ -141,10 +141,10 @@ void memory_mesh::draw_static(joint *joint_ptr) const
 	}
 }
 
-void memory_mesh::draw_animated(joint *joint_ptr) const
+void MemoryMesh::draw_animated(Joint *joint_ptr) const
 {
-    renderer *renderer_ptr = get_model()->get_renderer();
-    resource_manager *resource_manager_ptr = renderer_ptr->get_resource_manager();
+    Renderer *renderer_ptr = get_model()->get_renderer();
+    ResourceManager *resource_manager_ptr = renderer_ptr->get_resource_manager();
 	IDirect3DDevice9 *device_ptr = renderer_ptr->get_device();
 
 	std::vector<vertex_t> transformed_vertices;

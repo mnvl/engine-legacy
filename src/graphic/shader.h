@@ -9,9 +9,9 @@
 namespace graphic
 {
 
-class shader {
+class Shader {
 public:
-    shader(renderer *renderer_ptr):
+    Shader(Renderer *renderer_ptr):
         renderer_ptr_(renderer_ptr)
     {
     }
@@ -45,7 +45,7 @@ public:
     }
 
 private:
-    renderer *renderer_ptr_;
+    Renderer *renderer_ptr_;
     boost::intrusive_ptr<ID3DXEffect> effect_ptr_;
 };
 

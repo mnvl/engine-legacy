@@ -12,24 +12,24 @@
 
 namespace graphic {
 
-class camera;
-class font;
-class material;
+class Camera;
+class Font;
+class Material;
 
-class renderer {
+class Renderer {
 public:
-	renderer(platform::Window *window_ptr, int width = 800, int height = 600, bool fullscreen = false);
-	~renderer();
+	Renderer(platform::Window *window_ptr, int width = 800, int height = 600, bool fullscreen = false);
+	~Renderer();
 
 	void begin_frame();
 	void finish_frame();
 
 	IDirect3DDevice9 *get_device() const { return device_ptr_.get(); }
-    resource_manager *get_resource_manager() const { return resource_manager_.get(); }
+    ResourceManager *get_resource_manager() const { return resource_manager_.get(); }
 	math::matrix<4,4> const &get_view_matrix() const { return view_matrix_; }
 	math::matrix<4,4> const &get_projection_matrix() const { return projection_matrix_; }
 
-	void set_view_projection_from_camera(camera const &c);
+	void set_view_projection_from_camera(Camera const &c);
 
 private:
 	platform::Window *window_ptr_;
@@ -42,7 +42,7 @@ private:
 	boost::intrusive_ptr<IDirect3D9> direct3d_ptr_;
 	boost::intrusive_ptr<IDirect3DDevice9> device_ptr_;
 
-    boost::scoped_ptr<resource_manager> resource_manager_;
+    boost::scoped_ptr<ResourceManager> resource_manager_;
 
 	double frame_start_time_, last_frame_time_;
 	std::deque<double> frame_times_;

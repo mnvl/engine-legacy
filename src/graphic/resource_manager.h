@@ -9,18 +9,18 @@
 namespace graphic
 {
 
-class font;
-class material;
-class renderer;
-class shader;
+class Font;
+class Material;
+class Renderer;
+class Shader;
 
-class resource_manager {
+class ResourceManager {
 public:
-    resource_manager(renderer *renderer_ptr);
-    ~resource_manager();
+    ResourceManager(Renderer *renderer_ptr);
+    ~ResourceManager();
 
-    font *get_default_font() const { return default_font_.get(); }
-	material *get_default_material() const { return default_material_.get(); }
+    Font *get_default_font() const { return default_font_.get(); }
+	Material *get_default_material() const { return default_material_.get(); }
 
     template<class T>
     IDirect3DVertexDeclaration9 *get_vertex_decl() const;
@@ -37,21 +37,21 @@ public:
         return pnjwt_decl_.get();
     }
 
-    shader *get_animated_model_shader() const
+    Shader *get_animated_model_shader() const
     {
         return animated_model_shader_ptr_.get();
     }
 
 private:
-    renderer *renderer_ptr_;
+    Renderer *renderer_ptr_;
 
-	boost::scoped_ptr<font> default_font_;
-	boost::scoped_ptr<material> default_material_;
+	boost::scoped_ptr<Font> default_font_;
+	boost::scoped_ptr<Material> default_material_;
 
     boost::intrusive_ptr<IDirect3DVertexDeclaration9> pnt_decl_;
     boost::intrusive_ptr<IDirect3DVertexDeclaration9> pnjwt_decl_;
 
-    boost::scoped_ptr<shader> animated_model_shader_ptr_;
+    boost::scoped_ptr<Shader> animated_model_shader_ptr_;
 };
 
 }

@@ -6,10 +6,10 @@
 
 namespace graphic {
 
-class material {
+class Material {
 public:
-	material(renderer *renderer_ptr = 0);
-	~material();
+	Material(Renderer *renderer_ptr = 0);
+	~Material();
 
 	void set_diffuse(math::vec<4> const &v)
 	{
@@ -70,10 +70,10 @@ public:
 private:
 	std::string name_;
 
-	renderer *renderer_ptr_;
+	Renderer *renderer_ptr_;
 	D3DMATERIAL9 properties_;
 
-	std::auto_ptr<texture> texture_ptr_;
+	std::auto_ptr<Texture> texture_ptr_;
 };
 
 }

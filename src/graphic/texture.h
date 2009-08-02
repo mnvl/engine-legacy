@@ -10,9 +10,9 @@
 namespace graphic
 {
 
-class texture {
+class Texture {
 public:
-	texture(renderer *renderer_ptr):
+	Texture(Renderer *renderer_ptr):
 		renderer_ptr_(renderer_ptr)
 	{
 	}
@@ -42,7 +42,7 @@ public:
 	}
 
 private:
-	renderer *renderer_ptr_;
+	Renderer *renderer_ptr_;
 	std::string filename_;
 	boost::intrusive_ptr<IDirect3DTexture9> texture_ptr_;
 };

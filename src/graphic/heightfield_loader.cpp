@@ -8,19 +8,19 @@
 namespace graphic
 {
 
-heightfield_loader::heightfield_loader(std::string const &filename, model *model_ptr, renderer *renderer_ptr):
+HeightfieldLoader::HeightfieldLoader(std::string const &filename, Model *model_ptr, Renderer *renderer_ptr):
     filename_(filename),
     model_ptr_(model_ptr),
     renderer_ptr_(renderer_ptr)
 {
 }
 
-heightfield_loader::~heightfield_loader()
+HeightfieldLoader::~HeightfieldLoader()
 {
 }
 
 template<class T>
-void heightfield_loader::load_from_raw(math::matrix<4,4> const &tf, size_t nrows, size_t ncols,
+void HeightfieldLoader::load_from_raw(math::matrix<4,4> const &tf, size_t nrows, size_t ncols,
     math::vec<3> const &scale, std::string const &texture_name)
 {
 	LOG_INFO("importing heightfield from raw file " << filename_ << ", nrows = "
@@ -29,7 +29,7 @@ void heightfield_loader::load_from_raw(math::matrix<4,4> const &tf, size_t nrows
     std::vector<char> buffer;
     util::file_handle(filename_.c_str(), O_RDONLY).read_all(buffer);
 
-    mesh *mesh_ptr = model_ptr_->create_mesh();
+    Mesh *mesh_ptr = model_ptr_->create_mesh();
 
     T *get = (T *) &buffer[0];
 
@@ -89,13 +89,13 @@ void heightfield_loader::load_from_raw(math::matrix<4,4> const &tf, size_t nrows
     mesh_ptr->unlock();
 
 	LOG_DEBUG("setting material and texture (" << texture_name << ")...");
-    std::auto_ptr<material> material_ptr(new material(renderer_ptr_));
+    std::auto_ptr<Material> material_ptr(new Material(renderer_ptr_));
     material_ptr->set_name(texture_name + " material");
     material_ptr->set_texture(texture_name);
     model_ptr_->materials.push_back(material_ptr);
 
 	LOG_DEBUG("adding triangle lists and joints...");
-    mesh::triangles t;
+    Mesh::triangles t;
     t.material_ptr = &model_ptr_->materials.back();
     t.first_index_offset = 0;
     t.triangles_count = indices.size() / 3;
@@ -103,17 +103,17 @@ void heightfield_loader::load_from_raw(math::matrix<4,4> const &tf, size_t nrows
     t.vertices_count = positions.size();
     mesh_ptr->triangles_list.push_back(t);
 
-	joint *joint_ptr = model_ptr_->create_joint();
-	joint_ptr->transforms.push_back(joint::transform("tf", tf));
+	Joint *joint_ptr = model_ptr_->create_joint();
+	joint_ptr->transforms.push_back(Joint::transform("tf", tf));
 	joint_ptr->mesh_ptr = mesh_ptr;
 
 	LOG_DEBUG("heightfield imported successfully");
 }
 
-template void heightfield_loader::load_from_raw<boost::int16_t>(math::matrix<4,4> const &tf, size_t nrows, size_t ncols,
+template void HeightfieldLoader::load_from_raw<boost::int16_t>(math::matrix<4,4> const &tf, size_t nrows, size_t ncols,
     math::vec<3> const &scale, std::string const &texture_name);
 
-template void heightfield_loader::load_from_raw<boost::uint16_t>(math::matrix<4,4> const &tf, size_t nrows, size_t ncols,
+template void HeightfieldLoader::load_from_raw<boost::uint16_t>(math::matrix<4,4> const &tf, size_t nrows, size_t ncols,
     math::vec<3> const &scale, std::string const &texture_name);
 
 }

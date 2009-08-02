@@ -5,7 +5,7 @@
 
 namespace graphic {
 
-class camera {
+class Camera {
 private:
 	math::vec<3> eye_point;
 	math::vec<3> lookat_point;
@@ -25,7 +25,7 @@ private:
 	math::matrix<4,4>  projection_matrix;
 
 public:
-	camera();
+	Camera();
 
     math::matrix<4,4> const &get_view_matrix() const {
 		return view_matrix;

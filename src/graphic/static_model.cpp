@@ -6,18 +6,18 @@
 namespace graphic
 {
 
-static_model::static_model(renderer *renderer_ptr):
-model(renderer_ptr)
+StaticModel::StaticModel(Renderer *renderer_ptr):
+Model(renderer_ptr)
 {
 }
 
-static_model::~static_model()
+StaticModel::~StaticModel()
 {
 }
 
-mesh *static_model::create_mesh()
+Mesh *StaticModel::create_mesh()
 {
-	std::auto_ptr<static_mesh> mesh_ptr(new static_mesh(this));
+	std::auto_ptr<StaticMesh> mesh_ptr(new StaticMesh(this));
 	meshes.push_back(mesh_ptr);
 	return &meshes.back();
 }

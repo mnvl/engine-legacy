@@ -37,7 +37,7 @@ namespace collada_elements
 
 	class root_element {
 	public:
-		virtual model *get_model() = 0;
+		virtual Model *get_model() = 0;
 		virtual library_visual_scenes_e *get_visual_scenes() = 0;
 		virtual library_geometries_e *get_geometries() = 0;
 		virtual library_controllers_e *get_controllers() = 0;
@@ -68,7 +68,7 @@ namespace collada_elements
 		}
 
 		root_element *get_root() const { return root_; }
-		model *get_model() const { return root_->get_model(); }
+		Model *get_model() const { return root_->get_model(); }
 		void set_root(root_element *root) { root_ = root; }
 
 		void init(xercesc::DOMElement const *element_ptr) {}
@@ -416,7 +416,7 @@ namespace collada_elements
 		}
 
 	public:
-		void bind_mesh_materials(mesh_e const *, mesh *mesh_ptr) const;
+		void bind_mesh_materials(mesh_e const *, Mesh *mesh_ptr) const;
 
 		technique_common_e const *get_technique_common() const
 		{
@@ -543,7 +543,7 @@ namespace collada_elements
 			}
 		}
 
-		void build_hierarchy(joint *parent_ptr);
+		void build_hierarchy(Joint *parent_ptr);
 
 		node_e const *get_node_by_id(std::string const &id) const
 		{
@@ -747,7 +747,7 @@ namespace collada_elements
 			if (triangles_.empty()) throw std::logic_error("no <triangles> found");
 		}
 
-		void build_mesh(mesh *mesh_ptr);
+		void build_mesh(Mesh *mesh_ptr);
 
 		boost::ptr_vector<triangles_e> const &get_triangles() const
 		{
@@ -830,7 +830,7 @@ namespace collada_elements
 			{
 				LOG_DEBUG("building mesh id = " << it->get_id() << ", name = " << it->get_name());
 	
-				mesh *mesh_ptr = get_model()->create_mesh();
+				Mesh *mesh_ptr = get_model()->create_mesh();
 
 				mesh_ptr->id = it->get_id();
 				mesh_ptr->name = it->get_name();
@@ -897,7 +897,7 @@ namespace collada_elements
 		}
 
 	public:
-		void build_inverted_bind_matrices(mesh *mesh_ptr)
+		void build_inverted_bind_matrices(Mesh *mesh_ptr)
 		{
 			mesh_ptr->bind_shape_matrix = bind_shape_matrix_;
 
@@ -923,7 +923,7 @@ namespace collada_elements
 			}
 		}
 
-		void build_joint_weights(mesh *mesh_ptr)
+		void build_joint_weights(Mesh *mesh_ptr)
 		{
 			mesh_e *mesh_element_ptr = get_root()->get_geometries()->get_geometry_by_id(mesh_ptr->id)->get_mesh();
 			mesh_e::position_index_to_vertex_index_type const &position_index_to_vertex_index = mesh_element_ptr->get_position_index_to_vertex_index_mapping();
@@ -1041,7 +1041,7 @@ namespace collada_elements
 
 		void build_joint_influences() {
 			for (boost::ptr_map<std::string, skin_e *>::const_iterator it = skins_.begin(); it != skins_.end(); it++) {
-				mesh *mesh_ptr = get_model()->get_mesh_by_id(it->first.substr(1));
+				Mesh *mesh_ptr = get_model()->get_mesh_by_id(it->first.substr(1));
 				(*it->second)->build_inverted_bind_matrices(mesh_ptr);
 				(*it->second)->build_joint_weights(mesh_ptr);
 			}
@@ -1113,9 +1113,9 @@ namespace collada_elements
 		}
 
 	public:
-		animation build_animation(model *model_ptr)
+		Animation build_animation(Model *model_ptr)
 		{
-			animation result;
+			Animation result;
 
 			for (std::vector<channel>::const_iterator it = channels_.begin(); it != channels_.end(); it++) {
 				boost::ptr_map<std::string, sampler_e *>::iterator jt = samplers_.find(it->source_url.substr(1));
@@ -1126,7 +1126,7 @@ namespace collada_elements
 				source_e const *time_input = get_source(sampler_ptr->get_input("INPUT")->get_source().substr(1));
 				source_e const *transform_output = get_source(sampler_ptr->get_input("OUTPUT")->get_source().substr(1));
 
-				sampler dummy;
+				Sampler dummy;
 				transform_e const *transform_ptr = 0;
 
 				// target is in form <node>/<transform>.<param>, <param> may be omitted
@@ -1136,7 +1136,7 @@ namespace collada_elements
 				if (parsed_target_components.size() == 2) parsed_target_components.push_back(std::string());
 				if (parsed_target_components.size() != 3) throw std::logic_error("invalid url " + it->target_url);
 
-				joint *joint_ptr = model_ptr->get_joint_by_id(parsed_target_components[0]);
+				Joint *joint_ptr = model_ptr->get_joint_by_id(parsed_target_components[0]);
 				dummy.set_target(joint_ptr, parsed_target_components[1]);
 
 				transform_ptr = get_root()->get_visual_scenes()->get_node_by_id(parsed_target_components[0])->get_transform_by_sid(parsed_target_components[1]);
@@ -1170,7 +1170,7 @@ namespace collada_elements
 	public:
 		void build_animations() {
 			for (boost::ptr_map<std::string, animation_e *>::iterator it = animations_.begin(); it != animations_.end(); it++) {
-				get_model()->animations.push_back(new animation((*it->second)->build_animation(get_model())));
+				get_model()->animations.push_back(new Animation((*it->second)->build_animation(get_model())));
 				get_model()->animations.back().name = it->first;
 			}
 		}
@@ -1201,7 +1201,7 @@ namespace collada_elements
 			if (instance_effect_url_.empty()) throw std::logic_error("no <instance_effect> url specified for material");
 		}
 
-		material *build_material() const;
+		Material *build_material() const;
 	};
 
 	class library_materials_e: public element {
@@ -1391,9 +1391,9 @@ namespace collada_elements
 		std::string get_surface_filename(std::string const &component_name) const;
 
 	public:
-		material *build_material() const
+		Material *build_material() const
 		{
-			std::auto_ptr<material> material_ptr(new material(get_model()->get_renderer()));
+			std::auto_ptr<Material> material_ptr(new Material(get_model()->get_renderer()));
 
 			std::string const &diffuse_texture = get_surface_filename("diffuse");
 			std::string const &specular_texture = get_surface_filename("specular");
@@ -1438,7 +1438,7 @@ namespace collada_elements
 		}
 
 	public:
-		material *build_material() const
+		Material *build_material() const
 		{
 			return profile_common_ptr_->build_material();
 		}
@@ -1507,11 +1507,11 @@ namespace collada_elements
 		}
 	};
 
-	void bind_material_e::bind_mesh_materials(mesh_e const *mesh_element_ptr, mesh *mesh_ptr) const
+	void bind_material_e::bind_mesh_materials(mesh_e const *mesh_element_ptr, Mesh *mesh_ptr) const
 	{
 		boost::ptr_vector<triangles_e> const &triangles = mesh_element_ptr->get_triangles();
 
-		mesh::triangles_list_type::iterator mesh_triangles_it = mesh_ptr->triangles_list.begin();
+		Mesh::triangles_list_type::iterator mesh_triangles_it = mesh_ptr->triangles_list.begin();
 		boost::ptr_vector<triangles_e>::const_iterator triangles_it = triangles.begin();
 
 		while (mesh_triangles_it != mesh_ptr->triangles_list.end() && triangles_it != triangles.end())
@@ -1533,7 +1533,7 @@ namespace collada_elements
 		}
 	}
 
-	void mesh_e::build_mesh(mesh *mesh_ptr)
+	void mesh_e::build_mesh(Mesh *mesh_ptr)
 	{
 		input_e const *position_input = vertices_->get_input("POSITION");
 		source_e const *position_source = get_source(position_input->get_source().substr(1));
@@ -1564,7 +1564,7 @@ namespace collada_elements
 
 			size_t stride = triangles_ptr->get_stride();
 
-			mesh::triangles dummy;
+			Mesh::triangles dummy;
 			dummy.material_ptr = 0;
 			dummy.triangles_count = triangles_ptr->get_count();
 			dummy.first_index_offset = first_index_offset;
@@ -1628,22 +1628,22 @@ namespace collada_elements
 		mesh_ptr->unlock();
 	}
 
-	void node_e::build_hierarchy(joint *parent_ptr)
+	void node_e::build_hierarchy(Joint *parent_ptr)
 	{
-		joint *joint_ptr = get_model()->create_joint();
+		Joint *joint_ptr = get_model()->create_joint();
 		joint_ptr->id = id_;
 		joint_ptr->name = sid_;
 		joint_ptr->parent = parent_ptr;
 
 		for (boost::ptr_vector<transform_e>::const_iterator it = transforms_.begin(); it != transforms_.end(); it++) {
-			joint_ptr->transforms.push_back(joint::transform(it->get_sid(), it->get_baked_matrix()));
+			joint_ptr->transforms.push_back(Joint::transform(it->get_sid(), it->get_baked_matrix()));
 		}
 
 		if (parent_ptr) parent_ptr->childs.push_back(joint_ptr);
 
 		if (instance_geometry_)
 		{
-			mesh *mesh_ptr = get_model()->get_mesh_by_id(instance_geometry_->get_url());
+			Mesh *mesh_ptr = get_model()->get_mesh_by_id(instance_geometry_->get_url());
 
 			joint_ptr->mesh_ptr = mesh_ptr;
 			mesh_e const *mesh_element_ptr = get_root()->get_geometries()->get_geometry_by_id(instance_geometry_->get_url())->get_mesh();
@@ -1658,7 +1658,7 @@ namespace collada_elements
 			joint_ptr->mesh_ptr = get_model()->get_mesh_by_id(controller_ptr->get_skin_source_id());
 			mesh_e const *mesh_element_ptr = get_root()->get_geometries()->get_geometry_by_id(controller_ptr->get_skin_source_id())->get_mesh();
 
-			instance_controller_->get_bind_material()->bind_mesh_materials(mesh_element_ptr, (mesh *) joint_ptr->mesh_ptr);
+			instance_controller_->get_bind_material()->bind_mesh_materials(mesh_element_ptr, (Mesh *) joint_ptr->mesh_ptr);
 		}
 
 		for (boost::ptr_vector<node_e>::iterator it = childs_.begin(); it != childs_.end(); it++)
@@ -1667,11 +1667,11 @@ namespace collada_elements
 		}
 	}
 
-	material *material_e::build_material() const
+	Material *material_e::build_material() const
 	{
 		LOG_DEBUG("material " << name_);
 
-		std::auto_ptr<material> material_ptr(get_root()->
+		std::auto_ptr<Material> material_ptr(get_root()->
 			get_effects()->
 			get_effect_by_name(instance_effect_url_.substr(1))->
 			build_material());
@@ -1700,7 +1700,7 @@ namespace collada_elements
 
 	class collada_e: public element, public root_element {
 	private:
-		model *current_model_ptr_;
+		Model *current_model_ptr_;
 		boost::scoped_ptr<library_visual_scenes_e> visual_scenes_;
 		boost::scoped_ptr<library_geometries_e> geometries_;
 		boost::scoped_ptr<library_controllers_e> controllers_;
@@ -1748,7 +1748,7 @@ namespace collada_elements
 			set_root(this);
 		}
 
-		model *get_model()
+		Model *get_model()
 		{
 			return current_model_ptr_;
 		}
@@ -1789,7 +1789,7 @@ namespace collada_elements
 			if (!geometries_) throw std::logic_error("<library_geometries> not found");
 		}
 
-		void build_model(model *model_ptr)
+		void build_model(Model *model_ptr)
 		{
 			current_model_ptr_ = model_ptr;
 
@@ -1815,17 +1815,17 @@ namespace collada_elements
 namespace graphic
 {
 
-collada_loader::collada_loader(std::string const &filename, model *model_ptr, renderer *renderer_ptr):
+ColladaLoader::ColladaLoader(std::string const &filename, Model *model_ptr, Renderer *renderer_ptr):
 filename_(filename),
 model_ptr_(model_ptr),
 renderer_ptr_(renderer_ptr)
 {
 }
 
-collada_loader::~collada_loader() {
+ColladaLoader::~ColladaLoader() {
 }
 
-void collada_loader::load() {
+void ColladaLoader::load() {
 	try
 	{
 		LOG_INFO("parsing collada file " << filename_);

@@ -8,19 +8,19 @@
 
 namespace graphic {
 
-class static_model;
+class StaticModel;
 
 template<class T = vertex_pnt>
-class basic_static_mesh: public mesh {
+class BasicStaticMesh: public Mesh {
 public:
 	typedef T vertex_t;
 	typedef boost::uint32_t index_t;
 
-	basic_static_mesh(model *model_ptr);
-	~basic_static_mesh();
+	BasicStaticMesh(Model *model_ptr);
+	~BasicStaticMesh();
 
-	static_model *get_model();
-	virtual void draw(joint *joint_ptr);
+	StaticModel *get_model();
+	virtual void draw(Joint *joint_ptr);
 
 	virtual void set_vertices_count(size_t count);
 	virtual size_t get_vertices_count();
@@ -46,7 +46,7 @@ protected:
     void draw_triangles_list();
 };
 
-typedef basic_static_mesh<> static_mesh;
-typedef basic_static_mesh<vertex_pnjwt> pnjwt_static_mesh;
+typedef BasicStaticMesh<> StaticMesh;
+typedef BasicStaticMesh<vertex_pnjwt> PnjwtStaticMesh;
 
 };

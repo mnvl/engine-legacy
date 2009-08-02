@@ -9,11 +9,11 @@
 namespace graphic
 {
 
-resource_manager::resource_manager(renderer *renderer_ptr):
+ResourceManager::ResourceManager(Renderer *renderer_ptr):
     renderer_ptr_(renderer_ptr)
 {
-    default_font_.reset(new font(renderer_ptr_, "Courier New"));
-	default_material_.reset(new graphic::material(renderer_ptr_));
+    default_font_.reset(new Font(renderer_ptr_, "Courier New"));
+	default_material_.reset(new graphic::Material(renderer_ptr_));
 
     {
         IDirect3DVertexDeclaration9 *decl_ptr;
@@ -29,11 +29,11 @@ resource_manager::resource_manager(renderer *renderer_ptr):
         pnjwt_decl_.reset(decl_ptr);
     }
 
-    animated_model_shader_ptr_.reset(new shader(renderer_ptr));
+    animated_model_shader_ptr_.reset(new Shader(renderer_ptr));
     animated_model_shader_ptr_->load_from_file("animated_model.fx");
 }
 
-resource_manager::~resource_manager()
+ResourceManager::~ResourceManager()
 {
 }
 

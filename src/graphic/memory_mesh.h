@@ -7,16 +7,16 @@
 
 namespace graphic {
 
-class memory_model;
-class renderer;
+class MemoryModel;
+class Renderer;
 
-class memory_mesh: public mesh {
+class MemoryMesh: public Mesh {
 public:
     typedef vertex_pnt vertex_t;
 	typedef boost::uint32_t index_t;
 
-	memory_mesh(memory_model *m);
-	virtual ~memory_mesh();
+	MemoryMesh(MemoryModel *m);
+	virtual ~MemoryMesh();
 
 	std::vector<vertex_t> const &get_vertex_buffer() const
 	{
@@ -40,10 +40,10 @@ public:
 	virtual void set_face_indices(unsigned *buffer);
 	virtual void unlock();
 
-	void transform_vertices(joint const *joint_ptr, std::vector<vertex_t> &result) const;
+	void transform_vertices(Joint const *joint_ptr, std::vector<vertex_t> &result) const;
 
-	void draw_static(joint *joint_ptr) const;
-	void draw_animated(joint *joint_ptr) const;
+	void draw_static(Joint *joint_ptr) const;
+	void draw_animated(Joint *joint_ptr) const;
 
 private:
 	#pragma  pack(push, 1)

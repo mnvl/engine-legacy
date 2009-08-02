@@ -7,12 +7,12 @@
 
 namespace graphic {
 
-class static_model: public model {
+class StaticModel: public Model {
 public:
-	static_model(renderer *renderer_ptr);
-	~static_model();
+	StaticModel(Renderer *renderer_ptr);
+	~StaticModel();
 
-	mesh *create_mesh();
+	Mesh *create_mesh();
 };
 
 }

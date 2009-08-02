@@ -5,14 +5,14 @@
 namespace graphic
 {
 
-class animated_model;
+class AnimatedModel;
 
-class animated_mesh: public pnjwt_static_mesh {
+class AnimatedMesh: public PnjwtStaticMesh {
 public:
-    animated_mesh(model *model_ptr);
+    AnimatedMesh(Model *model_ptr);
 
-    animated_model *get_model();
-    virtual void draw(joint *joint_ptr);
+    AnimatedModel *get_model();
+    virtual void draw(Joint *joint_ptr);
 };
 
 }

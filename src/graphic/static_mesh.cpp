@@ -7,33 +7,33 @@
 namespace graphic
 {
 
-template static_mesh;
-template pnjwt_static_mesh;
+template StaticMesh;
+template PnjwtStaticMesh;
 
 template<class T>
-basic_static_mesh<T>::basic_static_mesh(model *model_ptr):
-    mesh(model_ptr),
+BasicStaticMesh<T>::BasicStaticMesh(Model *model_ptr):
+    Mesh(model_ptr),
     vertex_buffer_locked_(0),
     index_buffer_locked_(0)
 {
 }
 
 template<class T>
-basic_static_mesh<T>::~basic_static_mesh()
+BasicStaticMesh<T>::~BasicStaticMesh()
 {
 }
 
 template<class T>
-static_model *basic_static_mesh<T>::get_model()
+StaticModel *BasicStaticMesh<T>::get_model()
 {
-	return (static_model *) model_ptr_;
+	return (StaticModel *) model_ptr_;
 }
 
 template<class T>
-void basic_static_mesh<T>::draw(joint *joint_ptr)
+void BasicStaticMesh<T>::draw(Joint *joint_ptr)
 {
-    renderer *renderer_ptr = get_model()->get_renderer();
-    resource_manager *resource_manager_ptr = renderer_ptr->get_resource_manager();
+    Renderer *renderer_ptr = get_model()->get_renderer();
+    ResourceManager *resource_manager_ptr = renderer_ptr->get_resource_manager();
 	IDirect3DDevice9 *device_ptr = renderer_ptr->get_device();
 
     device_ptr->SetTransform(D3DTS_WORLDMATRIX(0), (D3DMATRIX const *) joint_ptr->matrix.ij);
@@ -47,7 +47,7 @@ void basic_static_mesh<T>::draw(joint *joint_ptr)
 }
 
 template<class T>
-void basic_static_mesh<T>::set_vertices_count(size_t count)
+void BasicStaticMesh<T>::set_vertices_count(size_t count)
 {
     IDirect3DVertexBuffer9 *vb;
     HRESULT hr = get_model()->get_renderer()->get_device()->CreateVertexBuffer(count * sizeof(vertex_t), 0, 0, D3DPOOL_MANAGED, &vb, 0);
@@ -59,13 +59,13 @@ void basic_static_mesh<T>::set_vertices_count(size_t count)
 }
 
 template<class T>
-size_t basic_static_mesh<T>::get_vertices_count()
+size_t BasicStaticMesh<T>::get_vertices_count()
 {
 	return vertices_count_;
 }
 
 template<class T>
-void basic_static_mesh<T>::set_indices_count(size_t count)
+void BasicStaticMesh<T>::set_indices_count(size_t count)
 {
     IDirect3DIndexBuffer9 *ib;
     HRESULT hr = get_model()->get_renderer()->get_device()->CreateIndexBuffer(count * sizeof(index_t), 0, D3DFMT_INDEX32, D3DPOOL_MANAGED, &ib, 0);
@@ -77,7 +77,7 @@ void basic_static_mesh<T>::set_indices_count(size_t count)
 }
 
 template<class T>
-void basic_static_mesh<T>::lock()
+void BasicStaticMesh<T>::lock()
 {
     HRESULT hr;
 
@@ -89,7 +89,7 @@ void basic_static_mesh<T>::lock()
 }
 
 template<class T>
-void basic_static_mesh<T>::set_positions(math::vec<3> const *buffer)
+void BasicStaticMesh<T>::set_positions(math::vec<3> const *buffer)
 {
     vertex_t *p = vertex_buffer_locked_;
 
@@ -100,7 +100,7 @@ void basic_static_mesh<T>::set_positions(math::vec<3> const *buffer)
 }
 
 template<class T>
-void basic_static_mesh<T>::set_normals(math::vec<3> const *buffer)
+void BasicStaticMesh<T>::set_normals(math::vec<3> const *buffer)
 {
     vertex_t *p = vertex_buffer_locked_;
 
@@ -111,13 +111,13 @@ void basic_static_mesh<T>::set_normals(math::vec<3> const *buffer)
 }
 
 template<>
-void basic_static_mesh<vertex_pnt>::set_joint_indices(math::vec<8, unsigned> const *buffer)
+void BasicStaticMesh<vertex_pnt>::set_joint_indices(math::vec<8, unsigned> const *buffer)
 {
     // not supported
 }
 
 template<>
-void basic_static_mesh<vertex_pnjwt>::set_joint_indices(math::vec<8, unsigned> const *buffer)
+void BasicStaticMesh<vertex_pnjwt>::set_joint_indices(math::vec<8, unsigned> const *buffer)
 {
     vertex_t *p = vertex_buffer_locked_;
 
@@ -128,13 +128,13 @@ void basic_static_mesh<vertex_pnjwt>::set_joint_indices(math::vec<8, unsigned> c
 }
 
 template<>
-void basic_static_mesh<vertex_pnt>::set_joint_weights(math::vec<8> const *buffer)
+void BasicStaticMesh<vertex_pnt>::set_joint_weights(math::vec<8> const *buffer)
 {
     // not supported
 }
 
 template<>
-void basic_static_mesh<vertex_pnjwt>::set_joint_weights(math::vec<8> const *buffer)
+void BasicStaticMesh<vertex_pnjwt>::set_joint_weights(math::vec<8> const *buffer)
 {
     vertex_t *p = vertex_buffer_locked_;
 
@@ -145,7 +145,7 @@ void basic_static_mesh<vertex_pnjwt>::set_joint_weights(math::vec<8> const *buff
 }
 
 template<class T>
-void basic_static_mesh<T>::set_texcoords(math::vec<2> const *buffer)
+void BasicStaticMesh<T>::set_texcoords(math::vec<2> const *buffer)
 {
     vertex_t *p = vertex_buffer_locked_;
 
@@ -156,7 +156,7 @@ void basic_static_mesh<T>::set_texcoords(math::vec<2> const *buffer)
 }
 
 template<class T>
-void basic_static_mesh<T>::set_face_indices(unsigned *buffer)
+void BasicStaticMesh<T>::set_face_indices(unsigned *buffer)
 {
     index_t *p = index_buffer_locked_;
 
@@ -167,7 +167,7 @@ void basic_static_mesh<T>::set_face_indices(unsigned *buffer)
 }
 
 template<class T>
-void basic_static_mesh<T>::unlock()
+void BasicStaticMesh<T>::unlock()
 {
     HRESULT hr;
 
@@ -181,10 +181,10 @@ void basic_static_mesh<T>::unlock()
 }
 
 template<class T>
-void basic_static_mesh<T>::draw_triangles_list()
+void BasicStaticMesh<T>::draw_triangles_list()
 {
-    renderer *renderer_ptr = get_model()->get_renderer();
-    resource_manager *resource_manager_ptr = renderer_ptr->get_resource_manager();
+    Renderer *renderer_ptr = get_model()->get_renderer();
+    ResourceManager *resource_manager_ptr = renderer_ptr->get_resource_manager();
 	IDirect3DDevice9 *device_ptr = renderer_ptr->get_device();
 
 	for (triangles_list_type::const_iterator it = triangles_list.begin();

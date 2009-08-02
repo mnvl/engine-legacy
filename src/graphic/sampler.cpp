@@ -5,7 +5,7 @@
 
 namespace graphic {
 
-void sampler::add_sample(math::scalar time, math::matrix<4,4> const &m)
+void Sampler::add_sample(math::scalar time, math::matrix<4,4> const &m)
 {
 	sample s;
 	s.time = time;
@@ -20,7 +20,7 @@ void sampler::add_sample(math::scalar time, math::matrix<4,4> const &m)
 	samples_.push_back(s);
 }
 
-math::matrix<4,4> sampler::get(math::scalar time) const {
+math::matrix<4,4> Sampler::get(math::scalar time) const {
 	if (time <= samples_.front().time) return samples_.front().transform;
 	if (time >= samples_.back().time) return samples_.back().transform;
 

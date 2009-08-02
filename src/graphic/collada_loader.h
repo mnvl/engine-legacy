@@ -10,9 +10,9 @@
 
 namespace graphic {
 
-class renderer;
+class Renderer;
 
-class collada_loader {
+class ColladaLoader {
 public:
 	class load_error: public std::runtime_error {
 	public:
@@ -22,15 +22,15 @@ public:
 		}
 	};
 
-	collada_loader(std::string const &filename, model *model_ptr, renderer *renderer_ptr = 0);
-	~collada_loader();
+	ColladaLoader(std::string const &filename, Model *model_ptr, Renderer *renderer_ptr = 0);
+	~ColladaLoader();
 
 	void load();
 
 private:
 	std::string filename_;
-	model *model_ptr_;
-	renderer *renderer_ptr_;
+	Model *model_ptr_;
+	Renderer *renderer_ptr_;
 };
 
 }

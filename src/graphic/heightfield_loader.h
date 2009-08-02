@@ -11,9 +11,9 @@
 namespace graphic
 {
 
-class renderer;
+class Renderer;
 
-class heightfield_loader {
+class HeightfieldLoader {
 public:
     class load_error: public std::runtime_error {
 	public:
@@ -23,8 +23,8 @@ public:
 		}
 	};
 
-    heightfield_loader(std::string const &filename, model *model_ptr, renderer *renderer_ptr = 0);
-	~heightfield_loader();
+    HeightfieldLoader(std::string const &filename, Model *model_ptr, Renderer *renderer_ptr = 0);
+	~HeightfieldLoader();
 
     template<class T>
 	void load_from_raw(math::matrix<4, 4> const &tf, size_t nrows, size_t ncols,
@@ -32,8 +32,8 @@ public:
 
 private:
 	std::string filename_;
-	model *model_ptr_;
-	renderer *renderer_ptr_;
+	Model *model_ptr_;
+	Renderer *renderer_ptr_;
 };
 
 }

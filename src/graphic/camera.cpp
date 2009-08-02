@@ -3,12 +3,12 @@
 
 namespace graphic {
 
-camera::camera() {
+Camera::Camera() {
 	set_perspective_projection(math::PI/4, 1.0f, 1.0f, 10000.0f);
 	set_eye_lookat_up(math::vec<3>(0,0,0),math::vec<3>(0,0,1),math::vec<3>(0,1,0));
 }
 
-void camera::set_eye_lookat_up(math::vec<3> const &eye_pt, math::vec<3> const &lookat_pt, math::vec<3> const &up_dir)
+void Camera::set_eye_lookat_up(math::vec<3> const &eye_pt, math::vec<3> const &lookat_pt, math::vec<3> const &up_dir)
 {
     eye_point = eye_pt;
     lookat_point = lookat_pt;
@@ -27,7 +27,7 @@ void camera::set_eye_lookat_up(math::vec<3> const &eye_pt, math::vec<3> const &l
     billboard_matrix.ij[3][2] = 0.0f;
 }
 
-void camera::set_position_rotation(math::vec<3> const &pos, math::vec<3> const &rot)
+void Camera::set_position_rotation(math::vec<3> const &pos, math::vec<3> const &rot)
 {
 	math::matrix<3,3> tf;
 	tf.rotation(rot);
@@ -38,7 +38,7 @@ void camera::set_position_rotation(math::vec<3> const &pos, math::vec<3> const &
 	set_eye_lookat_up(pos, pos + dir, up);
 }
 
-void camera::set_position_quaternion(math::vec<3> const &pos, const math::quaternion<> &rot)
+void Camera::set_position_quaternion(math::vec<3> const &pos, const math::quaternion<> &rot)
 {
 	math::matrix<3,3> tf;
 	tf.rotation(rot);
@@ -49,7 +49,7 @@ void camera::set_position_quaternion(math::vec<3> const &pos, const math::quater
 	set_eye_lookat_up(pos, pos + dir, up);
 }
 
-void camera::set_perspective_projection(math::scalar fov,math::scalar aspect,
+void Camera::set_perspective_projection(math::scalar fov,math::scalar aspect,
 	math::scalar z_near,math::scalar z_far)
 {
 	field_of_view	= fov;
@@ -60,7 +60,7 @@ void camera::set_perspective_projection(math::scalar fov,math::scalar aspect,
 	projection_matrix.perspective(fov, aspect, z_near, z_far);
 }
 
-void camera::set_orthographic_projection(math::scalar width,math::scalar height,
+void Camera::set_orthographic_projection(math::scalar width,math::scalar height,
 	math::scalar z_near,math::scalar z_far)
 {
 	field_of_view = math::PI/4;

@@ -7,14 +7,14 @@
 
 namespace graphic {
 
-class joint;
-class model;
+class Joint;
+class Model;
 
-class mesh {
+class Mesh {
 public:
 	struct triangles
 	{
-		material *material_ptr;
+		Material *material_ptr;
 		size_t first_index_offset;
 		size_t triangles_count;
 		size_t minimal_vertex_index;
@@ -34,10 +34,10 @@ public:
     // contains index of joint in model's joints array
     joint_index_transform_type joint_index_transform;
 
-	mesh(model *model_ptr = 0);
-	virtual ~mesh();
+	Mesh(Model *model_ptr = 0);
+	virtual ~Mesh();
 
-	model *get_model() const;
+	Model *get_model() const;
 
 	virtual void set_vertices_count(size_t count) = 0;
 	virtual size_t get_vertices_count() = 0;
@@ -55,10 +55,10 @@ public:
 	virtual void set_face_indices(unsigned *buffer) = 0;
 	virtual void unlock() = 0;
 
-	virtual void draw(joint *joint_ptr);
+	virtual void draw(Joint *joint_ptr);
 
 protected:
-	model *model_ptr_;
+	Model *model_ptr_;
 };
 
 }

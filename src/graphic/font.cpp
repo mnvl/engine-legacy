@@ -5,7 +5,7 @@
 
 namespace graphic {
 
-font::font(renderer *renderer, std::string const &face_name, int height) {
+Font::Font(Renderer *renderer, std::string const &face_name, int height) {
 	HRESULT hr;
 
 	ID3DXFont *font_ptr;
@@ -17,7 +17,7 @@ font::font(renderer *renderer, std::string const &face_name, int height) {
 	font_ptr->Release();
 }
 
-font::~font() {
+Font::~Font() {
 }
 
 }

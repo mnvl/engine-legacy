@@ -6,9 +6,9 @@
 
 namespace graphic {
 
-class mesh;
+class Mesh;
 
-class joint {
+class Joint {
 public:
 	struct transform {
 		transform(std::string const &s, math::matrix<4,4> const &m):
@@ -22,13 +22,13 @@ public:
 
 	size_t index;
 	std::string id, name;
-	joint *parent;
-	std::vector<joint *> childs;
+	Joint *parent;
+	std::vector<Joint *> childs;
 	std::vector<transform> transforms;
 	mutable math::matrix<4,4> matrix;
-	mesh *mesh_ptr;
+	Mesh *mesh_ptr;
 
-	joint(size_t i):
+	Joint(size_t i):
 	index(i),
 	parent(0),
 	mesh_ptr(0)
@@ -53,7 +53,7 @@ public:
 
 		if (parent) matrix *= parent->matrix;
 
-		for (std::vector<joint *>::iterator it = childs.begin(); it != childs.end(); it++)
+		for (std::vector<Joint *>::iterator it = childs.begin(); it != childs.end(); it++)
 		{
 			(*it)->build_frame_transforms();
 		}

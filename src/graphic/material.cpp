@@ -4,7 +4,7 @@
 
 namespace graphic {
 
-material::material(renderer *renderer_ptr):
+Material::Material(Renderer *renderer_ptr):
 renderer_ptr_(renderer_ptr)
 {
 	properties_.Ambient.r = properties_.Ambient.g = properties_.Ambient.b = properties_.Ambient.a = 1.0f;
@@ -14,17 +14,17 @@ renderer_ptr_(renderer_ptr)
 	properties_.Power = 1.0f;
 }
 
-material::~material()
+Material::~Material()
 {
 }
 
-void material::set_texture(std::string const &filename)
+void Material::set_texture(std::string const &filename)
 {
-	texture_ptr_.reset(new texture(renderer_ptr_));
+	texture_ptr_.reset(new Texture(renderer_ptr_));
 	texture_ptr_->load_from_file(filename);
 }
 
-void material::select()
+void Material::select()
 {
 	HRESULT hr;
 

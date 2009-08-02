@@ -9,7 +9,7 @@
 
 namespace graphic {
 
-struct sampler {
+struct Sampler {
 private:
 	struct sample {
 		math::scalar time;
@@ -27,16 +27,16 @@ private:
 	typedef std::vector<sample> samples_type;
 
 	std::string sid_;
-	joint *joint_ptr_;
+	Joint *joint_ptr_;
 	samples_type samples_;
 
 public:
-	sampler():
+	Sampler():
 	joint_ptr_(0)
 	{
 	}
 
-	void set_target(joint *joint_ptr, std::string const &sid) { joint_ptr_ = joint_ptr; sid_ = sid; }
+	void set_target(Joint *joint_ptr, std::string const &sid) { joint_ptr_ = joint_ptr; sid_ = sid; }
 
 	void add_sample(math::scalar time, math::matrix<4,4> const &m);
 	math::matrix<4,4> get(math::scalar time) const;

@@ -10,7 +10,7 @@
 namespace graphic
 {
 
-renderer::renderer(platform::Window *window_ptr, int width, int height, bool fullscreen):
+Renderer::Renderer(platform::Window *window_ptr, int width, int height, bool fullscreen):
 	window_ptr_(window_ptr),
 	width_(width),
 	height_(height),
@@ -49,13 +49,13 @@ renderer::renderer(platform::Window *window_ptr, int width, int height, bool ful
 		device_ptr->Release();
 	}
 
-    resource_manager_.reset(new resource_manager(this));
+    resource_manager_.reset(new ResourceManager(this));
 }
 
-renderer::~renderer() {
+Renderer::~Renderer() {
 }
 
-void renderer::begin_frame()
+void Renderer::begin_frame()
 {
 	HRESULT hr;
 
@@ -69,7 +69,7 @@ void renderer::begin_frame()
 	if (FAILED(hr)) throw exception::directx_error(hr);
 }
 
-void renderer::finish_frame()
+void Renderer::finish_frame()
 {
 	HRESULT hr;
 
@@ -93,7 +93,7 @@ void renderer::finish_frame()
 	while (!frame_times_.empty() && (current_time - frame_times_.front()) > 1.0) frame_times_.pop_front();
 }
 
-void renderer::set_view_projection_from_camera(camera const &c)
+void Renderer::set_view_projection_from_camera(Camera const &c)
 {
 	view_matrix_ = c.get_view_matrix();
 	device_ptr_->SetTransform(D3DTS_VIEW, (D3DMATRIX const *) &view_matrix_);

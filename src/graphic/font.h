@@ -8,12 +8,12 @@
 namespace graphic
 {
 
-class renderer;
+class Renderer;
 
-class font {
+class Font {
 public:
-	font(renderer *renderer, std::string const &face_name, int height = 16);
-	~font();
+	Font(Renderer *renderer, std::string const &face_name, int height = 16);
+	~Font();
 
 	ID3DXFont *get() const { return font_ptr_.get(); }
 

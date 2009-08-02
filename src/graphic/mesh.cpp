@@ -4,21 +4,21 @@
 
 namespace graphic {
 
-mesh::mesh(model *model_ptr):
+Mesh::Mesh(Model *model_ptr):
 model_ptr_(model_ptr)
 {
 }
 
-mesh::~mesh()
+Mesh::~Mesh()
 {
 }
 
-model *mesh::get_model() const
+Model *Mesh::get_model() const
 {
 	return model_ptr_;
 }
 
-void mesh::draw(joint *joint_ptr)
+void Mesh::draw(Joint *joint_ptr)
 {
 }
 

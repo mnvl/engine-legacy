@@ -5,15 +5,15 @@
 namespace graphic
 {
 
-class mesh;
-class renderer;
+class Mesh;
+class Renderer;
 
-class animated_model: public model {
+class AnimatedModel: public Model {
 public:
-	animated_model(renderer *renderer_ptr);
-	~animated_model();
+	AnimatedModel(Renderer *renderer_ptr);
+	~AnimatedModel();
 
-	mesh *create_mesh();
+	Mesh *create_mesh();
 };
 
 

@@ -5,18 +5,18 @@
 namespace graphic
 {
 
-animated_model::animated_model(renderer *renderer_ptr):
-model(renderer_ptr)
+AnimatedModel::AnimatedModel(Renderer *renderer_ptr):
+Model(renderer_ptr)
 {
 }
 
-animated_model::~animated_model()
+AnimatedModel::~AnimatedModel()
 {
 }
 
-mesh *animated_model::create_mesh()
+Mesh *AnimatedModel::create_mesh()
 {
-	std::auto_ptr<animated_mesh> mesh_ptr(new animated_mesh(this));
+	std::auto_ptr<AnimatedMesh> mesh_ptr(new AnimatedMesh(this));
 	meshes.push_back(mesh_ptr);
 	return &meshes.back();
 }

@@ -9,24 +9,24 @@
 namespace graphic
 {
 
-animated_mesh::animated_mesh(model *model_ptr):
-    pnjwt_static_mesh(model_ptr)
+AnimatedMesh::AnimatedMesh(Model *model_ptr):
+    PnjwtStaticMesh(model_ptr)
 {
 }
 
-animated_model *animated_mesh::get_model()
+AnimatedModel *AnimatedMesh::get_model()
 {
-    return (animated_model *) mesh::get_model();
+    return (AnimatedModel *) Mesh::get_model();
 }
 
-void animated_mesh::draw(joint *joint_ptr)
+void AnimatedMesh::draw(Joint *joint_ptr)
 {
     HRESULT hr;
 
-    renderer *renderer_ptr = get_model()->get_renderer();
-    resource_manager *resource_manager_ptr = renderer_ptr->get_resource_manager();
+    Renderer *renderer_ptr = get_model()->get_renderer();
+    ResourceManager *resource_manager_ptr = renderer_ptr->get_resource_manager();
 	IDirect3DDevice9 *device_ptr = renderer_ptr->get_device();
-    shader *shader_ptr = resource_manager_ptr->get_animated_model_shader();
+    Shader *shader_ptr = resource_manager_ptr->get_animated_model_shader();
 
 	math::matrix<4,4> view_projection_matrix = renderer_ptr->get_view_matrix() * renderer_ptr->get_projection_matrix();
 	shader_ptr->get()->SetMatrix("view_projection_matrix", (D3DXMATRIX const *) &view_projection_matrix);

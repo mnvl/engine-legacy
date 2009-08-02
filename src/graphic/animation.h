@@ -5,8 +5,8 @@
 
 namespace graphic {
 
-struct animation {
-	typedef std::vector<sampler> samplers_type;
+struct Animation {
+	typedef std::vector<Sampler> samplers_type;
 
 	std::string name;
 	samplers_type samplers;
