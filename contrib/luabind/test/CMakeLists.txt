@@ -42,3 +42,6 @@ FOREACH (TEST_SOURCE ${TESTS})
 
   ADD_TEST (${TEST_NAME} ${EXECUTABLE_OUTPUT_PATH}/${TEST_NAME})
 ENDFOREACH()
+
+ADD_EXECUTABLE (luabind_benchmark benchmark.cpp)
+TARGET_LINK_LIBRARIES (luabind_benchmark lua luabind)

@@ -7,19 +7,16 @@ namespace std
 //	using ::clock;
 }
 
-#define LUABIND_NO_ERROR_CHECKING
-#define LUABIND_DONT_COPY_STRINGS
+//#define LUABIND_NO_ERROR_CHECKING
+//#define LUABIND_DONT_COPY_STRINGS
 //#define LUABIND_NOT_THREADSAFE
 
-extern
-{
-	#include "lua.h"
-	#include "lauxlib.h"
-}
+#include "lua.h"
+#include "lauxlib.h"
 
 #include <luabind/luabind.hpp>
 
-struct A {};
+class A {};
 
 // luabind function
 float f1(int a, float b, const char* str, A* c)
@@ -33,6 +30,7 @@ int f2(lua_State* L)
 	return 0;
 }
 
+using namespace luabind;
 
 int main()
 {
@@ -43,11 +41,14 @@ int main()
 
 	lua_State* L = lua_open();
 	open(L);
-	
-	class_<A>(L, "A")
-		.def(constructor<>());
 
-	function(L, "test1", &f1);
+	module(L)
+		[
+			class_<A>("A")
+			.def(constructor<>()),
+
+			def("test1", &f1)
+		 ];
 
 	lua_pushstring(L, "test2");
 	lua_pushcclosure(L, &f2, 0);
@@ -60,7 +61,7 @@ int main()
 	{
 		// benchmark luabind
 		std::clock_t start1 = std::clock();
-		lua_dostring(L, "a = A()\n"
+		luaL_dostring(L, "a = A()\n"
 									"for i = 1, 100000 do\n"
 										"test1(5, 4.6, 'foo', a)\n"
 									"end");
@@ -70,7 +71,7 @@ int main()
 
 		// benchmark empty binding
 		std::clock_t start2 = std::clock();
-		lua_dostring(L, "a = A()\n"
+		luaL_dostring(L, "a = A()\n"
 									"for i = 1, 100000 do\n"
 										"test2(5, 4.6, 'foo', a)\n"
 									"end");
