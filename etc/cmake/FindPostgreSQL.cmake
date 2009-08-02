@@ -66,22 +66,26 @@ if(WIN32)
     D:/postgresql/postgresql-8.2.4
     C:/postgresql/postgresql-snapshot
     D:/postgresql/postgresql-snapshot
-    "C:Program Files/postgresql"
-    "D:Program Files/postgresql"
+    "C:/Program Files/postgresql"
+    "C:/Program Files/postgresql/8.4"
+    "D:/Program Files/postgresql"
+    "D:/Program Files/postgresql/*"
   )
 endif(WIN32)
 
 # Add in some path suffixes. These will have to be updated whenever a new PostgreSQL version comes out.
 set(SUFFIX_FOR_INCLUDE_PATH
+  include
 )
 
 set(SUFFIX_FOR_LIBRARY_PATH
+  lib
 )
 
 #
 # Look for an installation.
 #
-find_path(POSTGRESQL_INCLUDE_DIR NAMES src/include/postgres.h PATH_SUFFIXES ${SUFFIX_FOR_INCLUDE_PATH} PATHS
+find_path(POSTGRESQL_INCLUDE_DIR NAMES libpq-fe.h PATH_SUFFIXES ${SUFFIX_FOR_INCLUDE_PATH} PATHS
 
   # Look in other places.
   ${POSTGRESQL_DIR_SEARCH}
@@ -90,27 +94,24 @@ find_path(POSTGRESQL_INCLUDE_DIR NAMES src/include/postgres.h PATH_SUFFIXES ${SU
   DOC "The ${POSTGRESQL_INCLUDE_DIR_MESSAGE}"
 )
 
-# Assume we didn't find it.
-set(POSTGRESQL_FOUND 0)
+find_path(POSTGRESQL_LIBRARY_DIR NAMES libpq.lib PATH_SUFFIXES ${SUFFIX_FOR_LIBRARY_PATH} PATHS
+  # Look in other places.
+  ${POSTGRESQL_DIR_SEARCH}
 
-# Now try to get the include and library path.
+  # Help the user find it if we cannot.
+  DOC "The ${POSTGRESQL_LIBRARY_DIR_MESSAGE}"
+)
+
+INCLUDE(FindPackageHandleStandardArgs)
+FIND_PACKAGE_HANDLE_STANDARD_ARGS(PostgreSQL DEFAULT_MSG POSTGRESQL_INCLUDE_DIR POSTGRESQL_LIBRARY_DIR)
+
 if(POSTGRESQL_INCLUDE_DIR)
-
   if(EXISTS "${POSTGRESQL_INCLUDE_DIR}")
     set(POSTGRESQL_INCLUDE_DIRS
-      ${POSTGRESQL_INCLUDE_DIR}/src/include
-      ${POSTGRESQL_INCLUDE_DIR}/src/interfaces/libpq
-    )
-    set(POSTGRESQL_FOUND 1)
-  endif(EXISTS "${POSTGRESQL_INCLUDE_DIR}")
-
-  if(EXISTS "${POSTGRESQL_INCLUDE_DIR}")
-    set(POSTGRESQL_LIBRARY_DIRS
-      ${POSTGRESQL_INCLUDE_DIR}/src/interfaces/libpq/Release
-      ${POSTGRESQL_INCLUDE_DIR}/src/interfaces/libpq/Debug
+      ${POSTGRESQL_INCLUDE_DIR}
+      ${POSTGRESQL_INCLUDE_DIR}/libpq
     )
   endif(EXISTS "${POSTGRESQL_INCLUDE_DIR}")
-
 endif(POSTGRESQL_INCLUDE_DIR)
 
 if(NOT POSTGRESQL_FOUND)
