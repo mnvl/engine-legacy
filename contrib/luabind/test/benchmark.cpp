@@ -72,16 +72,20 @@ int main()
 	std::clock_t t2 = std::clock();
 	luaL_dostring(L, "for i = 1, 10000000 do test2(5, 4.6, 'foo') end");
 	std::clock_t t3 = std::clock();
-	luaL_dostring(L, "a = A()\nfor i = 1, 1000000 do a.x1 = i a.x2 = i end");
+	luaL_dostring(L, "a = A() for i = 1, 1000000 do a.x1 = i a.x2 = i end");
 	std::clock_t t4 = std::clock();
+	luaL_dostring(L, "a = { x1 = 1, x2 = 2 } for i = 1, 1000000 do a.x1 = i a.x2 = i end");
+	std::clock_t t5 = std::clock();
 
 	double delta1 = double(t2 - t1) / CLOCKS_PER_SEC;
 	double delta2 = double(t3 - t2) / CLOCKS_PER_SEC;
 	double delta3 = double(t4 - t3) / CLOCKS_PER_SEC;
+	double delta4 = double(t5 - t4) / CLOCKS_PER_SEC;
 
 	std::cout << "luabind calls: " << ncycles / delta1 << " per sec\n";
 	std::cout << "naked calls: " << ncycles / delta2 << " per sec\n";
-	std::cout << "member accesses: " << ncycles / delta3 << " per sec\n";
+	std::cout << "luabind member accesses: " << ncycles / delta3 << " per sec\n";
+	std::cout << "table element accesses: " << ncycles / delta4 << " per sec\n";
 
 	lua_close(L);
 }
