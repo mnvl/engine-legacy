@@ -712,7 +712,8 @@ namespace collada_elements
 
 	private:
 		struct vertex_less {
-			bool operator ()(vertex_t const &lhs, vertex_t const &rhs) {
+			bool operator ()(vertex_t const &lhs, vertex_t const &rhs) const
+            {
 				if ((lhs.position - rhs.position).length_sq() > math::EPSILON)
 				{
 					if (lhs.position <= rhs.position) return true;
