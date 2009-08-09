@@ -7,19 +7,7 @@ endif(POSTGRESQL_DIR_SEARCH)
 if(WIN32)
   set(POSTGRESQL_DIR_SEARCH
     ${POSTGRESQL_DIR_SEARCH}
-    C:/postgresql
-    D:/postgresql
-    C:/postgresql/postgresql-8.3.5
-    C:/postgresql/postgresql-8.3.1
-    D:/postgresql/postgresql-8.3.1
-    C:/postgresql/postgresql-8.2.4
-    D:/postgresql/postgresql-8.2.4
-    C:/postgresql/postgresql-snapshot
-    D:/postgresql/postgresql-snapshot
-    "C:/Program Files/postgresql"
-    "C:/Program Files/postgresql/*"
-    "D:/Program Files/postgresql"
-    "D:/Program Files/postgresql/*"
+    "$ENV{PROGRAMFILES}/postgresql/*"
   )
 endif(WIN32)
   
