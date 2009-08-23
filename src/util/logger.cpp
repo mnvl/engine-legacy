@@ -1,11 +1,11 @@
 
 #include <boost/date_time/posix_time/posix_time.hpp>
-#include <util/logger.h>
+#include <util/Logger.h>
 
 namespace util
 {
 
-char const *logger::get_level_text(level_t level)
+char const *Logger::get_level_text(level_t level)
 {
 	switch (level) {
 	case LEVEL_DEBUG: return "DEBUG";
@@ -18,9 +18,9 @@ char const *logger::get_level_text(level_t level)
 	}
 }
 
-logger::message::message(logger *logger_ptr, level_t level, char const *filename,
+Logger::message::message(Logger *Logger_ptr, level_t level, char const *filename,
 	int line, char const *pretty_function):
-logger_ptr_(logger_ptr)
+Logger_ptr_(Logger_ptr)
 {
 	stream_ << boost::posix_time::microsec_clock::local_time() << '\t'
 			<< get_level_text(level) << '\t'
@@ -28,49 +28,49 @@ logger_ptr_(logger_ptr)
 			<< pretty_function << '\t';
 }
 
-logger::message::~message()
+Logger::message::~message()
 {
 	stream_ << '\n';
 
-	logger_ptr_->write(stream_.str());
+	Logger_ptr_->write(stream_.str());
 }
 
-logger::logger()
+Logger::Logger()
 {
 	set_stderr();
 }
 
-logger::~logger()
+Logger::~Logger()
 {
 }
 
-logger &logger::instance()
+Logger &Logger::instance()
 {
-	static logger singleton;
+	static Logger singleton;
 	return singleton;
 }
 
-void logger::set_stdout()
+void Logger::set_stdout()
 {
 	file_.set_handle(1);
 }
 
-void logger::set_stderr()
+void Logger::set_stderr()
 {
     file_.set_handle(2);
 }
 
-void logger::set_file(std::string const &filename)
+void Logger::set_file(std::string const &filename)
 {
 	file_.open(filename.c_str(), O_WRONLY | O_CREAT);
 }
 
-void logger::write(char const *buffer, size_t length)
+void Logger::write(char const *buffer, size_t length)
 {
     file_.write(buffer, length);
 }
 
-void logger::write(std::string const &str)
+void Logger::write(std::string const &str)
 {
 	file_.write(str.c_str(), str.size());
 }

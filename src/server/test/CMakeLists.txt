@@ -1,2 +1,2 @@
 
-MAKE_TESTS_FROM_SOURCES (server ${Boost_LIBRARIES})
+MAKE_TESTS_FROM_SOURCES (server util ${Boost_LIBRARIES})

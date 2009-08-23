@@ -16,7 +16,7 @@ Global::~Global()
 
 void Global::Start()
 {
-	service_->start();
+	service_->start("localhost", "17171", 16);
 }
 
 void Global::Stop()
@@ -26,12 +26,12 @@ void Global::Stop()
 
 void Global::Wait()
 {
-	serice_->wait();
+	service_->wait();
 }
 
 Global &Global::instance()
 {
-	Global global;
+	static Global global;
 	return global;
 }
 

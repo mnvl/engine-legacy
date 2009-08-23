@@ -1,5 +1,6 @@
 
 #include <boost/bind.hpp>
+#include <util/logger.h>
 #include "connection.h"
 #include "service.h"
 
@@ -33,6 +34,9 @@ void Service::start(std::string const &host_name, std::string const &service_nam
 	{
 		threads_.create_thread(boost::bind(&boost::asio::io_service::run, &io_service_));
 	}
+
+	LOG_INFO("service on host " << host_name << ":" << service_name << " up and running in "
+		<< nthreads << " threads");
 }
 
 void Service::stop()

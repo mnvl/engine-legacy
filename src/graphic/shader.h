@@ -30,7 +30,7 @@ public:
         if (compilation_errors_ptr && compilation_errors_ptr->GetBufferSize() > 0)
         {
             LOG_WARNING("compilation messages:");
-            util::logger::instance().write((char const *) compilation_errors_ptr->GetBufferPointer(), compilation_errors_ptr->GetBufferSize());
+            util::Logger::instance().write((char const *) compilation_errors_ptr->GetBufferPointer(), compilation_errors_ptr->GetBufferSize());
             compilation_errors_ptr->Release();
         }
 

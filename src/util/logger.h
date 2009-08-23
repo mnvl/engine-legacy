@@ -6,7 +6,7 @@
 namespace util
 {
 
-class logger {
+class Logger {
 public:
 	enum level_t
 	{
@@ -20,7 +20,7 @@ public:
 
 	class message {
 	public:
-		message(logger *logger_ptr, level_t level, char const *filename,
+		message(Logger *Logger_ptr, level_t level, char const *filename,
 			int line, char const *pretty_function);
 		~message();
 
@@ -30,14 +30,14 @@ public:
 		}
 
 	private:
-		logger *logger_ptr_;
+		Logger *Logger_ptr_;
 		mutable std::stringstream stream_;
 	};
 
-	logger();
-	~logger();
+	Logger();
+	~Logger();
 
-	static logger &instance();
+	static Logger &instance();
 
 	void set_stdout();
     void set_stderr();
@@ -52,7 +52,7 @@ private:
 	static char const *get_level_text(level_t level);
 };
 
-#define LOG_MESSAGE(L, M) { util::logger::message(&util::logger::instance(), util::logger::L, __FILE__, __LINE__, __FUNCTION__).stream() << M; }
+#define LOG_MESSAGE(L, M) { util::Logger::message(&util::Logger::instance(), util::Logger::L, __FILE__, __LINE__, __FUNCTION__).stream() << M; }
 #define LOG_DEBUG(M)    LOG_MESSAGE(LEVEL_DEBUG, M)
 #define LOG_INFO(M)     LOG_MESSAGE(LEVEL_INFO, M)
 #define LOG_WARNING(M)  LOG_MESSAGE(LEVEL_WARNING, M)
