@@ -5,7 +5,7 @@
 #include <new>
 #include <exception>
 
-namespace server
+namespace util
 {
 
 class Buffer

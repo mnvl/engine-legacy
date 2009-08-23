@@ -1,7 +1,7 @@
 
 #define BOOST_TEST_MODULE test_buffer
 #include <boost/test/included/unit_test.hpp>
-#include <server/buffer.h>
+#include <util/buffer.h>
 
 #if defined(min)
 #undef min
@@ -11,13 +11,13 @@ BOOST_AUTO_TEST_SUITE(test_buffer)
 
 BOOST_AUTO_TEST_CASE (test_buffer_copy)
 {
-	server::Buffer a, b;
+	util::Buffer a, b;
 	b = a;
 }
 
 BOOST_AUTO_TEST_CASE (test_buffer_enlarge)
 {
-	server::Buffer a;
+	util::Buffer a;
 	a.enlarge();
 	BOOST_CHECK_THROW(a.enlarge(), std::bad_alloc);
 }
@@ -60,7 +60,7 @@ BOOST_AUTO_TEST_CASE (test_buffer_read_write)
 			std::vector<char> etalon(TEXT_SIZE[i]), readed(TEXT_SIZE[i]);
 			for (size_t k = 0; k < etalon.size(); k++) etalon[k] = (char) k;
 
-			server::Buffer buf;
+			util::Buffer buf;
 
 			size_t delta = SINGLE_READ_WRITE_SIZE[j];
 
