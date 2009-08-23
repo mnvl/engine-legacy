@@ -1,20 +1,20 @@
 
 #include <boost/bind.hpp>
 #include <util/logger.h>
-#include "service.h"
+#include "basic_service.h"
 
-namespace client
+namespace rpc
 {
 
-Service::Service()
-{
-}
-
-Service::~Service()
+BasicService::BasicService()
 {
 }
 
-void Service::start(size_t nthreads)
+BasicService::~BasicService()
+{
+}
+
+void BasicService::start(size_t nthreads)
 {
 	for (size_t i = 0; i < nthreads; ++i)
 	{
@@ -22,12 +22,12 @@ void Service::start(size_t nthreads)
 	}
 }
 
-void Service::stop()
+void BasicService::stop()
 {
 	io_service_.stop();
 }
 
-void Service::wait()
+void BasicService::wait()
 {
 	threads_.join_all();
 }

@@ -6,6 +6,7 @@
 #include <boost/enable_shared_from_this.hpp>
 #include <boost/thread/thread.hpp>
 #include "handler.h"
+#include "basic_service.h"
 
 namespace rpc
 {
@@ -13,7 +14,7 @@ namespace rpc
 class ServerConnection;
 
 class ServerService:
-		public boost::noncopyable,
+		public BasicService
 		public boost::enable_shared_from_this<ServerService>
 {
 public:
@@ -21,14 +22,10 @@ public:
 	~ServerService();
 
 	void start(std::string const &host_name, std::string const &service_name, size_t nthreads);
-	void stop();
-	void wait();
 
 private:
 	Handler *handler_;
-	boost::asio::io_service io_service_;
 	boost::asio::ip::tcp::acceptor acceptor_;
-	boost::thread_group threads_;
 
 	void schedule_accept();
 	void handle_accept(boost::shared_ptr<ServerConnection> const &connection_ptr,

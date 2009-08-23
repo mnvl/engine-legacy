@@ -9,7 +9,7 @@ namespace rpc
 
 ServerService::ServerService(Handler *handler_ptr):
 	handler_(handler_ptr),
-	acceptor_(io_service_)
+    acceptor_(get_io_service())
 {
 }
 
@@ -30,10 +30,7 @@ void ServerService::start(std::string const &host_name, std::string const &servi
 
 	schedule_accept();
 
-	for (size_t i = 0; i < nthreads; ++i)
-	{
-		threads_.create_thread(boost::bind(&boost::asio::io_service::run, &io_service_));
-	}
+    start(nthreads);
 
 	LOG_INFO("service on host " << host_name << ":" << service_name << " up and running in "
 		<< nthreads << " threads");

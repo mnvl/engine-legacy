@@ -3,21 +3,19 @@
 #include <boost/asio.hpp>
 #include <boost/noncopyable.hpp>
 #include <boost/shared_ptr.hpp>
-#include <boost/enable_shared_from_this.hpp>
 #include <boost/thread/thread.hpp>
 
-namespace client
+namespace rpc
 {
 
-class Service:
+class BasicService:
 		public boost::noncopyable,
-		public boost::enable_shared_from_this<Service>
 {
 public:
-	Service();
-	~Service();
+	BasicService();
+	virtual ~BasicService();
 
-	void start(size_t nthreads);
+    void start(size_t nthreads);
 	void stop();
 	void wait();
 
