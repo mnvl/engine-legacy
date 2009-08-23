@@ -19,10 +19,7 @@ class Connection:
 public:
 	Connection(Handler *handler, boost::asio::io_service &io_service);
 
-	boost::asio::ip::tcp::socket &socket()
-	{
-		return socket_;
-	}
+	boost::asio::ip::tcp::socket &socket() { return socket_; }
 
 	void start();
 	void write(boost::shared_ptr<Buffer> const &buffer_ptr);
