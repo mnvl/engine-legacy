@@ -4,24 +4,24 @@
 #include <boost/thread/locks.hpp>
 #include "header.h"
 #include "server_service.h"
-#include "server_connection.h"
+#include "connection.h"
 
 namespace rpc
 {
 
-ServerConnection::ServerConnection(Handler *Handler, boost::asio::io_service &io_service):
+Connection::Connection(Handler *Handler, boost::asio::io_service &io_service):
 	handler_(Handler),
 	strand_(io_service),
 	socket_(io_service)
 {
 }
 
-void ServerConnection::start()
+void Connection::start()
 {
 	read(boost::shared_ptr<Buffer>(new Buffer()));
 }
 
-void ServerConnection::read(boost::shared_ptr<Buffer> const &buffer_ptr)
+void Connection::read(boost::shared_ptr<Buffer> const &buffer_ptr)
 {
 	if (buffer_ptr->write_bytes_available() < MINIMAL_ASYNC_READ_BUFFER_SIZE)
 	{
@@ -29,11 +29,11 @@ void ServerConnection::read(boost::shared_ptr<Buffer> const &buffer_ptr)
 	}
 
 	socket_.async_read_some(boost::asio::buffer(buffer_ptr->write_ptr(), buffer_ptr->write_bytes_available()),
-		strand_.wrap(boost::bind(&ServerConnection::handle_read, shared_from_this(), buffer_ptr,
+		strand_.wrap(boost::bind(&Connection::handle_read, shared_from_this(), buffer_ptr,
 				boost::asio::placeholders::bytes_transferred, boost::asio::placeholders::error)));
 }
 
-void ServerConnection::write(boost::shared_ptr<Buffer> const &buffer_ptr)
+void Connection::write(boost::shared_ptr<Buffer> const &buffer_ptr)
 {
 	bool no_write_in_progress = false;
 
@@ -49,7 +49,7 @@ void ServerConnection::write(boost::shared_ptr<Buffer> const &buffer_ptr)
 	}
 }
 
-void ServerConnection::schedule_write()
+void Connection::schedule_write()
 {
 	boost::shared_ptr<Buffer> buffer_ptr;
 
@@ -60,11 +60,11 @@ void ServerConnection::schedule_write()
 
 	boost::asio::async_write(socket_,
 		boost::asio::buffer(buffer_ptr->read_ptr(), buffer_ptr->read_bytes_available()),
-		strand_.wrap(boost::bind(&ServerConnection::handle_write, shared_from_this(),
+		strand_.wrap(boost::bind(&Connection::handle_write, shared_from_this(),
 		boost::asio::placeholders::bytes_transferred, boost::asio::placeholders::error)));
 }
 
-void ServerConnection::handle_read(boost::shared_ptr<Buffer> const &buffer_ptr,
+void Connection::handle_read(boost::shared_ptr<Buffer> const &buffer_ptr,
 	size_t bytes_transferred, boost::system::error_code const &error)
 {
 	if (error)
@@ -91,7 +91,7 @@ void ServerConnection::handle_read(boost::shared_ptr<Buffer> const &buffer_ptr,
 	{
 		handler_->process(this, h.id, *buffer_ptr);
 	}
-	catch(Handler::CloseServerConnection const &)
+	catch(Handler::CloseConnectionException const &)
 	{
 		return;
 	}
@@ -103,7 +103,7 @@ void ServerConnection::handle_read(boost::shared_ptr<Buffer> const &buffer_ptr,
 	read(buffer_ptr);
 }
 
-void ServerConnection::handle_write(size_t bytes_transferred, boost::system::error_code const &error)
+void Connection::handle_write(size_t bytes_transferred, boost::system::error_code const &error)
 {
 	boost::shared_ptr<Buffer> buffer_ptr;
 

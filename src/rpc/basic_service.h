@@ -9,7 +9,7 @@ namespace rpc
 {
 
 class BasicService:
-		public boost::noncopyable,
+		public boost::noncopyable
 {
 public:
 	BasicService();

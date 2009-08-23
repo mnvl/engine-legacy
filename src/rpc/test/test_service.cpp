@@ -31,7 +31,7 @@ struct EchoFixture: public rpc::Handler
 		service.wait();
 	}
 
-	void process(rpc::ServerConnection *connection_ptr, boost::uint16_t id, Buffer &in)
+	void process(rpc::Connection *connection_ptr, boost::uint16_t id, Buffer &in)
 	{
 		std::vector<char> message(in.read_bytes_available());
 		if (message.size()) in.read(&message[0], message.size());
@@ -53,7 +53,7 @@ struct EchoFixture: public rpc::Handler
 		completed = true;
 	}
 
-	void error(rpc::ServerConnection *connection_ptr, boost::system::error_code const &error)
+	void error(rpc::Connection *connection_ptr, boost::system::error_code const &error)
 	{
 		BOOST_ASSERT (completed);
 	}

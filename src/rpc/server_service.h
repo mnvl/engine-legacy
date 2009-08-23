@@ -11,10 +11,10 @@
 namespace rpc
 {
 
-class ServerConnection;
+class Connection;
 
 class ServerService:
-		public BasicService
+		public BasicService,
 		public boost::enable_shared_from_this<ServerService>
 {
 public:
@@ -28,7 +28,7 @@ private:
 	boost::asio::ip::tcp::acceptor acceptor_;
 
 	void schedule_accept();
-	void handle_accept(boost::shared_ptr<ServerConnection> const &connection_ptr,
+	void handle_accept(boost::shared_ptr<Connection> const &connection_ptr,
 		boost::system::error_code const &error);
 };
 
