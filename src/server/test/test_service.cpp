@@ -31,13 +31,13 @@ struct EchoFixture: public server::Handler
 		service.wait();
 	}
 
-	void process(server::Connection *connection_ptr, boost::uint16_t id, server::Buffer &in)
+	void process(server::Connection *connection_ptr, boost::uint16_t id, util::Buffer &in)
 	{
 		std::vector<char> message(in.read_bytes_available());
 		if (message.size()) in.read(&message[0], message.size());
 		for (size_t j = 0; j < message.size(); j++) BOOST_ASSERT(message[j] == (char) j);
 
-		boost::shared_ptr<server::Buffer> out(new server::Buffer());
+		boost::shared_ptr<util::Buffer> out(new util::Buffer());
 
 		{
 			server::header h;

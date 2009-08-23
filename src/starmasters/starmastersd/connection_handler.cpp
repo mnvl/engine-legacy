@@ -4,8 +4,7 @@
 namespace starmastersd
 {
 
-void ConnectionHandler::process(server::Connection *connection_ptr, boost::uint16_t id,
-	server::Buffer &buf)
+void ConnectionHandler::process(server::Connection *connection_ptr, boost::uint16_t id, util::Buffer &buf)
 {
 }
 
