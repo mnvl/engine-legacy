@@ -37,6 +37,7 @@ Logger::message::~message()
 
 Logger::Logger()
 {
+    set_stderr();
 }
 
 Logger::~Logger()

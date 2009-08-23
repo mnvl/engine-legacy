@@ -6,6 +6,7 @@
 #include <rpc/handler.h>
 #include <rpc/connection.h>
 #include <rpc/server_service.h>
+#include <rpc/client_service.h>
 
 namespace
 {
@@ -13,26 +14,49 @@ namespace
 char const HOST[] = "127.0.0.1";
 char const SERVICE[] = "17171";
 
-struct EchoFixture: public rpc::Handler
+static size_t const MESSAGE_SIZE[] = {
+    0,
+    1,
+    41,
+    2650,
+    4091,
+    4092,
+    4093,
+    4095,
+    4096,
+    4097,
+    20123,
+    30132,
+    40213,
+    50312,
+    65530,
+    65531
+};
+
+struct Server: public rpc::Handler
 {
-	rpc::ServerService service;
+    rpc::ServerService service;
 	bool completed;
 
-	EchoFixture():
+	Server():
 		service(this),
 		completed(false)
     {
 		service.start(HOST, SERVICE, 4);
 	}
 
-	~EchoFixture()
+	~Server()
 	{
-		service.stop();
+        service.stop();
 		service.wait();
 	}
 
-	void process(rpc::Connection *connection_ptr, boost::uint16_t id, rpc::Buffer &in)
-	{
+    void on_connect(boost::shared_ptr<rpc::Connection> const &connection_ptr)
+    {
+    }
+
+	void on_read(boost::shared_ptr<rpc::Connection> const &connection_ptr, boost::uint16_t id, rpc::Buffer &in)
+    {
 		std::vector<char> message(in.read_bytes_available());
 		if (message.size()) in.read(&message[0], message.size());
 		for (size_t j = 0; j < message.size(); j++) BOOST_ASSERT(message[j] == (char) j);
@@ -40,7 +64,7 @@ struct EchoFixture: public rpc::Handler
 		boost::shared_ptr<rpc::Buffer> out(new rpc::Buffer());
 
 		{
-			rpc::header h;
+			rpc::Header h;
 			h.id = id;
 			h.len = sizeof(h) + message.size();
 			out->write(&h, sizeof(h));
@@ -53,7 +77,62 @@ struct EchoFixture: public rpc::Handler
 		completed = true;
 	}
 
-	void error(rpc::Connection *connection_ptr, boost::system::error_code const &error)
+	void on_error(boost::shared_ptr<rpc::Connection> const &connection_ptr, boost::system::error_code const &error)
+	{
+		BOOST_ASSERT (completed);
+	}
+};
+
+struct Client: public rpc::Handler
+{
+    rpc::ClientService service;
+    int index_;
+	bool completed;
+
+	Client():
+		service(this),
+        index_(0),
+		completed(false)
+    {
+	}
+
+	~Client()
+	{
+        service.stop();
+		service.wait();
+	}
+
+    void go()
+    {
+        service.connect(HOST, SERVICE);
+        service.start(4);
+    }
+
+    void on_connect(boost::shared_ptr<rpc::Connection> const &connection_ptr)
+    {
+        boost::shared_ptr<rpc::Buffer> buffer;
+
+        std::vector<char> message(MESSAGE_SIZE[index_]);
+		for (size_t j = 0; j < message.size(); j++) message[j] = (char) j;
+
+        {
+            rpc::Header h;
+            h.id = index_;
+            h.len = message.size();
+            buffer->write(&h, sizeof(h));
+        }
+
+        buffer->write(&message[0], message.size());
+
+        connection_ptr->write(buffer);
+    }
+
+	void on_read(boost::shared_ptr<rpc::Connection> const &connection_ptr, boost::uint16_t id, rpc::Buffer &in)
+    {
+        index_++;
+    }
+
+	void on_error(boost::shared_ptr<rpc::Connection> const &connection_ptr, boost::system::error_code const &error)
 	{
 		BOOST_ASSERT (completed);
 	}
@@ -63,60 +142,15 @@ struct EchoFixture: public rpc::Handler
 
 void test_echo()
 {
-	static size_t const MESSAGE_SIZE[] = {
-		0,
-		1,
-		41,
-		2650,
-		4091,
-		4092,
-		4093,
-		4095,
-		4096,
-		4097,
-		20123,
-		30132,
-		40213,
-		50312,
-		65530,
-		65531
-	};
+    Server server;
+    Client client;
 
-	EchoFixture fixture;
+    client.go();
 
-	for (size_t i = 0; i < sizeof(MESSAGE_SIZE) / sizeof(MESSAGE_SIZE[0]); i++)
-	{
-		std::vector<char> message(MESSAGE_SIZE[i]);
-		for (size_t j = 0; j < message.size(); j++) message[j] = (char) j;
+    client.service.wait();
 
-		boost::asio::ip::tcp::iostream stream(HOST, SERVICE);
-
-		{
-			rpc::header header;
-			header.id = i;
-			header.len = message.size() + sizeof(header);
-			stream.write((char const *) &header, sizeof(header));
-		}
-
-		if (message.size())
-		{
-			stream.write(&message[0], message.size());
-		}
-
-		std::vector<char> reply(message.size());
-
-		{
-			rpc::header h;
-			stream.read((char *) &h, sizeof(h));
-
-			BOOST_ASSERT (h.id == i);
-			BOOST_ASSERT (h.len == sizeof(h) + message.size());
-		}
-
-		if (message.size()) stream.read(&reply[0], message.size());
-
-		BOOST_ASSERT (message == reply);
-	}
+    server.service.stop();
+    server.service.wait();
 }
 
 boost::unit_test::test_suite*

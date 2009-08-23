@@ -69,19 +69,19 @@ void Connection::handle_read(boost::shared_ptr<Buffer> const &buffer_ptr,
 {
 	if (error)
 	{
-		return handler_->error(this, error);
+		return handler_->on_error(shared_from_this(), error);
 	}
 
 	buffer_ptr->seek_write(bytes_transferred);
 
 	if (bytes_transferred == 0 ||
-		buffer_ptr->read_bytes_available() < sizeof(header) ||
-		reinterpret_cast<header *>(buffer_ptr->read_ptr())->len > buffer_ptr->read_bytes_available())
+		buffer_ptr->read_bytes_available() < sizeof(Header) ||
+		reinterpret_cast<Header *>(buffer_ptr->read_ptr())->len > buffer_ptr->read_bytes_available())
 	{
 		return read(buffer_ptr);
 	}
 
-	header h;
+	Header h;
 	buffer_ptr->read((char *) &h, sizeof(h));
 
 	size_t write_offset_saved = buffer_ptr->write_offset();
@@ -89,7 +89,7 @@ void Connection::handle_read(boost::shared_ptr<Buffer> const &buffer_ptr,
 
 	try
 	{
-		handler_->process(this, h.id, *buffer_ptr);
+		handler_->on_read(shared_from_this(), h.id, *buffer_ptr);
 	}
 	catch(Handler::CloseConnectionException const &)
 	{
@@ -124,7 +124,7 @@ void Connection::handle_write(size_t bytes_transferred, boost::system::error_cod
 
 	if (error)
 	{
-		handler_->error(this, error);
+		handler_->on_error(shared_from_this(), error);
 	}
 }
 

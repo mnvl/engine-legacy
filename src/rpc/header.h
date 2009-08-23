@@ -6,7 +6,7 @@ namespace rpc
 {
 
 #pragma pack(push, 1)
-struct header
+struct Header
 {
 	boost::uint16_t id;
 	boost::uint16_t len;
