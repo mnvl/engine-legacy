@@ -7,8 +7,8 @@
 namespace rpc
 {
 
-ServerService::ServerService(Handler *handler_ptr):
-	handler_(handler_ptr),
+ServerService::ServerService(Handler *handler):
+	BasicService(handler),
     acceptor_(get_io_service())
 {
 }
@@ -38,7 +38,7 @@ void ServerService::start(std::string const &host_name, std::string const &servi
 
 void ServerService::schedule_accept()
 {
-	boost::shared_ptr<Connection> connection_ptr(new Connection(handler_, get_io_service()));
+	boost::shared_ptr<Connection> connection_ptr(new Connection(get_handler(), get_io_service()));
 
    	acceptor_.async_accept(connection_ptr->socket(),
 		boost::bind(&ServerService::handle_accept, this, connection_ptr, boost::asio::placeholders::error));

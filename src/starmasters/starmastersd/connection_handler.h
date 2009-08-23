@@ -1,15 +1,15 @@
 #pragma once
 
-#include <server/handler.h>
+#include <rpc/handler.h>
 
 namespace starmastersd
 {
 
-class ConnectionHandler: public server::Handler
+class ConnectionHandler: public rpc::Handler
 {
 public:
-	void process(server::Connection *connection_ptr, boost::uint16_t id, util::Buffer &buf);
-	void error(server::Connection *connection_ptr, boost::system::error_code const &error);
+	void process(rpc::Connection *connection_ptr, boost::uint16_t id, rpc::Buffer &buf);
+	void error(rpc::Connection *connection_ptr, boost::system::error_code const &error);
 };
 
 }

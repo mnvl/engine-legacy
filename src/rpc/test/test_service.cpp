@@ -5,7 +5,7 @@
 #include <rpc/header.h>
 #include <rpc/handler.h>
 #include <rpc/connection.h>
-#include <rpc/service.h>
+#include <rpc/server_service.h>
 
 namespace
 {
@@ -31,13 +31,13 @@ struct EchoFixture: public rpc::Handler
 		service.wait();
 	}
 
-	void process(rpc::Connection *connection_ptr, boost::uint16_t id, Buffer &in)
+	void process(rpc::Connection *connection_ptr, boost::uint16_t id, rpc::Buffer &in)
 	{
 		std::vector<char> message(in.read_bytes_available());
 		if (message.size()) in.read(&message[0], message.size());
 		for (size_t j = 0; j < message.size(); j++) BOOST_ASSERT(message[j] == (char) j);
 
-		boost::shared_ptr<Buffer> out(new util::Buffer());
+		boost::shared_ptr<rpc::Buffer> out(new rpc::Buffer());
 
 		{
 			rpc::header h;

@@ -6,7 +6,8 @@
 namespace rpc
 {
 
-BasicService::BasicService()
+BasicService::BasicService(Handler *handler):
+    handler_(handler)
 {
 }
 

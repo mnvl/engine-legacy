@@ -1,7 +1,7 @@
 #pragma once
 
 #include <boost/scoped_ptr.hpp>
-#include <server/service.h>
+#include <rpc/server_service.h>
 #include "connection_handler.h"
 
 namespace starmastersd
@@ -21,7 +21,7 @@ public:
 
 private:
 	boost::scoped_ptr<ConnectionHandler> connection_handler_;
-	boost::scoped_ptr<server::Service> service_;
+	boost::scoped_ptr<rpc::ServerService> service_;
 };
 
 }

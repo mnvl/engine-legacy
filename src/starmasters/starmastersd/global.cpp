@@ -7,7 +7,7 @@ namespace starmastersd
 Global::Global()
 {
 	connection_handler_.reset(new ConnectionHandler());
-	service_.reset(new server::Service(connection_handler_.get()));
+	service_.reset(new rpc::ServerService(connection_handler_.get()));
 }
 
 Global::~Global()
