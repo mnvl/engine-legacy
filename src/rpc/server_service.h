@@ -10,15 +10,15 @@
 namespace rpc
 {
 
-class Connection;
+class ServerConnection;
 
-class Service:
+class ServerService:
 		public boost::noncopyable,
-		public boost::enable_shared_from_this<Service>
+		public boost::enable_shared_from_this<ServerService>
 {
 public:
-	Service(Handler *handler_ptr);
-	~Service();
+	ServerService(Handler *handler_ptr);
+	~ServerService();
 
 	void start(std::string const &host_name, std::string const &service_name, size_t nthreads);
 	void stop();
@@ -31,7 +31,7 @@ private:
 	boost::thread_group threads_;
 
 	void schedule_accept();
-	void handle_accept(boost::shared_ptr<Connection> const &connection_ptr,
+	void handle_accept(boost::shared_ptr<ServerConnection> const &connection_ptr,
 		boost::system::error_code const &error);
 };
 

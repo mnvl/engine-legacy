@@ -1,23 +1,23 @@
 
 #include <boost/bind.hpp>
 #include <util/logger.h>
-#include "connection.h"
-#include "service.h"
+#include "server_connection.h"
+#include "server_service.h"
 
 namespace rpc
 {
 
-Service::Service(Handler *handler_ptr):
+ServerService::ServerService(Handler *handler_ptr):
 	handler_(handler_ptr),
 	acceptor_(io_service_)
 {
 }
 
-Service::~Service()
+ServerService::~ServerService()
 {
 }
 
-void Service::start(std::string const &host_name, std::string const &service_name, size_t nthreads)
+void ServerService::start(std::string const &host_name, std::string const &service_name, size_t nthreads)
 {
 	boost::asio::ip::tcp::resolver resolver(io_service_);
 	boost::asio::ip::tcp::resolver::query query(host_name, service_name);
@@ -39,25 +39,25 @@ void Service::start(std::string const &host_name, std::string const &service_nam
 		<< nthreads << " threads");
 }
 
-void Service::stop()
+void ServerService::stop()
 {
 	io_service_.stop();
 }
 
-void Service::wait()
+void ServerService::wait()
 {
 	threads_.join_all();
 }
 
-void Service::schedule_accept()
+void ServerService::schedule_accept()
 {
-	boost::shared_ptr<Connection> connection_ptr(new Connection(handler_, io_service_));
+	boost::shared_ptr<ServerConnection> connection_ptr(new ServerConnection(handler_, io_service_));
 
    	acceptor_.async_accept(connection_ptr->socket(),
-		boost::bind(&Service::handle_accept, this, connection_ptr, boost::asio::placeholders::error));
+		boost::bind(&ServerService::handle_accept, this, connection_ptr, boost::asio::placeholders::error));
 }
 
-void Service::handle_accept(boost::shared_ptr<Connection> const &connection_ptr,
+void ServerService::handle_accept(boost::shared_ptr<ServerConnection> const &connection_ptr,
 	boost::system::error_code const &error)
 {
 	schedule_accept();

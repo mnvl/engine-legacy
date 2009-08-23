@@ -12,12 +12,12 @@
 namespace rpc
 {
 
-class Connection:
+class ServerConnection:
 		public boost::noncopyable,
-		public boost::enable_shared_from_this<Connection>
+		public boost::enable_shared_from_this<ServerConnection>
 {
 public:
-	Connection(Handler *handler, boost::asio::io_service &io_service);
+	ServerConnection(Handler *handler, boost::asio::io_service &io_service);
 
 	boost::asio::ip::tcp::socket &socket()
 	{

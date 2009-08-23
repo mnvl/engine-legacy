@@ -8,15 +8,15 @@
 namespace rpc
 {
 
-class Connection;
+class ServerConnection;
 
 class Handler
 {
 public:
-	class CloseConnection {};
+	class CloseServerConnection {};
 
-	virtual void process(Connection *connection_ptr, boost::uint16_t id, Buffer &buf) = 0;
-	virtual void error(Connection *connection_ptr, boost::system::error_code const &error) = 0;
+	virtual void process(ServerConnection *connection_ptr, boost::uint16_t id, Buffer &buf) = 0;
+	virtual void error(ServerConnection *connection_ptr, boost::system::error_code const &error) = 0;
 };
 
 }
