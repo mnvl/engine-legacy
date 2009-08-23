@@ -8,22 +8,19 @@ namespace rpc
 
 class Connection;
 
-class ServerService:
+class ClientService:
 		public BasicService,
-		public boost::enable_shared_from_this<ServerService>
+		public boost::enable_shared_from_this<ClientService>
 {
 public:
-	ServerService(Handler *handler);
-	~ServerService();
+	ClientService(Handler *handler);
+	~ClientService();
 
-	void start(std::string const &host_name, std::string const &service_name, size_t nthreads);
+	void connect(std::string const &host, std::string const &port);
 
 private:
-	boost::asio::ip::tcp::acceptor acceptor_;
-
-	void schedule_accept();
-	void handle_accept(boost::shared_ptr<Connection> const &connection_ptr,
-		boost::system::error_code const &error);
+	void handle_connect(const boost::system::error_code& error, boost::shared_ptr<Connection> const &connection,
+		boost::asio::ip::tcp::resolver::iterator endpoint_it);
 };
 
 }
