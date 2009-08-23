@@ -4,7 +4,7 @@
 #include "connection.h"
 #include "service.h"
 
-namespace server
+namespace rpc
 {
 
 Service::Service(Handler *handler_ptr):
@@ -63,6 +63,5 @@ void Service::handle_accept(boost::shared_ptr<Connection> const &connection_ptr,
 	schedule_accept();
 	connection_ptr->start();
 }
-
 
 }

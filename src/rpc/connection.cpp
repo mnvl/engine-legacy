@@ -6,7 +6,7 @@
 #include "service.h"
 #include "connection.h"
 
-namespace server
+namespace rpc
 {
 
 Connection::Connection(Handler *Handler, boost::asio::io_service &io_service):
@@ -18,10 +18,10 @@ Connection::Connection(Handler *Handler, boost::asio::io_service &io_service):
 
 void Connection::start()
 {
-	read(boost::shared_ptr<util::Buffer>(new util::Buffer()));
+	read(boost::shared_ptr<Buffer>(new Buffer()));
 }
 
-void Connection::read(boost::shared_ptr<util::Buffer> const &buffer_ptr)
+void Connection::read(boost::shared_ptr<Buffer> const &buffer_ptr)
 {
 	if (buffer_ptr->write_bytes_available() < MINIMAL_ASYNC_READ_BUFFER_SIZE)
 	{
@@ -33,7 +33,7 @@ void Connection::read(boost::shared_ptr<util::Buffer> const &buffer_ptr)
 				boost::asio::placeholders::bytes_transferred, boost::asio::placeholders::error)));
 }
 
-void Connection::write(boost::shared_ptr<util::Buffer> const &buffer_ptr)
+void Connection::write(boost::shared_ptr<Buffer> const &buffer_ptr)
 {
 	bool no_write_in_progress = false;
 
@@ -51,7 +51,7 @@ void Connection::write(boost::shared_ptr<util::Buffer> const &buffer_ptr)
 
 void Connection::schedule_write()
 {
-	boost::shared_ptr<util::Buffer> buffer_ptr;
+	boost::shared_ptr<Buffer> buffer_ptr;
 
 	{
 		boost::unique_lock<boost::mutex> lock(write_queue_mutex_);
@@ -64,7 +64,7 @@ void Connection::schedule_write()
 		boost::asio::placeholders::bytes_transferred, boost::asio::placeholders::error)));
 }
 
-void Connection::handle_read(boost::shared_ptr<util::Buffer> const &buffer_ptr,
+void Connection::handle_read(boost::shared_ptr<Buffer> const &buffer_ptr,
 	size_t bytes_transferred, boost::system::error_code const &error)
 {
 	if (error)
@@ -105,7 +105,7 @@ void Connection::handle_read(boost::shared_ptr<util::Buffer> const &buffer_ptr,
 
 void Connection::handle_write(size_t bytes_transferred, boost::system::error_code const &error)
 {
-	boost::shared_ptr<util::Buffer> buffer_ptr;
+	boost::shared_ptr<Buffer> buffer_ptr;
 
 	bool more_writes_pending;
 

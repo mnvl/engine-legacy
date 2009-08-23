@@ -2,7 +2,7 @@
 
 #include <boost/cstdint.hpp>
 
-namespace server
+namespace rpc
 {
 
 #pragma pack(push, 1)

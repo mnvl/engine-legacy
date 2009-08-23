@@ -5,7 +5,7 @@
 #include <new>
 #include <exception>
 
-namespace util
+namespace rpc
 {
 
 class Buffer

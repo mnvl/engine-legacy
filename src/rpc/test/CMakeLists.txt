@@ -1,0 +1,2 @@
+
+MAKE_TESTS_FROM_SOURCES (rpc util ${Boost_LIBRARIES})

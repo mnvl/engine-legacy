@@ -2,10 +2,10 @@
 #include <boost/asio.hpp>
 #include <boost/test/included/unit_test.hpp>
 #include <iosfwd>
-#include <server/header.h>
-#include <server/handler.h>
-#include <server/connection.h>
-#include <server/service.h>
+#include <rpc/header.h>
+#include <rpc/handler.h>
+#include <rpc/connection.h>
+#include <rpc/service.h>
 
 namespace
 {
@@ -13,9 +13,9 @@ namespace
 char const HOST[] = "127.0.0.1";
 char const SERVICE[] = "17171";
 
-struct EchoFixture: public server::Handler
+struct EchoFixture: public rpc::Handler
 {
-	server::Service service;
+	rpc::Service service;
 	bool completed;
 
 	EchoFixture():
@@ -31,16 +31,16 @@ struct EchoFixture: public server::Handler
 		service.wait();
 	}
 
-	void process(server::Connection *connection_ptr, boost::uint16_t id, util::Buffer &in)
+	void process(rpc::Connection *connection_ptr, boost::uint16_t id, Buffer &in)
 	{
 		std::vector<char> message(in.read_bytes_available());
 		if (message.size()) in.read(&message[0], message.size());
 		for (size_t j = 0; j < message.size(); j++) BOOST_ASSERT(message[j] == (char) j);
 
-		boost::shared_ptr<util::Buffer> out(new util::Buffer());
+		boost::shared_ptr<Buffer> out(new util::Buffer());
 
 		{
-			server::header h;
+			rpc::header h;
 			h.id = id;
 			h.len = sizeof(h) + message.size();
 			out->write(&h, sizeof(h));
@@ -53,7 +53,7 @@ struct EchoFixture: public server::Handler
 		completed = true;
 	}
 
-	void error(server::Connection *connection_ptr, boost::system::error_code const &error)
+	void error(rpc::Connection *connection_ptr, boost::system::error_code const &error)
 	{
 		BOOST_ASSERT (completed);
 	}
@@ -92,7 +92,7 @@ void test_echo()
 		boost::asio::ip::tcp::iostream stream(HOST, SERVICE);
 
 		{
-			server::header header;
+			rpc::header header;
 			header.id = i;
 			header.len = message.size() + sizeof(header);
 			stream.write((char const *) &header, sizeof(header));
@@ -106,7 +106,7 @@ void test_echo()
 		std::vector<char> reply(message.size());
 
 		{
-			server::header h;
+			rpc::header h;
 			stream.read((char *) &h, sizeof(h));
 
 			BOOST_ASSERT (h.id == i);

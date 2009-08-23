@@ -7,7 +7,7 @@
 #include <boost/thread/thread.hpp>
 #include "handler.h"
 
-namespace server
+namespace rpc
 {
 
 class Connection;

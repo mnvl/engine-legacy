@@ -11,13 +11,13 @@ BOOST_AUTO_TEST_SUITE(test_buffer)
 
 BOOST_AUTO_TEST_CASE (test_buffer_copy)
 {
-	util::Buffer a, b;
+	Buffer a, b;
 	b = a;
 }
 
 BOOST_AUTO_TEST_CASE (test_buffer_enlarge)
 {
-	util::Buffer a;
+	Buffer a;
 	a.enlarge();
 	BOOST_CHECK_THROW(a.enlarge(), std::bad_alloc);
 }
@@ -60,7 +60,7 @@ BOOST_AUTO_TEST_CASE (test_buffer_read_write)
 			std::vector<char> etalon(TEXT_SIZE[i]), readed(TEXT_SIZE[i]);
 			for (size_t k = 0; k < etalon.size(); k++) etalon[k] = (char) k;
 
-			util::Buffer buf;
+			Buffer buf;
 
 			size_t delta = SINGLE_READ_WRITE_SIZE[j];
 
