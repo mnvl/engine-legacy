@@ -209,7 +209,7 @@ template<class T>
 void heightfield<T>::load_from_raw_file(std::string const &name)
 {
     std::vector<char> buffer;
-    util::file_handle(name.c_str(), O_RDONLY).read_all(buffer);
+    util::FileHandle(name.c_str(), O_RDONLY).read_all(buffer);
 
     if (buffer.size() != nheights() * sizeof(value_type))
         throw std::logic_error("heigtfield " + name + " contains invalid amount of data");

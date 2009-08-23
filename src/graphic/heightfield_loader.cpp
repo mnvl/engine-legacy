@@ -27,7 +27,7 @@ void HeightfieldLoader::load_from_raw(math::matrix<4,4> const &tf, size_t nrows,
 		<< nrows << ", ncols = " << ncols);
 
     std::vector<char> buffer;
-    util::file_handle(filename_.c_str(), O_RDONLY).read_all(buffer);
+    util::FileHandle(filename_.c_str(), O_RDONLY).read_all(buffer);
 
     Mesh *mesh_ptr = model_ptr_->create_mesh();
 

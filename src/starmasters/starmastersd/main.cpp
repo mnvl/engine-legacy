@@ -6,6 +6,8 @@ int main(int argc, char *argv[])
 {
 	try
 	{
+		util::Logger::instance().set_stderr();
+
 		starmastersd::Global::instance().Start();
 
 		starmastersd::Global::instance().Wait();

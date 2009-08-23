@@ -21,7 +21,7 @@
 
 namespace util {
 
-class file_handle {
+class FileHandle {
 public:
 	class error: public std::runtime_error {
 	public:
@@ -35,11 +35,11 @@ public:
 	typedef long offset_type;
     typedef struct stat stat_t;
 
-	file_handle();
-	explicit file_handle(int handle);
-	file_handle(char const *filename, int flags, int mode = S_IREAD | S_IWRITE);
-	file_handle(file_handle const &rhs);
-	~file_handle();
+	FileHandle();
+	explicit FileHandle(int handle);
+	FileHandle(char const *filename, int flags, int mode = S_IREAD | S_IWRITE);
+	FileHandle(FileHandle const &rhs);
+	~FileHandle();
 
 	void set_handle(int handle);
 	void open(char const *filename, int flags, int mode = S_IREAD | S_IWRITE);

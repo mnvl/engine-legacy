@@ -47,7 +47,7 @@ public:
 	void write(std::string const &str);
 
 private:
-	util::file_handle file_;
+	util::FileHandle file_;
 
 	static char const *get_level_text(level_t level);
 };
