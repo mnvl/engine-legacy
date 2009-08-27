@@ -1,9 +1,8 @@
 
 ADD_SUBDIRECTORY (model)
 ADD_SUBDIRECTORY (proto)
-ADD_SUBDIRECTORY (starmastersd)
+ADD_SUBDIRECTORY (server)
 
 IF(WIN32)
-	ADD_SUBDIRECTORY (starmastersc)
-
+	ADD_SUBDIRECTORY (client)
 ENDIF()
