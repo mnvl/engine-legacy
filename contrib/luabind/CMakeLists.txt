@@ -1,3 +1,6 @@
 
 add_subdirectory(src)
-add_subdirectory(test)
+
+if (ENGINE_ENABLE_CONTRIB_TESTS)
+   add_subdirectory(test)
+endif()
