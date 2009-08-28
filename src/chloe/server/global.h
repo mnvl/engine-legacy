@@ -4,7 +4,7 @@
 #include <rpc/server_service.h>
 #include "connection_handler.h"
 
-namespace starmastersd
+namespace chloe
 {
 
 class Global

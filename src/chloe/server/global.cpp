@@ -1,7 +1,7 @@
 
 #include "global.h"
 
-namespace starmastersd
+namespace chloe
 {
 
 Global::Global()

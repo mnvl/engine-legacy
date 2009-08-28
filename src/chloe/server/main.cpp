@@ -8,9 +8,9 @@ int main(int argc, char *argv[])
 	{
 		util::Logger::instance().set_stderr();
 
-		starmastersd::Global::instance().Start();
+		chloe::Global::instance().Start();
 
-		starmastersd::Global::instance().Wait();
+		chloe::Global::instance().Wait();
 	}
 	catch (std::exception const &error)
 	{
