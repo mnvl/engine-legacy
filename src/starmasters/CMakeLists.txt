@@ -1,9 +1,0 @@
-
-ADD_SUBDIRECTORY (model)
-ADD_SUBDIRECTORY (proto)
-ADD_SUBDIRECTORY (starmastersd)
-
-IF(WIN32)
-	ADD_SUBDIRECTORY (starmastersc)
-
-ENDIF()

@@ -7,7 +7,7 @@
 #include <platform/mouse.h>
 #include <graphic/renderer.h>
 
-namespace starmastersc
+namespace chloe
 {
 
 class Global
