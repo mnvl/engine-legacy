@@ -8,7 +8,7 @@ BOOST_AUTO_TEST_SUITE (test_proto)
 
 BOOST_AUTO_TEST_CASE (test_handshake)
 {
-	service::handshake hs;
+	chloe::proto::service::handshake hs;
 	hs.set_protocol_version(100);
 }
 

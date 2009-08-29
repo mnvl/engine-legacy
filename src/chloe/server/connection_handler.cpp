@@ -19,7 +19,7 @@ void ConnectionHandler::on_read(boost::shared_ptr<rpc::Connection> const &connec
 	case chloe::proto::SERVICE_TIME_SYNC:
 		break;
 
-	case chloe::proto::SERVICE_ERROR:
+	case chloe::proto::SERVICE_LOGIC_ERROR:
 		break;
 
 	case chloe::proto::SERVICE_INTERNAL_ERROR:

@@ -2,7 +2,7 @@
 package chloe.proto.service;
 
 // handshake is first message sent from client to server
-message servhandshake
+message handshake
 {
 	required uint32 protocol_version = 1;
 };
