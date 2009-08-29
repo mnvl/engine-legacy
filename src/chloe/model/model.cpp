@@ -1,7 +1,7 @@
 
 #include "model.h"
 
-namespace starmasters
+namespace chloe
 {
 namespace model
 {

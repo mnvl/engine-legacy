@@ -1,8 +1,8 @@
 
-package service;
+package chloe.proto.service;
 
 // handshake is first message sent from client to server
-message handshake
+message servhandshake
 {
 	required uint32 protocol_version = 1;
 };
@@ -21,4 +21,15 @@ message time_sync
 message time_sync_reply
 {
     required uint32 server_time = 1;
+};
+
+// this messages can be sent from server to client and inverse
+message logic_error
+{
+	required string message = 1;
+};
+
+message internal_error
+{
+	required string message = 1;
 };

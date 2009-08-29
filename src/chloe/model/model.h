@@ -1,6 +1,6 @@
 #pragma once
 
-namespace starmasters
+namespace chloe
 {
 namespace model
 {
