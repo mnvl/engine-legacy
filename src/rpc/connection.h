@@ -6,6 +6,7 @@
 #include <boost/shared_ptr.hpp>
 #include <boost/enable_shared_from_this.hpp>
 #include <boost/thread/mutex.hpp>
+#include <google/protobuf/message.h>
 #include "buffer.h"
 #include "handler.h"
 
@@ -23,6 +24,7 @@ public:
 
 	void start();
 	void write(boost::shared_ptr<Buffer> const &buffer_ptr);
+	void write(google::protobuf::Message const &message);
 
 private:
 	static size_t const MINIMAL_ASYNC_READ_BUFFER_SIZE = 1024;

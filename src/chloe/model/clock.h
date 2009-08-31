@@ -15,10 +15,12 @@ public:
 	~Clock();
 
 	long millisecs() const;
+	void set_delta(long delta);
 
 private:
 	class Impl;
 	boost::scoped_ptr<Impl> impl_;
+	long delta_;
 };
 
 }

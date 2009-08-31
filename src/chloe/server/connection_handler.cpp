@@ -1,5 +1,6 @@
 
 #include <chloe/proto/id.pb.h>
+#include "service_handler.h"
 #include "connection_handler.h"
 
 namespace chloe
@@ -13,17 +14,24 @@ void ConnectionHandler::on_read(boost::shared_ptr<rpc::Connection> const &connec
 {
 	switch (id)
 	{
-	case chloe::proto::SERVICE_HANDSHAKE:
+	case proto::SERVICE_HANDSHAKE:
+		ServiceHandler::handle_handshake(connection_ptr, buf);
 		break;
 
-	case chloe::proto::SERVICE_TIME_SYNC:
+	case proto::SERVICE_TIME_SYNC:
+		ServiceHandler::handle_time_sync(connection_ptr, buf);
 		break;
 
-	case chloe::proto::SERVICE_LOGIC_ERROR:
+	case proto::SERVICE_LOGIC_ERROR:
+		ServiceHandler::handle_logic_error(connection_ptr, buf);
 		break;
 
-	case chloe::proto::SERVICE_INTERNAL_ERROR:
+	case proto::SERVICE_INTERNAL_ERROR:
+		ServiceHandler::handle_internal_error(connection_ptr, buf);
 		break;
+
+	default:
+		throw CloseConnectionException();
 	}
 }
 

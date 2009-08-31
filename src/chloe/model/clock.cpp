@@ -25,7 +25,8 @@ private:
 };
 
 Clock::Clock():
-	impl_(new Impl())
+	impl_(new Impl()),
+	delta_(0)
 {
 }
 
@@ -35,7 +36,12 @@ Clock::~Clock()
 
 long Clock::millisecs() const
 {
-	return (long) impl_->time_since_epoch().total_milliseconds();
+	return long(impl_->time_since_epoch().total_milliseconds()) + delta_;
+}
+
+void Clock::set_delta(long delta)
+{
+	delta_ = delta;
 }
 
 }

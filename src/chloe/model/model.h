@@ -1,5 +1,7 @@
 #pragma once
 
+#include "clock.h"
+
 namespace chloe
 {
 namespace model
@@ -8,7 +10,15 @@ namespace model
 class Model
 {
 public:
-	static Model &Instance();
+	static Model &instance();
+
+	static Clock &clock()
+	{
+		return instance().clock_;
+	}
+
+private:
+	Clock clock_;
 };
 
 }

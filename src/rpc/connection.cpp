@@ -1,4 +1,5 @@
 
+#include <assert.h>
 #include <iosfwd>
 #include <boost/bind.hpp>
 #include <boost/thread/locks.hpp>
@@ -49,12 +50,30 @@ void Connection::write(boost::shared_ptr<Buffer> const &buffer_ptr)
 	}
 }
 
+void Connection::write(google::protobuf::Message const &message)
+{
+	size_t message_size = message.ByteSize();
+
+	boost::shared_ptr<rpc::Buffer> buffer(new rpc::Buffer());
+	if (buffer->write_bytes_available() < message_size) {
+		buffer->enlarge();
+	}
+
+	assert (buffer->write_bytes_available() < message_size);
+
+	message.SerializeToArray(buffer->write_ptr(), buffer->write_bytes_available());
+	buffer->seek_write(message_size);
+
+	write(buffer);
+}
+
 void Connection::schedule_write()
 {
 	boost::shared_ptr<Buffer> buffer_ptr;
 
 	{
 		boost::unique_lock<boost::mutex> lock(write_queue_mutex_);
+		assert (!write_queue_.empty());
 		buffer_ptr = write_queue_.front();
 	}
 

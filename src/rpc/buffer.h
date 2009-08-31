@@ -77,6 +77,7 @@ public:
 		size_ = SIZE_2;
 	}
 
+	void *begin_ptr() const { return data_; }
 	void *read_ptr() const { return read_; }
 	size_t read_offset() const { return read_ - data_; }
 	size_t read_bytes_available() const { return write_ - read_; }

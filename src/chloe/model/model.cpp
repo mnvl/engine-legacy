@@ -6,7 +6,7 @@ namespace chloe
 namespace model
 {
 
-Model &Model::Instance()
+Model &Model::instance()
 {
 	static Model model;
 	return model;
