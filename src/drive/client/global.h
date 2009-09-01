@@ -6,10 +6,11 @@
 #include <platform/keyboard.h>
 #include <platform/mouse.h>
 #include <graphic/renderer.h>
-#include <rpc/client_service.h>
 #include "connection_handler.h"
 
 namespace drive
+{
+namespace client
 {
 
 class Global
@@ -24,9 +25,9 @@ public:
 
 	static Global &instance();
 
-	static rpc::ClientService &service()
+	static ConnectionHandler &connection_handler()
 	{
-		return instance.service_;
+		return *instance().connection_handler_.get();
 	}
 
 private:
@@ -36,7 +37,7 @@ private:
 	boost::scoped_ptr<platform::Mouse> mouse_;
 	boost::scoped_ptr<graphic::Renderer> renderer_;
 	boost::scoped_ptr<ConnectionHandler> connection_handler_;
-	boost::scoped_ptr<rpc::ClientService> service_;
 };
 
+}
 }

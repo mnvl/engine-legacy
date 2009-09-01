@@ -1,5 +1,5 @@
 
-package chloe.proto.service;
+package drive.proto.service;
 
 // handshake is first message sent from client to server
 message handshake

@@ -8,9 +8,9 @@ INT WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpstrCmdLine, INT
 	try
 	{
 		util::Logger::instance().set_file("drive.log");
-		drive::Global::instance().Start();
-		drive::Global::instance().Run();
-		drive::Global::instance().Stop();
+		drive::client::Global::instance().Start();
+		drive::client::Global::instance().Run();
+		drive::client::Global::instance().Stop();
 	}
 	catch (std::exception const &error)
 	{

@@ -4,6 +4,8 @@
 
 namespace drive
 {
+namespace client
+{
 
 class ConnectionHandler: public rpc::Handler
 {
@@ -13,4 +15,5 @@ public:
 	void on_error(boost::shared_ptr<rpc::Connection> const &connection_ptr, boost::system::error_code const &error);
 };
 
+}
 }

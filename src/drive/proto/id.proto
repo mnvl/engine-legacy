@@ -1,5 +1,5 @@
 
-package chloe.proto;
+package drive.proto;
 
 enum id_t
 {

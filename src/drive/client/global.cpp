@@ -3,6 +3,8 @@
 
 namespace drive
 {
+namespace client
+{
 
 Global::Global()
 {
@@ -12,7 +14,6 @@ Global::Global()
 	mouse_.reset(new platform::Mouse(input_.get()));
 	renderer_.reset(new graphic::Renderer(window_.get()));
 	connection_handler_.reset(new ConnectionHandler());
-	client_service_.reset(new rpc::ClientService(connection_handler_.get()));
 }
 
 Global::~Global()
@@ -43,4 +44,5 @@ Global &Global::instance()
 	return global;
 }
 
+}
 }
