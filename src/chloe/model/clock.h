@@ -3,7 +3,7 @@
 #include <boost/noncopyable.hpp>
 #include <boost/scoped_ptr.hpp>
 
-namespace chloe
+namespace drive
 {
 namespace model
 {

@@ -52,10 +52,11 @@ bool FileHandle::is_open() const {
 }
 
 void FileHandle::close() {
-	if(!is_open()) throw std::logic_error("file handle is not open but close() is called");
-
-	if (handle_ > 2) ::close(handle_);
-	handle_ = -1;
+	if(is_open())
+	{
+		if (handle_ > 2) ::close(handle_);
+		handle_ = -1;
+	}
 }
 
 void FileHandle::read(void *buffer, size_t length) {

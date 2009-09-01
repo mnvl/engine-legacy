@@ -7,10 +7,10 @@ INT WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpstrCmdLine, INT
 {
 	try
 	{
-		util::Logger::instance().set_file("chloe.log");
-		chloe::Global::instance().Start();
-		chloe::Global::instance().Run();
-		chloe::Global::instance().Stop();
+		util::Logger::instance().set_file("drive.log");
+		drive::Global::instance().Start();
+		drive::Global::instance().Run();
+		drive::Global::instance().Stop();
 	}
 	catch (std::exception const &error)
 	{

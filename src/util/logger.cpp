@@ -52,16 +52,19 @@ Logger &Logger::instance()
 
 void Logger::set_stdout()
 {
+	file_.close();
 	file_.set_handle(1);
 }
 
 void Logger::set_stderr()
 {
+	file_.close();
     file_.set_handle(2);
 }
 
 void Logger::set_file(std::string const &filename)
 {
+	file_.close();
 	file_.open(filename.c_str(), O_WRONLY | O_CREAT);
 }
 

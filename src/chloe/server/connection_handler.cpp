@@ -1,9 +1,9 @@
 
-#include <chloe/proto/id.pb.h>
+#include <drive/proto/id.pb.h>
 #include "service_handler.h"
 #include "connection_handler.h"
 
-namespace chloe
+namespace drive
 {
 
 void ConnectionHandler::on_connect(boost::shared_ptr<rpc::Connection> const &connection_ptr)

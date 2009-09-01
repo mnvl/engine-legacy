@@ -1,4 +1,4 @@
 
-FILE (GLOB CHLOED_SOURCES *.h *.cpp)
-ADD_EXECUTABLE (chloed ${CHLOED_SOURCES})
-TARGET_LINK_LIBRARIES (chloed util rpc chloe_proto chloe_model ${ENGINE_LIBRARIES})
+FILE (GLOB driveD_SOURCES *.h *.cpp)
+ADD_EXECUTABLE (drived ${driveD_SOURCES})
+TARGET_LINK_LIBRARIES (drived util rpc drive_proto drive_model ${ENGINE_LIBRARIES})

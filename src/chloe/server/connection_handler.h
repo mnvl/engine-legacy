@@ -2,7 +2,7 @@
 
 #include <rpc/handler.h>
 
-namespace chloe
+namespace drive
 {
 
 class ConnectionHandler: public rpc::Handler

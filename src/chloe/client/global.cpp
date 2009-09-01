@@ -1,7 +1,7 @@
 
 #include "global.h"
 
-namespace chloe
+namespace drive
 {
 
 Global::Global()
@@ -11,6 +11,8 @@ Global::Global()
 	keyboard_.reset(new platform::Keyboard(input_.get()));
 	mouse_.reset(new platform::Mouse(input_.get()));
 	renderer_.reset(new graphic::Renderer(window_.get()));
+	connection_handler_.reset(new ConnectionHandler());
+	client_service_.reset(new rpc::ClientService(connection_handler_.get()));
 }
 
 Global::~Global()

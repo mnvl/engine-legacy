@@ -8,9 +8,9 @@ int main(int argc, char *argv[])
 	{
 		util::Logger::instance().set_stderr();
 
-		chloe::Global::instance().Start();
+		drive::Global::instance().Start();
 
-		chloe::Global::instance().Wait();
+		drive::Global::instance().Wait();
 	}
 	catch (std::exception const &error)
 	{

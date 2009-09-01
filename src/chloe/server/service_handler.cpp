@@ -1,12 +1,12 @@
 
 #include <rpc/handler.h>
-#include <chloe/model/clock.h>
-#include <chloe/model/model.h>
-#include <chloe/proto/service.pb.h>
+#include <drive/model/clock.h>
+#include <drive/model/model.h>
+#include <drive/proto/service.pb.h>
 #include <util/logger.h>
 #include "service_handler.h"
 
-namespace chloe
+namespace drive
 {
 
 void ServiceHandler::handle_handshake(boost::shared_ptr<rpc::Connection> const &connection_ptr, rpc::Buffer &buf)

@@ -4,7 +4,7 @@
 #include <rpc/connection.h>
 #include <rpc/buffer.h>
 
-namespace chloe
+namespace drive
 {
 
 class ServiceHandler
