@@ -2,6 +2,8 @@
 #include <rpc/connection.h>
 #include <rpc/client_service.h>
 #include <util/logger.h>
+#include <drive/proto/id.pb.h>
+#include <drive/proto/service.pb.h>
 #include "connection_handler.h"
 
 namespace drive
@@ -72,10 +74,35 @@ void ConnectionHandler::on_connect(boost::shared_ptr<rpc::Connection> const &con
 {
 	boost::system::error_code dummy_error_code;
 	LOG_DEBUG("connected to " << connection_ptr->socket().remote_endpoint(dummy_error_code));
+
+	proto::service::handshake message;
+	message.set_protocol_version(1);
+	connection_ptr->write(proto::SERVICE_HANDSHAKE, message);
 }
 
 void ConnectionHandler::on_read(boost::shared_ptr<rpc::Connection> const &connection_ptr, boost::uint16_t id, rpc::Buffer &buf)
 {
+	switch (id)
+	{
+	case proto::SERVICE_HANDSHAKE_REPLY:
+	{
+		proto::service::handshake_reply reply;
+		reply.ParseFromArray(buf.read_ptr(), buf.read_bytes_available());
+
+		if (!reply.is_supported()) {
+			LOG_ERROR("protocol version is not supported by server");
+			throw CloseConnectionException();
+		}
+
+		LOG_DEBUG("handshake completed");
+
+		break;
+	}
+
+	default:
+		LOG_ERROR("invalid message " << id);
+		throw CloseConnectionException();
+	}
 }
 
 void ConnectionHandler::on_error(boost::shared_ptr<rpc::Connection> const &connection_ptr, boost::system::error_code const &error)

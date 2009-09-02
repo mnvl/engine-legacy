@@ -50,16 +50,22 @@ void Connection::write(boost::shared_ptr<Buffer> const &buffer_ptr)
 	}
 }
 
-void Connection::write(google::protobuf::Message const &message)
+void Connection::write(boost::uint16_t id, google::protobuf::Message const &message)
 {
 	size_t message_size = message.ByteSize();
 
 	boost::shared_ptr<rpc::Buffer> buffer(new rpc::Buffer());
+
+	rpc::Header header;
+	header.id = id;
+	header.len = message_size;
+	buffer->write(&header, sizeof(header));
+
 	if (buffer->write_bytes_available() < message_size) {
 		buffer->enlarge();
 	}
 
-	assert (buffer->write_bytes_available() < message_size);
+	assert (buffer->write_bytes_available() >= message_size);
 
 	message.SerializeToArray(buffer->write_ptr(), buffer->write_bytes_available());
 	buffer->seek_write(message_size);
@@ -94,8 +100,7 @@ void Connection::handle_read(boost::shared_ptr<Buffer> const &buffer_ptr,
 	buffer_ptr->seek_write(bytes_transferred);
 
 	if (bytes_transferred == 0 ||
-		buffer_ptr->read_bytes_available() < sizeof(Header) ||
-		reinterpret_cast<Header *>(buffer_ptr->read_ptr())->len > buffer_ptr->read_bytes_available())
+		buffer_ptr->read_bytes_available() < sizeof(Header))
 	{
 		return read(buffer_ptr);
 	}
@@ -103,8 +108,15 @@ void Connection::handle_read(boost::shared_ptr<Buffer> const &buffer_ptr,
 	Header h;
 	buffer_ptr->read((char *) &h, sizeof(h));
 
+	if (buffer_ptr->read_bytes_available() < h.len)
+	{
+		return read(buffer_ptr);
+	}
+
+	size_t total_length = h.len + sizeof(Header);
+
 	size_t write_offset_saved = buffer_ptr->write_offset();
-	buffer_ptr->set_write(h.len);
+	buffer_ptr->set_write(total_length);
 
 	try
 	{
@@ -115,9 +127,9 @@ void Connection::handle_read(boost::shared_ptr<Buffer> const &buffer_ptr,
 		return;
 	}
 
-	buffer_ptr->set_read(h.len);
+	buffer_ptr->set_read(total_length);
 	buffer_ptr->set_write(write_offset_saved);
-	buffer_ptr->consume(h.len);
+	buffer_ptr->consume(total_length);
 
 	read(buffer_ptr);
 }

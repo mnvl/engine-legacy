@@ -2,6 +2,7 @@
 #include <rpc/handler.h>
 #include <drive/model/clock.h>
 #include <drive/model/model.h>
+#include <drive/proto/id.pb.h>
 #include <drive/proto/service.pb.h>
 #include <util/logger.h>
 #include "service_handler.h"
@@ -17,7 +18,7 @@ void ServiceHandler::handle_handshake(boost::shared_ptr<rpc::Connection> const &
 	proto::service::handshake_reply reply;
 	reply.set_is_supported(message.protocol_version() == 1);
 
-	connection_ptr->write(reply);
+	connection_ptr->write(proto::SERVICE_HANDSHAKE_REPLY, reply);
 }
 
 void ServiceHandler::handle_time_sync(boost::shared_ptr<rpc::Connection> const &connection_ptr, rpc::Buffer &buf)
@@ -27,7 +28,7 @@ void ServiceHandler::handle_time_sync(boost::shared_ptr<rpc::Connection> const &
 
 	proto::service::time_sync_reply reply;
 	reply.set_server_time(model::Model::clock().millisecs());
-	connection_ptr->write(reply);
+	connection_ptr->write(proto::SERVICE_TIME_SYNC_REPLY, reply);
 }
 
 void ServiceHandler::handle_logic_error(boost::shared_ptr<rpc::Connection> const &connection_ptr, rpc::Buffer &buf)

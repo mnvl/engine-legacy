@@ -66,7 +66,7 @@
 			{
 				rpc::Header h;
 				h.id = id;
-				h.len = sizeof(h) + message.size();
+				h.len = message.size();
 				out->write(&h, sizeof(h));
 			}
 
@@ -123,7 +123,7 @@
 			{
 				rpc::Header h;
 				h.id = index_;
-				h.len = sizeof(h) + message.size();
+				h.len = message.size();
 				buffer->write(&h, sizeof(h));
 			}
 
