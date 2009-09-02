@@ -8,7 +8,7 @@ namespace client
 
 Global::Global()
 {
-	window_.reset(new platform::Window("starmasters"));
+	window_.reset(new platform::Window("drive"));
 	input_.reset(new platform::Input(window_.get()));
 	keyboard_.reset(new platform::Keyboard(input_.get()));
 	mouse_.reset(new platform::Mouse(input_.get()));
@@ -20,11 +20,11 @@ Global::~Global()
 {
 }
 
-void Global::Start()
+void Global::start()
 {
 }
 
-void Global::Run()
+void Global::run()
 {
 	while (window_->run_message_loop())
 	{
@@ -34,7 +34,7 @@ void Global::Run()
 	}
 }
 
-void Global::Stop()
+void Global::stop()
 {
 }
 

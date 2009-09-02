@@ -19,9 +19,9 @@ public:
 	Global();
 	~Global();
 
-	void Start();
-	void Run();
-	void Stop();
+	void start();
+	void run();
+	void stop();
 
 	static Global &instance();
 

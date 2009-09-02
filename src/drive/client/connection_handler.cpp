@@ -1,13 +1,77 @@
 
-#include "global.h"
+#include <rpc/connection.h>
+#include <rpc/client_service.h>
+#include <util/logger.h>
+#include "connection_handler.h"
 
 namespace drive
 {
 namespace client
 {
 
+class ConnectionHandler::Impl
+{
+public:
+	Impl(ConnectionHandler *handler):
+		handler_(handler),
+		service_(handler)
+	{
+	}
+
+	~Impl()
+	{
+	}
+
+	void connect(std::string const &host, std::string const &port)
+	{
+		service_.connect(host, port);
+	}
+
+	void start()
+	{
+		service_.start(1);
+	}
+
+	void stop()
+	{
+		service_.stop();
+	}
+
+	void wait()
+	{
+		service_.wait();
+	}
+
+private:
+	ConnectionHandler *handler_;
+	rpc::ClientService service_;
+};
+
+ConnectionHandler::ConnectionHandler():
+	impl_(new Impl(this))
+{
+}
+
+ConnectionHandler::~ConnectionHandler()
+{
+}
+
+void ConnectionHandler::connect(std::string const &host, std::string const &port)
+{
+	impl_->connect(host, port);
+	impl_->start();
+}
+
+void ConnectionHandler::stop()
+{
+	impl_->stop();
+	impl_->wait();
+}
+
 void ConnectionHandler::on_connect(boost::shared_ptr<rpc::Connection> const &connection_ptr)
 {
+	boost::system::error_code dummy_error_code;
+	LOG_DEBUG("connected to " << connection_ptr->socket().remote_endpoint(dummy_error_code));
 }
 
 void ConnectionHandler::on_read(boost::shared_ptr<rpc::Connection> const &connection_ptr, boost::uint16_t id, rpc::Buffer &buf)
@@ -16,6 +80,8 @@ void ConnectionHandler::on_read(boost::shared_ptr<rpc::Connection> const &connec
 
 void ConnectionHandler::on_error(boost::shared_ptr<rpc::Connection> const &connection_ptr, boost::system::error_code const &error)
 {
+	boost::system::error_code dummy_error_code;
+	LOG_ERROR("error on " << connection_ptr->socket().remote_endpoint(dummy_error_code) << ": " << error);
 }
 
 }
