@@ -1,4 +1,7 @@
 
+#include <boost/thread/mutex.hpp>
+#include <boost/thread/locks.hpp>
+#include <rpc/handler.h>
 #include <rpc/connection.h>
 #include <rpc/client_service.h>
 #include <util/logger.h>
@@ -11,12 +14,13 @@ namespace drive
 namespace client
 {
 
-class ConnectionHandler::Impl
+class ConnectionHandler::Impl:
+	public rpc::Handler,
+	public boost::noncopyable
 {
 public:
-	Impl(ConnectionHandler *handler):
-		handler_(handler),
-		service_(handler)
+	Impl():
+		service_(this)
 	{
 	}
 
@@ -44,13 +48,77 @@ public:
 		service_.wait();
 	}
 
+	bool is_connected() const
+	{
+		boost::unique_lock<boost::mutex> lock(mutex_);
+		return is_connected_;
+	}
+
+	bool have_error() const
+	{
+		boost::unique_lock<boost::mutex> lock(mutex_);
+		return have_error_;
+	}
+
+	std::string error_message() const
+	{
+		boost::unique_lock<boost::mutex> lock(mutex_);
+		return error_message_;
+	}
+
+	bool get_message(boost::uint16_t &id, rpc::BufferPtr &buffer)
+	{
+		boost::unique_lock<boost::mutex> lock(mutex_);
+		if (incoming_messages_.empty()) return false;
+
+		message_t &message = incoming_messages_.front();
+
+		id = message.first;
+		buffer = message.second;
+
+		incoming_messages_.pop_front();
+
+		return true;
+	}
+
 private:
-	ConnectionHandler *handler_;
+	typedef std::pair<boost::uint16_t, rpc::BufferPtr> message_t;
+
+	mutable boost::mutex mutex_;
 	rpc::ClientService service_;
+	bool is_connected_, have_error_;
+	std::string error_message_;
+	std::deque<message_t> incoming_messages_;
+
+    void on_connect(boost::shared_ptr<rpc::Connection> const &connection_ptr)
+	{
+		boost::unique_lock<boost::mutex> lock(mutex_);
+
+		boost::system::error_code dummy_error_code;
+		LOG_DEBUG("connected to " << connection_ptr->socket().remote_endpoint(dummy_error_code));
+
+		is_connected_ = true;
+	}
+
+	void on_read(boost::shared_ptr<rpc::Connection> const &connection_ptr, boost::uint16_t id, rpc::Buffer &buf)
+	{
+		boost::unique_lock<boost::mutex> lock(mutex_);
+		incoming_messages_.push_back(message_t(id, rpc::BufferPtr(new rpc::Buffer(buf))));
+	}
+
+	void on_error(boost::shared_ptr<rpc::Connection> const &connection_ptr, boost::system::error_code const &error)
+	{
+		boost::unique_lock<boost::mutex> lock(mutex_);
+
+		have_error_ = true;
+		error_message_ = error.message();
+
+		boost::system::error_code dummy_error_code;
+		LOG_ERROR("error on " << connection_ptr->socket().remote_endpoint(dummy_error_code) << ": " << error);
+	}
 };
 
-ConnectionHandler::ConnectionHandler():
-	impl_(new Impl(this))
+ConnectionHandler::ConnectionHandler()
 {
 }
 
@@ -60,55 +128,36 @@ ConnectionHandler::~ConnectionHandler()
 
 void ConnectionHandler::connect(std::string const &host, std::string const &port)
 {
+	impl_.reset(new Impl());
 	impl_->connect(host, port);
 	impl_->start();
 }
 
-void ConnectionHandler::stop()
+void ConnectionHandler::disconnect()
 {
 	impl_->stop();
 	impl_->wait();
+	impl_.reset();
 }
 
-void ConnectionHandler::on_connect(boost::shared_ptr<rpc::Connection> const &connection_ptr)
+bool ConnectionHandler::is_connected() const
 {
-	boost::system::error_code dummy_error_code;
-	LOG_DEBUG("connected to " << connection_ptr->socket().remote_endpoint(dummy_error_code));
-
-	proto::service::handshake message;
-	message.set_protocol_version(1);
-	connection_ptr->write(proto::SERVICE_HANDSHAKE, message);
+	return impl_ && impl_->is_connected();
 }
 
-void ConnectionHandler::on_read(boost::shared_ptr<rpc::Connection> const &connection_ptr, boost::uint16_t id, rpc::Buffer &buf)
+bool ConnectionHandler::have_error() const
 {
-	switch (id)
-	{
-	case proto::SERVICE_HANDSHAKE_REPLY:
-	{
-		proto::service::handshake_reply reply;
-		reply.ParseFromArray(buf.read_ptr(), buf.read_bytes_available());
-
-		if (!reply.is_supported()) {
-			LOG_ERROR("protocol version is not supported by server");
-			throw CloseConnectionException();
-		}
-
-		LOG_DEBUG("handshake completed");
-
-		break;
-	}
-
-	default:
-		LOG_ERROR("invalid message " << id);
-		throw CloseConnectionException();
-	}
+	return impl_->have_error();
 }
 
-void ConnectionHandler::on_error(boost::shared_ptr<rpc::Connection> const &connection_ptr, boost::system::error_code const &error)
+std::string ConnectionHandler::error_message() const
 {
-	boost::system::error_code dummy_error_code;
-	LOG_ERROR("error on " << connection_ptr->socket().remote_endpoint(dummy_error_code) << ": " << error);
+	return impl_->error_message();
+}
+
+bool ConnectionHandler::get_message(boost::uint16_t &id, rpc::BufferPtr &buffer)
+{
+	return impl_->get_message(id, buffer);
 }
 
 }

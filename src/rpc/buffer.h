@@ -4,9 +4,12 @@
 #include <string.h>
 #include <new>
 #include <exception>
+#include <boost/shared_ptr.hpp>
 
 namespace rpc
 {
+
+typedef boost::shared_ptr<class Buffer> BufferPtr;
 
 class Buffer
 {

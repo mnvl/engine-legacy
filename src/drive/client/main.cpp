@@ -12,7 +12,7 @@ INT WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpstrCmdLine, INT
 		drive::client::Global::connection_handler().connect("localhost", "17171");
 		drive::client::Global::instance().run();
 		drive::client::Global::instance().stop();
-		drive::client::Global::connection_handler().stop();
+		drive::client::Global::connection_handler().disconnect();
 	}
 	catch (std::exception const &error)
 	{
