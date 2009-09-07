@@ -14,6 +14,8 @@
 namespace rpc
 {
 
+typedef boost::shared_ptr<class Connection> ConnectionPtr;
+
 class Connection:
 		public boost::noncopyable,
 		public boost::enable_shared_from_this<Connection>
@@ -24,7 +26,7 @@ public:
 	boost::asio::ip::tcp::socket &socket() { return socket_; }
 
 	void start();
-	void write(boost::shared_ptr<Buffer> const &buffer_ptr);
+	void write(BufferPtr const &buffer_ptr);
 	void write(boost::uint16_t id, google::protobuf::Message const &message);
 
 private:
@@ -35,11 +37,11 @@ private:
 	boost::asio::ip::tcp::socket socket_;
 
 	boost::mutex write_queue_mutex_;
-	std::list<boost::shared_ptr<Buffer> > write_queue_;
+	std::list<BufferPtr > write_queue_;
 
 	void schedule_write();
-	void read(boost::shared_ptr<Buffer> const &buffer_ptr);
-	void handle_read(boost::shared_ptr<Buffer> const &buffer_ptr,
+	void read(BufferPtr const &buffer_ptr);
+	void handle_read(BufferPtr const &buffer_ptr,
 		size_t bytes_transferred, boost::system::error_code const &error);
 	void handle_write(size_t bytes_transferred, boost::system::error_code const &error);
 };

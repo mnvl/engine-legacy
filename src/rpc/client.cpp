@@ -22,6 +22,8 @@ public:
 
 	~Impl()
 	{
+		stop();
+		wait();
 	}
 
 	void connect(std::string const &host, std::string const &port)
@@ -62,7 +64,12 @@ public:
 		return error_message_;
 	}
 
-	boost::tuple<boost::uint16_t, rpc::BufferPtr> get_message()
+	void send(boost::uint16_t id, google::protobuf::Message const &message)
+	{
+		connection_->write(id, message);
+	}
+
+	boost::tuple<boost::uint16_t, rpc::BufferPtr> receive()
 	{
 		boost::unique_lock<boost::mutex> lock(mutex_);
 
@@ -76,6 +83,7 @@ public:
 private:
 	mutable boost::mutex mutex_;
 	rpc::ClientService service_;
+	rpc::ConnectionPtr connection_;
 	bool is_connected_, have_error_;
 	std::string error_message_;
 	std::deque<boost::tuple<boost::uint16_t, rpc::BufferPtr> > incoming_messages_;
@@ -88,6 +96,7 @@ private:
 		LOG_DEBUG("connected to " << connection_ptr->socket().remote_endpoint(dummy_error_code));
 
 		is_connected_ = true;
+		connection_ = connection_ptr;
 	}
 
 	void on_read(boost::shared_ptr<rpc::Connection> const &connection_ptr, boost::uint16_t id, rpc::Buffer &buf)
@@ -145,9 +154,14 @@ std::string Client::error_message() const
 	return impl_->error_message();
 }
 
-boost::tuple<boost::uint16_t, rpc::BufferPtr> Client::get_message()
+void Client::send(boost::uint16_t id, google::protobuf::Message const &message)
 {
-	return impl_->get_message();
+	return impl_->send(id, message);
+}
+
+boost::tuple<boost::uint16_t, rpc::BufferPtr> Client::receive()
+{
+	return impl_->receive();
 }
 
 }

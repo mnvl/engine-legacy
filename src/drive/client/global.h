@@ -7,6 +7,7 @@
 #include <platform/mouse.h>
 #include <graphic/renderer.h>
 #include <rpc/client.h>
+#include "dispatcher.h"
 
 namespace drive
 {
@@ -37,6 +38,7 @@ private:
 	boost::scoped_ptr<platform::Mouse> mouse_;
 	boost::scoped_ptr<graphic::Renderer> renderer_;
 	boost::scoped_ptr<rpc::Client> client_;
+	boost::scoped_ptr<Dispatcher> dispatcher_;
 };
 
 }

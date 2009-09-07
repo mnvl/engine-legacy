@@ -14,6 +14,7 @@ Global::Global()
 	mouse_.reset(new platform::Mouse(input_.get()));
 	renderer_.reset(new graphic::Renderer(window_.get()));
 	client_.reset(new rpc::Client());
+	dispatcher_.reset(new Dispatcher());
 }
 
 Global::~Global()
@@ -28,6 +29,8 @@ void Global::run()
 {
 	while (window_->run_message_loop())
 	{
+		dispatcher_->tick();
+
 		renderer_->begin_frame();
 
 		renderer_->finish_frame();
