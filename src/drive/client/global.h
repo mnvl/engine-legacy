@@ -6,7 +6,7 @@
 #include <platform/keyboard.h>
 #include <platform/mouse.h>
 #include <graphic/renderer.h>
-#include "connection_handler.h"
+#include "connection.h"
 
 namespace drive
 {
@@ -25,9 +25,9 @@ public:
 
 	static Global &instance();
 
-	static ConnectionHandler &connection_handler()
+	static Connection &connection()
 	{
-		return *instance().connection_handler_.get();
+		return *instance().connection_.get();
 	}
 
 private:
@@ -36,7 +36,7 @@ private:
 	boost::scoped_ptr<platform::Keyboard> keyboard_;
 	boost::scoped_ptr<platform::Mouse> mouse_;
 	boost::scoped_ptr<graphic::Renderer> renderer_;
-	boost::scoped_ptr<ConnectionHandler> connection_handler_;
+	boost::scoped_ptr<Connection> connection_;
 };
 
 }

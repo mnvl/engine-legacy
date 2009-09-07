@@ -3,17 +3,18 @@
 #include <rpc/buffer.h>
 #include <boost/noncopyable.hpp>
 #include <boost/scoped_ptr.hpp>
+#include <boost/tuple/tuple.hpp>
 
 namespace drive
 {
 namespace client
 {
 
-class ConnectionHandler: public boost::noncopyable
+class Connection: public boost::noncopyable
 {
 public:
-	ConnectionHandler();
-	~ConnectionHandler();
+	Connection();
+	~Connection();
 
 	void connect(std::string const &host, std::string const &port);
 	void disconnect();
@@ -22,7 +23,7 @@ public:
 	bool have_error() const;
 	std::string error_message() const;
 
-	bool get_message(boost::uint16_t &id, rpc::BufferPtr &buffer);
+	boost::tuple<boost::uint16_t, rpc::BufferPtr> get_message();
 
 private:
 	class Impl;

@@ -7,14 +7,14 @@
 #include <util/logger.h>
 #include <drive/proto/id.pb.h>
 #include <drive/proto/service.pb.h>
-#include "connection_handler.h"
+#include "connection.h"
 
 namespace drive
 {
 namespace client
 {
 
-class ConnectionHandler::Impl:
+class Connection::Impl:
 	public rpc::Handler,
 	public boost::noncopyable
 {
@@ -66,29 +66,23 @@ public:
 		return error_message_;
 	}
 
-	bool get_message(boost::uint16_t &id, rpc::BufferPtr &buffer)
+	boost::tuple<boost::uint16_t, rpc::BufferPtr> get_message()
 	{
 		boost::unique_lock<boost::mutex> lock(mutex_);
-		if (incoming_messages_.empty()) return false;
 
-		message_t &message = incoming_messages_.front();
+		if (incoming_messages_.empty()) return boost::tuple<boost::uint16_t, rpc::BufferPtr>();
 
-		id = message.first;
-		buffer = message.second;
-
+		boost::tuple<boost::uint16_t, rpc::BufferPtr> result = incoming_messages_.front();
 		incoming_messages_.pop_front();
-
-		return true;
+		return result;
 	}
 
 private:
-	typedef std::pair<boost::uint16_t, rpc::BufferPtr> message_t;
-
 	mutable boost::mutex mutex_;
 	rpc::ClientService service_;
 	bool is_connected_, have_error_;
 	std::string error_message_;
-	std::deque<message_t> incoming_messages_;
+	std::deque<boost::tuple<boost::uint16_t, rpc::BufferPtr> > incoming_messages_;
 
     void on_connect(boost::shared_ptr<rpc::Connection> const &connection_ptr)
 	{
@@ -103,7 +97,7 @@ private:
 	void on_read(boost::shared_ptr<rpc::Connection> const &connection_ptr, boost::uint16_t id, rpc::Buffer &buf)
 	{
 		boost::unique_lock<boost::mutex> lock(mutex_);
-		incoming_messages_.push_back(message_t(id, rpc::BufferPtr(new rpc::Buffer(buf))));
+		incoming_messages_.push_back(boost::make_tuple(id, rpc::BufferPtr(new rpc::Buffer(buf))));
 	}
 
 	void on_error(boost::shared_ptr<rpc::Connection> const &connection_ptr, boost::system::error_code const &error)
@@ -118,46 +112,46 @@ private:
 	}
 };
 
-ConnectionHandler::ConnectionHandler()
+Connection::Connection()
 {
 }
 
-ConnectionHandler::~ConnectionHandler()
+Connection::~Connection()
 {
 }
 
-void ConnectionHandler::connect(std::string const &host, std::string const &port)
+void Connection::connect(std::string const &host, std::string const &port)
 {
 	impl_.reset(new Impl());
 	impl_->connect(host, port);
 	impl_->start();
 }
 
-void ConnectionHandler::disconnect()
+void Connection::disconnect()
 {
 	impl_->stop();
 	impl_->wait();
 	impl_.reset();
 }
 
-bool ConnectionHandler::is_connected() const
+bool Connection::is_connected() const
 {
 	return impl_ && impl_->is_connected();
 }
 
-bool ConnectionHandler::have_error() const
+bool Connection::have_error() const
 {
 	return impl_->have_error();
 }
 
-std::string ConnectionHandler::error_message() const
+std::string Connection::error_message() const
 {
 	return impl_->error_message();
 }
 
-bool ConnectionHandler::get_message(boost::uint16_t &id, rpc::BufferPtr &buffer)
+boost::tuple<boost::uint16_t, rpc::BufferPtr> Connection::get_message()
 {
-	return impl_->get_message(id, buffer);
+	return impl_->get_message();
 }
 
 }
