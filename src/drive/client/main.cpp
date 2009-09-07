@@ -9,10 +9,10 @@ INT WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpstrCmdLine, INT
 	{
 		util::Logger::instance().set_file("drive.log");
 		drive::client::Global::instance().start();
-		drive::client::Global::connection().connect("localhost", "17171");
+		drive::client::Global::client().connect("localhost", "17171");
 		drive::client::Global::instance().run();
 		drive::client::Global::instance().stop();
-		drive::client::Global::connection().disconnect();
+		drive::client::Global::client().disconnect();
 	}
 	catch (std::exception const &error)
 	{

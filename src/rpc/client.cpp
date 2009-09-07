@@ -1,20 +1,16 @@
 
 #include <boost/thread/mutex.hpp>
 #include <boost/thread/locks.hpp>
-#include <rpc/handler.h>
-#include <rpc/connection.h>
-#include <rpc/client_service.h>
 #include <util/logger.h>
-#include <drive/proto/id.pb.h>
-#include <drive/proto/service.pb.h>
+#include "handler.h"
 #include "connection.h"
+#include "client_service.h"
+#include "client.h"
 
-namespace drive
-{
-namespace client
+namespace rpc
 {
 
-class Connection::Impl:
+class Client::Impl:
 	public rpc::Handler,
 	public boost::noncopyable
 {
@@ -112,47 +108,46 @@ private:
 	}
 };
 
-Connection::Connection()
+Client::Client()
 {
 }
 
-Connection::~Connection()
+Client::~Client()
 {
 }
 
-void Connection::connect(std::string const &host, std::string const &port)
+void Client::connect(std::string const &host, std::string const &port)
 {
 	impl_.reset(new Impl());
 	impl_->connect(host, port);
 	impl_->start();
 }
 
-void Connection::disconnect()
+void Client::disconnect()
 {
 	impl_->stop();
 	impl_->wait();
 	impl_.reset();
 }
 
-bool Connection::is_connected() const
+bool Client::is_connected() const
 {
 	return impl_ && impl_->is_connected();
 }
 
-bool Connection::have_error() const
+bool Client::have_error() const
 {
 	return impl_->have_error();
 }
 
-std::string Connection::error_message() const
+std::string Client::error_message() const
 {
 	return impl_->error_message();
 }
 
-boost::tuple<boost::uint16_t, rpc::BufferPtr> Connection::get_message()
+boost::tuple<boost::uint16_t, rpc::BufferPtr> Client::get_message()
 {
 	return impl_->get_message();
 }
 
-}
 }

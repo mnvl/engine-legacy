@@ -1,20 +1,18 @@
 #pragma once
 
-#include <rpc/buffer.h>
 #include <boost/noncopyable.hpp>
 #include <boost/scoped_ptr.hpp>
 #include <boost/tuple/tuple.hpp>
+#include "buffer.h"
 
-namespace drive
-{
-namespace client
+namespace rpc
 {
 
-class Connection: public boost::noncopyable
+class Client: public boost::noncopyable
 {
 public:
-	Connection();
-	~Connection();
+	Client();
+	~Client();
 
 	void connect(std::string const &host, std::string const &port);
 	void disconnect();
@@ -30,5 +28,4 @@ private:
 	boost::scoped_ptr<Impl> impl_;
 };
 
-}
 }

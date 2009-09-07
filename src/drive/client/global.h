@@ -6,7 +6,7 @@
 #include <platform/keyboard.h>
 #include <platform/mouse.h>
 #include <graphic/renderer.h>
-#include "connection.h"
+#include <rpc/client.h>
 
 namespace drive
 {
@@ -25,9 +25,9 @@ public:
 
 	static Global &instance();
 
-	static Connection &connection()
+	static rpc::Client &client()
 	{
-		return *instance().connection_.get();
+		return *instance().client_.get();
 	}
 
 private:
@@ -36,7 +36,7 @@ private:
 	boost::scoped_ptr<platform::Keyboard> keyboard_;
 	boost::scoped_ptr<platform::Mouse> mouse_;
 	boost::scoped_ptr<graphic::Renderer> renderer_;
-	boost::scoped_ptr<Connection> connection_;
+	boost::scoped_ptr<rpc::Client> client_;
 };
 
 }

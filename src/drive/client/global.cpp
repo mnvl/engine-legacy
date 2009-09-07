@@ -13,7 +13,7 @@ Global::Global()
 	keyboard_.reset(new platform::Keyboard(input_.get()));
 	mouse_.reset(new platform::Mouse(input_.get()));
 	renderer_.reset(new graphic::Renderer(window_.get()));
-	connection_.reset(new Connection());
+	client_.reset(new rpc::Client());
 }
 
 Global::~Global()
