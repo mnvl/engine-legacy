@@ -100,18 +100,14 @@ void Connection::handle_read(BufferPtr const &buffer_ptr,
 	buffer_ptr->seek_write(bytes_transferred);
 
 	if (bytes_transferred == 0 ||
-		buffer_ptr->read_bytes_available() < sizeof(Header))
+		buffer_ptr->read_bytes_available() < sizeof(Header) ||
+		sizeof(Header) + reinterpret_cast<Header const *>(buffer_ptr->begin_ptr())->len > buffer_ptr->read_bytes_available())
 	{
 		return read(buffer_ptr);
 	}
 
 	Header h;
 	buffer_ptr->read((char *) &h, sizeof(h));
-
-	if (buffer_ptr->read_bytes_available() < h.len)
-	{
-		return read(buffer_ptr);
-	}
 
 	size_t total_length = h.len + sizeof(Header);
 

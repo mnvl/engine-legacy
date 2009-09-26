@@ -1,6 +1,5 @@
 
-#define BOOST_TEST_MODULE test_buffer
-#include <boost/test/included/unit_test.hpp>
+#include <boost/test/unit_test.hpp>
 #include <rpc/buffer.h>
 
 #if defined(min)
