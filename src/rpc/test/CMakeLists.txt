@@ -1,2 +1,0 @@
-
-MAKE_TEST_FROM_SOURCES (test_rpc rpc util ${ENGINE_LIBRARIES})
