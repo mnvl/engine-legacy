@@ -1,6 +1,5 @@
 
-#define BOOST_TEST_MODULE test_heightfield
-#include <boost/test/included/unit_test.hpp>
+#include <boost/test/unit_test.hpp>
 #include <boost/cstdint.hpp>
 #include <boost/scoped_ptr.hpp>
 #include <math/heightfield.h>

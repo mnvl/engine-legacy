@@ -1,9 +1,8 @@
 
-#define BOOST_TEST_MODULE test_triangle
-#include <boost/test/included/unit_test.hpp>
+#include <boost/test/unit_test.hpp>
 #include <math/triangle.h>
 
-BOOST_AUTO_TEST_SUITE(test_triangle)
+BOOST_AUTO_TEST_SUITE (test_triangle)
 
 BOOST_AUTO_TEST_CASE (test_triangle_trace)
 {

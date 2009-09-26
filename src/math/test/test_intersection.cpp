@@ -1,6 +1,5 @@
 
-#define BOOST_TEST_MODULE test_intersection
-#include <boost/test/included/unit_test.hpp>
+#include <boost/test/unit_test.hpp>
 #include <math/intersection.h>
 
 BOOST_AUTO_TEST_SUITE (test_intersection)
