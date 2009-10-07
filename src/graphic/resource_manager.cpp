@@ -9,6 +9,10 @@
 namespace graphic
 {
 
+static char ANIMATED_MODEL_FX[] = {
+    #include "animated_model.dump.h"
+};
+
 ResourceManager::ResourceManager(Renderer *renderer_ptr):
     renderer_ptr_(renderer_ptr)
 {
@@ -30,7 +34,7 @@ ResourceManager::ResourceManager(Renderer *renderer_ptr):
     }
 
     animated_model_shader_ptr_.reset(new Shader(renderer_ptr));
-    animated_model_shader_ptr_->load_from_file("animated_model.fx");
+    animated_model_shader_ptr_->load_from_buffer(ANIMATED_MODEL_FX, sizeof(ANIMATED_MODEL_FX));
 }
 
 ResourceManager::~ResourceManager()
