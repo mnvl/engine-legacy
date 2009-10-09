@@ -1,5 +1,7 @@
 
-local Model = dofile "lib/model.lua"
+dofile("lib/import.lua")
+
+local Model = import "lib/model.lua"
 
 local window = platform.Window()
 window:create("defence")
