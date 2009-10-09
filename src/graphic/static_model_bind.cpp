@@ -8,7 +8,7 @@ void graphic::StaticModel::bind(lua_State *L)
 
     module_(L, "graphic")
     [
-        class_<StaticModel>("StaticModel")
+        class_<StaticModel, Model>("StaticModel")
         .def(constructor<Renderer *>())
     ];
 }

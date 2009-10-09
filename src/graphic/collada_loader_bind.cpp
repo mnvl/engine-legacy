@@ -10,6 +10,7 @@ void graphic::ColladaLoader::bind(lua_State *L)
     [
         class_<ColladaLoader>("ColladaLoader")
         .def(constructor<std::string const &, Model *, Renderer *>())
+        .def("load", &ColladaLoader::load)
     ];
 }
 

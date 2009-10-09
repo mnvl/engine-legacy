@@ -1,6 +1,7 @@
 #pragma once
 
 #include <boost/ptr_container/ptr_vector.hpp>
+#include <luabind/lua_include.hpp>
 #include <graphic/joint.h>
 #include <graphic/animation.h>
 #include <graphic/mesh.h>
@@ -44,6 +45,8 @@ public:
 
     virtual void set_animation_time(math::scalar t);
     virtual void draw();
+
+    static void bind(lua_State *L);
 
 protected:
 	Renderer *renderer_ptr_;

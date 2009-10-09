@@ -1823,10 +1823,12 @@ renderer_ptr_(renderer_ptr)
 {
 }
 
-ColladaLoader::~ColladaLoader() {
+ColladaLoader::~ColladaLoader()
+{
 }
 
-void ColladaLoader::load() {
+void ColladaLoader::load()
+{
 	try
 	{
 		LOG_INFO("parsing collada file " << filename_);
