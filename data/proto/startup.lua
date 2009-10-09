@@ -1,5 +1,5 @@
 
-dofile("lib/import.lua")
+import = dofile("lib/import.lua")
 
 local Model = import "lib/model.lua"
 
