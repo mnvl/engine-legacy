@@ -1,15 +1,12 @@
 
+local Model = dofile "lib/model.lua"
+
 local window = platform.Window()
 window:create("defence")
 
 local renderer = graphic.Renderer(window)
 
-local model = graphic.StaticModel(renderer)
-
-local loader = graphic.ColladaLoader("pyramide4.dae", model, renderer)
-loader:load()
-
-model:set_animation_time(0)
+local model = Model.load_static(renderer, "pyramide4.lua")
 
 local camera = graphic.Camera()
 
