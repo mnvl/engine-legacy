@@ -9,6 +9,7 @@ void graphic::Model::bind(lua_State *L)
     module_(L, "graphic")
     [
         class_<Model>("Model")
+		.def("draw", &Model::draw)
     ];
 }
 

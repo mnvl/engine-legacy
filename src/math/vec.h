@@ -2,6 +2,7 @@
 
 #include <iosfwd>
 #include <algorithm>
+#include <luabind/lua_include.hpp>
 #include <math/scalar.h>
 
 namespace math {
@@ -53,6 +54,8 @@ namespace math {
 	template<class T> inline void minmax(vec<4,T> &v1,vec<4,T> &v2);
 
 	template<int N,class T> inline vec<N,T> normalize(const vec<N,T> &v);
+
+	void bind_vectors(lua_State *L);
 }
 
 template<class T>
@@ -678,12 +681,12 @@ operator<(const math::vec<2,L> &left,const math::vec<2,R> &right) {
 
 template<class L,class R> inline bool
 operator<(const math::vec<3,L> &left,const math::vec<3,R> &right) {
-	return left.x<right.x && left.y<right.y && left.z<right.z; 
+	return left.x<right.x && left.y<right.y && left.z<right.z;
 }
 
 template<class L,class R> inline bool
 operator<(const math::vec<4,L> &left,const math::vec<4,R> &right) {
-	return left.x<right.x && left.y<right.y && left.z<right.z && left.w<right.w;   
+	return left.x<right.x && left.y<right.y && left.z<right.z && left.w<right.w;
 }
 
 template<class L,class R> inline bool

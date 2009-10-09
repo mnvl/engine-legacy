@@ -5,7 +5,7 @@
 #include <d3dx9.h>
 #include <boost/scoped_ptr.hpp>
 #include <boost/intrusive_ptr.hpp>
-#include <luabind/lua_include.hpp>
+#include <lua.h>
 #include <math/matrix.h>
 #include <util/boost_com_intrusive_ptr.h>
 #include <platform/window.h>

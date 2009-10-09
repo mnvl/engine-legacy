@@ -1,4 +1,5 @@
 
+#include <luabind/luabind.hpp>
 #include <math/vec.h>
 
 template class math::vec<2>;
@@ -26,4 +27,22 @@ math::vec<3,T>::to_axis_angle(vec_type &axis, scalar_type &angle) const {
 
 	scalar_type t;
 	xy.to_polar(t, angle);
+}
+
+void math::bind_vectors(lua_State *L)
+{
+	using namespace luabind;
+
+	module(L, "math")
+	[
+		class_<vec<2> >("vec2")
+		.def(constructor<>()),
+
+		class_<vec<3> >("vec3")
+		.def(constructor<>())
+		.def(constructor<scalar, scalar, scalar>()),
+
+		class_<vec<4> >("vec4")
+		.def(constructor<>())
+	];
 }

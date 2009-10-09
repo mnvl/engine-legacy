@@ -5,6 +5,7 @@
 #include <luabind/luabind.hpp>
 #include <graphic/bind.h>
 #include <platform/window.h>
+#include <math/vec.h>
 #include <util/logger.h>
 
 class LuaStateHolder
@@ -20,6 +21,8 @@ public:
 
 		graphic::bind(L_);
 		platform::Window::bind(L_);
+
+		math::bind_vectors(L_);
 	}
 
     ~LuaStateHolder()
