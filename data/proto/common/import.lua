@@ -16,19 +16,14 @@ local make_package_stub = function(name)
 end
 
 local get_module_name = function(path)
-	local name
-
-	for str in string.gmatch(path, "(%w+).lua$") do
-		if name then error(string.format("multiple candidates for module name in path `%s'", path)) end
-		name = str
+	for name in string.gmatch(path, "(%w+).lua$") do
+		return name
 	end
 
-	if not name then error(string.format("could not get module name from path `%s'", path)) end
-
-	return name
+	error(string.format("could not get module name from path `%s'", path))
 end
 
-return function(path)
+local import = function(path)
 	local name = get_module_name(path)
 
 	do
@@ -36,7 +31,11 @@ return function(path)
 		if package then return package end
 	end
 
-	local chunk = assert(loadfile(path), string.format("could not locate package `%s'", name))
+	local chunk, error_message = loadfile(path)
+
+	if not chunk then
+		error(string.format("could not locate package `%s' from path `%s': %s", name, path, error_message))
+    end
 
 	imported[name] = make_package_stub(name)
 
@@ -45,3 +44,5 @@ return function(path)
 
 	return package
 end
+
+declare('import', import)

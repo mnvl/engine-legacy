@@ -1,14 +1,13 @@
 
-import = dofile("lib/import.lua")
+dofile("common/declare.lua")
+dofile("common/import.lua")
 
 local Model = import "lib/model.lua"
+local Main = import "lib/main.lua"
 
-local window = platform.Window()
-window:create("defence")
+Main.init()
 
-local renderer = graphic.Renderer(window)
-
-local model = Model.load_static(renderer, "pyramide4.lua")
+local model = Model.load_static("pyramide4.lua")
 
 local camera = graphic.Camera()
 
@@ -16,15 +15,15 @@ camera:set_perspective_projection(3.14/2, 4/3, 1, 1000)
 
 local x = 0
 
-while window:run_message_loop() do
-	renderer:begin_frame()
+while Main.get_window():run_message_loop() do
+	Main.get_renderer():begin_frame()
 
 	camera:set_eye_lookat_up(math.vec3(5 * math.sin(x), 0, 5 * math.cos(x)), math.vec3(0, 0, 0), math.vec3(0, 1, 0))
 
-	renderer:set_view_projection_from_camera(camera)
+	Main.get_renderer():set_view_projection_from_camera(camera)
 	model:draw()
 
-	renderer:finish_frame()
+	Main.get_renderer():finish_frame()
 
-	x = x + 0.001
+	x = x + 0.01
 end
