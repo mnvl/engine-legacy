@@ -5,6 +5,7 @@
 #include <d3dx9.h>
 #include <boost/scoped_ptr.hpp>
 #include <boost/intrusive_ptr.hpp>
+#include <luabind/lua_include.hpp>
 #include <math/matrix.h>
 #include <util/boost_com_intrusive_ptr.h>
 #include <platform/window.h>
@@ -30,6 +31,8 @@ public:
 	math::matrix<4,4> const &get_projection_matrix() const { return projection_matrix_; }
 
 	void set_view_projection_from_camera(Camera const &c);
+
+    static void bind(lua_State *L);
 
 private:
 	platform::Window *window_ptr_;

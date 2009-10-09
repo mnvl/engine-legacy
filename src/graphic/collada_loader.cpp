@@ -16,7 +16,7 @@
 #include <util/xerces_lcp_transcoder.h>
 #include <util/logger.h>
 #include <math/matrix.h>
-#include <graphic/collada_loader.h>
+#include "collada_loader.h"
 
 #if defined(max)
 #undef max

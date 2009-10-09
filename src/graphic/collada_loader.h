@@ -5,6 +5,7 @@
 #include <vector>
 #include <stdexcept>
 #include <xercesc/dom/DOM.hpp>
+#include <luabind/lua_include.hpp>
 #include <math/vec.h>
 #include <graphic/model.h>
 
@@ -26,6 +27,8 @@ public:
 	~ColladaLoader();
 
 	void load();
+
+    static void bind(lua_State *L);
 
 private:
 	std::string filename_;
