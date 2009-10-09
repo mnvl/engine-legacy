@@ -426,8 +426,8 @@ math::matrix<4,4,T>::direct(const point_type &dir) {
 }
 
 template<class T> void
-math::matrix<4,4,T>::lookat(const point_type &eye,const point_type &at,const point_type &up) {
-
+math::matrix<4,4,T>::lookat(const point_type &eye,const point_type &at,const point_type &up)
+{
 	point_type x_axis,y_axis,z_axis;
 
 	(z_axis=at-eye).normalize();
@@ -448,54 +448,54 @@ math::matrix<4,4,T>::lookat(const point_type &eye,const point_type &at,const poi
 }
 
 template<class T> void
-math::matrix<4,4,T>::ortho(scalar_type width,scalar_type height,scalar_type z_near,scalar_type z_far) {
+math::matrix<4,4,T>::ortho(scalar_type width,scalar_type height,scalar_type z_near,scalar_type z_far)
+{
+	ij[0][0] = 2/width;
+	ij[0][1] = 0;
+	ij[0][2] = 0;
+	ij[0][3] = 0;
 
-	ij[0][0]=2/width;
-	ij[0][1]=0;
-	ij[0][2]=0;
-	ij[0][3]=0;
-	
-	ij[1][0]=0;
-	ij[1][1]=2/height;
-	ij[1][2]=0;
-	ij[1][3]=0;
+	ij[1][0] = 0;
+	ij[1][1] = 2/height;
+	ij[1][2] = 0;
+	ij[1][3] = 0;
 
-	ij[2][0]=0;
-	ij[2][1]=0;
-	ij[2][2]=1/(z_far-z_near);
-	ij[2][3]=0;
+	ij[2][0] = 0;
+	ij[2][1] = 0;
+	ij[2][2] = 1 / (z_far - z_near);
+	ij[2][3] = 0;
 
-	ij[3][0]=0;
-	ij[3][1]=0;
-	ij[3][2]=z_near/(z_near-z_far);
-	ij[3][3]=1;
+	ij[3][0] = 0;
+	ij[3][1] = 0;
+	ij[3][2] = z_near / (z_near - z_far);
+	ij[3][3] = 0;
 }
 
 template<class T> void
-math::matrix<4,4,T>::perspective(scalar_type fovy,scalar_type aspect,scalar_type z_near,scalar_type z_far) {
-
+math::matrix<4,4,T>::perspective(scalar_type fovy,scalar_type aspect,scalar_type z_near,scalar_type z_far)
+{
 	scalar_type h = 1 / tan(fovy/2);
 	scalar_type w = h / aspect;
 
-	ij[0][0]=w;
-	ij[0][1]=0;
-	ij[0][2]=0;
-	ij[0][3]=0;
-	
-	ij[1][0]=0;
-	ij[1][1]=h;
-	ij[1][2]=0;
-	ij[1][3]=0;
+	ij[0][0] = w;
+	ij[0][1] = 0;
+	ij[0][2] = 0;
+	ij[0][3] = 0;
 
-	ij[2][0]=0;
-	ij[2][1]=0;
-	ij[2][2]=z_far/(z_far-z_near);
-	ij[2][3]=1;
-	
-	ij[3][0]=0;
-	ij[3][1]=0;
-	ij[3][2]=-z_near*z_far/(z_far-z_near);
-	ij[3][3]=0;
+	ij[1][0] = 0;
+	ij[1][1] = h;
+	ij[1][2] = 0;
+	ij[1][3] = 0;
+
+	ij[2][0] = 0;
+	ij[2][1] = 0;
+	ij[2][2] = z_far/(z_far-z_near);
+	ij[2][3] = 1;
+
+	ij[3][0] = 0;
+	ij[3][1] = 0;
+	ij[3][2] = -z_near*z_far/(z_far-z_near);
+	ij[3][3] = 0;
 }
 
 template<class T> bool
@@ -504,7 +504,7 @@ math::matrix<4,4,T>::decompose(point_type &scale,point_type &shear,point_type &r
 {
  	int i, j;
  	matrix_type locmat, pmat, invpmat, tinvpmat;
-	
+
  	/* Vector4 type and functions need to be added to the common set. */
  	vec_type prhs, psol;
  	point_type row[3], pdum3;

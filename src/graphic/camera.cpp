@@ -8,6 +8,29 @@ Camera::Camera() {
 	set_eye_lookat_up(math::vec<3>(0,0,0),math::vec<3>(0,0,1),math::vec<3>(0,1,0));
 }
 
+void Camera::set_perspective_projection(math::scalar fov,math::scalar aspect,
+	math::scalar z_near,math::scalar z_far)
+{
+	field_of_view	= fov;
+	aspect_ratio	= aspect;
+	near_plane	= z_near;
+	far_plane	= z_far;
+
+	projection_matrix.perspective(fov, aspect, z_near, z_far);
+}
+
+void Camera::set_orthographic_projection(math::scalar width,math::scalar height,
+	math::scalar z_near,math::scalar z_far)
+{
+	field_of_view = math::PI/4;
+	aspect_ratio = width / height;
+	near_plane = z_near;
+	far_plane = z_far;
+
+	view_matrix.translation(-width/2,-height/2,0);
+	projection_matrix.ortho(width, height, z_near, z_far);
+}
+
 void Camera::set_eye_lookat_up(math::vec<3> const &eye_pt, math::vec<3> const &lookat_pt, math::vec<3> const &up_dir)
 {
     eye_point = eye_pt;
@@ -47,29 +70,6 @@ void Camera::set_position_quaternion(math::vec<3> const &pos, const math::quater
 	math::vec<3> up = math::vec<3>(0, 1, 0) * tf;
 
 	set_eye_lookat_up(pos, pos + dir, up);
-}
-
-void Camera::set_perspective_projection(math::scalar fov,math::scalar aspect,
-	math::scalar z_near,math::scalar z_far)
-{
-	field_of_view	= fov;
-	aspect_ratio	= aspect;
-	near_plane	= z_near;
-	far_plane	= z_far;
-
-	projection_matrix.perspective(fov, aspect, z_near, z_far);
-}
-
-void Camera::set_orthographic_projection(math::scalar width,math::scalar height,
-	math::scalar z_near,math::scalar z_far)
-{
-	field_of_view = math::PI/4;
-	aspect_ratio = width / height;
-	near_plane = z_near;
-	far_plane = z_far;
-
-	view_matrix.translation(-width/2,-height/2,0);
-	projection_matrix.ortho(width, height, z_near, z_far);
 }
 
 }
