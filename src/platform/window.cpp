@@ -6,10 +6,9 @@
 namespace platform
 {
 
-Window::Window(char const *title):
+Window::Window():
 	handle_(0)
 {
-	if (title) create(title);
 }
 
 Window::~Window() {

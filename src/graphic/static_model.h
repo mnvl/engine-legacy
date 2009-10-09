@@ -1,6 +1,6 @@
 #pragma once
 
-#include <luabind/luabind.hpp>
+#include <luabind/lua_include.hpp>
 #include <graphic/model.h>
 #include <graphic/memory_model.h>
 #include <graphic/static_mesh.h>

@@ -1,6 +1,6 @@
 #pragma once
 
-#include <luabind/luabind.hpp>
+#include <luabind/lua_include.hpp>
 
 namespace graphic
 {
