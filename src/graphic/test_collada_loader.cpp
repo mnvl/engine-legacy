@@ -144,23 +144,23 @@ void test_materials()
 
     graphic::Material const &m0 = model_ptr->materials[0];
     BOOST_ASSERT (m0.get_name() == "blinn1");
-    BOOST_ASSERT (m0.get_texture_name() == "file2.tga");
+    BOOST_ASSERT (m0.get_texture_name().find("file2.tga") != std::string::npos);
 
     graphic::Material const &m1 = model_ptr->materials[1];
     BOOST_ASSERT (m1.get_name() == "blinn2");
-    BOOST_ASSERT (m1.get_texture_name() == "file4.tga");
+    BOOST_ASSERT (m1.get_texture_name().find("file4.tga") != std::string::npos);
 
     graphic::Material const &m2 = model_ptr->materials[2];
     BOOST_ASSERT (m2.get_name() == "lambert1");
-    BOOST_ASSERT (m2.get_texture_name() == "file1.tga");
+    BOOST_ASSERT (m2.get_texture_name().find("file1.tga") != std::string::npos);
 
     graphic::Material const &m3 = model_ptr->materials[3];
     BOOST_ASSERT (m3.get_name() == "phong1");
-    BOOST_ASSERT (m3.get_texture_name() == "file3.tga");
+    BOOST_ASSERT (m3.get_texture_name().find("file3.tga") != std::string::npos);
 
     graphic::Material const &m4 = model_ptr->materials[4];
     BOOST_ASSERT (m4.get_name() == "phong2");
-    BOOST_ASSERT (m4.get_texture_name() == "file5.tga");
+    BOOST_ASSERT (m4.get_texture_name().find("file5.tga") != std::string::npos);
 
     {
         graphic::MemoryMesh const *mesh1_ptr = (graphic::MemoryMesh const *) &model_ptr->meshes[0];
