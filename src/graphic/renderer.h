@@ -29,8 +29,10 @@ public:
     ResourceManager *get_resource_manager() const { return resource_manager_.get(); }
 	math::matrix<4,4> const &get_view_matrix() const { return view_matrix_; }
 	math::matrix<4,4> const &get_projection_matrix() const { return projection_matrix_; }
+    math::matrix<4,4> const &get_world_matrix() const { return world_matrix_; }
 
 	void set_view_projection_from_camera(Camera const &c);
+    void set_world_matrix(math::matrix<4,4> const &tf);
 
     static void bind(lua_State *L);
 
@@ -39,6 +41,7 @@ private:
 	int width_, height_;
 	bool fullscreen_;
 
+    math::matrix<4,4> world_matrix_;
 	math::matrix<4,4> view_matrix_;
 	math::matrix<4,4> projection_matrix_;
 

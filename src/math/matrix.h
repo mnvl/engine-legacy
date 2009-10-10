@@ -143,6 +143,7 @@ public:
 	void decompose(vec_type &rotation) const;
 };
 
+// must be binary-compatible with D3DMATRIX, see graphic/renderer.cpp
 template<class T>
 class math::matrix<4,4,T> {
 public:

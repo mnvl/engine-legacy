@@ -14,6 +14,7 @@ void graphic::Renderer::bind(lua_State *L)
 		.def("begin_frame", &Renderer::begin_frame)
 		.def("finish_frame", &Renderer::finish_frame)
 		.def("set_view_projection_from_camera", &Renderer::set_view_projection_from_camera)
+        .def("set_world_matrix", &Renderer::set_world_matrix)
     ];
 }
 

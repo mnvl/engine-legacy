@@ -95,11 +95,19 @@ void Renderer::finish_frame()
 
 void Renderer::set_view_projection_from_camera(Camera const &c)
 {
-	view_matrix_ = c.get_view_matrix();
-	device_ptr_->SetTransform(D3DTS_VIEW, (D3DMATRIX const *) &view_matrix_);
+    HRESULT hr;
 
-	projection_matrix_ = c.get_projection_matrix();
-	device_ptr_->SetTransform(D3DTS_PROJECTION, (D3DMATRIX const *) &projection_matrix_);
+	hr = device_ptr_->SetTransform(D3DTS_VIEW, (D3DMATRIX const *) &c.get_view_matrix());
+	if (FAILED(hr)) throw exception::directx_error(hr);
+
+	hr = device_ptr_->SetTransform(D3DTS_PROJECTION, (D3DMATRIX const *) &c.get_projection_matrix());
+	if (FAILED(hr)) throw exception::directx_error(hr);
+}
+
+void Renderer::set_world_matrix(math::matrix<4,4> const &tf)
+{
+    HRESULT hr = device_ptr_->SetTransform(D3DTS_WORLD, (D3DMATRIX const *) &tf);
+	if (FAILED(hr)) throw exception::directx_error(hr);
 }
 
 }
