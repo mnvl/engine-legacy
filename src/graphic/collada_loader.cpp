@@ -37,13 +37,14 @@ namespace collada_elements
 
 	class root_element {
 	public:
-		virtual Model *get_model() = 0;
-		virtual library_visual_scenes_e *get_visual_scenes() = 0;
-		virtual library_geometries_e *get_geometries() = 0;
-		virtual library_controllers_e *get_controllers() = 0;
-		virtual library_materials_e *get_materials() = 0;
-		virtual library_effects_e *get_effects() = 0;
-		virtual library_images_e *get_images() = 0;
+		virtual Model *get_model() const = 0;
+		virtual library_visual_scenes_e *get_visual_scenes() const = 0;
+		virtual library_geometries_e *get_geometries() const = 0;
+		virtual library_controllers_e *get_controllers() const = 0;
+		virtual library_materials_e *get_materials() const = 0;
+		virtual library_effects_e *get_effects() const = 0;
+		virtual library_images_e *get_images() const = 0;
+		virtual boost::filesystem::path const &get_basepath() const = 0;
 	};
 
 	class element {
@@ -830,7 +831,7 @@ namespace collada_elements
 			for (boost::ptr_vector<geometry_e>::iterator it = geometries_.begin(); it != geometries_.end(); it++)
 			{
 				LOG_DEBUG("building mesh id = " << it->get_id() << ", name = " << it->get_name());
-	
+
 				Mesh *mesh_ptr = get_model()->create_mesh();
 
 				mesh_ptr->id = it->get_id();
@@ -1330,7 +1331,7 @@ namespace collada_elements
 		{
 			std::map<std::string, std::string>::const_iterator it = textures_.find(component_name);
 			if (it != textures_.end()) return it->second;
-				
+
 			return std::string();
 		}
 	};
@@ -1397,12 +1398,13 @@ namespace collada_elements
 			std::auto_ptr<Material> material_ptr(new Material(get_model()->get_renderer()));
 
 			std::string const &diffuse_texture = get_surface_filename("diffuse");
-			std::string const &specular_texture = get_surface_filename("specular");
 
 			if (diffuse_texture.size())
 			{
-				LOG_DEBUG("texture = " << diffuse_texture);
-				material_ptr->set_texture(diffuse_texture);
+				std::string const &filename= (get_root()->get_basepath() / diffuse_texture).native_file_string();
+
+				LOG_DEBUG("texture = " << diffuse_texture << ", filename = " << filename);
+				material_ptr->set_texture(filename);
 			}
 			else
 			{
@@ -1411,6 +1413,8 @@ namespace collada_elements
 
 			// NOT IMPLEMENTED
 			/*
+			std::string const &specular_texture = get_surface_filename("specular");
+
 			if (specular_texture.size())
 			{
 				LOG_DEBUG("specular_texture = " << diffuse_texture);
@@ -1709,6 +1713,7 @@ namespace collada_elements
 		boost::scoped_ptr<library_materials_e> materials_;
 		boost::scoped_ptr<library_effects_e> effects_;
 		boost::scoped_ptr<library_images_e> images_;
+		boost::filesystem::path basepath_;
 
 		void process_child(std::string const &child_name, std::string const &child_id, xercesc::DOMElement const *child_ptr)
 		{
@@ -1743,45 +1748,51 @@ namespace collada_elements
 		}
 
 	public:
-		collada_e():
-		current_model_ptr_(0)
+		collada_e(std::string const &filename):
+			current_model_ptr_(0),
+			basepath_(boost::filesystem::path(filename, boost::filesystem::native).parent_path())
 		{
 			set_root(this);
 		}
 
-		Model *get_model()
+		Model *get_model() const
 		{
 			return current_model_ptr_;
 		}
 
-		library_visual_scenes_e *get_visual_scenes()
+		library_visual_scenes_e *get_visual_scenes() const
 		{
 			return visual_scenes_.get();
 		}
 
-		library_geometries_e *get_geometries() 
+		library_geometries_e *get_geometries() const
 		{
 			return geometries_.get();
 		}
 
-		library_controllers_e *get_controllers()
+		library_controllers_e *get_controllers() const
 		{
 			return controllers_.get();
 		}
 
-		library_materials_e *get_materials()
+		library_materials_e *get_materials() const
 		{
 			return materials_.get();
 		}
 
-		library_effects_e *get_effects()
+		library_effects_e *get_effects() const
 		{
 			return effects_.get();
 		}
 
-		library_images_e *get_images()
+		library_images_e *get_images() const
 		{
 			return images_.get();
+		}
+
+		boost::filesystem::path const &get_basepath() const
+		{
+			return basepath_;
 		}
 
 		void check()
@@ -1851,7 +1862,7 @@ void ColladaLoader::load()
 		if (util::xerces_lcp_transcode(root_node->getLocalName()) != "COLLADA")
 			throw load_error("root element is not <COLLADA />");
 
-		collada_elements::collada_e dummy;
+		collada_elements::collada_e dummy(filename_);
 		dummy.go((xercesc::DOMElement *) root_node);
 		dummy.build_model(model_ptr_);
 
