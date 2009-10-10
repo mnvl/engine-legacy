@@ -36,7 +36,10 @@ void BasicStaticMesh<T>::draw(Joint *joint_ptr)
     ResourceManager *resource_manager_ptr = renderer_ptr->get_resource_manager();
 	IDirect3DDevice9 *device_ptr = renderer_ptr->get_device();
 
-    device_ptr->SetTransform(D3DTS_WORLDMATRIX(1), (D3DMATRIX const *) joint_ptr->matrix.ij);
+	{
+		math::matrix<4,4> tf = joint_ptr->matrix * renderer_ptr->get_world_matrix();
+		device_ptr->SetTransform(D3DTS_WORLD, (D3DMATRIX const *) tf.ij);
+	}
 
 	device_ptr->SetVertexDeclaration(resource_manager_ptr->get_vertex_decl<vertex_t>());
     device_ptr->SetStreamSource(0, vertex_buffer_.get(), 0, sizeof(vertex_t));
