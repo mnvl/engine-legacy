@@ -96,7 +96,6 @@ void Model::set_animation_time(math::scalar t)
 	}
 }
 
-
 void Model::draw()
 {
 	for (joints_type::iterator it = joints.begin(); it != joints.end(); it++)

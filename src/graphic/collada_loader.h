@@ -28,8 +28,6 @@ public:
 
 	void load();
 
-    static void bind(lua_State *L);
-
 private:
 	std::string filename_;
 	Model *model_ptr_;
