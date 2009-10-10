@@ -134,7 +134,7 @@ void MemoryMesh::draw_static(Joint *joint_ptr) const
 			resource_manager_ptr->get_default_material()->select();
 		}
 
-		device_ptr->SetTransform(D3DTS_WORLDMATRIX(0), (D3DMATRIX const *) joint_ptr->matrix.ij);
+		device_ptr->SetTransform(D3DTS_WORLDMATRIX(1), (D3DMATRIX const *) joint_ptr->matrix.ij);
 
 		device_ptr->DrawIndexedPrimitiveUP(D3DPT_TRIANGLELIST, it->minimal_vertex_index, it->vertices_count,
 			it->triangles_count, &indices_[it->first_index_offset], D3DFMT_INDEX32, &vertices_[0], sizeof(vertex_t));
