@@ -1,4 +1,5 @@
 
+#include <crtdbg.h>
 #include <windows.h>
 #include <lualib.h>
 #include <xercesc/util/PlatformUtils.hpp>
@@ -9,10 +10,10 @@
 #include <math/matrix.h>
 #include <util/logger.h>
 
-class LuaStateHolder
+class Main
 {
 public:
-    LuaStateHolder():
+    Main():
 		L_(lua_open())
 	{
 		xercesc::XMLPlatformUtils::Initialize();
@@ -28,7 +29,7 @@ public:
         math::bind_matrix(L_);
 	}
 
-    ~LuaStateHolder()
+    ~Main()
 	{
 		lua_close(L_);
 
@@ -52,7 +53,7 @@ INT WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpstrCmdLine, INT
 {
     try
     {
-		LuaStateHolder().run(lpstrCmdLine);
+		Main().run(lpstrCmdLine);
     }
     catch (std::exception const &error)
     {
