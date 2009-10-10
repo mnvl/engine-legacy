@@ -21,7 +21,7 @@ FUNCTION(MAKE_CHAR_ARRAY_FROM_FILES GENERATED_FILES)
     ADD_CUSTOM_COMMAND(
       OUTPUT ${DUMP_FILE}
       COMMAND ${LUA_INTERPRETER}
-      ARGS ${ENGINE_SCRIPT_DIR}/make_char_array_from_file.lua ${FILE_PATH} ${DUMP_FILE}
+      ARGS ${ENGINE_LUA_DIR}/util/make_char_array_from_file.lua ${FILE_PATH} ${DUMP_FILE}
       DEPENDS ${FILE_PATH} luai
       COMMENT "Running file to char array converter on ${FILE}"
       VERBATIM)
