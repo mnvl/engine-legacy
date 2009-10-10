@@ -1,7 +1,7 @@
 #pragma once
 
 #include <boost/ptr_container/ptr_vector.hpp>
-#include <luabind/lua_include.hpp>
+#include <lua.h>
 #include <graphic/joint.h>
 #include <graphic/animation.h>
 #include <graphic/mesh.h>

@@ -2,7 +2,7 @@
 
 #include <iosfwd>
 #include <algorithm>
-#include <luabind/lua_include.hpp>
+#include <lua.h>
 #include <math/scalar.h>
 
 namespace math {
@@ -55,7 +55,7 @@ namespace math {
 
 	template<int N,class T> inline vec<N,T> normalize(const vec<N,T> &v);
 
-	void bind_vectors(lua_State *L);
+	void bind_vec(lua_State *L);
 }
 
 template<class T>

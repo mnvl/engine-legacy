@@ -29,7 +29,7 @@ math::vec<3,T>::to_axis_angle(vec_type &axis, scalar_type &angle) const {
 	xy.to_polar(t, angle);
 }
 
-void math::bind_vectors(lua_State *L)
+void math::bind_vec(lua_State *L)
 {
 	using namespace luabind;
 

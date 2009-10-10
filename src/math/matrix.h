@@ -1,6 +1,7 @@
 #pragma once
 
 #include <iosfwd>
+#include <lua.h>
 #include <math/scalar.h>
 #include <math/vec.h>
 #include <math/quaternion.h>
@@ -26,6 +27,8 @@ namespace math {
 
 	template <int M, int N, class T> bool
 	operator ==(math::matrix<M, N, T> const &lhs, math::matrix<M, N, T> const &rhs);
+
+	void bind_matrix(lua_State *L);
 }
 
 template<class T>

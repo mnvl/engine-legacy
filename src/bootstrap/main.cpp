@@ -6,6 +6,7 @@
 #include <graphic/bind.h>
 #include <platform/window.h>
 #include <math/vec.h>
+#include <math/matrix.h>
 #include <util/logger.h>
 
 class LuaStateHolder
@@ -20,9 +21,11 @@ public:
 		luabind::open(L_);
 
 		graphic::bind(L_);
+
 		platform::Window::bind(L_);
 
-		math::bind_vectors(L_);
+		math::bind_vec(L_);
+        math::bind_matrix(L_);
 	}
 
     ~LuaStateHolder()

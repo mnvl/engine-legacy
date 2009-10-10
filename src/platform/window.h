@@ -1,7 +1,7 @@
 #pragma once
 
 #include <windows.h>
-#include <luabind/lua_include.hpp>
+#include <lua.h>
 
 namespace platform {
 
