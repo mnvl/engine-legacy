@@ -1,21 +1,21 @@
 
 local imported = {}
 
-local make_package_stub = function(name)
+local make_stub = function(name)
 	local stub = {}
-	local stub_meta = {
+	local meta = {
 		__index = function(_, index)
-			error(string.format("member `%s' is accessed before package `%s' is fully imported", index, name))
+			error(string.format("member `%s' is accessed before package `%s' is fully imported or package have no such member", index, name))
 		end,
 		__newindex = function(_, index, _)
-			error(string.format("member `%s' is assigned a value before package `%s' is fully imported", index, name))
+			error(string.format("member `%s' is assigned a value before package `%s' is fully imported or package have no such member", index, name))
 		end,
 	}
-	setmetatable(stub, stub_meta)
+	setmetatable(stub, meta)
 	return stub
 end
 
-local get_module_name = function(path)
+local get_name = function(path)
 	for name in string.gmatch(path, "(%w+).lua$") do
 		return name
 	end
@@ -24,7 +24,7 @@ local get_module_name = function(path)
 end
 
 local import = function(path)
-	local name = get_module_name(path)
+	local name = get_name(path)
 
 	do
 		local package = imported[name]
@@ -37,10 +37,14 @@ local import = function(path)
 		error(string.format("could not locate package `%s' from path `%s': %s", name, path, error_message))
     end
 
-	imported[name] = make_package_stub(name)
-
-	local package = chunk()
+	local package = make_stub(name)
 	imported[name] = package
+
+	local exports = chunk()
+
+	for k, v in pairs(exports) do
+		rawset(package, k, v)
+	end
 
 	return package
 end
