@@ -5,6 +5,7 @@
 #include <xercesc/util/PlatformUtils.hpp>
 #include <luabind/luabind.hpp>
 #include <graphic/bind.h>
+#include <platform/timer.h>
 #include <platform/window.h>
 #include <math/vec.h>
 #include <math/matrix.h>
@@ -23,6 +24,7 @@ public:
 
 		graphic::bind(L_);
 
+		platform::Timer::bind(L_);
 		platform::Window::bind(L_);
 
 		math::bind_vec(L_);

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <windows.h>
+#include <lua.h>
 #include <boost/cstdint.hpp>
 #include <exception/winapi_error.h>
 
@@ -19,20 +20,22 @@ public:
 	~Timer() {
 	}
 
-	double get_current_value() const {
+	static double get_current_time() {
 		LARGE_INTEGER counter;
 		if (!QueryPerformanceCounter(&counter))
 			throw exception::winapi_error();
 
-		return double(counter.QuadPart) / double(performance_frequency_);
+		return double(counter.QuadPart) / double(instance().performance_frequency_);
 	}
 
-	static Timer &singleton() {
+	static void bind(lua_State *L);
+
+private:
+	static Timer &instance() {
 		static Timer instance;
 		return instance;
 	}
 
-private:
 	boost::int64_t performance_frequency_;
 };
 
