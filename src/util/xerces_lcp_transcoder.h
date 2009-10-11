@@ -4,22 +4,24 @@
 #include <xercesc/dom/DOM.hpp>
 #include <xercesc/util/XMLString.hpp>
 #include <xercesc/parsers/XercesDOMParser.hpp>
-#include <boost/scoped_array.hpp>
+#include <boost/shared_array.hpp>
 #include <boost/lexical_cast.hpp>
 
 namespace util
 {
 
 inline std::string xerces_lcp_transcode(XMLCh const *str) {
-	// TODO: free using XMLString::release
-	boost::scoped_array<char> buffer(xercesc::XMLString::transcode(str));
-	return std::string(buffer.get());
+	char *buffer = xercesc::XMLString::transcode(str);
+	std::string result(buffer);
+	xercesc::XMLString::release(&buffer);
+	return result;
 }
 
 inline std::basic_string<XMLCh> xerces_lcp_transcode(char const *str) {
-	// TODO: free using XMLString::release
-	boost::scoped_array<XMLCh> buffer(xercesc::XMLString::transcode(str));
-	return std::basic_string<XMLCh>(buffer.get());
+	XMLCh *buffer = xercesc::XMLString::transcode(str);
+	std::basic_string<XMLCh> result(buffer);
+	xercesc::XMLString::release(&buffer);
+	return result;
 }
 
 inline std::basic_string<XMLCh> xerces_lcp_transcode(std::string const &str) {
