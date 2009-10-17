@@ -14,6 +14,8 @@ public:
 	~AnimatedModel();
 
 	Mesh *create_mesh();
+
+    static void bind(lua_State *L);
 };
 
 
