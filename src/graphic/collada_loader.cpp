@@ -1748,9 +1748,8 @@ namespace collada_elements
 		}
 
 	public:
-		collada_e(std::string const &filename):
-			current_model_ptr_(0),
-			basepath_(boost::filesystem::path(filename, boost::filesystem::native).parent_path())
+		collada_e():
+			current_model_ptr_(0)
 		{
 			set_root(this);
 		}
@@ -1801,6 +1800,11 @@ namespace collada_elements
 			if (!geometries_) throw std::logic_error("<library_geometries> not found");
 		}
 
+		void set_filename(std::string const &filename)
+		{
+			basepath_ = boost::filesystem::path(filename, boost::filesystem::native).parent_path();
+		}
+
 		void build_model(Model *model_ptr)
 		{
 			current_model_ptr_ = model_ptr;
@@ -1827,8 +1831,21 @@ namespace collada_elements
 namespace graphic
 {
 
+class ColladaLoader::Impl
+{
+public:
+	collada_elements::collada_e *get_root()
+	{
+		return &root_;
+	}
+
+private:
+	collada_elements::collada_e root_;
+};
+
 ColladaLoader::ColladaLoader(Model *model_ptr):
-model_ptr_(model_ptr)
+model_ptr_(model_ptr),
+impl_(new Impl())
 {
 }
 
@@ -1860,9 +1877,8 @@ void ColladaLoader::load(std::string const &filename)
 		if (util::xerces_lcp_transcode(root_node->getLocalName()) != "COLLADA")
 			throw load_error("root element is not <COLLADA />");
 
-		collada_elements::collada_e dummy(filename);
-		dummy.go((xercesc::DOMElement *) root_node);
-		dummy.build_model(model_ptr_);
+		impl_->get_root()->set_filename(filename);
+		impl_->get_root()->go((xercesc::DOMElement *) root_node);
 
 		LOG_INFO("finished parsing " << filename);
 	}
@@ -1870,6 +1886,11 @@ void ColladaLoader::load(std::string const &filename)
 	{
 		throw load_error("error loading collada " + filename + ": " + error.what());
 	}
+}
+
+void ColladaLoader::build_model()
+{
+	impl_->get_root()->build_model(model_ptr_);
 }
 
 }

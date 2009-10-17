@@ -4,6 +4,7 @@
 #include <map>
 #include <vector>
 #include <stdexcept>
+#include <boost/scoped_ptr.hpp>
 #include <xercesc/dom/DOM.hpp>
 #include <lua.h>
 #include <math/vec.h>
@@ -27,12 +28,16 @@ public:
 	~ColladaLoader();
 
 	void load(std::string const &filename);
+	void build_model();
 
 	static void bind(lua_State *L);
 
 private:
 	Model *model_ptr_;
 	Renderer *renderer_ptr_;
+
+	class Impl;
+	boost::scoped_ptr<Impl> impl_;
 };
 
 }

@@ -11,6 +11,7 @@ void graphic::ColladaLoader::bind(lua_State *L)
         class_<ColladaLoader>("ColladaLoader")
         .def(constructor<Model *>())
 		.def("load", &ColladaLoader::load)
+		.def("build_model", &ColladaLoader::build_model)
     ];
 }
 
