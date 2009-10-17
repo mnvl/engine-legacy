@@ -22,7 +22,7 @@ Joint *Model::create_joint()
 
 void Model::load_from_collada(std::string const &filename)
 {
-    ColladaLoader(filename, this, renderer_ptr_).load();
+    ColladaLoader(this).load(filename);
 }
 
 void Model::load_from_raw_i16_heightfield(std::string const &filename, math::matrix<4,4> const &tf,

@@ -26,7 +26,7 @@ void test_plane()
 	Fixture dummy;
 
     std::auto_ptr<graphic::MemoryModel> model_ptr(new graphic::MemoryModel());
-    graphic::ColladaLoader(sources_directory + "/test_collada_loader_plane.xml", model_ptr.get()).load();
+    graphic::ColladaLoader(model_ptr.get()).load(sources_directory + "/test_collada_loader_plane.xml");
 
     BOOST_ASSERT (model_ptr->meshes.size() == 1);
     BOOST_ASSERT (model_ptr->joints.size() == 1);
@@ -56,7 +56,7 @@ void test_joint()
 	Fixture dummy;
 
     std::auto_ptr<graphic::MemoryModel> model_ptr(new graphic::MemoryModel());
-    graphic::ColladaLoader(sources_directory + "/test_collada_loader_joint.xml", model_ptr.get()).load();
+    graphic::ColladaLoader(model_ptr.get()).load(sources_directory + "/test_collada_loader_joint.xml");
 
     BOOST_ASSERT (model_ptr->meshes.size() == 1);
     BOOST_ASSERT (model_ptr->joints.size() == 2);
@@ -89,7 +89,7 @@ void test_animation()
 	Fixture dummy;
 
     std::auto_ptr<graphic::MemoryModel> model_ptr(new graphic::MemoryModel());
-    graphic::ColladaLoader(sources_directory + "/test_collada_loader_animation.xml", model_ptr.get()).load();
+    graphic::ColladaLoader(model_ptr.get()).load(sources_directory + "/test_collada_loader_animation.xml");
 
     BOOST_ASSERT (model_ptr->meshes.size() == 1);
     BOOST_ASSERT (model_ptr->joints.size() == 4);
@@ -133,7 +133,7 @@ void test_materials()
 	Fixture dummy;
 
     std::auto_ptr<graphic::MemoryModel> model_ptr(new graphic::MemoryModel());
-    graphic::ColladaLoader(sources_directory + "/test_collada_loader_materials.xml", model_ptr.get()).load();
+    graphic::ColladaLoader(model_ptr.get()).load(sources_directory + "/test_collada_loader_materials.xml");
 
     BOOST_ASSERT (model_ptr->meshes.size() == 2);
     BOOST_ASSERT (model_ptr->joints.size() == 2);

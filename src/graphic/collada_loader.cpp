@@ -1827,10 +1827,8 @@ namespace collada_elements
 namespace graphic
 {
 
-ColladaLoader::ColladaLoader(std::string const &filename, Model *model_ptr, Renderer *renderer_ptr):
-filename_(filename),
-model_ptr_(model_ptr),
-renderer_ptr_(renderer_ptr)
+ColladaLoader::ColladaLoader(Model *model_ptr):
+model_ptr_(model_ptr)
 {
 }
 
@@ -1838,11 +1836,11 @@ ColladaLoader::~ColladaLoader()
 {
 }
 
-void ColladaLoader::load()
+void ColladaLoader::load(std::string const &filename)
 {
 	try
 	{
-		LOG_INFO("parsing collada file " << filename_);
+		LOG_INFO("parsing collada file " << filename);
 
 		boost::scoped_ptr<xercesc::XercesDOMParser> parser(new xercesc::XercesDOMParser());
 		parser->setValidationScheme(xercesc::XercesDOMParser::Val_Always);
@@ -1851,7 +1849,7 @@ void ColladaLoader::load()
 		boost::scoped_ptr<xercesc::ErrorHandler> error_handler(new xercesc::HandlerBase());
 		parser->setErrorHandler(error_handler.get());
 
-		parser->parse(filename_.c_str());
+		parser->parse(filename.c_str());
 
 		xercesc::DOMDocument *document = parser->getDocument();
 
@@ -1862,15 +1860,15 @@ void ColladaLoader::load()
 		if (util::xerces_lcp_transcode(root_node->getLocalName()) != "COLLADA")
 			throw load_error("root element is not <COLLADA />");
 
-		collada_elements::collada_e dummy(filename_);
+		collada_elements::collada_e dummy(filename);
 		dummy.go((xercesc::DOMElement *) root_node);
 		dummy.build_model(model_ptr_);
 
-		LOG_INFO("finished parsing " << filename_);
+		LOG_INFO("finished parsing " << filename);
 	}
 	catch (std::exception const &error)
 	{
-		throw load_error("error loading collada " + filename_ + ": " + error.what());
+		throw load_error("error loading collada " + filename + ": " + error.what());
 	}
 }
 

@@ -23,13 +23,14 @@ public:
 		}
 	};
 
-	ColladaLoader(std::string const &filename, Model *model_ptr, Renderer *renderer_ptr = 0);
+	ColladaLoader(Model *model_ptr);
 	~ColladaLoader();
 
-	void load();
+	void load(std::string const &filename);
+
+	static void bind(lua_State *L);
 
 private:
-	std::string filename_;
 	Model *model_ptr_;
 	Renderer *renderer_ptr_;
 };

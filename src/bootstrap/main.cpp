@@ -55,6 +55,7 @@ INT WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpstrCmdLine, INT
 {
     try
     {
+		util::Logger::instance().set_file("log");
 		Main().run(lpstrCmdLine);
     }
     catch (std::exception const &error)
