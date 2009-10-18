@@ -91,6 +91,19 @@ void MemoryMesh::transform_vertices(Joint const *joint_ptr, std::vector<vertex_t
 {
 	result = vertices_;
 
+    std::vector<math::matrix<4,4> > joint_matrix_array;
+    joint_matrix_array.reserve(joint_index_transform.size());
+
+    for (joint_index_transform_type::const_iterator it = joint_index_transform.begin();
+         it != joint_index_transform.end(); it++)
+    {
+		math::matrix<4,4> t = bind_shape_matrix *
+			inverted_bind_matrices[*it] *
+			get_model()->joints[*it].matrix;
+
+        joint_matrix_array.push_back(t);
+    }
+
 	for (size_t i = 0; i < vertices_.size(); i++)
 	{
 		math::vec<3> pos(0, 0, 0);
@@ -101,12 +114,7 @@ void MemoryMesh::transform_vertices(Joint const *joint_ptr, std::vector<vertex_t
 		for (size_t j = 0; j < 8; j++)
 		{
 			size_t joint_index = joint_index_transform[indices.i[j]];
-
-			pos += vertices_[i].position *
-				bind_shape_matrix *
-				inverted_bind_matrices[joint_index] *
-				model_ptr_->joints[joint_index].matrix *
-				factors.i[j];
+			pos += vertices_[i].position * joint_matrix_array[joint_index] * factors.i[j];
 		}
 
 		result[i].position = pos;
@@ -124,7 +132,6 @@ void MemoryMesh::draw_static(Joint *joint_ptr) const
 	for (triangles_list_type::const_iterator it = triangles_list.begin();
 		it != triangles_list.end(); it++)
 	{
-
 		if (it->material_ptr)
 		{
 			it->material_ptr->select();

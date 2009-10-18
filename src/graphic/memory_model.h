@@ -24,6 +24,8 @@ public:
 	virtual void draw();
 	void draw_static();
 	void draw_animated();
+
+	static void bind(lua_State *L);
 };
 
 }
