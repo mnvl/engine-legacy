@@ -29,11 +29,12 @@ void AnimatedMesh::draw(Joint *joint_ptr)
     Shader *shader_ptr = resource_manager_ptr->get_animated_model_shader();
 
 	math::matrix<4,4> world_view_projection_matrix =
+		joint_ptr->matrix *
         renderer_ptr->get_world_matrix() *
         renderer_ptr->get_view_matrix() *
         renderer_ptr->get_projection_matrix();
 
-	shader_ptr->get()->SetMatrix("world_view_projection_matrix", (D3DXMATRIX const *) &world_view_projection_matrix);
+	shader_ptr->get()->SetMatrix("view_projection_matrix", (D3DXMATRIX const *) &world_view_projection_matrix);
 
     std::vector<math::matrix<4,4> > joint_matrix_array;
     joint_matrix_array.reserve(joint_index_transform.size());

@@ -1,7 +1,6 @@
 
 static const int MAX_MATRICES = 26;
-int maximal_influenting_joint_index = 7;
-float4x4 world_view_projection_matrix : VIEWPROJECTION;
+float4x4 view_projection_matrix : VIEWPROJECTION;
 float4x4 joint_matrix_array[MAX_MATRICES] : WORLDMATRIXARRAY;
 
 struct VS_INPUT
@@ -53,7 +52,7 @@ VS_OUTPUT VS(const VS_INPUT i, uniform int count)
 		}
 	}
 
-    o.position = mul(float4(position.xyz, 1), world_view_projection_matrix);
+    o.position = mul(float4(position.xyz, 1), view_projection_matrix);
     o.texcoords  = i.texcoords.xy;
 
     return o;
@@ -75,6 +74,6 @@ technique t0
 {
     pass p0
     {
-        VertexShader = (vertex_shaders_array[maximal_influenting_joint_index]);
+        VertexShader = (vertex_shaders_array[7]);
     }
 }
