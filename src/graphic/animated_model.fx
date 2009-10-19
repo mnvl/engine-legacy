@@ -31,7 +31,7 @@ VS_OUTPUT VS(const VS_INPUT i)
     
     for (int index1 = 0; index1 < 4; index1++)
     {
-        position += mul(i.position, joint_matrix_array[indices1[index1]]) * weights1[index1];
+        position += mul(float4(i.position.xyz, 1.0), joint_matrix_array[indices1[index1]]) * weights1[index1];
     }
 
     int indices2[4] = (int[4]) i.joints2;
@@ -39,10 +39,10 @@ VS_OUTPUT VS(const VS_INPUT i)
 
     for (int index2 = 0; index2 < 4; index2++)
     {
-        position += mul(i.position, joint_matrix_array[indices2[index2]]) * weights2[index2];
+        position += mul(float4(i.position.xyz, 1.0), joint_matrix_array[indices2[index2]]) * weights2[index2];
     }
 
-    o.position = mul(float4(position.xyz, 1), view_projection_matrix);
+    o.position = mul(float4(position.xyz, 1.0), view_projection_matrix);
     o.texcoords  = i.texcoords.xy;
 
     return o;
