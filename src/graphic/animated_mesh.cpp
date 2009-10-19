@@ -28,13 +28,14 @@ void AnimatedMesh::draw(Joint *joint_ptr)
 	IDirect3DDevice9 *device_ptr = renderer_ptr->get_device();
     Shader *shader_ptr = resource_manager_ptr->get_animated_model_shader();
 
-	math::matrix<4,4> world_view_projection_matrix =
+	math::matrix<4,4> view_projection_matrix =
 		joint_ptr->matrix *
         renderer_ptr->get_world_matrix() *
         renderer_ptr->get_view_matrix() *
         renderer_ptr->get_projection_matrix();
 
-	shader_ptr->get()->SetMatrix("view_projection_matrix", (D3DXMATRIX const *) &world_view_projection_matrix);
+	hr = shader_ptr->get()->SetMatrix("view_projection_matrix", (D3DXMATRIX const *) &view_projection_matrix);
+	if (FAILED(hr)) throw exception::directx_error(hr);
 
     std::vector<math::matrix<4,4> > joint_matrix_array;
     joint_matrix_array.reserve(joint_index_transform.size());
@@ -52,10 +53,14 @@ void AnimatedMesh::draw(Joint *joint_ptr)
     hr = shader_ptr->get()->SetMatrixArray("joint_matrix_array", (D3DXMATRIX const *) &joint_matrix_array[0], joint_matrix_array.size());
     if (FAILED(hr)) throw exception::directx_error(hr);
 
-	device_ptr->SetVertexDeclaration(resource_manager_ptr->get_vertex_decl<vertex_t>());
-    device_ptr->SetStreamSource(0, vertex_buffer_.get(), 0, sizeof(vertex_t));
+	hr = device_ptr->SetVertexDeclaration(resource_manager_ptr->get_vertex_decl<vertex_t>());
+	if (FAILED(hr)) throw exception::directx_error(hr);
 
-    device_ptr->SetIndices(index_buffer_.get());
+    hr = device_ptr->SetStreamSource(0, vertex_buffer_.get(), 0, sizeof(vertex_t));
+	if (FAILED(hr)) throw exception::directx_error(hr);
+
+    hr = device_ptr->SetIndices(index_buffer_.get());
+	if (FAILED(hr)) throw exception::directx_error(hr);
 
     UINT passes_count;
     hr = shader_ptr->get()->Begin(&passes_count, D3DXFX_DONOTSAVESTATE);

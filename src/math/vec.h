@@ -58,6 +58,7 @@ namespace math {
 	void bind_vec(lua_State *L);
 }
 
+#pragma pack(push, 1)
 template<class T>
 class math::vec<2,T> {
 public:
@@ -67,7 +68,6 @@ public:
 	typedef vec<arity,scalar_type> vec_type;
 	typedef size_type mask_type;
 
-	#pragma pack(push,1)
 	union {
 		struct {
 			scalar_type x,y;
@@ -87,7 +87,6 @@ public:
 
 		scalar_type i[arity];
 	};
-	#pragma pack(pop)
 
 	vec() {
 	}
@@ -208,7 +207,9 @@ public:
 
 	void to_polar(scalar_type &modulus, scalar_type &angle) const;
 };
+#pragma pack(pop)
 
+#pragma pack(push, 1)
 template<class T>
 class math::vec<3,T> {
 public:
@@ -219,7 +220,6 @@ public:
 	typedef vec<arity,scalar_type> vec_type;
 	typedef size_type mask_type;
 
-	#pragma pack(push,1)
 	union {
 		struct {
 			scalar_type x,y,z;
@@ -235,7 +235,6 @@ public:
 
 		scalar_type i[arity];
 	};
-	#pragma pack(pop)
 
 	vec() {
 	}
@@ -379,7 +378,9 @@ public:
 
 	void to_axis_angle(vec_type &axis, scalar_type &angle) const;
 };
+#pragma pack(pop)
 
+#pragma pack(push, 1)
 template<class T>
 class math::vec<4,T> {
 public:
@@ -389,7 +390,6 @@ public:
 	typedef vec<arity,scalar_type> vec_type;
 	typedef size_type mask_type;
 
-	#pragma pack(push,1)
 	union {
 		struct {
 			scalar_type x,y,z,w;
@@ -405,7 +405,6 @@ public:
 
 		scalar_type i[arity];
 	};
-	#pragma pack(pop)
 
 	vec() {
 	}
@@ -541,7 +540,9 @@ public:
 		w = mask & (1<<3) ? v1.w : v2.w;
 	}
 };
+#pragma pack(pop)
 
+#pragma pack(push, 1)
 template<int N,class T>
 class math::vec {
 public:
@@ -612,6 +613,7 @@ public:
 		if(abs(l) > 0) *this /= l;
 	}
 };
+#pragma pack(pop)
 
 template<int N,class T> inline math::vec<N,T>
 operator *(const math::vec<N,T> &lhs,T rhs) {

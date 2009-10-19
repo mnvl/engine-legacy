@@ -113,8 +113,7 @@ void MemoryMesh::transform_vertices(Joint const *joint_ptr, std::vector<vertex_t
 
 		for (size_t j = 0; j < 8; j++)
 		{
-			size_t joint_index = joint_index_transform[indices.i[j]];
-			pos += vertices_[i].position * joint_matrix_array[joint_index] * factors.i[j];
+			pos += (vertices_[i].position * joint_matrix_array.at(indices.i[j])) * factors.i[j];
 		}
 
 		result[i].position = pos;
@@ -174,7 +173,7 @@ void MemoryMesh::draw_animated(Joint *joint_ptr) const
 			resource_manager_ptr->get_default_material()->select();
 		}
 
-		device_ptr->SetTransform(D3DTS_WORLDMATRIX(0), (D3DMATRIX const *) joint_ptr->matrix.ij);
+		device_ptr->SetTransform(D3DTS_WORLD, (D3DMATRIX const *) joint_ptr->matrix.ij);
 
 		device_ptr->DrawIndexedPrimitiveUP(D3DPT_TRIANGLELIST, it->minimal_vertex_index, it->vertices_count,
 			it->triangles_count, &indices_[it->first_index_offset], D3DFMT_INDEX32, &transformed_vertices[0], sizeof(vertex_t));

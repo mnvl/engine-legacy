@@ -35,6 +35,7 @@ ResourceManager::ResourceManager(Renderer *renderer_ptr):
 
     animated_model_shader_ptr_.reset(new Shader(renderer_ptr));
     animated_model_shader_ptr_->load_from_buffer(ANIMATED_MODEL_FX, sizeof(ANIMATED_MODEL_FX));
+	//animated_model_shader_ptr_->load_from_file("../src/graphic/animated_model.fx");
 }
 
 ResourceManager::~ResourceManager()
