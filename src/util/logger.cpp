@@ -1,9 +1,46 @@
 
+#include <windows.h>
 #include <boost/date_time/posix_time/posix_time.hpp>
-#include <util/Logger.h>
+#include "logger.h"
 
 namespace util
 {
+
+Logger::Output::~Output()
+{
+}
+
+namespace
+{
+
+class DebugStringOutput: public Logger::Output
+{
+public:
+	void print_line(char const *message)
+	{
+		OutputDebugString(message);
+	}
+};
+
+class StdoutOutput: public Logger::Output
+{
+public:
+	void print_line(char const *message)
+	{
+		fputs(message, stdout);
+	}
+};
+
+class StderrOutput: public Logger::Output
+{
+public:
+	void print_line(char const *message)
+	{
+		fputs(message, stderr);
+	}
+};
+
+}
 
 char const *Logger::get_level_text(level_t level)
 {
@@ -18,7 +55,7 @@ char const *Logger::get_level_text(level_t level)
 	}
 }
 
-Logger::message::message(Logger *Logger_ptr, level_t level, char const *filename,
+Logger::Message::Message(Logger *Logger_ptr, level_t level, char const *filename,
 	int line, char const *pretty_function):
 Logger_ptr_(Logger_ptr)
 {
@@ -28,16 +65,13 @@ Logger_ptr_(Logger_ptr)
 			<< pretty_function << '\t';
 }
 
-Logger::message::~message()
+Logger::Message::~Message()
 {
-	stream_ << '\n';
-
-	Logger_ptr_->write(stream_.str());
+	Logger_ptr_->print_line(stream_.str().c_str());
 }
 
 Logger::Logger()
 {
-    set_stderr();
 }
 
 Logger::~Logger()
@@ -50,32 +84,27 @@ Logger &Logger::instance()
 	return singleton;
 }
 
-void Logger::set_stdout()
+void Logger::print_line(char const *str)
 {
-	file_.close();
-	file_.set_handle(1);
+	for (outputs_t::iterator it = outputs_.begin(); it != outputs_.end(); it++)
+	{
+		(*it)->print_line(str);
+	}
 }
 
-void Logger::set_stderr()
+void Logger::enable_output_debug_string()
 {
-	file_.close();
-    file_.set_handle(2);
+	outputs_.push_back(OutputPtr(new DebugStringOutput()));
 }
 
-void Logger::set_file(std::string const &filename)
+void Logger::enable_stdout()
 {
-	file_.close();
-	file_.open(filename.c_str(), O_WRONLY | O_CREAT);
+	outputs_.push_back(OutputPtr(new StdoutOutput()));
 }
 
-void Logger::write(char const *buffer, size_t length)
+void Logger::enable_stderr()
 {
-    file_.write(buffer, length);
-}
-
-void Logger::write(std::string const &str)
-{
-	file_.write(str.c_str(), str.size());
+	outputs_.push_back(OutputPtr(new StderrOutput()));
 }
 
 }

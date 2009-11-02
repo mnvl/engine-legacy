@@ -27,12 +27,7 @@ public:
         hr = D3DXCreateEffectFromFile(renderer_ptr_->get_device(), filename.c_str(), 0, 0, D3DXSHADER_DEBUG, 0,
             &effect_ptr, &compilation_errors_ptr);
 
-        if (compilation_errors_ptr && compilation_errors_ptr->GetBufferSize() > 0)
-        {
-            LOG_WARNING("compilation messages:");
-            util::Logger::instance().write((char const *) compilation_errors_ptr->GetBufferPointer(), compilation_errors_ptr->GetBufferSize());
-            compilation_errors_ptr->Release();
-        }
+		log_compilation_errors(compilation_errors_ptr);
 
         if (FAILED(hr)) throw exception::directx_error(hr);
 
@@ -50,12 +45,7 @@ public:
         hr = D3DXCreateEffect(renderer_ptr_->get_device(), buffer, len, 0, 0, D3DXSHADER_DEBUG, 0,
             &effect_ptr, &compilation_errors_ptr);
 
-        if (compilation_errors_ptr && compilation_errors_ptr->GetBufferSize() > 0)
-        {
-            LOG_WARNING("compilation messages:");
-            util::Logger::instance().write((char const *) compilation_errors_ptr->GetBufferPointer(), compilation_errors_ptr->GetBufferSize());
-            compilation_errors_ptr->Release();
-        }
+		log_compilation_errors(compilation_errors_ptr);
 
         if (FAILED(hr)) throw exception::directx_error(hr);
 
@@ -70,6 +60,16 @@ public:
 private:
     Renderer *renderer_ptr_;
     boost::intrusive_ptr<ID3DXEffect> effect_ptr_;
+
+	static void log_compilation_errors(ID3DXBuffer *compilation_errors_ptr)
+	{
+		if (compilation_errors_ptr && compilation_errors_ptr->GetBufferSize() > 0)
+        {
+            LOG_WARNING("compilation messages:");
+			util::Logger::instance().print_line(std::string((char const *) compilation_errors_ptr->GetBufferPointer(), compilation_errors_ptr->GetBufferSize()).c_str());
+            compilation_errors_ptr->Release();
+        }
+	}
 };
 
 }

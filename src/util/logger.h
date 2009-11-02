@@ -1,7 +1,8 @@
 #pragma once
 
+#include <vector>
 #include <sstream>
-#include <util/file_handle.h>
+#include <boost/shared_ptr.hpp>
 
 namespace util
 {
@@ -18,11 +19,11 @@ public:
 		LEVEL_CRITICAL = 6
 	};
 
-	class message {
+	class Message {
 	public:
-		message(Logger *Logger_ptr, level_t level, char const *filename,
+		Message(Logger *Logger_ptr, level_t level, char const *filename,
 			int line, char const *pretty_function);
-		~message();
+		~Message();
 
 		std::ostream &stream() const
 		{
@@ -34,25 +35,33 @@ public:
 		mutable std::stringstream stream_;
 	};
 
+	class Output {
+	public:
+		virtual ~Output();
+		virtual void print_line(char const *str) = 0;
+	};
+
+	typedef boost::shared_ptr<Output> OutputPtr;
+
 	Logger();
 	~Logger();
 
 	static Logger &instance();
 
-	void set_stdout();
-    void set_stderr();
-	void set_file(std::string const &filename);
+	void print_line(char const *str);
 
-    void write(char const *buffer, size_t length);
-	void write(std::string const &str);
+	void enable_output_debug_string();
+	void enable_stdout();
+	void enable_stderr();
 
 private:
-	util::FileHandle file_;
+	typedef std::vector<OutputPtr> outputs_t;
 
 	static char const *get_level_text(level_t level);
+	outputs_t outputs_;
 };
 
-#define LOG_MESSAGE(L, M) { util::Logger::message(&util::Logger::instance(), util::Logger::L, __FILE__, __LINE__, __FUNCTION__).stream() << M; }
+#define LOG_MESSAGE(L, M) { util::Logger::Message(&util::Logger::instance(), util::Logger::L, __FILE__, __LINE__, __FUNCTION__).stream() << M; }
 #define LOG_DEBUG(M)    LOG_MESSAGE(LEVEL_DEBUG, M)
 #define LOG_INFO(M)     LOG_MESSAGE(LEVEL_INFO, M)
 #define LOG_WARNING(M)  LOG_MESSAGE(LEVEL_WARNING, M)

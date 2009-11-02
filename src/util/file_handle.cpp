@@ -54,7 +54,7 @@ bool FileHandle::is_open() const {
 void FileHandle::close() {
 	if(is_open())
 	{
-		if (handle_ > 2) ::close(handle_);
+		::close(handle_);
 		handle_ = -1;
 	}
 }
