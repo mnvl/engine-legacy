@@ -33,6 +33,10 @@ public:
 	private:
 		Logger *Logger_ptr_;
 		mutable std::stringstream stream_;
+
+		char const * const filename_;
+		int const line_;
+		char const * const pretty_function_;
 	};
 
 	class Output {

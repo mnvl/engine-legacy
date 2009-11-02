@@ -27,7 +27,7 @@ class StdoutOutput: public Logger::Output
 public:
 	void print_line(char const *message)
 	{
-		fputs(message, stdout);
+		fwrite(message, 1, strlen(message), stdout);
 	}
 };
 
@@ -36,7 +36,7 @@ class StderrOutput: public Logger::Output
 public:
 	void print_line(char const *message)
 	{
-		fputs(message, stderr);
+		fwrite(message, 1, strlen(message), stderr);
 	}
 };
 
@@ -55,18 +55,22 @@ char const *Logger::get_level_text(level_t level)
 	}
 }
 
-Logger::Message::Message(Logger *Logger_ptr, level_t level, char const *filename,
-	int line, char const *pretty_function):
-Logger_ptr_(Logger_ptr)
+Logger::Message::Message(Logger *Logger_ptr, level_t level, char const *filename, int line, char const *pretty_function):
+Logger_ptr_(Logger_ptr),
+filename_(filename),
+line_(line),
+pretty_function_(pretty_function)
 {
 	stream_ << boost::posix_time::microsec_clock::local_time() << '\t'
-			<< get_level_text(level) << '\t'
-			<< filename << ':' << line << '\t'
-			<< pretty_function << '\t';
+			<< get_level_text(level) << '\t';
 }
 
 Logger::Message::~Message()
 {
+	stream_ << '\t'
+			<< filename_ << ':' << line_ << '\t'
+			<< pretty_function_ << '\n';
+
 	Logger_ptr_->print_line(stream_.str().c_str());
 }
 
