@@ -71,7 +71,7 @@ template<class T>
 void BasicStaticMesh<T>::set_indices_count(size_t count)
 {
     IDirect3DIndexBuffer9 *ib;
-    HRESULT hr = get_model()->get_renderer()->get_device()->CreateIndexBuffer(count * sizeof(index_t), 0, D3DFMT_INDEX32, D3DPOOL_MANAGED, &ib, 0);
+    HRESULT hr = get_model()->get_renderer()->get_device()->CreateIndexBuffer(count * sizeof(index_t), 0, INDEX_FORMAT, D3DPOOL_MANAGED, &ib, 0);
     if (FAILED(hr)) throw exception::directx_error(hr);
     index_buffer_.reset(ib);
     ib->Release();

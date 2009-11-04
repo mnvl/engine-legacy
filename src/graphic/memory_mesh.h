@@ -1,9 +1,9 @@
 #pragma once
 
-#include <boost/cstdint.hpp>
-#include <graphic/mesh.h>
-#include <graphic/model.h>
-#include <graphic/vertex.h>
+#include "vertex.h"
+#include "index.h"
+#include "mesh.h"
+#include "model.h"
 
 namespace graphic {
 
@@ -13,7 +13,6 @@ class Renderer;
 class MemoryMesh: public Mesh {
 public:
     typedef vertex_pnt vertex_t;
-	typedef boost::uint32_t index_t;
 
 	MemoryMesh(MemoryModel *m);
 	virtual ~MemoryMesh();

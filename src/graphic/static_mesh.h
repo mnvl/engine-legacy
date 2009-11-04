@@ -1,10 +1,10 @@
 #pragma once
 
 #include <d3d9.h>
-#include <boost/cstdint.hpp>
 #include <util/boost_com_intrusive_ptr.h>
-#include <graphic/vertex.h>
-#include <graphic/mesh.h>
+#include "index.h"
+#include "vertex.h"
+#include "mesh.h"
 
 namespace graphic {
 
@@ -14,7 +14,6 @@ template<class T = vertex_pnt>
 class BasicStaticMesh: public Mesh {
 public:
 	typedef T vertex_t;
-	typedef boost::uint32_t index_t;
 
 	BasicStaticMesh(Model *model_ptr);
 	~BasicStaticMesh();

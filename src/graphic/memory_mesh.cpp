@@ -146,7 +146,7 @@ void MemoryMesh::draw_static(Joint *joint_ptr) const
 		}
 
 		device_ptr->DrawIndexedPrimitiveUP(D3DPT_TRIANGLELIST, it->minimal_vertex_index, it->vertices_count,
-			it->triangles_count, &indices_[it->first_index_offset], D3DFMT_INDEX32, &vertices_[0], sizeof(vertex_t));
+			it->triangles_count, &indices_[it->first_index_offset], INDEX_FORMAT, &vertices_[0], sizeof(vertex_t));
 	}
 }
 
@@ -176,7 +176,7 @@ void MemoryMesh::draw_animated(Joint *joint_ptr) const
 		device_ptr->SetTransform(D3DTS_WORLD, (D3DMATRIX const *) joint_ptr->matrix.ij);
 
 		device_ptr->DrawIndexedPrimitiveUP(D3DPT_TRIANGLELIST, it->minimal_vertex_index, it->vertices_count,
-			it->triangles_count, &indices_[it->first_index_offset], D3DFMT_INDEX32, &transformed_vertices[0], sizeof(vertex_t));
+			it->triangles_count, &indices_[it->first_index_offset], INDEX_FORMAT, &transformed_vertices[0], sizeof(vertex_t));
 	}
 }
 
