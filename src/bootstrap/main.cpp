@@ -10,6 +10,7 @@
 #include <math/vec.h>
 #include <math/matrix.h>
 #include <util/logger.h>
+#include <util/lua_backtrace.h>
 
 class Main
 {
@@ -57,6 +58,8 @@ INT WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpstrCmdLine, INT
     {
 		util::Logger::instance().enable_output_debug_string();
 		util::Logger::instance().enable_stderr();
+
+		luabind::set_pcall_callback(util::print_backtrace_to_log);
 
 		Main().run(lpstrCmdLine);
     }

@@ -2,6 +2,7 @@
 #include <d3dx9.h>
 #include <exception/directx_error.h>
 #include <platform/timer.h>
+#include <util/logger.h>
 #include <graphic/camera.h>
 #include <graphic/font.h>
 #include <graphic/material.h>
@@ -43,6 +44,16 @@ Renderer::Renderer(platform::Window *window_ptr, int width, int height, bool ful
 
 		HRESULT hr = direct3d_ptr_->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL,
 			window_ptr_->get_handle(), D3DCREATE_HARDWARE_VERTEXPROCESSING, &pp, &device_ptr);
+
+		if (FAILED(hr))
+		{
+			LOG_ERROR("failed to create direct3d device with hr = " << std::hex << hr
+				<< ", trying sw vertex processing");
+
+			hr = direct3d_ptr_->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL,
+				window_ptr_->get_handle(), D3DCREATE_SOFTWARE_VERTEXPROCESSING, &pp, &device_ptr);
+		}
+
 		if (FAILED(hr)) throw exception::directx_error(hr);
 
 		device_ptr_.reset(device_ptr);
