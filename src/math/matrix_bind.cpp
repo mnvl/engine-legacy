@@ -16,5 +16,9 @@ void math::bind_matrix(lua_State *L)
         .def("identity", &matrix<4,4>::identity)
         .def("translation", (void (matrix<4,4>::*)(vec<3> const &)) &matrix<4,4>::translation)
         .def("translate", (void (matrix<4,4>::*)(vec<3> const &)) &matrix<4,4>::translate)
+        .def("rotation", (void (matrix<4,4>::*)(vec<3> const &)) &matrix<4,4>::rotation)
+        .def("rotate", (void (matrix<4,4>::*)(vec<3> const &)) &matrix<4,4>::rotate)
+        .def("scaling", (void (matrix<4,4>::*)(vec<3> const &)) &matrix<4,4>::scaling)
+        .def("scale", (void (matrix<4,4>::*)(vec<3> const &)) &matrix<4,4>::scale)
     ];
 }
