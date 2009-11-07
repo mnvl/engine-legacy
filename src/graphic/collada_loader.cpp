@@ -990,16 +990,46 @@ namespace collada_elements
 
                     if (weight > math::EPSILON)
                     {
-                        if (j > 7)
+                        if (j == 8)
                         {
-                            throw std::logic_error("joints influenting more than 8 positions not supported (in mesh id = "
-                                + mesh_ptr->id + ")");
+							size_t ligtest_index = size_t(-1);
+							float ligtest_weight = weight;
+
+							for (size_t k = 0; k < 8; k++)
+							{
+								if (joint_weights.i[k] < ligtest_weight)
+								{
+									ligtest_index = k;
+									ligtest_weight = joint_weights.i[k];
+								}
+							}
+
+							if (ligtest_index == size_t(-1))
+							{
+								LOG_WARNING("vertex with more than 8 joint weights found in mesh " << mesh_ptr->id
+									<< " and last one is lightest with weight = " << weight
+									<< ", index = " << index << " -- ignoring it");
+							}
+							else
+							{
+								LOG_WARNING("vertex with more than 8 joint weights found in mesh " << mesh_ptr->id
+									<< " and lightest weight index = " << ligtest_index
+									<< ", weight = " << ligtest_weight
+									<< ", joint = " << joint_indices.i[ligtest_index]
+									<< " will be replaced with joint = " << index
+									<< ", weight = " << weight);
+
+								joint_indices.i[ligtest_index] = index;
+								joint_weights.i[ligtest_index] = weight;
+							}
                         }
+						else
+						{
+	                        joint_indices.i[j] = index;
+		                    joint_weights.i[j] = weight;
 
-                        joint_indices.i[j] = index;
-                        joint_weights.i[j] = weight;
-
-                        j++;
+			                j++;
+						}
                     }
 				}
 

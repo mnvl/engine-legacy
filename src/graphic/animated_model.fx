@@ -1,5 +1,5 @@
 
-static const int MAX_MATRICES = 50;
+static const int MAX_MATRICES = 54;
 
 float4x4 view_projection_matrix : VIEWPROJECTION;
 float4x4 joint_matrix_array[MAX_MATRICES] : WORLDMATRIXARRAY;
