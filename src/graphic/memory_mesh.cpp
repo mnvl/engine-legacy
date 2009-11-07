@@ -12,7 +12,7 @@ Mesh(m)
 }
 
 MemoryMesh::~MemoryMesh()
-{
+{ 
 }
 
 void MemoryMesh::set_vertices_count(size_t count)

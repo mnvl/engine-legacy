@@ -333,6 +333,18 @@ public:
 		return *this;
 	}
 
+	vec_type operator +(vec_type const &rhs) const {
+		vec_type res;
+		add(res, *this, rhs);
+		return res;
+	}
+
+	vec_type operator -(vec_type const &rhs) const {
+		vec_type res;
+		sub(res, *this, rhs);
+		return res;
+	}
+
 	scalar_type length_sq() const {
 		return dot_product(*this, *this);
 	}
