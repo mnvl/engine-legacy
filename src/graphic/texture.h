@@ -12,24 +12,10 @@ namespace graphic
 
 class Texture {
 public:
-	Texture(Renderer *renderer_ptr):
-		renderer_ptr_(renderer_ptr)
-	{
-	}
+	Texture(Renderer *renderer_ptr);
+	~Texture();
 
-	void load_from_file(std::string const &filename)
-	{
-		filename_ = filename;
-
-        if (renderer_ptr_)
-        {
-            IDirect3DTexture9 *texture_ptr;
-            HRESULT hr = D3DXCreateTextureFromFile(renderer_ptr_->get_device(), filename.c_str(), &texture_ptr);
-            if (FAILED(hr)) throw exception::directx_error(hr);
-            texture_ptr_.reset(texture_ptr);
-            texture_ptr->Release();
-        }
-	}
+	void load_from_file(std::string const &filename);
 
 	std::string const &get_filename() const
 	{

@@ -1431,7 +1431,7 @@ namespace collada_elements
 
 			if (diffuse_texture.size())
 			{
-				std::string const &filename= (get_root()->get_basepath() / diffuse_texture).native_file_string();
+				std::string const &filename = (get_root()->get_basepath() / diffuse_texture).native_file_string();
 
 				LOG_DEBUG("texture = " << diffuse_texture << ", filename = " << filename);
 				material_ptr->set_texture(filename);
