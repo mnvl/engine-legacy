@@ -67,9 +67,9 @@ pretty_function_(pretty_function)
 
 Logger::Message::~Message()
 {
-	stream_ << '\t'
-			<< filename_ << ':' << line_ << '\t'
-			<< pretty_function_ << '\n';
+	stream_ << "\t\t\t["
+			<< filename_ << ':' << line_ << ' '
+			<< pretty_function_ << "]\n";
 
 	Logger_ptr_->print_line(stream_.str().c_str());
 }
