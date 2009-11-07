@@ -1,5 +1,6 @@
 
 #include <luabind/luabind.hpp>
+#include <luabind/operator.hpp>
 #include <math/vec.h>
 
 template class math::vec<2>;
@@ -29,6 +30,13 @@ math::vec<3,T>::to_axis_angle(vec_type &axis, scalar_type &angle) const {
 	xy.to_polar(t, angle);
 }
 
+inline math::vec<3>
+operator -(const math::vec<3> &lhs,const math::vec<3> &rhs) {
+	math::vec<3> res;
+	math::sub(res, lhs, rhs);
+	return res;
+}
+
 void math::bind_vec(lua_State *L)
 {
 	using namespace luabind;
@@ -40,9 +48,10 @@ void math::bind_vec(lua_State *L)
 
 		class_<vec<3> >("vec3")
 		.def(constructor<>())
-		.def(constructor<scalar, scalar, scalar>()),
+		.def(constructor<scalar, scalar, scalar>())
+		.def("__sub", (vec<3> (*)(vec<3> const &, vec<3> const &) operator -),
 
 		class_<vec<4> >("vec4")
-		.def(constructor<>())
+		.def(constructor<>()),
 	];
 }
