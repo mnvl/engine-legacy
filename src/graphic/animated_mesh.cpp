@@ -50,8 +50,16 @@ void AnimatedMesh::draw(Joint *joint_ptr)
         joint_matrix_array.push_back(t);
     }
 
-    hr = shader_ptr->get()->SetMatrixArray("joint_matrix_array", (D3DXMATRIX const *) &joint_matrix_array[0], joint_matrix_array.size());
-    if (FAILED(hr)) throw exception::directx_error(hr);
+	if (joint_matrix_array.empty())
+	{
+	    hr = shader_ptr->get()->SetMatrixArray("joint_matrix_array", (D3DXMATRIX const *) 0, 0);
+	}
+	else
+	{
+	    hr = shader_ptr->get()->SetMatrixArray("joint_matrix_array", (D3DXMATRIX const *) &joint_matrix_array[0], joint_matrix_array.size());
+	}
+
+	if (FAILED(hr)) throw exception::directx_error(hr);
 
 	hr = device_ptr->SetVertexDeclaration(resource_manager_ptr->get_vertex_decl<vertex_t>());
 	if (FAILED(hr)) throw exception::directx_error(hr);

@@ -1,5 +1,6 @@
 #pragma once
 
+#include <boost/shared_ptr.hpp>
 #include <math/vec.h>
 #include <graphic/texture.h>
 #include <graphic/renderer.h>
@@ -73,7 +74,7 @@ private:
 	Renderer *renderer_ptr_;
 	D3DMATERIAL9 properties_;
 
-	std::auto_ptr<Texture> texture_ptr_;
+	boost::shared_ptr<Texture> texture_ptr_;
 };
 
 }

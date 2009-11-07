@@ -89,8 +89,6 @@ void MemoryMesh::unlock()
 
 void MemoryMesh::transform_vertices(Joint const *joint_ptr, std::vector<vertex_t> &result) const
 {
-	result = vertices_;
-
     std::vector<math::matrix<4,4> > joint_matrix_array;
     joint_matrix_array.reserve(joint_index_transform.size());
 
@@ -103,6 +101,8 @@ void MemoryMesh::transform_vertices(Joint const *joint_ptr, std::vector<vertex_t
 
         joint_matrix_array.push_back(t);
     }
+
+	result = vertices_;
 
 	for (size_t i = 0; i < vertices_.size(); i++)
 	{
@@ -120,6 +120,10 @@ void MemoryMesh::transform_vertices(Joint const *joint_ptr, std::vector<vertex_t
 	}
 }
 
+// Results of rendering via MemoryMesh and AnimatedMesh may differ if model have joint weights
+// and no animation: AnimatedMesh always computes positions of vertices using weights but MemoryMesh
+// uses weights only if model have animation. You can easily check if this is the cause just replacing
+// AnimatedMesh with StaticMesh and checking that rendering result is matching the one of MemoryMesh.
 void MemoryMesh::draw_static(Joint *joint_ptr) const
 {
     Renderer *renderer_ptr = get_model()->get_renderer();
@@ -173,7 +177,10 @@ void MemoryMesh::draw_animated(Joint *joint_ptr) const
 			resource_manager_ptr->get_default_material()->select();
 		}
 
-		device_ptr->SetTransform(D3DTS_WORLD, (D3DMATRIX const *) joint_ptr->matrix.ij);
+		{
+			math::matrix<4,4> tf = joint_ptr->matrix * renderer_ptr->get_world_matrix();
+			device_ptr->SetTransform(D3DTS_WORLD, (D3DMATRIX const *) tf.ij);
+		}
 
 		device_ptr->DrawIndexedPrimitiveUP(D3DPT_TRIANGLELIST, it->minimal_vertex_index, it->vertices_count,
 			it->triangles_count, &indices_[it->first_index_offset], INDEX_FORMAT, &transformed_vertices[0], sizeof(vertex_t));
