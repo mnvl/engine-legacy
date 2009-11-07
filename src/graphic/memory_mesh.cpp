@@ -113,7 +113,10 @@ void MemoryMesh::transform_vertices(Joint const *joint_ptr, std::vector<vertex_t
 
 		for (size_t j = 0; j < 8; j++)
 		{
-			pos += (vertices_[i].position * joint_matrix_array.at(indices.i[j])) * factors.i[j];
+			if (factors.i[j] > math::EPSILON)
+			{
+				pos += (vertices_[i].position * joint_matrix_array.at(indices.i[j])) * factors.i[j];
+			}
 		}
 
 		result[i].position = pos;
