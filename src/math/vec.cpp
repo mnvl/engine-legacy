@@ -44,10 +44,15 @@ void math::bind_vec(lua_State *L)
 		.def(constructor<scalar, scalar, scalar>())
 		.def(const_self + const_self)
 		.def(const_self - const_self)
+		.def(const_self * other<scalar>())
 		.def("length", &vec<3>::length)
 		.def("length_sq", &vec<3>::length_sq),
 
 		class_<vec<4> >("vec4")
-		.def(constructor<>())
+		.def(constructor<>()),
+
+		def("dot_product", (scalar (*)(const vec<2> &,const vec<2> &)) dot_product),
+		def("dot_product", (scalar (*)(const vec<3> &,const vec<3> &)) dot_product),
+		def("dot_product", (scalar (*)(const vec<4> &,const vec<4> &)) dot_product)
 	];
 }

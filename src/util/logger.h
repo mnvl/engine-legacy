@@ -21,7 +21,7 @@ public:
 
 	class Message {
 	public:
-		Message(Logger *Logger_ptr, level_t level, char const *filename,
+		Message(Logger *logger_ptr, level_t level, char const *filename,
 			int line, char const *pretty_function);
 		~Message();
 
@@ -31,7 +31,7 @@ public:
 		}
 
 	private:
-		Logger *Logger_ptr_;
+		Logger *logger_ptr_;
 		mutable std::stringstream stream_;
 
 		char const * const filename_;
@@ -54,15 +54,21 @@ public:
 
 	void print_line(char const *str);
 
-	void enable_output_debug_string();
-	void enable_stdout();
-	void enable_stderr();
+	void add_debug_string_output();
+	void add_stdout_output();
+	void add_stderr_output();
+
+	void enable_source_position();
+	void disable_source_position();
+	bool is_source_position_enabled() const;
 
 private:
 	typedef std::vector<OutputPtr> outputs_t;
 
 	static char const *get_level_text(level_t level);
+
 	outputs_t outputs_;
+	bool source_position_enabled_;
 };
 
 #define LOG_MESSAGE(L, M) { util::Logger::Message(&util::Logger::instance(), util::Logger::L, __FILE__, __LINE__, __FUNCTION__).stream() << M; }

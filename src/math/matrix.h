@@ -1,10 +1,11 @@
 #pragma once
 
+#include <assert.h>
 #include <iosfwd>
 #include <lua.h>
-#include <math/scalar.h>
-#include <math/vec.h>
-#include <math/quaternion.h>
+#include "scalar.h"
+#include "vec.h"
+#include "quaternion.h"
 
 #if defined(minor)
 #undef minor
@@ -353,6 +354,8 @@ math::mul(math::vec<2,T> &result,const math::vec<2,T> &v,const math::matrix<3,3,
 
 template<class T> void
 math::mul(math::vec<3,T> &result,const math::vec<2,T> &v,const math::matrix<3,3,T> &m) {
+	assert(&result != &v);
+
 	result.x=m.ij[0][0]*v.x+m.ij[1][0]*v.y+m.ij[2][0];
 	result.y=m.ij[0][1]*v.x+m.ij[1][1]*v.y+m.ij[2][1];
 	result.z=m.ij[0][2]*v.x+m.ij[1][2]*v.y+m.ij[2][2];
@@ -360,6 +363,8 @@ math::mul(math::vec<3,T> &result,const math::vec<2,T> &v,const math::matrix<3,3,
 
 template<class T> void
 math::mul(math::vec<3,T> &result,const math::vec<3,T> &v,const math::matrix<3,3,T> &m) {
+	assert(&result != &v);
+
 	result.x=m.ij[0][0]*v.x+m.ij[1][0]*v.y+m.ij[2][0]*v.z;
 	result.y=m.ij[0][1]*v.x+m.ij[1][1]*v.y+m.ij[2][1]*v.z;
 	result.z=m.ij[0][2]*v.x+m.ij[1][2]*v.y+m.ij[2][2]*v.z;
@@ -367,6 +372,8 @@ math::mul(math::vec<3,T> &result,const math::vec<3,T> &v,const math::matrix<3,3,
 
 template<class T> void
 math::mul(math::vec<3,T> &result,const math::vec<3,T> &v,const math::matrix<4,4,T> &m) {
+	assert(&result != &v);
+
 	result.x=m.ij[0][0]*v.x+m.ij[1][0]*v.y+m.ij[2][0]*v.z+m.ij[3][0];
 	result.y=m.ij[0][1]*v.x+m.ij[1][1]*v.y+m.ij[2][1]*v.z+m.ij[3][1];
 	result.z=m.ij[0][2]*v.x+m.ij[1][2]*v.y+m.ij[2][2]*v.z+m.ij[3][2];
@@ -374,6 +381,8 @@ math::mul(math::vec<3,T> &result,const math::vec<3,T> &v,const math::matrix<4,4,
 
 template<class T> void
 math::mul(math::vec<4,T> &result,const math::vec<3,T> &v,const math::matrix<4,4,T> &m) {
+	assert(&result != &v);
+
 	result.x=m.ij[0][0]*v.x+m.ij[1][0]*v.y+m.ij[2][0]*v.z+m.ij[3][0];
 	result.y=m.ij[0][1]*v.x+m.ij[1][1]*v.y+m.ij[2][1]*v.z+m.ij[3][1];
 	result.z=m.ij[0][2]*v.x+m.ij[1][2]*v.y+m.ij[2][2]*v.z+m.ij[3][2];
@@ -382,6 +391,8 @@ math::mul(math::vec<4,T> &result,const math::vec<3,T> &v,const math::matrix<4,4,
 
 template<class T> void
 math::mul(math::vec<4,T> &result,const math::vec<4,T> &v,const math::matrix<4,4,T> &m) {
+	assert(&result != &v);
+
 	result.x=m.ij[0][0]*v.x+m.ij[1][0]*v.y+m.ij[2][0]*v.z+m.ij[3][0]*v.w;
 	result.y=m.ij[0][1]*v.x+m.ij[1][1]*v.y+m.ij[2][1]*v.z+m.ij[3][1]*v.w;
 	result.z=m.ij[0][2]*v.x+m.ij[1][2]*v.y+m.ij[2][2]*v.z+m.ij[3][2]*v.w;
@@ -390,6 +401,9 @@ math::mul(math::vec<4,T> &result,const math::vec<4,T> &v,const math::matrix<4,4,
 
 template<int M,int N,int K,class T> void
 math::mul(math::matrix<M,K,T> &result,const math::matrix<M,N,T> &left,const math::matrix<N,K,T> &right) {
+	assert(&result != &left);
+	assert(&result != &right);
+
 	int i,j,k;
 	for(i=0; i<M; i++) {
 		for(j=0; j<K; j++) {

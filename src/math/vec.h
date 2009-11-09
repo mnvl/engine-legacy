@@ -345,6 +345,10 @@ public:
 		return res;
 	}
 
+	vec_type operator *(scalar_type const s) const {
+		return vec_type(x * s, y * s, z * s);
+	}
+
 	scalar_type length_sq() const {
 		return dot_product(*this, *this);
 	}

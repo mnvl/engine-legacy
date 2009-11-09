@@ -56,9 +56,6 @@ INT WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpstrCmdLine, INT
 {
     try
     {
-		util::Logger::instance().enable_output_debug_string();
-		util::Logger::instance().enable_stderr();
-
 		luabind::set_pcall_callback(util::print_backtrace_to_log);
 
 		Main().run(lpstrCmdLine);

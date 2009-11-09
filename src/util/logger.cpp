@@ -55,8 +55,8 @@ char const *Logger::get_level_text(level_t level)
 	}
 }
 
-Logger::Message::Message(Logger *Logger_ptr, level_t level, char const *filename, int line, char const *pretty_function):
-Logger_ptr_(Logger_ptr),
+Logger::Message::Message(Logger *logger_ptr, level_t level, char const *filename, int line, char const *pretty_function):
+logger_ptr_(logger_ptr),
 filename_(filename),
 line_(line),
 pretty_function_(pretty_function)
@@ -67,15 +67,25 @@ pretty_function_(pretty_function)
 
 Logger::Message::~Message()
 {
-	stream_ << "\t["
-			<< filename_ << ':' << line_ << ' '
-			<< pretty_function_ << "]\n";
+	if (logger_ptr_->is_source_position_enabled())
+	{
+		stream_ << "\t["
+				<< filename_ << ':' << line_ << ' '
+				<< pretty_function_ << "]\n";
+	}
+	else
+	{
+		stream_ << '\n';
+	}
 
-	Logger_ptr_->print_line(stream_.str().c_str());
+	logger_ptr_->print_line(stream_.str().c_str());
 }
 
-Logger::Logger()
+Logger::Logger():
+	source_position_enabled_(false)
 {
+	add_debug_string_output();
+	add_stderr_output();
 }
 
 Logger::~Logger()
@@ -96,19 +106,34 @@ void Logger::print_line(char const *str)
 	}
 }
 
-void Logger::enable_output_debug_string()
+void Logger::add_debug_string_output()
 {
 	outputs_.push_back(OutputPtr(new DebugStringOutput()));
 }
 
-void Logger::enable_stdout()
+void Logger::add_stdout_output()
 {
 	outputs_.push_back(OutputPtr(new StdoutOutput()));
 }
 
-void Logger::enable_stderr()
+void Logger::add_stderr_output()
 {
 	outputs_.push_back(OutputPtr(new StderrOutput()));
+}
+
+void Logger::enable_source_position()
+{
+	source_position_enabled_ = true;
+}
+
+void Logger::disable_source_position()
+{
+	source_position_enabled_ = false;
+}
+
+bool Logger::is_source_position_enabled() const
+{
+	return source_position_enabled_;
 }
 
 }
