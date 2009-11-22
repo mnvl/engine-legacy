@@ -1,8 +1,8 @@
 
 #include <luabind/luabind.hpp>
-#include <exception/directx_error.hpp>
+#include <exception/directx_error.h>
 #include "renderer.h"
-#include "vertex_array.hpp"
+#include "vertex_array.h"
 
 namespace graphic
 {
@@ -16,7 +16,7 @@ VertexBuffer::VertexBuffer(Renderer *renderer, size_t size, bool dynamic, bool w
 	D3DPOOL pool = dynamic ? D3DPOOL_DEFAULT : D3DPOOL_MANAGED;
 
 	IDirect3DVertexBuffer9 *buffer;
-	HRESULT hr = renderer->get_device()->CreateVertexBuffer(size, usage, vertex_format, pool, &buffer, 0);
+	HRESULT hr = renderer->get_device()->CreateVertexBuffer(size, usage, 0, pool, &buffer, 0);
 	if(FAILED(hr)) throw exception::directx_error(hr);
 
 	buffer_.reset(buffer);
@@ -57,13 +57,13 @@ void bind_vertex_array(lua_State *L)
 	[
 		class_<VertexArrayPNT>("VertexArrayPNT")
 		.def(constructor<Renderer *, size_t, bool, bool>())
-		.def("lock", (vertex_pnt *(*)()) &VertexArrayPNT::lock)
+		.def("lock", (vertex_pnt *(VertexArrayPNT::*)()) &VertexArrayPNT::lock)
 		.def("unlock", &VertexArrayPNT::unlock)
 		.def("at", &VertexArrayPNT::at),
 
 		class_<VertexArrayPNJWT>("VertexArrayPNJWT")
 		.def(constructor<Renderer *, size_t, bool, bool>())
-		.def("lock", (vertex_pnjwt *(*)()) &VertexArrayPNJWT::lock)
+		.def("lock", (vertex_pnjwt *(VertexArrayPNJWT::*)()) &VertexArrayPNJWT::lock)
 		.def("unlock", &VertexArrayPNJWT::unlock)
 		.def("at", &VertexArrayPNJWT::at)
 	];
