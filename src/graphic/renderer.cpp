@@ -11,8 +11,8 @@
 namespace graphic
 {
 
-Renderer::Renderer(platform::Window *window_ptr, int width, int height, bool fullscreen):
-	window_ptr_(window_ptr),
+Renderer::Renderer(boost::shared_ptr<platform::Window> const &window, int width, int height, bool fullscreen):
+	window_ptr_(window),
 	width_(width),
 	height_(height),
 	fullscreen_(fullscreen)

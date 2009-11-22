@@ -4,6 +4,7 @@
 #include <d3d9.h>
 #include <d3dx9.h>
 #include <boost/scoped_ptr.hpp>
+#include <boost/shared_ptr.hpp>
 #include <boost/intrusive_ptr.hpp>
 #include <lua.h>
 #include <math/matrix.h>
@@ -19,7 +20,8 @@ class Material;
 
 class Renderer {
 public:
-	Renderer(platform::Window *window_ptr, int width = 800, int height = 600, bool fullscreen = false);
+	Renderer(boost::shared_ptr<platform::Window> const &window, int width = 800, int height = 600,
+		bool fullscreen = false);
 	~Renderer();
 
 	void begin_frame();
@@ -37,7 +39,7 @@ public:
     static void bind(lua_State *L);
 
 private:
-	platform::Window *window_ptr_;
+	boost::shared_ptr<platform::Window> const window_ptr_;
 	int width_, height_;
 	bool fullscreen_;
 

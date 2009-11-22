@@ -1,6 +1,7 @@
 
-#include "window.h"
+#include <boost/shared_ptr.hpp>
 #include <luabind/luabind.hpp>
+#include "window.h"
 
 void platform::Window::bind(lua_State *L)
 {
@@ -8,7 +9,7 @@ void platform::Window::bind(lua_State *L)
 
     module_(L, "platform")
     [
-        class_<Window>("Window")
+        class_<Window, boost::shared_ptr<Window> >("Window")
 		.def(constructor<>())
 		.def("create", &Window::create)
 		.def("run_message_loop", &Window::run_message_loop)
