@@ -1,5 +1,6 @@
 
 #include "vertex.h"
+#include "vertex_array.h"
 #include "model.h"
 #include "static_model.h"
 #include "animated_model.h"
@@ -15,6 +16,7 @@ namespace graphic
 void bind(lua_State *L)
 {
 	bind_vertex(L);
+	bind_vertex_array(L);
     Model::bind(L);
     StaticModel::bind(L);
 	AnimatedModel::bind(L);

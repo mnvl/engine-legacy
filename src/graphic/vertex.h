@@ -34,12 +34,14 @@ template<>
 struct vertex_traits<vertex_pnt>
 {
 	static D3DVERTEXELEMENT9 *get_descr();
+	static size_t get_size() { return sizeof(vertex_pnt); }
 };
 
 template<>
 struct vertex_traits<vertex_pnjwt>
 {
 	static D3DVERTEXELEMENT9 *get_descr();
+	static size_t get_size() { return sizeof(vertex_pnjwt); }
 };
 
 void bind_vertex(lua_State *L);
