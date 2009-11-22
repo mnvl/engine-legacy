@@ -1,4 +1,5 @@
 
+#include <boost/shared_ptr.hpp>
 #include <luabind/luabind.hpp>
 #include "static_model.h"
 
@@ -8,7 +9,7 @@ void graphic::StaticModel::bind(lua_State *L)
 
     module_(L, "graphic")
     [
-        class_<StaticModel, Model>("StaticModel")
+        class_<StaticModel, Model, boost::shared_ptr<StaticModel> >("StaticModel")
         .def(constructor<Renderer *>())
     ];
 }
