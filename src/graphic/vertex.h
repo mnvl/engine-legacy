@@ -42,4 +42,6 @@ struct vertex_traits<vertex_pnjwt>
 	static D3DVERTEXELEMENT9 *get_descr();
 };
 
+void bind_vertex(lua_State *L);
+
 }
