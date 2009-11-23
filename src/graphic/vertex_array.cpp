@@ -59,13 +59,13 @@ void bind_vertex_array(lua_State *L)
 		.def(constructor<Renderer *, size_t, bool, bool>())
 		.def("lock", (vertex_pnt *(VertexArrayPNT::*)()) &VertexArrayPNT::lock)
 		.def("unlock", &VertexArrayPNT::unlock)
-		.def("at", &VertexArrayPNT::at),
+		.def("at", (vertex_pnt *(VertexArrayPNT::*)(size_t)) &VertexArrayPNT::at),
 
 		class_<VertexArrayPNJWT>("VertexArrayPNJWT")
 		.def(constructor<Renderer *, size_t, bool, bool>())
 		.def("lock", (vertex_pnjwt *(VertexArrayPNJWT::*)()) &VertexArrayPNJWT::lock)
 		.def("unlock", &VertexArrayPNJWT::unlock)
-		.def("at", &VertexArrayPNJWT::at)
+		.def("at", (vertex_pnjwt *(VertexArrayPNJWT::*)(size_t)) &VertexArrayPNJWT::at)
 	];
 }
 

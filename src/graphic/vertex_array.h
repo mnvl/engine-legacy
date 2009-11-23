@@ -29,7 +29,7 @@ private:
 };
 
 template <class T>
-class VertexArray: private VertexBuffer {
+class VertexArray: public VertexBuffer {
 public:
 	typedef T vertex_t;
 	typedef vertex_traits<vertex_t> traits_t;
@@ -45,8 +45,8 @@ public:
 	vertex_t *begin() { return (vertex_t *) VertexBuffer::begin(); }
 	vertex_t const *begin() const { return (vertex_t const *) VertexBuffer::begin(); }
 
-	vertex_t *at(size_t index) { return begin()[index]; }
-	vertex_t const *at(size_t index) const { return begin()[index]; }
+	vertex_t *at(size_t index) { return &begin()[index]; }
+	vertex_t const *at(size_t index) const { return &begin()[index]; }
 };
 
 typedef VertexArray<vertex_pnt> VertexArrayPNT;
