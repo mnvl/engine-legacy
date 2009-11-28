@@ -12,6 +12,7 @@ void graphic::Renderer::bind(lua_State *L)
     [
         class_<Renderer, boost::shared_ptr<Renderer> >("Renderer")
 		.def(constructor<boost::shared_ptr<platform::Window> const &>())
+		.def("postconstruct", &Renderer::postconstruct)
 		.def("begin_frame", &Renderer::begin_frame)
 		.def("finish_frame", &Renderer::finish_frame)
 		.def("set_view_projection_from_camera", &Renderer::set_view_projection_from_camera)

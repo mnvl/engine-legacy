@@ -6,7 +6,7 @@
 namespace graphic
 {
 
-StaticModel::StaticModel(Renderer *renderer_ptr):
+StaticModel::StaticModel(boost::shared_ptr<Renderer> const &renderer_ptr):
 Model(renderer_ptr)
 {
 }

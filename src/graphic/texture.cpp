@@ -1,12 +1,13 @@
 
 #include <boost/filesystem.hpp>
+#include <luabind/luabind.hpp>
 #include <util/logger.h>
 #include "texture.h"
 
 namespace graphic
 {
 
-Texture::Texture(Renderer *renderer_ptr):
+Texture::Texture(boost::shared_ptr<Renderer> const &renderer_ptr):
 	renderer_ptr_(renderer_ptr)
 {
 }
@@ -38,6 +39,18 @@ void Texture::load_from_file(std::string const &filename)
 		texture_ptr_.reset(texture_ptr);
 		texture_ptr->Release();
 	}
+}
+
+void Texture::bind(lua_State *L)
+{
+	using namespace luabind;
+
+	module(L, "graphic")
+	[
+		class_<Texture>("Texture")
+		.def(constructor<boost::shared_ptr<Renderer> const &>())
+		.def("load_from_file", &Texture::load_from_file)
+	];
 }
 
 }

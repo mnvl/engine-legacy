@@ -5,6 +5,8 @@
 #include <d3dx9.h>
 #include <boost/scoped_ptr.hpp>
 #include <boost/shared_ptr.hpp>
+#include <boost/noncopyable.hpp>
+#include <boost/enable_shared_from_this.hpp>
 #include <boost/intrusive_ptr.hpp>
 #include <lua.h>
 #include <math/matrix.h>
@@ -18,11 +20,13 @@ class Camera;
 class Font;
 class Material;
 
-class Renderer {
+class Renderer: public boost::enable_shared_from_this<Renderer>, public boost::noncopyable {
 public:
 	Renderer(boost::shared_ptr<platform::Window> const &window, int width = 800, int height = 600,
 		bool fullscreen = false);
 	~Renderer();
+
+	void postconstruct();
 
 	void begin_frame();
 	void finish_frame();

@@ -10,7 +10,7 @@ class Renderer;
 
 class AnimatedModel: public Model {
 public:
-	AnimatedModel(Renderer *renderer_ptr);
+	AnimatedModel(boost::shared_ptr<Renderer> const &renderer_ptr = boost::shared_ptr<Renderer>());
 	~AnimatedModel();
 
 	Mesh *create_mesh();

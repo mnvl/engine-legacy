@@ -32,7 +32,7 @@ StaticModel *BasicStaticMesh<T>::get_model()
 template<class T>
 void BasicStaticMesh<T>::draw(Joint *joint_ptr)
 {
-    Renderer *renderer_ptr = get_model()->get_renderer();
+	boost::shared_ptr<Renderer> const renderer_ptr = get_model()->get_renderer();
     ResourceManager *resource_manager_ptr = renderer_ptr->get_resource_manager();
 	IDirect3DDevice9 *device_ptr = renderer_ptr->get_device();
 
@@ -186,7 +186,7 @@ void BasicStaticMesh<T>::unlock()
 template<class T>
 void BasicStaticMesh<T>::draw_triangles_list()
 {
-    Renderer *renderer_ptr = get_model()->get_renderer();
+	boost::shared_ptr<Renderer> renderer_ptr = get_model()->get_renderer();
     ResourceManager *resource_manager_ptr = renderer_ptr->get_resource_manager();
 	IDirect3DDevice9 *device_ptr = renderer_ptr->get_device();
 

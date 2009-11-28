@@ -7,6 +7,7 @@
 #include "memory_model.h"
 #include "collada_loader.h"
 #include "camera.h"
+#include "texture.h"
 #include "renderer.h"
 #include "bind.h"
 
@@ -23,6 +24,7 @@ void bind(lua_State *L)
 	MemoryModel::bind(L);
 	ColladaLoader::bind(L);
 	Camera::bind(L);
+	Texture::bind(L);
     Renderer::bind(L);
 }
 

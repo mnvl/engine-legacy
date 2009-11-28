@@ -10,6 +10,6 @@ void graphic::AnimatedModel::bind(lua_State *L)
     module_(L, "graphic")
     [
         class_<AnimatedModel, Model, boost::shared_ptr<AnimatedModel> >("AnimatedModel")
-        .def(constructor<Renderer *>())
-    ];
+        .def(constructor<boost::shared_ptr<Renderer> const &>())
+	];
 }

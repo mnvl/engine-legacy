@@ -9,6 +9,6 @@ void graphic::MemoryModel::bind(lua_State *L)
     module_(L, "graphic")
     [
         class_<MemoryModel, Model>("MemoryModel")
-        .def(constructor<Renderer *>())
+        .def(constructor<boost::shared_ptr<Renderer> const &>())
     ];
 }

@@ -23,7 +23,8 @@ public:
 		}
 	};
 
-    HeightfieldLoader(std::string const &filename, Model *model_ptr, Renderer *renderer_ptr = 0);
+    HeightfieldLoader(std::string const &filename, Model *model_ptr,
+		boost::shared_ptr<Renderer> const &renderer_ptr = boost::shared_ptr<Renderer>());
 	~HeightfieldLoader();
 
     template<class T>
@@ -33,7 +34,7 @@ public:
 private:
 	std::string filename_;
 	Model *model_ptr_;
-	Renderer *renderer_ptr_;
+	boost::shared_ptr<Renderer> const renderer_ptr_;
 };
 
 }

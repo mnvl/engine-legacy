@@ -7,12 +7,12 @@
 namespace graphic {
 
 MemoryMesh::MemoryMesh(MemoryModel *m):
-Mesh(m)
+	Mesh(m)
 {
 }
 
 MemoryMesh::~MemoryMesh()
-{ 
+{
 }
 
 void MemoryMesh::set_vertices_count(size_t count)
@@ -129,7 +129,7 @@ void MemoryMesh::transform_vertices(Joint const *joint_ptr, std::vector<vertex_t
 // AnimatedMesh with StaticMesh and checking that rendering result is matching the one of MemoryMesh.
 void MemoryMesh::draw_static(Joint *joint_ptr) const
 {
-    Renderer *renderer_ptr = get_model()->get_renderer();
+	boost::shared_ptr<Renderer> const renderer_ptr = get_model()->get_renderer();
     ResourceManager *resource_manager_ptr = renderer_ptr->get_resource_manager();
 	IDirect3DDevice9 *device_ptr = renderer_ptr->get_device();
 
@@ -159,7 +159,7 @@ void MemoryMesh::draw_static(Joint *joint_ptr) const
 
 void MemoryMesh::draw_animated(Joint *joint_ptr) const
 {
-    Renderer *renderer_ptr = get_model()->get_renderer();
+	boost::shared_ptr<Renderer> const renderer_ptr = get_model()->get_renderer();
     ResourceManager *resource_manager_ptr = renderer_ptr->get_resource_manager();
 	IDirect3DDevice9 *device_ptr = renderer_ptr->get_device();
 

@@ -5,8 +5,8 @@
 namespace graphic
 {
 
-AnimatedModel::AnimatedModel(Renderer *renderer_ptr):
-Model(renderer_ptr)
+AnimatedModel::AnimatedModel(boost::shared_ptr<Renderer> const &renderer_ptr):
+	Model(renderer_ptr)
 {
 }
 

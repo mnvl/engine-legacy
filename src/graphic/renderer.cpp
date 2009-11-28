@@ -59,11 +59,14 @@ Renderer::Renderer(boost::shared_ptr<platform::Window> const &window, int width,
 		device_ptr_.reset(device_ptr);
 		device_ptr->Release();
 	}
-
-    resource_manager_.reset(new ResourceManager(this));
 }
 
 Renderer::~Renderer() {
+}
+
+void Renderer::postconstruct()
+{
+    resource_manager_.reset(new ResourceManager(this));
 }
 
 void Renderer::begin_frame()

@@ -8,7 +8,9 @@
 namespace graphic
 {
 
-HeightfieldLoader::HeightfieldLoader(std::string const &filename, Model *model_ptr, Renderer *renderer_ptr):
+HeightfieldLoader::HeightfieldLoader(std::string const &filename, Model *model_ptr,
+	boost::shared_ptr<Renderer> const &renderer_ptr)
+:
     filename_(filename),
     model_ptr_(model_ptr),
     renderer_ptr_(renderer_ptr)

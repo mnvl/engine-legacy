@@ -1,5 +1,6 @@
 #pragma once
 
+#include <boost/shared_ptr.hpp>
 #include <boost/ptr_container/ptr_vector.hpp>
 #include <lua.h>
 #include <graphic/joint.h>
@@ -20,10 +21,10 @@ public:
 	animations_type animations;
 	materials_type materials;
 
-	Model(Renderer *renderer_ptr = 0);
+	Model(boost::shared_ptr<Renderer> const &renderer_ptr = boost::shared_ptr<Renderer>());
 	virtual ~Model();
 
-	Renderer *get_renderer() const
+	boost::shared_ptr<Renderer> const &get_renderer() const
 	{
 		return renderer_ptr_;
 	}
@@ -53,7 +54,7 @@ public:
     static void bind(lua_State *L);
 
 protected:
-	Renderer *renderer_ptr_;
+	boost::shared_ptr<Renderer> const renderer_ptr_;
 };
 
 }

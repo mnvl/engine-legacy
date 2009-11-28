@@ -23,7 +23,7 @@ void AnimatedMesh::draw(Joint *joint_ptr)
 {
     HRESULT hr;
 
-    Renderer *renderer_ptr = get_model()->get_renderer();
+	boost::shared_ptr<Renderer> const renderer_ptr = get_model()->get_renderer();
     ResourceManager *resource_manager_ptr = renderer_ptr->get_resource_manager();
 	IDirect3DDevice9 *device_ptr = renderer_ptr->get_device();
     Shader *shader_ptr = resource_manager_ptr->get_animated_model_shader();

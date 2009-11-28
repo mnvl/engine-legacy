@@ -4,8 +4,8 @@
 
 namespace graphic {
 
-Material::Material(Renderer *renderer_ptr):
-renderer_ptr_(renderer_ptr)
+Material::Material(boost::shared_ptr<Renderer> const &renderer_ptr):
+	renderer_ptr_(renderer_ptr)
 {
 	properties_.Ambient.r = properties_.Ambient.g = properties_.Ambient.b = properties_.Ambient.a = 1.0f;
 	properties_.Diffuse = properties_.Ambient;

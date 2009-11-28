@@ -11,7 +11,7 @@ namespace graphic
 
 class Shader {
 public:
-    Shader(Renderer *renderer_ptr):
+    Shader(boost::shared_ptr<Renderer> const &renderer_ptr):
         renderer_ptr_(renderer_ptr)
     {
     }
@@ -58,7 +58,7 @@ public:
     }
 
 private:
-    Renderer *renderer_ptr_;
+	boost::shared_ptr<Renderer> const renderer_ptr_;
     boost::intrusive_ptr<ID3DXEffect> effect_ptr_;
 
 	static void log_compilation_errors(ID3DXBuffer *compilation_errors_ptr)

@@ -9,7 +9,7 @@ namespace graphic {
 
 class Material {
 public:
-	Material(Renderer *renderer_ptr = 0);
+	Material(boost::shared_ptr<Renderer> const &renderer_ptr = boost::shared_ptr<Renderer>());
 	~Material();
 
 	void set_diffuse(math::vec<4> const &v)
@@ -71,7 +71,7 @@ public:
 private:
 	std::string name_;
 
-	Renderer *renderer_ptr_;
+	boost::shared_ptr<Renderer> renderer_ptr_;
 	D3DMATERIAL9 properties_;
 
 	boost::shared_ptr<Texture> texture_ptr_;

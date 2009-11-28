@@ -1,6 +1,6 @@
 #pragma once
 
-#include <boost/ptr_container/ptr_vector.hpp>
+#include <boost/shared_ptr.hpp>
 #include <math/matrix.h>
 #include <graphic/memory_mesh.h>
 #include <graphic/model.h>
@@ -9,7 +9,7 @@ namespace graphic {
 
 class MemoryModel: public Model {
 public:
-	MemoryModel(Renderer *renderer_ptr = 0);
+	MemoryModel(boost::shared_ptr<Renderer> const &renderer_ptr = boost::shared_ptr<Renderer>());
 
 	MemoryMesh *get_mesh_by_id(std::string const &id) {
 		return (MemoryMesh *) Model::get_mesh_by_id(id);

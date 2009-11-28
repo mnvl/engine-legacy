@@ -16,7 +16,7 @@ class Shader;
 
 class ResourceManager {
 public:
-    ResourceManager(Renderer *renderer_ptr);
+    ResourceManager(Renderer * const renderer_ptr);
     ~ResourceManager();
 
     Font *get_default_font() const { return default_font_.get(); }
@@ -43,7 +43,7 @@ public:
     }
 
 private:
-    Renderer *renderer_ptr_;
+	Renderer * const renderer_ptr_;
 
 	boost::scoped_ptr<Font> default_font_;
 	boost::scoped_ptr<Material> default_material_;

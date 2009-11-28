@@ -5,8 +5,8 @@
 namespace graphic
 {
 
-MemoryModel::MemoryModel(Renderer *renderer_ptr):
-Model(renderer_ptr)
+MemoryModel::MemoryModel(boost::shared_ptr<Renderer> const &renderer_ptr):
+	Model(renderer_ptr)
 {
 }
 

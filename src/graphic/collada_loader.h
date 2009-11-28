@@ -34,7 +34,6 @@ public:
 
 private:
 	Model *model_ptr_;
-	Renderer *renderer_ptr_;
 
 	class Impl;
 	boost::scoped_ptr<Impl> impl_;
