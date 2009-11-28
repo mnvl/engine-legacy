@@ -37,7 +37,8 @@ void math::bind_vec(lua_State *L)
 	module(L, "math")
 	[
 		class_<vec<2> >("vec2")
-		.def(constructor<>()),
+		.def(constructor<>())
+		.def(constructor<scalar, scalar>()),
 
 		class_<vec<3> >("vec3")
 		.def(constructor<>())
@@ -46,13 +47,17 @@ void math::bind_vec(lua_State *L)
 		.def(const_self - const_self)
 		.def(const_self * other<scalar>())
 		.def("length", &vec<3>::length)
-		.def("length_sq", &vec<3>::length_sq),
+		.def("length_sq", &vec<3>::length_sq)
+		.def("normalize", &vec<3>::normalize),
 
 		class_<vec<4> >("vec4")
 		.def(constructor<>()),
 
 		def("dot_product", (scalar (*)(const vec<2> &,const vec<2> &)) dot_product),
 		def("dot_product", (scalar (*)(const vec<3> &,const vec<3> &)) dot_product),
-		def("dot_product", (scalar (*)(const vec<4> &,const vec<4> &)) dot_product)
+		def("dot_product", (scalar (*)(const vec<4> &,const vec<4> &)) dot_product),
+
+		def("cross_product", (math::vec<3> (*)(const vec<3> &,const vec<3> &)) operator ^),
+		def("cross_product", (void (*)(math::vec<3> &, const vec<3> &,const vec<3> &)) math::cross_product)
 	];
 }

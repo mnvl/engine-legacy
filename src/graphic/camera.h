@@ -23,7 +23,7 @@ private:
 	math::scalar near_plane;
 	math::scalar far_plane;
 
-	math::matrix<4,4>  projection_matrix;
+	math::matrix<4,4> projection_matrix;
 
 public:
 	Camera();
@@ -44,6 +44,8 @@ public:
    	void set_eye_lookat_up(math::vec<3> const &eye_pt, math::vec<3> const &lookat_pt, math::vec<3> const &up_dir);
 	void set_position_rotation(math::vec<3> const &pos, math::vec<3> const &rot);
 	void set_position_quaternion(math::vec<3> const &pos, const math::quaternion<> &rot);
+
+	math::vec<3> const &get_eye_point() const { return eye_point; }
 
 	static void bind(lua_State *L);
 };
