@@ -123,7 +123,22 @@ void Renderer::set_view_projection_from_camera(Camera const &c)
 void Renderer::set_world_matrix(math::matrix<4,4> const &tf)
 {
 	world_matrix_ = tf;
+
     HRESULT hr = device_ptr_->SetTransform(D3DTS_WORLD, (D3DMATRIX const *) &tf);
+	if (FAILED(hr)) throw exception::directx_error(hr);
+}
+
+void Renderer::draw_triangles(VertexBuffer *buffer, size_t triangles_count)
+{
+	HRESULT hr;
+
+	hr = device_ptr_->SetVertexDeclaration(buffer->get_vertex_decl());
+	if (FAILED(hr)) throw exception::directx_error(hr);
+
+    hr = device_ptr_->SetStreamSource(0, buffer->get(), 0, buffer->get_vertex_size());
+	if (FAILED(hr)) throw exception::directx_error(hr);
+
+	hr = device_ptr_->DrawPrimitive(D3DPT_TRIANGLELIST, 0, triangles_count);
 	if (FAILED(hr)) throw exception::directx_error(hr);
 }
 

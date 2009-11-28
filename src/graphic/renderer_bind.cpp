@@ -17,6 +17,7 @@ void graphic::Renderer::bind(lua_State *L)
 		.def("finish_frame", &Renderer::finish_frame)
 		.def("set_view_projection_from_camera", &Renderer::set_view_projection_from_camera)
         .def("set_world_matrix", &Renderer::set_world_matrix)
+        .def("draw_triangles", &Renderer::draw_triangles)
     ];
 }
 

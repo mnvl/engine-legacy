@@ -7,7 +7,10 @@
 namespace graphic
 {
 
-VertexBuffer::VertexBuffer(Renderer *renderer, size_t size, bool dynamic, bool writeonly)
+VertexBuffer::VertexBuffer(boost::shared_ptr<Renderer> const &renderer, size_t size,
+	bool dynamic, bool writeonly)
+:
+	renderer_(renderer)
 {
 	DWORD usage = 0;
 	if(dynamic) usage |= D3DUSAGE_DYNAMIC;
@@ -49,20 +52,44 @@ void VertexBuffer::unlock() const
 	if(FAILED(hr)) throw exception::directx_error(hr);
 }
 
+template<>
+IDirect3DVertexDeclaration9 *VertexArrayPNT::get_vertex_decl() const
+{
+	return renderer_->get_resource_manager()->get_vertex_decl<vertex_pnt>();
+}
+
+template<>
+size_t VertexArrayPNT::get_vertex_size() const {
+	return sizeof(vertex_pnt);
+}
+
+template<>
+IDirect3DVertexDeclaration9 *VertexArrayPNJWT::get_vertex_decl() const
+{
+	return renderer_->get_resource_manager()->get_vertex_decl<vertex_pnjwt>();
+}
+
+template<>
+size_t VertexArrayPNJWT::get_vertex_size() const {
+	return sizeof(vertex_pnjwt);
+}
+
 void bind_vertex_array(lua_State *L)
 {
 	using namespace luabind;
 
 	module_(L, "graphic")
 	[
-		class_<VertexArrayPNT>("VertexArrayPNT")
-		.def(constructor<Renderer *, size_t, bool, bool>())
+		class_<VertexBuffer, boost::shared_ptr<VertexBuffer> >("VertexBuffer"),
+
+		class_<VertexArrayPNT, VertexBuffer, boost::shared_ptr<VertexArrayPNT> >("VertexArrayPNT")
+		.def(constructor<boost::shared_ptr<Renderer> const &, size_t, bool, bool>())
 		.def("lock", (vertex_pnt *(VertexArrayPNT::*)()) &VertexArrayPNT::lock)
 		.def("unlock", &VertexArrayPNT::unlock)
 		.def("at", (vertex_pnt *(VertexArrayPNT::*)(size_t)) &VertexArrayPNT::at),
 
-		class_<VertexArrayPNJWT>("VertexArrayPNJWT")
-		.def(constructor<Renderer *, size_t, bool, bool>())
+		class_<VertexArrayPNJWT, VertexBuffer, boost::shared_ptr<VertexArrayPNJWT> >("VertexArrayPNJWT")
+		.def(constructor<boost::shared_ptr<Renderer> const &, size_t, bool, bool>())
 		.def("lock", (vertex_pnjwt *(VertexArrayPNJWT::*)()) &VertexArrayPNJWT::lock)
 		.def("unlock", &VertexArrayPNJWT::unlock)
 		.def("at", (vertex_pnjwt *(VertexArrayPNJWT::*)(size_t)) &VertexArrayPNJWT::at)

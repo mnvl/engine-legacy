@@ -41,6 +41,12 @@ void Texture::load_from_file(std::string const &filename)
 	}
 }
 
+void Texture::select()
+{
+	HRESULT hr = renderer_ptr_->get_device()->SetTexture(0, texture_ptr_.get());
+	if (FAILED(hr)) throw exception::directx_error(hr);
+}
+
 void Texture::bind(lua_State *L)
 {
 	using namespace luabind;
@@ -50,6 +56,7 @@ void Texture::bind(lua_State *L)
 		class_<Texture>("Texture")
 		.def(constructor<boost::shared_ptr<Renderer> const &>())
 		.def("load_from_file", &Texture::load_from_file)
+		.def("select", &Texture::select)
 	];
 }
 

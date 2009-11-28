@@ -29,6 +29,8 @@ public:
 		return texture_ptr_.get();
 	}
 
+	void select();
+
 	static void bind(lua_State *L);
 
 private:

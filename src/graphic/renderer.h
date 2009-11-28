@@ -12,7 +12,8 @@
 #include <math/matrix.h>
 #include <util/boost_com_intrusive_ptr.h>
 #include <platform/window.h>
-#include <graphic/resource_manager.h>
+#include "resource_manager.h"
+#include "vertex_array.h"
 
 namespace graphic {
 
@@ -39,6 +40,8 @@ public:
 
 	void set_view_projection_from_camera(Camera const &c);
     void set_world_matrix(math::matrix<4,4> const &tf);
+
+	void draw_triangles(VertexBuffer *buffer, size_t triangles_count);
 
     static void bind(lua_State *L);
 
