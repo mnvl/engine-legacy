@@ -55,7 +55,7 @@ void VertexBuffer::unlock() const
 template<>
 IDirect3DVertexDeclaration9 *VertexArrayPNT::get_vertex_decl() const
 {
-	return renderer_->get_resource_manager()->get_vertex_decl<vertex_pnt>();
+	return renderer_->get_shared_resources()->get_vertex_decl<vertex_pnt>();
 }
 
 template<>
@@ -66,7 +66,7 @@ size_t VertexArrayPNT::get_vertex_size() const {
 template<>
 IDirect3DVertexDeclaration9 *VertexArrayPNJWT::get_vertex_decl() const
 {
-	return renderer_->get_resource_manager()->get_vertex_decl<vertex_pnjwt>();
+	return renderer_->get_shared_resources()->get_vertex_decl<vertex_pnjwt>();
 }
 
 template<>

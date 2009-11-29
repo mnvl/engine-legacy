@@ -10,7 +10,8 @@ namespace graphic
 {
 
 AnimatedMesh::AnimatedMesh(Model *model_ptr):
-    PnjwtStaticMesh(model_ptr)
+    PnjwtStaticMesh(model_ptr),
+	shader_(get_model()->get_renderer()->get_shared_resources()->get_animated_model_shader())
 {
 }
 
@@ -24,9 +25,8 @@ void AnimatedMesh::draw(Joint *joint_ptr)
     HRESULT hr;
 
 	boost::shared_ptr<Renderer> const renderer_ptr = get_model()->get_renderer();
-    ResourceManager *resource_manager_ptr = renderer_ptr->get_resource_manager();
-	IDirect3DDevice9 *device_ptr = renderer_ptr->get_device();
-    Shader *shader_ptr = resource_manager_ptr->get_animated_model_shader();
+	SharedResources * const shared_resources_ptr = renderer_ptr->get_shared_resources();
+	IDirect3DDevice9 * const device_ptr = renderer_ptr->get_device();
 
 	math::matrix<4,4> view_projection_matrix =
 		joint_ptr->matrix *
@@ -34,7 +34,7 @@ void AnimatedMesh::draw(Joint *joint_ptr)
         renderer_ptr->get_view_matrix() *
         renderer_ptr->get_projection_matrix();
 
-	hr = shader_ptr->get()->SetMatrix("view_projection_matrix", (D3DXMATRIX const *) &view_projection_matrix);
+	hr = shader_->get()->SetMatrix("view_projection_matrix", (D3DXMATRIX const *) &view_projection_matrix);
 	if (FAILED(hr)) throw exception::directx_error(hr);
 
     std::vector<math::matrix<4,4> > joint_matrix_array;
@@ -52,16 +52,16 @@ void AnimatedMesh::draw(Joint *joint_ptr)
 
 	if (joint_matrix_array.empty())
 	{
-	    hr = shader_ptr->get()->SetMatrixArray("joint_matrix_array", (D3DXMATRIX const *) 0, 0);
+	    hr = shader_->get()->SetMatrixArray("joint_matrix_array", (D3DXMATRIX const *) 0, 0);
 	}
 	else
 	{
-	    hr = shader_ptr->get()->SetMatrixArray("joint_matrix_array", (D3DXMATRIX const *) &joint_matrix_array[0], joint_matrix_array.size());
+	    hr = shader_->get()->SetMatrixArray("joint_matrix_array", (D3DXMATRIX const *) &joint_matrix_array[0], joint_matrix_array.size());
 	}
 
 	if (FAILED(hr)) throw exception::directx_error(hr);
 
-	hr = device_ptr->SetVertexDeclaration(resource_manager_ptr->get_vertex_decl<vertex_t>());
+	hr = device_ptr->SetVertexDeclaration(shared_resources_ptr->get_vertex_decl<vertex_t>());
 	if (FAILED(hr)) throw exception::directx_error(hr);
 
     hr = device_ptr->SetStreamSource(0, vertex_buffer_.get(), 0, sizeof(vertex_t));
@@ -71,21 +71,21 @@ void AnimatedMesh::draw(Joint *joint_ptr)
 	if (FAILED(hr)) throw exception::directx_error(hr);
 
     UINT passes_count;
-    hr = shader_ptr->get()->Begin(&passes_count, D3DXFX_DONOTSAVESTATE);
+    hr = shader_->get()->Begin(&passes_count, D3DXFX_DONOTSAVESTATE);
     if (FAILED(hr)) throw exception::directx_error(hr);
 
     for(UINT pass = 0; pass < passes_count; pass++ )
     {
-        hr = shader_ptr->get()->BeginPass(pass);
+        hr = shader_->get()->BeginPass(pass);
         if (FAILED(hr)) throw exception::directx_error(hr);
 
         draw_triangles_list();
 
-        hr = shader_ptr->get()->EndPass();
+        hr = shader_->get()->EndPass();
         if (FAILED(hr)) throw exception::directx_error(hr);
     }
 
-    hr = shader_ptr->get()->End();
+    hr = shader_->get()->End();
     if (FAILED(hr)) throw exception::directx_error(hr);
 
     hr = device_ptr->SetVertexShader(0);

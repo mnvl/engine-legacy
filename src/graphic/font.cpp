@@ -5,7 +5,7 @@
 
 namespace graphic {
 
-Font::Font(Renderer *renderer, std::string const &face_name, int height) {
+Font::Font(boost::shared_ptr<Renderer> const &renderer, std::string const &face_name, int height) {
 	HRESULT hr;
 
 	ID3DXFont *font_ptr;

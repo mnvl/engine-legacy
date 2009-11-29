@@ -12,7 +12,7 @@
 #include <math/matrix.h>
 #include <util/boost_com_intrusive_ptr.h>
 #include <platform/window.h>
-#include "resource_manager.h"
+#include "shared_resources.h"
 #include "vertex_array.h"
 
 namespace graphic {
@@ -33,7 +33,7 @@ public:
 	void finish_frame();
 
 	IDirect3DDevice9 *get_device() const { return device_ptr_.get(); }
-    ResourceManager *get_resource_manager() const { return resource_manager_.get(); }
+    SharedResources *get_shared_resources() const { return shared_resources_.get(); }
 	math::matrix<4,4> const &get_view_matrix() const { return view_matrix_; }
 	math::matrix<4,4> const &get_projection_matrix() const { return projection_matrix_; }
     math::matrix<4,4> const &get_world_matrix() const { return world_matrix_; }
@@ -57,7 +57,7 @@ private:
 	boost::intrusive_ptr<IDirect3D9> direct3d_ptr_;
 	boost::intrusive_ptr<IDirect3DDevice9> device_ptr_;
 
-    boost::scoped_ptr<ResourceManager> resource_manager_;
+    boost::scoped_ptr<SharedResources> shared_resources_;
 
 	double frame_start_time_, last_frame_time_;
 	std::deque<double> frame_times_;

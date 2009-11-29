@@ -2,6 +2,7 @@
 
 #include <d3d9.h>
 #include <d3dx9.h>
+#include <boost/shared_ptr.hpp>
 #include <boost/intrusive_ptr.hpp>
 #include <util/boost_com_intrusive_ptr.h>
 
@@ -12,7 +13,7 @@ class Renderer;
 
 class Font {
 public:
-	Font(Renderer *renderer, std::string const &face_name, int height = 16);
+	Font(boost::shared_ptr<Renderer> const &renderer, std::string const &face_name, int height = 16);
 	~Font();
 
 	ID3DXFont *get() const { return font_ptr_.get(); }

@@ -130,10 +130,10 @@ void MemoryMesh::transform_vertices(Joint const *joint_ptr, std::vector<vertex_t
 void MemoryMesh::draw_static(Joint *joint_ptr) const
 {
 	boost::shared_ptr<Renderer> const renderer_ptr = get_model()->get_renderer();
-    ResourceManager *resource_manager_ptr = renderer_ptr->get_resource_manager();
+    SharedResources *shared_resources_ptr = renderer_ptr->get_shared_resources();
 	IDirect3DDevice9 *device_ptr = renderer_ptr->get_device();
 
-    device_ptr->SetVertexDeclaration(resource_manager_ptr->get_vertex_decl<vertex_t>());
+    device_ptr->SetVertexDeclaration(shared_resources_ptr->get_vertex_decl<vertex_t>());
 
 	for (triangles_list_type::const_iterator it = triangles_list.begin();
 		it != triangles_list.end(); it++)
@@ -144,7 +144,7 @@ void MemoryMesh::draw_static(Joint *joint_ptr) const
 		}
 		else
 		{
-			resource_manager_ptr->get_default_material()->select();
+			shared_resources_ptr->get_default_material()->select();
 		}
 
 		{
@@ -160,13 +160,13 @@ void MemoryMesh::draw_static(Joint *joint_ptr) const
 void MemoryMesh::draw_animated(Joint *joint_ptr) const
 {
 	boost::shared_ptr<Renderer> const renderer_ptr = get_model()->get_renderer();
-    ResourceManager *resource_manager_ptr = renderer_ptr->get_resource_manager();
+    SharedResources *shared_resources_ptr = renderer_ptr->get_shared_resources();
 	IDirect3DDevice9 *device_ptr = renderer_ptr->get_device();
 
 	std::vector<vertex_t> transformed_vertices;
 	transform_vertices(joint_ptr, transformed_vertices);
 
-	device_ptr->SetVertexDeclaration(resource_manager_ptr->get_vertex_decl<vertex_t>());
+	device_ptr->SetVertexDeclaration(shared_resources_ptr->get_vertex_decl<vertex_t>());
 
 	for (triangles_list_type::const_iterator it = triangles_list.begin();
 		it != triangles_list.end(); it++)
@@ -177,7 +177,7 @@ void MemoryMesh::draw_animated(Joint *joint_ptr) const
 		}
 		else
 		{
-			resource_manager_ptr->get_default_material()->select();
+			shared_resources_ptr->get_default_material()->select();
 		}
 
 		{

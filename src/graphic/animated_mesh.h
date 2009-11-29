@@ -13,6 +13,9 @@ public:
 
     AnimatedModel *get_model();
     virtual void draw(Joint *joint_ptr);
+
+private:
+	boost::shared_ptr<Shader> shader_;
 };
 
 }

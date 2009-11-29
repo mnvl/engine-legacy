@@ -1,7 +1,8 @@
 #pragma once
 
 #include <d3d9.h>
-#include <boost/scoped_ptr.hpp>
+#include <boost/shared_ptr.hpp>
+#include <boost/weak_ptr.hpp>
 #include <boost/intrusive_ptr.hpp>
 #include <util/boost_com_intrusive_ptr.h>
 #include <graphic/vertex.h>
@@ -14,13 +15,10 @@ class Material;
 class Renderer;
 class Shader;
 
-class ResourceManager {
+class SharedResources {
 public:
-    ResourceManager(Renderer * const renderer_ptr);
-    ~ResourceManager();
-
-    Font *get_default_font() const { return default_font_.get(); }
-	Material *get_default_material() const { return default_material_.get(); }
+    SharedResources(Renderer * const renderer_ptr);
+    ~SharedResources();
 
     template<class T>
     IDirect3DVertexDeclaration9 *get_vertex_decl() const;
@@ -37,21 +35,19 @@ public:
         return pnjwt_decl_.get();
     }
 
-    Shader *get_animated_model_shader() const
-    {
-        return animated_model_shader_ptr_.get();
-    }
+	boost::shared_ptr<Font> get_default_font();
+	boost::shared_ptr<Material> get_default_material();
+	boost::shared_ptr<Shader> get_animated_model_shader();
 
 private:
 	Renderer * const renderer_ptr_;
 
-	boost::scoped_ptr<Font> default_font_;
-	boost::scoped_ptr<Material> default_material_;
-
     boost::intrusive_ptr<IDirect3DVertexDeclaration9> pnt_decl_;
     boost::intrusive_ptr<IDirect3DVertexDeclaration9> pnjwt_decl_;
 
-    boost::scoped_ptr<Shader> animated_model_shader_ptr_;
+	boost::weak_ptr<Font> default_font_;
+	boost::weak_ptr<Material> default_material_;
+    boost::weak_ptr<Shader> animated_model_shader_ptr_;
 };
 
 }

@@ -66,7 +66,7 @@ Renderer::~Renderer() {
 
 void Renderer::postconstruct()
 {
-    resource_manager_.reset(new ResourceManager(this));
+    shared_resources_.reset(new SharedResources(this));
 }
 
 void Renderer::begin_frame()
@@ -93,7 +93,7 @@ void Renderer::finish_frame()
 
 		RECT rc = { 0, 0, width_, height_ };
 
-		get_resource_manager()->get_default_font()->get()->DrawText(0, buffer, strlen(buffer), &rc, DT_LEFT | DT_TOP, D3DCOLOR_XRGB(255, 255, 255));
+		get_shared_resources()->get_default_font()->get()->DrawText(0, buffer, strlen(buffer), &rc, DT_LEFT | DT_TOP, D3DCOLOR_XRGB(255, 255, 255));
 	}
 
 	hr = device_ptr_->EndScene();

@@ -33,7 +33,7 @@ template<class T>
 void BasicStaticMesh<T>::draw(Joint *joint_ptr)
 {
 	boost::shared_ptr<Renderer> const renderer_ptr = get_model()->get_renderer();
-    ResourceManager *resource_manager_ptr = renderer_ptr->get_resource_manager();
+    SharedResources *shared_resources_ptr = renderer_ptr->get_shared_resources();
 	IDirect3DDevice9 *device_ptr = renderer_ptr->get_device();
 
 	{
@@ -41,7 +41,7 @@ void BasicStaticMesh<T>::draw(Joint *joint_ptr)
 		device_ptr->SetTransform(D3DTS_WORLD, (D3DMATRIX const *) tf.ij);
 	}
 
-	device_ptr->SetVertexDeclaration(resource_manager_ptr->get_vertex_decl<vertex_t>());
+	device_ptr->SetVertexDeclaration(shared_resources_ptr->get_vertex_decl<vertex_t>());
     device_ptr->SetStreamSource(0, vertex_buffer_.get(), 0, sizeof(vertex_t));
 
     device_ptr->SetIndices(index_buffer_.get());
@@ -187,7 +187,7 @@ template<class T>
 void BasicStaticMesh<T>::draw_triangles_list()
 {
 	boost::shared_ptr<Renderer> renderer_ptr = get_model()->get_renderer();
-    ResourceManager *resource_manager_ptr = renderer_ptr->get_resource_manager();
+    SharedResources *shared_resources_ptr = renderer_ptr->get_shared_resources();
 	IDirect3DDevice9 *device_ptr = renderer_ptr->get_device();
 
 	for (triangles_list_type::const_iterator it = triangles_list.begin();
@@ -199,7 +199,7 @@ void BasicStaticMesh<T>::draw_triangles_list()
 		}
 		else
 		{
-			resource_manager_ptr->get_default_material()->select();
+			shared_resources_ptr->get_default_material()->select();
 		}
 
 		device_ptr->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, it->minimal_vertex_index, it->vertices_count,
