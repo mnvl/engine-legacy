@@ -1,5 +1,6 @@
 #pragma once
 
+#include <lua.h>
 #include <vector>
 #include <sstream>
 #include <boost/shared_ptr.hpp>
@@ -61,6 +62,8 @@ public:
 	void enable_source_position();
 	void disable_source_position();
 	bool is_source_position_enabled() const;
+
+	static void bind(lua_State *L);
 
 private:
 	typedef std::vector<OutputPtr> outputs_t;

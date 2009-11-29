@@ -1,4 +1,5 @@
 
+#include <lauxlib.h>
 #include <windows.h>
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include "logger.h"
@@ -134,6 +135,40 @@ void Logger::disable_source_position()
 bool Logger::is_source_position_enabled() const
 {
 	return source_position_enabled_;
+}
+
+namespace
+{
+
+int lua_message(lua_State *L, Logger::level_t level)
+{
+	lua_Debug d;
+	lua_getstack(L, 1, &d);
+	lua_getinfo(L, "Sln", &d);
+
+	Logger::Message message(&Logger::instance(), level, d.short_src, d.currentline, d.name);
+	message.stream() << lua_tostring(L, -1);
+
+	lua_pop(L, 1);
+
+	return 0;
+}
+
+int lua_debug(lua_State *L)
+{
+	return lua_message(L, Logger::LEVEL_DEBUG);
+}
+
+luaL_reg const log_functions[] = {
+	{"debug", lua_debug},
+	{0, 0}
+};
+
+}
+
+void Logger::bind(lua_State *L)
+{
+	luaL_register(L, "log", log_functions);
 }
 
 }

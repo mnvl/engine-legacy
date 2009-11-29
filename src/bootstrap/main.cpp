@@ -30,6 +30,8 @@ public:
 
 		math::bind_vec(L_);
         math::bind_matrix(L_);
+
+		util::Logger::bind(L_);
 	}
 
     ~Main()
@@ -57,6 +59,8 @@ INT WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpstrCmdLine, INT
     try
     {
 		luabind::set_pcall_callback(util::print_backtrace_to_log);
+
+		util::Logger::instance().enable_source_position();
 
 		Main().run(lpstrCmdLine);
     }
