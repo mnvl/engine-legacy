@@ -7,33 +7,15 @@
 namespace graphic {
 
 class Camera {
-private:
-	math::vec<3> eye_point;
-	math::vec<3> lookat_point;
-	math::vec<3> up_direction;
-
-	math::vec<3> view_dir;
-	math::vec<3> cross_dir;
-
-	math::matrix<4,4> view_matrix;
-	math::matrix<4,4> billboard_matrix;
-
-	math::scalar field_of_view;
-	math::scalar aspect_ratio;
-	math::scalar near_plane;
-	math::scalar far_plane;
-
-	math::matrix<4,4> projection_matrix;
-
 public:
 	Camera();
 
     math::matrix<4,4> const &get_view_matrix() const {
-		return view_matrix;
+		return view_matrix_;
 	}
 
     math::matrix<4,4> const &get_projection_matrix() const {
-		return projection_matrix;
+		return projection_matrix_;
 	}
 
 	void set_perspective_projection(math::scalar fFOV,math::scalar fAspect,math::scalar fNearPlane,
@@ -45,9 +27,27 @@ public:
 	void set_position_rotation(math::vec<3> const &pos, math::vec<3> const &rot);
 	void set_position_quaternion(math::vec<3> const &pos, const math::quaternion<> &rot);
 
-	math::vec<3> const &get_eye_point() const { return eye_point; }
+	math::vec<3> const &get_eye_point() const { return eye_point_; }
 
 	static void bind(lua_State *L);
+
+private:
+	math::vec<3> eye_point_;
+	math::vec<3> lookat_point_;
+	math::vec<3> up_direction_;
+
+	math::vec<3> view_dir_;
+	math::vec<3> cross_dir_;
+
+	math::matrix<4,4> view_matrix_;
+	math::matrix<4,4> billboard_matrix_;
+
+	math::scalar field_of_view_;
+	math::scalar aspect_ratio_;
+	math::scalar near_plane_;
+	math::scalar far_plane_;
+
+	math::matrix<4,4> projection_matrix_;
 };
 
 }
