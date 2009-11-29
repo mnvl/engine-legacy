@@ -146,8 +146,10 @@ int lua_message(lua_State *L, Logger::level_t level)
 	lua_getstack(L, 1, &d);
 	lua_getinfo(L, "Sln", &d);
 
-	Logger::Message message(&Logger::instance(), level, d.short_src, d.currentline, d.name);
-	message.stream() << lua_tostring(L, -1);
+	{
+		Logger::Message message(&Logger::instance(), level, d.short_src, d.currentline, d.name);
+		message.stream() << lua_tostring(L, -1);
+	}
 
 	lua_pop(L, 1);
 
