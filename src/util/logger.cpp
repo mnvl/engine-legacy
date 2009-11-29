@@ -71,8 +71,9 @@ Logger::Message::~Message()
 	if (logger_ptr_->is_source_position_enabled())
 	{
 		stream_ << "\t["
-				<< filename_ << ':' << line_ << ' '
-				<< pretty_function_ << "]\n";
+				<< filename_ << ':' << line_;
+		if (pretty_function_) stream_  << ' ' << pretty_function_;
+		stream_ << "]\n";
 	}
 	else
 	{
@@ -161,8 +162,32 @@ int lua_debug(lua_State *L)
 	return lua_message(L, Logger::LEVEL_DEBUG);
 }
 
+int lua_info(lua_State *L)
+{
+	return lua_message(L, Logger::LEVEL_INFO);
+}
+
+int lua_warning(lua_State *L)
+{
+	return lua_message(L, Logger::LEVEL_WARNING);
+}
+
+int lua_error(lua_State *L)
+{
+	return lua_message(L, Logger::LEVEL_ERROR);
+}
+
+int lua_critical(lua_State *L)
+{
+	return lua_message(L, Logger::LEVEL_CRITICAL);
+}
+
 luaL_reg const log_functions[] = {
 	{"debug", lua_debug},
+	{"info", lua_info},
+	{"warning", lua_warning},
+	{"error", lua_error},
+	{"critical", lua_critical},
 	{0, 0}
 };
 
