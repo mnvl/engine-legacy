@@ -279,12 +279,12 @@ math::matrix<4,4,T>::rotation(scalar_type alpha,scalar_type beta,scalar_type gam
 	ij[0][1] = cb*sg;
 	ij[0][2] = -sb;
 	ij[0][3] = 0;
-	
+
 	ij[1][0] = sa_sb*cg - ca*sg;
 	ij[1][1] = sa_sb*sg + ca*cg;
 	ij[1][2] = sa*cb;
 	ij[1][3] = 0;
-	
+
 	ij[2][0] = ca_sb*cg + sa*sg;
 	ij[2][1] = ca_sb*sg - sa*cg;
 	ij[2][2] = ca*cb;
@@ -306,7 +306,7 @@ math::matrix<4,4,T>::rotation(const point_type &v) {
 template<class T> void
 math::matrix<4,4,T>::rotation(const quaternion_type &q) {
 	scalar_type wx, wy, wz, xx, yy, yz, xy, xz, zz, x2, y2, z2;
-	scalar_type s  = 2 / q.norm(); 
+	scalar_type s  = 2 / q.norm();
 
 	x2 = q.x * s;    y2 = q.y * s;    z2 = q.z * s;
 	xx = q.x * x2;   xy = q.x * y2;   xz = q.x * z2;
@@ -415,7 +415,7 @@ math::matrix<4,4,T>::direction(const point_type &dir) {
 	ij[0][0] = x_axis.x;	ij[0][1] = x_axis.y;	ij[0][2] = x_axis.z;	ij[0][3] = 0;
 	ij[1][0] = y_axis.x;	ij[1][1] = y_axis.y;	ij[1][2] = y_axis.z;	ij[1][3] = 0;
 	ij[2][0] = z_axis.x;	ij[2][1] = z_axis.y;	ij[2][2] = z_axis.z;	ij[2][3] = 0;
-	ij[3][0] = 0;		ij[3][1] = 0;		ij[3][2] = 0;		ij[3][3] = 1;
+	ij[3][0] = 0;		    ij[3][1] = 0;		    ij[3][2] = 0;		    ij[3][3] = 1;
 }
 
 template<class T> void
@@ -435,11 +435,8 @@ math::matrix<4,4,T>::lookat(const point_type &eye,const point_type &at,const poi
 	y_axis=z_axis^x_axis;
 
 	ij[0][0]=x_axis.x;	ij[0][1]=y_axis.x;	ij[0][2]=z_axis.x;	ij[0][3]=0;
-
 	ij[1][0]=x_axis.y;	ij[1][1]=y_axis.y;	ij[1][2]=z_axis.y;	ij[1][3]=0;
-
 	ij[2][0]=x_axis.z;	ij[2][1]=y_axis.z;	ij[2][2]=z_axis.z;	ij[2][3]=0;
-
 
 	ij[3][0]=-(x_axis&eye);
 	ij[3][1]=-(y_axis&eye);
