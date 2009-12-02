@@ -43,9 +43,22 @@ public:
 
 	void run(char const *filename)
 	{
-		if (luaL_dofile(L_, filename))
+		int result = luaL_loadfile(L_, filename);
+		if (result == 0) result = lua_pcall(L_, 0, LUA_MULTRET, 0);
+
+		int top = lua_gettop(L_);
+
+		switch (result)
 		{
-			throw std::runtime_error(lua_tostring(L_, 1));
+		case LUA_ERRSYNTAX:
+			util::print_backtrace_to_log(L_);
+			throw std::runtime_error("syntax eror");
+
+		case LUA_ERRRUN:
+			throw std::runtime_error(lua_tostring(L_, -1));
+
+		default:
+			throw std::runtime_error("unknown error");
 		}
 	}
 
