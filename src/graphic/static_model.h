@@ -14,7 +14,7 @@ public:
 	StaticModel(boost::shared_ptr<Renderer> const &renderer_ptr = boost::shared_ptr<Renderer>());
 	~StaticModel();
 
-	Mesh *create_mesh();
+	MeshPtr add_mesh();
 
     static void bind(lua_State *L);
 };

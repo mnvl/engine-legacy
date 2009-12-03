@@ -13,7 +13,7 @@ public:
 	AnimatedModel(boost::shared_ptr<Renderer> const &renderer_ptr = boost::shared_ptr<Renderer>());
 	~AnimatedModel();
 
-	Mesh *create_mesh();
+	virtual MeshPtr add_mesh();
 
     static void bind(lua_State *L);
 };

@@ -1,14 +1,18 @@
 #pragma once
 
+#include <boost/shared_ptr.hpp>
 #include "vertex.h"
 #include "index.h"
 #include "mesh.h"
 #include "model.h"
 
-namespace graphic {
+namespace graphic
+{
 
 class MemoryModel;
 class Renderer;
+
+typedef boost::shared_ptr<class MemoryMesh> MemoryMeshPtr;
 
 class MemoryMesh: public Mesh {
 public:

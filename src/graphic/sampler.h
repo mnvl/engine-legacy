@@ -5,7 +5,7 @@
 #include <math/vec.h>
 #include <math/quaternion.h>
 #include <math/matrix.h>
-#include <graphic/joint.h>
+#include "joint.h"
 
 namespace graphic {
 
@@ -27,22 +27,18 @@ private:
 	typedef std::vector<sample> samples_type;
 
 	std::string sid_;
-	Joint *joint_ptr_;
+	JointWeakPtr joint_ptr_;
 	samples_type samples_;
 
 public:
-	Sampler():
-	joint_ptr_(0)
-	{
-	}
-
-	void set_target(Joint *joint_ptr, std::string const &sid) { joint_ptr_ = joint_ptr; sid_ = sid; }
+	void set_target(JointPtr joint_ptr, std::string const &sid) { joint_ptr_ = joint_ptr; sid_ = sid; }
 
 	void add_sample(math::scalar time, math::matrix<4,4> const &m);
 	math::matrix<4,4> get(math::scalar time) const;
 
 	void set_target_matrix(math::scalar t) const {
-		if (joint_ptr_)	joint_ptr_->get_transform_by_sid(sid_) = get(t);
+		if (JointPtr joint_ptr = joint_ptr_.lock())
+			joint_ptr->get_transform_by_sid(sid_) = get(t);
 	}
 };
 

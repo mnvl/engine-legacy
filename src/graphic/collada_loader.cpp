@@ -417,7 +417,7 @@ namespace collada_elements
 		}
 
 	public:
-		void bind_mesh_materials(mesh_e const *, Mesh *mesh_ptr) const;
+		void bind_mesh_materials(mesh_e const *, MeshPtr mesh_ptr) const;
 
 		technique_common_e const *get_technique_common() const
 		{
@@ -544,7 +544,7 @@ namespace collada_elements
 			}
 		}
 
-		void build_hierarchy(Joint *parent_ptr);
+		void build_hierarchy(JointPtr parent_ptr);
 
 		node_e const *get_node_by_id(std::string const &id) const
 		{
@@ -577,7 +577,7 @@ namespace collada_elements
 
 		void build_hierarchy() {
 			for (boost::ptr_vector<node_e>::iterator it = childs_.begin(); it != childs_.end(); it++) {
-				it->build_hierarchy(0);
+				it->build_hierarchy(JointPtr());
 			}
 		}
 	};
@@ -749,7 +749,7 @@ namespace collada_elements
 			if (triangles_.empty()) throw std::logic_error("no <triangles> found");
 		}
 
-		void build_mesh(Mesh *mesh_ptr);
+		void build_mesh(MeshPtr mesh_ptr);
 
 		boost::ptr_vector<triangles_e> const &get_triangles() const
 		{
@@ -832,7 +832,7 @@ namespace collada_elements
 			{
 				LOG_DEBUG("building mesh id = " << it->get_id() << ", name = " << it->get_name());
 
-				Mesh *mesh_ptr = get_model()->create_mesh();
+				MeshPtr mesh_ptr = get_model()->add_mesh();
 
 				mesh_ptr->id = it->get_id();
 				mesh_ptr->name = it->get_name();
@@ -899,7 +899,7 @@ namespace collada_elements
 		}
 
 	public:
-		void build_inverted_bind_matrices(Mesh *mesh_ptr)
+		void build_inverted_bind_matrices(MeshPtr mesh_ptr)
 		{
 			mesh_ptr->bind_shape_matrix = bind_shape_matrix_;
 
@@ -925,7 +925,7 @@ namespace collada_elements
 			}
 		}
 
-		void build_joint_weights(Mesh *mesh_ptr)
+		void build_joint_weights(MeshPtr mesh_ptr)
 		{
 			mesh_e *mesh_element_ptr = get_root()->get_geometries()->get_geometry_by_id(mesh_ptr->id)->get_mesh();
 			mesh_e::position_index_to_vertex_index_type const &position_index_to_vertex_index = mesh_element_ptr->get_position_index_to_vertex_index_mapping();
@@ -1073,7 +1073,7 @@ namespace collada_elements
 
 		void build_joint_influences() {
 			for (boost::ptr_map<std::string, skin_e *>::const_iterator it = skins_.begin(); it != skins_.end(); it++) {
-				Mesh *mesh_ptr = get_model()->get_mesh_by_id(it->first.substr(1));
+				MeshPtr mesh_ptr = get_model()->get_mesh_by_id(it->first.substr(1));
 				(*it->second)->build_inverted_bind_matrices(mesh_ptr);
 				(*it->second)->build_joint_weights(mesh_ptr);
 			}
@@ -1168,7 +1168,7 @@ namespace collada_elements
 				if (parsed_target_components.size() == 2) parsed_target_components.push_back(std::string());
 				if (parsed_target_components.size() != 3) throw std::logic_error("invalid url " + it->target_url);
 
-				Joint *joint_ptr = model_ptr->get_joint_by_id(parsed_target_components[0]);
+				JointPtr joint_ptr = model_ptr->get_joint_by_id(parsed_target_components[0]);
 				dummy.set_target(joint_ptr, parsed_target_components[1]);
 
 				transform_ptr = get_root()->get_visual_scenes()->get_node_by_id(parsed_target_components[0])->get_transform_by_sid(parsed_target_components[1]);
@@ -1202,8 +1202,8 @@ namespace collada_elements
 	public:
 		void build_animations() {
 			for (boost::ptr_map<std::string, animation_e *>::iterator it = animations_.begin(); it != animations_.end(); it++) {
-				get_model()->animations.push_back(new Animation((*it->second)->build_animation(get_model())));
-				get_model()->animations.back().name = it->first;
+				get_model()->animations.push_back(AnimationPtr(new Animation((*it->second)->build_animation(get_model()))));
+				get_model()->animations.back()->name = it->first;
 			}
 		}
 	};
@@ -1233,7 +1233,7 @@ namespace collada_elements
 			if (instance_effect_url_.empty()) throw std::logic_error("no <instance_effect> url specified for material");
 		}
 
-		Material *build_material() const;
+		MaterialPtr build_material() const;
 	};
 
 	class library_materials_e: public element {
@@ -1423,9 +1423,9 @@ namespace collada_elements
 		std::string get_surface_filename(std::string const &component_name) const;
 
 	public:
-		Material *build_material() const
+		MaterialPtr build_material() const
 		{
-			std::auto_ptr<Material> material_ptr(new Material(get_model()->get_renderer()));
+			MaterialPtr material_ptr(new Material(get_model()->get_renderer()));
 
 			std::string const &diffuse_texture = get_surface_filename("diffuse");
 
@@ -1456,7 +1456,7 @@ namespace collada_elements
 			}
 			*/
 
-			return material_ptr.release();
+			return material_ptr;
 		}
 	};
 
@@ -1473,7 +1473,7 @@ namespace collada_elements
 		}
 
 	public:
-		Material *build_material() const
+		MaterialPtr build_material() const
 		{
 			return profile_common_ptr_->build_material();
 		}
@@ -1542,7 +1542,7 @@ namespace collada_elements
 		}
 	};
 
-	void bind_material_e::bind_mesh_materials(mesh_e const *mesh_element_ptr, Mesh *mesh_ptr) const
+	void bind_material_e::bind_mesh_materials(mesh_e const *mesh_element_ptr, MeshPtr mesh_ptr) const
 	{
 		boost::ptr_vector<triangles_e> const &triangles = mesh_element_ptr->get_triangles();
 
@@ -1568,7 +1568,7 @@ namespace collada_elements
 		}
 	}
 
-	void mesh_e::build_mesh(Mesh *mesh_ptr)
+	void mesh_e::build_mesh(MeshPtr mesh_ptr)
 	{
 		input_e const *position_input = vertices_->get_input("POSITION");
 		source_e const *position_source = get_source(position_input->get_source().substr(1));
@@ -1600,7 +1600,6 @@ namespace collada_elements
 			size_t stride = triangles_ptr->get_stride();
 
 			Mesh::triangles dummy;
-			dummy.material_ptr = 0;
 			dummy.triangles_count = triangles_ptr->get_count();
 			dummy.first_index_offset = first_index_offset;
 			dummy.minimal_vertex_index = size_t(-1);
@@ -1663,9 +1662,9 @@ namespace collada_elements
 		mesh_ptr->unlock();
 	}
 
-	void node_e::build_hierarchy(Joint *parent_ptr)
+	void node_e::build_hierarchy(JointPtr parent_ptr)
 	{
-		Joint *joint_ptr = get_model()->create_joint();
+		JointPtr joint_ptr = get_model()->add_joint();
 		joint_ptr->id = id_;
 		joint_ptr->name = sid_;
 		joint_ptr->parent = parent_ptr;
@@ -1678,7 +1677,7 @@ namespace collada_elements
 
 		if (instance_geometry_)
 		{
-			Mesh *mesh_ptr = get_model()->get_mesh_by_id(instance_geometry_->get_url());
+			MeshPtr mesh_ptr = get_model()->get_mesh_by_id(instance_geometry_->get_url());
 
 			joint_ptr->mesh_ptr = mesh_ptr;
 			mesh_e const *mesh_element_ptr = get_root()->get_geometries()->get_geometry_by_id(instance_geometry_->get_url())->get_mesh();
@@ -1693,7 +1692,7 @@ namespace collada_elements
 			joint_ptr->mesh_ptr = get_model()->get_mesh_by_id(controller_ptr->get_skin_source_id());
 			mesh_e const *mesh_element_ptr = get_root()->get_geometries()->get_geometry_by_id(controller_ptr->get_skin_source_id())->get_mesh();
 
-			instance_controller_->get_bind_material()->bind_mesh_materials(mesh_element_ptr, (Mesh *) joint_ptr->mesh_ptr);
+			instance_controller_->get_bind_material()->bind_mesh_materials(mesh_element_ptr, joint_ptr->mesh_ptr.lock());
 		}
 
 		for (boost::ptr_vector<node_e>::iterator it = childs_.begin(); it != childs_.end(); it++)
@@ -1702,18 +1701,18 @@ namespace collada_elements
 		}
 	}
 
-	Material *material_e::build_material() const
+	MaterialPtr material_e::build_material() const
 	{
 		LOG_DEBUG("material " << name_);
 
-		std::auto_ptr<Material> material_ptr(get_root()->
+		MaterialPtr material_ptr(get_root()->
 			get_effects()->
 			get_effect_by_name(instance_effect_url_.substr(1))->
 			build_material());
 
 		material_ptr->set_name(name_);
 
-		return material_ptr.release();
+		return material_ptr;
 	}
 
 	std::string profile_common_e::get_surface_filename(std::string const &component_name) const

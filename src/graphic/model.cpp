@@ -14,10 +14,10 @@ Model::~Model()
 {
 }
 
-Joint *Model::create_joint()
+JointPtr Model::add_joint()
 {
-	joints.push_back(new Joint(joints.size()));
-	return &joints.back();
+	joints.push_back(JointPtr(new Joint(joints.size())));
+	return joints.back();
 }
 
 void Model::load_from_collada(std::string const &filename)
@@ -39,46 +39,46 @@ void Model::load_from_raw_u16_heightfield(std::string const &filename, math::mat
     HeightfieldLoader(filename, this, renderer_ptr_).load_from_raw<boost::uint16_t>(tf, nrows, ncols, scale, texture_name);
 }
 
-Joint *Model::get_joint_by_id(std::string const &id)
+JointPtr Model::get_joint_by_id(std::string const &id)
 {
 	for (joints_type::iterator it = joints.begin(); it != joints.end(); it++) {
-		if (it->id == id) return &*it;
+		if ((*it)->id == id) return *it;
 	}
 
 	throw std::runtime_error("joint with id = " + id + " not found in model");
 }
 
-Joint *Model::get_joint_by_name(std::string const &name)
+JointPtr Model::get_joint_by_name(std::string const &name)
 {
 	for (joints_type::iterator it = joints.begin(); it != joints.end(); it++) {
-		if (it->name == name) return &*it;
+		if ((*it)->name == name) return *it;
 	}
 
-	throw std::runtime_error("joint with name = " + name + " not found in model");
+	throw std::runtime_error("joint with name = " + name + " not found");
 }
 
-Mesh *Model::get_mesh_by_id(std::string const &id)
+MeshPtr Model::get_mesh_by_id(std::string const &id)
 {
 	for (meshes_type::iterator it = meshes.begin(); it != meshes.end(); it++) {
-		if (it->id == id) return &*it;
+		if ((*it)->id == id) return *it;
 	}
 
 	throw std::runtime_error("mesh with id = " + id + " not found");
 }
 
-Mesh *Model::get_mesh_by_name(std::string const &name)
+MeshPtr Model::get_mesh_by_name(std::string const &name)
 {
 	for (meshes_type::iterator it = meshes.begin(); it != meshes.end(); it++) {
-		if (it->name == name) return &*it;
+		if ((*it)->name == name) return *it;
 	}
 
 	throw std::runtime_error("mesh with name = " + name + " not found");
 }
 
-Material *Model::get_material_by_name(std::string const &name)
+MaterialPtr Model::get_material_by_name(std::string const &name)
 {
 	for (materials_type::iterator it = materials.begin(); it != materials.end(); it++) {
-		if (it->get_name() == name) return &*it;
+		if ((*it)->get_name() == name) return *it;
 	}
 
 	throw std::runtime_error("material with name = " + name + " not found");
@@ -88,12 +88,12 @@ void Model::set_animation_time(math::scalar t)
 {
 	for (animations_type::iterator it = animations.begin(); it != animations.end(); it++)
 	{
-		it->set_time(t);
+		(*it)->set_time(t);
 	}
 
 	for (joints_type::iterator it = joints.begin(); it != joints.end(); it++) {
-		if (it->parent == 0) {
-			it->build_frame_transforms();
+		if (!(*it)->parent.lock()) {
+			(*it)->build_frame_transforms();
 		}
 	}
 }
@@ -102,9 +102,9 @@ void Model::draw()
 {
 	for (joints_type::iterator it = joints.begin(); it != joints.end(); it++)
 	{
-		if (it->mesh_ptr)
+		if (MeshPtr mesh_ptr = (*it)->mesh_ptr.lock())
 		{
-			it->mesh_ptr->draw(&*it);
+			mesh_ptr->draw(it->get());
 		}
 	}
 }

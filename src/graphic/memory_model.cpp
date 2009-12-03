@@ -10,11 +10,10 @@ MemoryModel::MemoryModel(boost::shared_ptr<Renderer> const &renderer_ptr):
 {
 }
 
-Mesh *MemoryModel::create_mesh()
+MeshPtr MemoryModel::add_mesh()
 {
-	std::auto_ptr<MemoryMesh> mesh_ptr(new MemoryMesh(this));
-	meshes.push_back(mesh_ptr);
-	return &meshes.back();
+	meshes.push_back(MeshPtr(new MemoryMesh(this)));
+	return meshes.back();
 }
 
 void MemoryModel::draw()
@@ -29,9 +28,9 @@ void MemoryModel::draw_static()
 
 	for (joints_type::iterator it = joints.begin(); it != joints.end(); it++)
 	{
-		if (it->mesh_ptr)
+		if (MemoryMeshPtr mesh_ptr = boost::static_pointer_cast<MemoryMesh>((*it)->mesh_ptr.lock()))
 		{
-			((MemoryMesh *) it->mesh_ptr)->draw_static(&*it);
+			mesh_ptr->draw_static(it->get());
 		}
 	}
 }
@@ -40,9 +39,9 @@ void MemoryModel::draw_animated()
 {
 	for (joints_type::iterator it = joints.begin(); it != joints.end(); it++)
 	{
-		if (it->mesh_ptr)
+		if (MemoryMeshPtr mesh_ptr = boost::static_pointer_cast<MemoryMesh>((*it)->mesh_ptr.lock()))
 		{
-			((MemoryMesh *) it->mesh_ptr)->draw_animated(&*it);
+			mesh_ptr->draw_animated(it->get());
 		}
 	}
 }

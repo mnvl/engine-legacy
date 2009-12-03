@@ -15,11 +15,10 @@ StaticModel::~StaticModel()
 {
 }
 
-Mesh *StaticModel::create_mesh()
+MeshPtr StaticModel::add_mesh()
 {
-	std::auto_ptr<StaticMesh> mesh_ptr(new StaticMesh(this));
-	meshes.push_back(mesh_ptr);
-	return &meshes.back();
+	meshes.push_back(MeshPtr(new StaticMesh(this)));
+	return meshes.back();
 }
 
 }

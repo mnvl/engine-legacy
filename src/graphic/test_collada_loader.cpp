@@ -35,9 +35,9 @@ void test_plane()
     BOOST_ASSERT (model_ptr->joints.size() == 1);
     BOOST_ASSERT (model_ptr->animations.size() == 0);
 
-    BOOST_ASSERT (model_ptr->joints[0].mesh_ptr == &model_ptr->meshes[0]);
+    BOOST_ASSERT (model_ptr->joints[0]->mesh_ptr.lock() == model_ptr->meshes[0]);
 
-    graphic::MemoryMesh const *mesh_ptr = (graphic::MemoryMesh const *) &model_ptr->meshes.front();
+    graphic::MemoryMesh const *mesh_ptr = (graphic::MemoryMesh const *) model_ptr->meshes.front().get();
     BOOST_ASSERT (mesh_ptr->get_vertex_buffer().size() == 4);
     BOOST_ASSERT (mesh_ptr->get_index_buffer().size() == 6);
 
@@ -68,23 +68,23 @@ void test_joint()
     BOOST_ASSERT (model_ptr->joints.size() == 2);
     BOOST_ASSERT (model_ptr->animations.size() == 1);
 
-    BOOST_ASSERT (model_ptr->joints[0].parent == 0);
-    BOOST_ASSERT (model_ptr->joints[1].parent == 0);
+    BOOST_ASSERT (!model_ptr->joints[0]->parent.lock());
+    BOOST_ASSERT (!model_ptr->joints[1]->parent.lock());
 
-    BOOST_ASSERT (model_ptr->joints[0].mesh_ptr == (graphic::Mesh *) &model_ptr->meshes[0]);
+    BOOST_ASSERT (model_ptr->joints[0]->mesh_ptr.lock() == model_ptr->meshes[0]);
 
-    graphic::MemoryMesh *mesh_ptr = (graphic::MemoryMesh *) &model_ptr->meshes.front();
+    graphic::MemoryMesh *mesh_ptr = (graphic::MemoryMesh *) model_ptr->meshes.front().get();
 
     model_ptr->set_animation_time(0);
     std::vector<graphic::MemoryMesh::vertex_t> vertices1;
-    mesh_ptr->transform_vertices(&model_ptr->joints[0], vertices1);
+    mesh_ptr->transform_vertices(model_ptr->joints[0].get(), vertices1);
 
     BOOST_ASSERT (vertices1.size() == 3);
     BOOST_ASSERT (abs(vertices1[0].position.y) < 0.1f);
 
     model_ptr->set_animation_time(1);
     std::vector<graphic::MemoryMesh::vertex_t> vertices2;
-    mesh_ptr->transform_vertices(&model_ptr->joints[0], vertices2);
+    mesh_ptr->transform_vertices(model_ptr->joints[0].get(), vertices2);
 
     BOOST_ASSERT (vertices2.size() == 3);
     BOOST_ASSERT (abs(vertices2[0].position.y - 1.0f) < 0.1f);
@@ -103,31 +103,31 @@ void test_animation()
     BOOST_ASSERT (model_ptr->joints.size() == 4);
     BOOST_ASSERT (model_ptr->animations.size() == 1);
 
-    BOOST_ASSERT (model_ptr->joints[0].parent == 0);
-    BOOST_ASSERT (model_ptr->joints[1].parent == 0);
-    BOOST_ASSERT (model_ptr->joints[2].parent == &model_ptr->joints[1]);
-    BOOST_ASSERT (model_ptr->joints[3].parent == &model_ptr->joints[2]);
+    BOOST_ASSERT (!model_ptr->joints[0]->parent.lock());
+    BOOST_ASSERT (!model_ptr->joints[1]->parent.lock());
+    BOOST_ASSERT (model_ptr->joints[2]->parent.lock() == model_ptr->joints[1]);
+    BOOST_ASSERT (model_ptr->joints[3]->parent.lock() == model_ptr->joints[2]);
 
-    BOOST_ASSERT (model_ptr->joints[0].childs.size() == 0);
+    BOOST_ASSERT (model_ptr->joints[0]->childs.size() == 0);
 
-    BOOST_ASSERT (model_ptr->joints[1].childs.size() == 1);
-    BOOST_ASSERT (model_ptr->joints[1].childs[0] == &model_ptr->joints[2]);
+    BOOST_ASSERT (model_ptr->joints[1]->childs.size() == 1);
+    BOOST_ASSERT (model_ptr->joints[1]->childs[0].lock() == model_ptr->joints[2]);
 
-    BOOST_ASSERT (model_ptr->joints[2].childs.size() == 1);
-    BOOST_ASSERT (model_ptr->joints[2].childs[0] == &model_ptr->joints[3]);
+    BOOST_ASSERT (model_ptr->joints[2]->childs.size() == 1);
+    BOOST_ASSERT (model_ptr->joints[2]->childs[0].lock() == model_ptr->joints[3]);
 
-    BOOST_ASSERT (model_ptr->joints[3].childs.size() == 0);
+    BOOST_ASSERT (model_ptr->joints[3]->childs.size() == 0);
 
-    graphic::MemoryMesh *mesh_ptr = (graphic::MemoryMesh *) &model_ptr->meshes.front();
-    BOOST_ASSERT (model_ptr->joints[0].mesh_ptr == mesh_ptr);
+    graphic::MemoryMesh *mesh_ptr = (graphic::MemoryMesh *) model_ptr->meshes.front().get();
+    BOOST_ASSERT (model_ptr->joints[0]->mesh_ptr.lock().get() == mesh_ptr);
 
     model_ptr->set_animation_time(0);
     std::vector<graphic::MemoryMesh::vertex_t> vertices1;
-    mesh_ptr->transform_vertices(&model_ptr->joints[0], vertices1);
+    mesh_ptr->transform_vertices(model_ptr->joints[0].get(), vertices1);
 
     model_ptr->set_animation_time(1);
     std::vector<graphic::MemoryMesh::vertex_t> vertices2;
-    mesh_ptr->transform_vertices(&model_ptr->joints[0], vertices2);
+    mesh_ptr->transform_vertices(model_ptr->joints[0].get(), vertices2);
 
     BOOST_ASSERT((vertices1[0].position - math::vec<3>(-1.0f, 0.85f, 1.0f)).length_sq() < 0.1f);
     BOOST_ASSERT((vertices2[0].position - math::vec<3>(-1.0f, 0.85f, 1.0f)).length_sq() < 0.1f);
@@ -150,31 +150,31 @@ void test_materials()
     BOOST_ASSERT (model_ptr->joints.size() == 2);
     BOOST_ASSERT (model_ptr->animations.size() == 0);
 
-    BOOST_ASSERT (model_ptr->joints[0].mesh_ptr == &model_ptr->meshes[0]);
-    BOOST_ASSERT (model_ptr->joints[1].mesh_ptr == &model_ptr->meshes[1]);
+    BOOST_ASSERT (model_ptr->joints[0]->mesh_ptr.lock() == model_ptr->meshes[0]);
+    BOOST_ASSERT (model_ptr->joints[1]->mesh_ptr.lock() == model_ptr->meshes[1]);
 
-    graphic::Material const &m0 = model_ptr->materials[0];
+    graphic::Material const &m0 = *model_ptr->materials[0];
     BOOST_ASSERT (m0.get_name() == "blinn1");
     BOOST_ASSERT (m0.get_texture_name().find("file2.tga") != std::string::npos);
 
-    graphic::Material const &m1 = model_ptr->materials[1];
+    graphic::Material const &m1 = *model_ptr->materials[1];
     BOOST_ASSERT (m1.get_name() == "blinn2");
     BOOST_ASSERT (m1.get_texture_name().find("file4.tga") != std::string::npos);
 
-    graphic::Material const &m2 = model_ptr->materials[2];
+    graphic::Material const &m2 = *model_ptr->materials[2];
     BOOST_ASSERT (m2.get_name() == "lambert1");
     BOOST_ASSERT (m2.get_texture_name().find("file1.tga") != std::string::npos);
 
-    graphic::Material const &m3 = model_ptr->materials[3];
+    graphic::Material const &m3 = *model_ptr->materials[3];
     BOOST_ASSERT (m3.get_name() == "phong1");
     BOOST_ASSERT (m3.get_texture_name().find("file3.tga") != std::string::npos);
 
-    graphic::Material const &m4 = model_ptr->materials[4];
+    graphic::Material const &m4 = *model_ptr->materials[4];
     BOOST_ASSERT (m4.get_name() == "phong2");
     BOOST_ASSERT (m4.get_texture_name().find("file5.tga") != std::string::npos);
 
     {
-        graphic::MemoryMesh const *mesh1_ptr = (graphic::MemoryMesh const *) &model_ptr->meshes[0];
+        graphic::MemoryMesh const *mesh1_ptr = (graphic::MemoryMesh const *) model_ptr->meshes[0].get();
         BOOST_ASSERT (mesh1_ptr->get_vertex_buffer().size() == 9);
         BOOST_ASSERT (mesh1_ptr->get_index_buffer().size() == 9);
 
@@ -201,7 +201,7 @@ void test_materials()
     }
 
     {
-        graphic::MemoryMesh const *mesh2_ptr = (graphic::MemoryMesh const *) &model_ptr->meshes[1];
+        graphic::MemoryMesh const *mesh2_ptr = (graphic::MemoryMesh const *) model_ptr->meshes[1].get();
         BOOST_ASSERT (mesh2_ptr->get_vertex_buffer().size() == 9);
         BOOST_ASSERT (mesh2_ptr->get_index_buffer().size() == 9);
 
@@ -232,6 +232,8 @@ void test_materials()
 boost::unit_test::test_suite*
 init_unit_test_suite(int argc, char *argv[])
 {
+	BOOST_ASSERT (argc == 2);
+
 	sources_directory = argv[1];
 	boost::unit_test::framework::master_test_suite().p_name.value = "test_collada_loader";
 	boost::unit_test::framework::master_test_suite().add(BOOST_TEST_CASE(&test_plane), 0, 0);

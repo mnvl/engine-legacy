@@ -2,11 +2,17 @@
 
 #include <string>
 #include <vector>
+#include <boost/shared_ptr.hpp>
+#include <boost/weak_ptr.hpp>
 #include <math/matrix.h>
 
 namespace graphic {
 
+class Joint;
 class Mesh;
+
+typedef boost::shared_ptr<Joint> JointPtr;
+typedef boost::weak_ptr<Joint> JointWeakPtr;
 
 class Joint {
 public:
@@ -20,18 +26,18 @@ public:
 		math::matrix<4,4> matrix;
 	};
 
+	typedef std::vector<JointWeakPtr> childs_type;
+
 	size_t index;
 	std::string id, name;
-	Joint *parent;
-	std::vector<Joint *> childs;
+	JointWeakPtr parent;
+	childs_type childs;
 	std::vector<transform> transforms;
 	mutable math::matrix<4,4> matrix;
-	Mesh *mesh_ptr;
+	boost::weak_ptr<Mesh> mesh_ptr;
 
 	Joint(size_t i):
-	index(i),
-	parent(0),
-	mesh_ptr(0)
+	index(i)
 	{
 	}
 
@@ -51,11 +57,11 @@ public:
 			matrix *= it->matrix;
 		}
 
-		if (parent) matrix *= parent->matrix;
+		if (JointPtr p = parent.lock()) matrix *= p->matrix;
 
-		for (std::vector<Joint *>::iterator it = childs.begin(); it != childs.end(); it++)
+		for (childs_type::iterator it = childs.begin(); it != childs.end(); it++)
 		{
-			(*it)->build_frame_transforms();
+			if (JointPtr child = it->lock()) child->build_frame_transforms();
 		}
 	}
 };

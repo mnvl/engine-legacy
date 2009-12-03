@@ -1,9 +1,13 @@
 #pragma once
 
 #include <vector>
-#include <graphic/sampler.h>
+#include <boost/shared_ptr.hpp>
+#include "sampler.h"
 
-namespace graphic {
+namespace graphic
+{
+
+typedef boost::shared_ptr<struct Animation> AnimationPtr;
 
 struct Animation {
 	typedef std::vector<Sampler> samplers_type;

@@ -2,19 +2,24 @@
 
 #include <vector>
 #include <boost/shared_ptr.hpp>
+#include <boost/weak_ptr.hpp>
 #include <math/matrix.h>
 #include <graphic/material.h>
 
 namespace graphic {
 
 class Joint;
+class Mesh;
 class Model;
+
+typedef boost::shared_ptr<Mesh> MeshPtr;
+typedef boost::weak_ptr<Mesh> MeshWeakPtr;
 
 class Mesh {
 public:
 	struct triangles
 	{
-		Material *material_ptr;
+		MaterialPtr material_ptr;
 		size_t first_index_offset;
 		size_t triangles_count;
 		size_t minimal_vertex_index;

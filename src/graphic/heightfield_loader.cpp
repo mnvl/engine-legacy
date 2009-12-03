@@ -31,7 +31,7 @@ void HeightfieldLoader::load_from_raw(math::matrix<4,4> const &tf, size_t nrows,
     std::vector<char> buffer;
     util::FileHandle(filename_.c_str(), O_RDONLY).read_all(buffer);
 
-    Mesh *mesh_ptr = model_ptr_->create_mesh();
+	MeshPtr mesh_ptr = model_ptr_->add_mesh();
 
     T *get = (T *) &buffer[0];
 
@@ -91,21 +91,21 @@ void HeightfieldLoader::load_from_raw(math::matrix<4,4> const &tf, size_t nrows,
     mesh_ptr->unlock();
 
 	LOG_DEBUG("setting material and texture (" << texture_name << ")...");
-    std::auto_ptr<Material> material_ptr(new Material(renderer_ptr_));
+    MaterialPtr material_ptr(new Material(renderer_ptr_));
     material_ptr->set_name(texture_name + " material");
     material_ptr->set_texture(texture_name);
     model_ptr_->materials.push_back(material_ptr);
 
 	LOG_DEBUG("adding triangle lists and joints...");
     Mesh::triangles t;
-    t.material_ptr = &model_ptr_->materials.back();
+    t.material_ptr = model_ptr_->materials.back();
     t.first_index_offset = 0;
     t.triangles_count = indices.size() / 3;
     t.minimal_vertex_index = 0;
     t.vertices_count = positions.size();
     mesh_ptr->triangles_list.push_back(t);
 
-	Joint *joint_ptr = model_ptr_->create_joint();
+	JointPtr joint_ptr = model_ptr_->add_joint();
 	joint_ptr->transforms.push_back(Joint::transform("tf", tf));
 	joint_ptr->mesh_ptr = mesh_ptr;
 

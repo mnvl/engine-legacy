@@ -5,7 +5,10 @@
 #include <graphic/texture.h>
 #include <graphic/renderer.h>
 
-namespace graphic {
+namespace graphic
+{
+
+typedef boost::shared_ptr<class Material> MaterialPtr;
 
 class Material {
 public:

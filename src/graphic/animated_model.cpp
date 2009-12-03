@@ -14,11 +14,10 @@ AnimatedModel::~AnimatedModel()
 {
 }
 
-Mesh *AnimatedModel::create_mesh()
+MeshPtr AnimatedModel::add_mesh()
 {
-	std::auto_ptr<AnimatedMesh> mesh_ptr(new AnimatedMesh(this));
-	meshes.push_back(mesh_ptr);
-	return &meshes.back();
+	meshes.push_back(MeshPtr(new AnimatedMesh(this)));
+	return meshes.back();
 }
 
 }

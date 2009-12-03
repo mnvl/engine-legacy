@@ -45,7 +45,7 @@ void AnimatedMesh::draw(Joint *joint_ptr)
     {
 		math::matrix<4,4> t = bind_shape_matrix *
 			inverted_bind_matrices[*it] *
-			get_model()->joints[*it].matrix;
+			get_model()->joints[*it]->matrix;
 
         joint_matrix_array.push_back(t);
     }
