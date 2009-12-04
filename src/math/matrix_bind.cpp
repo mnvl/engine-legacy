@@ -1,5 +1,6 @@
 
 #include <luabind/luabind.hpp>
+#include <luabind/operator.hpp>
 #include "matrix.h"
 
 void math::bind_matrix(lua_State *L)
@@ -26,7 +27,9 @@ void math::bind_matrix(lua_State *L)
         .def("direction", (void (matrix<4,4>::*)(vec<3> const &)) &matrix<4,4>::direction)
         .def("direct", (void (matrix<4,4>::*)(vec<3> const &)) &matrix<4,4>::direct),
 
-		def("mul", (void (*)(vec<3> &,const vec<3> &,const matrix<3,3> &)) mul),
-		def("mul", (void (*)(vec<3> &,const vec<3> &,const matrix<4,4> &)) mul)
+		def("mul", (void (*)(vec<3> &,vec<3> const &, matrix<3,3> const &)) mul),
+		def("mul", (void (*)(vec<3> &,vec<3> const &, matrix<4,4> const &)) mul),
+		def("mul", (void (*)(vec<4> &,vec<4> const &, matrix<4,4> const &)) mul),
+		def("mul", (void (*)(matrix<4,4> &,matrix<4,4> const &, matrix<4,4> const &)) mul)
     ];
 }
