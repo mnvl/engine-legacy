@@ -13,6 +13,8 @@ void graphic::Model::bind(lua_State *L)
 		.def("load_from_collada", &Model::load_from_collada)
 		.def("set_animation_time", &Model::set_animation_time)
 		.def("draw", &Model::draw)
+		.def("get_joint_by_id", &Model::get_joint_by_id)
+		.def("get_joint_by_name", &Model::get_joint_by_name)
     ];
 }
 

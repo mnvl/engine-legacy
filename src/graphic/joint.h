@@ -4,6 +4,7 @@
 #include <vector>
 #include <boost/shared_ptr.hpp>
 #include <boost/weak_ptr.hpp>
+#include <lua.h>
 #include <math/matrix.h>
 
 namespace graphic {
@@ -64,6 +65,8 @@ public:
 			if (JointPtr child = it->lock()) child->build_frame_transforms();
 		}
 	}
+
+	static void bind(lua_State *L);
 };
 
 }
