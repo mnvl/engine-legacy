@@ -15,6 +15,11 @@ AnimatedMesh::AnimatedMesh(Model *model_ptr):
 {
 }
 
+MeshPtr AnimatedMesh::shallow_copy() const
+{
+	return MeshPtr(new AnimatedMesh(*this));
+}
+
 AnimatedModel *AnimatedMesh::get_model()
 {
     return (AnimatedModel *) Mesh::get_model();

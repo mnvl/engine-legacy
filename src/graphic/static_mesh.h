@@ -18,6 +18,8 @@ public:
 	BasicStaticMesh(Model *model_ptr);
 	~BasicStaticMesh();
 
+	virtual MeshPtr shallow_copy() const;
+
 	StaticModel *get_model();
 	virtual void draw(Joint *joint_ptr);
 

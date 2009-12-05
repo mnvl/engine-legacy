@@ -12,23 +12,40 @@ Model::Model(boost::shared_ptr<Renderer> const &renderer_ptr):
 }
 
 Model::Model(Model const &model):
-	meshes(model.meshes),
-	materials(model.materials)
+	materials(model.materials),
+	renderer_ptr_(model.renderer_ptr_)
 {
 	boost::unordered_map<JointPtr, JointPtr> joints_tt;
+	boost::unordered_map<MeshPtr, MeshPtr> meshes_tt;
 
 	joints.reserve(model.joints.size());
 	animations.reserve(model.animations.size());
+	meshes.reserve(model.meshes.size());
 
 	for (size_t i = 0; i < model.joints.size(); i++)
 	{
-		joints.push_back(JointPtr(new Joint(*model.joints[i])));
-		joints_tt[model.joints[i]] = joints.back();
+		JointPtr source = model.joints[i];
+		JointPtr joint(new Joint(*source));
+
+		joints.push_back(joint);
+		joints_tt.insert(std::make_pair(source, joint));
 	}
 
-	for (size_t i = 0; i < model.animations.size(); i++)
+	for (animations_type::const_iterator it = model.animations.begin(); it != model.animations.end(); it++)
 	{
-		animations.push_back(AnimationPtr(new Animation(*model.animations[i])));
+		animations.push_back(AnimationPtr(new Animation(**it)));
+	}
+
+	for (meshes_type::const_iterator it = model.meshes.begin(); it != model.meshes.end(); it++)
+	{
+		MeshPtr source = *it;
+
+		MeshPtr mesh = source->shallow_copy();
+		mesh->set_model(this);
+
+		meshes.push_back(mesh);
+
+		meshes_tt.insert(std::make_pair(source, mesh));
 	}
 
 	for (joints_type::iterator it = joints.begin(); it != joints.end(); it++)
@@ -41,6 +58,11 @@ Model::Model(Model const &model):
 		for (Joint::childs_type::iterator jt = (*it)->childs.begin(); jt != (*it)->childs.end(); jt++)
 		{
 			*jt = joints_tt.find(jt->lock())->second;
+		}
+
+		if (MeshPtr mesh_ptr = (*it)->mesh_ptr.lock())
+		{
+			(*it)->mesh_ptr = meshes_tt.find(mesh_ptr)->second;
 		}
 	}
 

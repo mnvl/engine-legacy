@@ -24,6 +24,12 @@ BasicStaticMesh<T>::~BasicStaticMesh()
 }
 
 template<class T>
+MeshPtr BasicStaticMesh<T>::shallow_copy() const
+{
+	return MeshPtr(new BasicStaticMesh<T>(*this));
+}
+
+template<class T>
 StaticModel *BasicStaticMesh<T>::get_model()
 {
 	return (StaticModel *) model_ptr_;

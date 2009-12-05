@@ -13,6 +13,11 @@ Mesh::~Mesh()
 {
 }
 
+void Mesh::set_model(Model *model)
+{
+	model_ptr_ = model;
+}
+
 Model *Mesh::get_model() const
 {
 	return model_ptr_;

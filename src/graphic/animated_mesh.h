@@ -11,6 +11,8 @@ class AnimatedMesh: public PnjwtStaticMesh {
 public:
     AnimatedMesh(Model *model_ptr);
 
+	virtual MeshPtr shallow_copy() const;
+
     AnimatedModel *get_model();
     virtual void draw(Joint *joint_ptr);
 

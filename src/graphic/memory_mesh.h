@@ -21,6 +21,8 @@ public:
 	MemoryMesh(MemoryModel *m);
 	virtual ~MemoryMesh();
 
+	virtual MeshPtr shallow_copy() const;
+
 	std::vector<vertex_t> const &get_vertex_buffer() const
 	{
 		return vertices_;

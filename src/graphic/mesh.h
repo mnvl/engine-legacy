@@ -42,6 +42,9 @@ public:
 	Mesh(Model *model_ptr = 0);
 	virtual ~Mesh();
 
+	virtual MeshPtr shallow_copy() const = 0;
+
+	void set_model(Model *model);
 	Model *get_model() const;
 
 	virtual void set_vertices_count(size_t count) = 0;

@@ -15,6 +15,11 @@ MemoryMesh::~MemoryMesh()
 {
 }
 
+MeshPtr MemoryMesh::shallow_copy() const
+{
+	return MeshPtr(new MemoryMesh(*this));
+}
+
 void MemoryMesh::set_vertices_count(size_t count)
 {
 	vertices_.resize(count);
