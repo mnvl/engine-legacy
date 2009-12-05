@@ -8,7 +8,8 @@
 #include "mesh.h"
 #include "material.h"
 
-namespace graphic {
+namespace graphic
+{
 
 class Model {
 public:
@@ -23,6 +24,7 @@ public:
 	materials_type materials;
 
 	Model(boost::shared_ptr<Renderer> const &renderer_ptr = boost::shared_ptr<Renderer>());
+	Model(Model const &model); // makes shallow copy of meshes and materials, and full copy of joints and animations
 	virtual ~Model();
 
 	boost::shared_ptr<Renderer> const &get_renderer() const

@@ -1,13 +1,59 @@
 
-#include <graphic/collada_loader.h>
-#include <graphic/heightfield_loader.h>
-#include <graphic/model.h>
+#include <boost/unordered_map.hpp>
+#include "collada_loader.h"
+#include "heightfield_loader.h"
+#include "model.h"
 
 namespace graphic {
 
 Model::Model(boost::shared_ptr<Renderer> const &renderer_ptr):
 	renderer_ptr_(renderer_ptr)
 {
+}
+
+Model::Model(Model const &model):
+	meshes(model.meshes),
+	materials(model.materials)
+{
+	boost::unordered_map<JointPtr, JointPtr> joints_tt;
+
+	joints.reserve(model.joints.size());
+	animations.reserve(model.animations.size());
+
+	for (size_t i = 0; i < model.joints.size(); i++)
+	{
+		joints.push_back(JointPtr(new Joint(*model.joints[i])));
+		joints_tt[model.joints[i]] = joints.back();
+	}
+
+	for (size_t i = 0; i < model.animations.size(); i++)
+	{
+		animations.push_back(AnimationPtr(new Animation(*model.animations[i])));
+	}
+
+	for (joints_type::iterator it = joints.begin(); it != joints.end(); it++)
+	{
+		if (JointPtr parent = (*it)->parent.lock())
+		{
+			(*it)->parent = joints_tt.find(parent)->second;
+		}
+
+		for (Joint::childs_type::iterator jt = (*it)->childs.begin(); jt != (*it)->childs.end(); jt++)
+		{
+			*jt = joints_tt.find(jt->lock())->second;
+		}
+	}
+
+	for (animations_type::iterator it = animations.begin(); it != animations.end(); it++)
+	{
+		for (Animation::samplers_type::iterator jt = (*it)->samplers.begin(); jt != (*it)->samplers.end(); jt++)
+		{
+			if (JointPtr joint = jt->get_joint())
+			{
+				jt->set_joint(joints_tt.find(joint)->second);
+			}
+		}
+	}
 }
 
 Model::~Model()

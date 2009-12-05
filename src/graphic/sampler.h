@@ -40,9 +40,10 @@ public:
 		if (JointPtr joint_ptr = joint_ptr_.lock())
 			joint_ptr->get_transform_by_sid(sid_) = get(t);
 	}
+
+	// stores joint as weak ptr
+	JointPtr get_joint() const { return joint_ptr_.lock(); }
+	void set_joint(JointPtr const &joint) { joint_ptr_ = joint; }
 };
 
-
 }
-
-
