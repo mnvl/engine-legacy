@@ -5,6 +5,6 @@
 namespace util
 {
 
-int print_backtrace_to_log(lua_State *L);
+int make_lua_backtrace(lua_State *L);
 
 }

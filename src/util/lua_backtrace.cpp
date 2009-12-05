@@ -5,18 +5,31 @@
 namespace util
 {
 
-int print_backtrace_to_log(lua_State *L)
+int make_lua_backtrace(lua_State *L)
 {
-	lua_Debug d;
-	lua_getstack(L, 1, &d);
-	lua_getinfo(L, "Sln", &d);
-	std::string err = lua_tostring(L, -1);
+	std::stringstream formatter;
+
+	formatter << lua_tostring(L, -1) << '\n';
 	lua_pop(L, 1);
 
-	LOG_ERROR(d.short_src << ":" << d.currentline
-		<< "(" << d.namewhat << " " << d.name << ") " << err);
+	lua_Debug d;
+	int frame = 1;
 
-	lua_pushstring(L, err.c_str());
+	while (lua_getstack(L, frame++, &d))
+	{
+		lua_getinfo(L, "Sln", &d);
+
+		formatter << '\t' << d.short_src << ":" << d.currentline
+			<< " " << d.namewhat;
+		
+		if (d.name) formatter << " " << d.name;
+
+		formatter << '\n';
+	}
+
+	std::string const &error = formatter.str();
+	lua_pushlstring(L, error.c_str(), error.size());
+
 	return 1;
 }
 

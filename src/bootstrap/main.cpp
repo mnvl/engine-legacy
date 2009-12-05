@@ -4,6 +4,7 @@
 #include <lualib.h>
 #include <xercesc/util/PlatformUtils.hpp>
 #include <luabind/luabind.hpp>
+#include <luabind/detail/pcall.hpp>
 #include <graphic/bind.h>
 #include <platform/timer.h>
 #include <platform/window.h>
@@ -44,14 +45,11 @@ public:
 	void run(char const *filename)
 	{
 		int result = luaL_loadfile(L_, filename);
-		if (result == 0) result = lua_pcall(L_, 0, LUA_MULTRET, 0);
-
-		int top = lua_gettop(L_);
+		if (result == 0) result = luabind::detail::pcall(L_, 0, 0);
 
 		switch (result)
 		{
 		case LUA_ERRSYNTAX:
-			util::print_backtrace_to_log(L_);
 			throw std::runtime_error("syntax eror");
 
 		case LUA_ERRRUN:
@@ -71,7 +69,7 @@ INT WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpstrCmdLine, INT
 {
     try
     {
-		luabind::set_pcall_callback(util::print_backtrace_to_log);
+		luabind::set_pcall_callback(util::make_lua_backtrace);
 
 		util::Logger::instance().enable_source_position();
 
