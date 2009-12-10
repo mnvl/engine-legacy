@@ -130,6 +130,8 @@ void Renderer::set_world_matrix(math::matrix<4,4> const &tf)
 
 void Renderer::draw_triangles(VertexBuffer *buffer, size_t triangles_count)
 {
+	if (triangles_count == 0) return;
+
 	HRESULT hr;
 
 	hr = device_ptr_->SetVertexDeclaration(buffer->get_vertex_decl());
