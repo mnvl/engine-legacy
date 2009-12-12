@@ -12,12 +12,15 @@ void graphic::Renderer::bind(lua_State *L)
     [
         class_<Renderer, boost::shared_ptr<Renderer> >("Renderer")
 		.def(constructor<boost::shared_ptr<platform::Window> const &>())
+		.def("get_width", &Renderer::get_width)
+		.def("get_height", &Renderer::get_height)
 		.def("postconstruct", &Renderer::postconstruct)
 		.def("begin_frame", &Renderer::begin_frame)
 		.def("finish_frame", &Renderer::finish_frame)
 		.def("set_view_projection_from_camera", &Renderer::set_view_projection_from_camera)
         .def("set_world_matrix", &Renderer::set_world_matrix)
-        .def("draw_triangles", &Renderer::draw_triangles)
+        .def("draw_triangles", (void (Renderer::*)(VertexBuffer *, size_t))&Renderer::draw_triangles)
+        .def("draw_triangles", (void (Renderer::*)(VertexBuffer *, size_t, size_t))&Renderer::draw_triangles)
     ];
 }
 

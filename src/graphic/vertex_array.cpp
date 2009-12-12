@@ -53,6 +53,17 @@ void VertexBuffer::unlock() const
 }
 
 template<>
+IDirect3DVertexDeclaration9 *VertexArrayP2T::get_vertex_decl() const
+{
+	return renderer_->get_shared_resources()->get_vertex_decl<vertex_p2t>();
+}
+
+template<>
+size_t VertexArrayP2T::get_vertex_size() const {
+	return sizeof(vertex_p2t);
+}
+
+template<>
 IDirect3DVertexDeclaration9 *VertexArrayPNT::get_vertex_decl() const
 {
 	return renderer_->get_shared_resources()->get_vertex_decl<vertex_pnt>();
@@ -81,6 +92,12 @@ void bind_vertex_array(lua_State *L)
 	module_(L, "graphic")
 	[
 		class_<VertexBuffer, boost::shared_ptr<VertexBuffer> >("VertexBuffer"),
+
+		class_<VertexArrayP2T, VertexBuffer, boost::shared_ptr<VertexArrayP2T> >("VertexArrayP2T")
+		.def(constructor<boost::shared_ptr<Renderer> const &, size_t, bool, bool>())
+		.def("lock", (vertex_p2t *(VertexArrayP2T::*)()) &VertexArrayP2T::lock)
+		.def("unlock", &VertexArrayP2T::unlock)
+		.def("at", (vertex_p2t *(VertexArrayP2T::*)(size_t)) &VertexArrayP2T::at),
 
 		class_<VertexArrayPNT, VertexBuffer, boost::shared_ptr<VertexArrayPNT> >("VertexArrayPNT")
 		.def(constructor<boost::shared_ptr<Renderer> const &, size_t, bool, bool>())

@@ -27,6 +27,9 @@ public:
 		bool fullscreen = false);
 	~Renderer();
 
+	int const get_width() const { return width_; }
+	int const get_height() const { return height_; }
+
 	void postconstruct();
 
 	void begin_frame();
@@ -42,6 +45,7 @@ public:
     void set_world_matrix(math::matrix<4,4> const &tf);
 
 	void draw_triangles(VertexBuffer *buffer, size_t triangles_count);
+	void draw_triangles(VertexBuffer *buffer, size_t first_vertex, size_t triangles_count);
 
     static void bind(lua_State *L);
 

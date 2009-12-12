@@ -130,6 +130,11 @@ void Renderer::set_world_matrix(math::matrix<4,4> const &tf)
 
 void Renderer::draw_triangles(VertexBuffer *buffer, size_t triangles_count)
 {
+	draw_triangles(buffer, 0, triangles_count);
+}
+
+void Renderer::draw_triangles(VertexBuffer *buffer, size_t first_vertex, size_t triangles_count)
+{
 	if (triangles_count == 0) return;
 
 	HRESULT hr;
@@ -140,7 +145,7 @@ void Renderer::draw_triangles(VertexBuffer *buffer, size_t triangles_count)
     hr = device_ptr_->SetStreamSource(0, buffer->get(), 0, buffer->get_vertex_size());
 	if (FAILED(hr)) throw exception::directx_error(hr);
 
-	hr = device_ptr_->DrawPrimitive(D3DPT_TRIANGLELIST, 0, triangles_count);
+	hr = device_ptr_->DrawPrimitive(D3DPT_TRIANGLELIST, first_vertex, triangles_count);
 	if (FAILED(hr)) throw exception::directx_error(hr);
 }
 

@@ -63,6 +63,7 @@ public:
 	virtual size_t get_vertex_size() const;
 };
 
+typedef VertexArray<vertex_p2t> VertexArrayP2T;
 typedef VertexArray<vertex_pnt> VertexArrayPNT;
 typedef VertexArray<vertex_pnjwt> VertexArrayPNJWT;
 

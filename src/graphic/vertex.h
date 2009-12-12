@@ -8,15 +8,19 @@ namespace graphic
 {
 
 #pragma pack(push, 1)
+struct vertex_p2t
+{
+	math::vec<2> position;
+	math::vec<2> texcoords;
+};
+
 struct vertex_pnt
 {
 	math::vec<3> position;
 	math::vec<3> normal;
 	math::vec<2> texcoords;
 };
-#pragma pack(pop)
 
-#pragma pack(push, 1)
 struct vertex_pnjwt
 {
 	math::vec<3> position;
@@ -31,17 +35,21 @@ template <class T>
 struct vertex_traits;
 
 template<>
+struct vertex_traits<vertex_p2t>
+{
+	static D3DVERTEXELEMENT9 *get_descr();
+};
+
+template<>
 struct vertex_traits<vertex_pnt>
 {
 	static D3DVERTEXELEMENT9 *get_descr();
-	static size_t get_size() { return sizeof(vertex_pnt); }
 };
 
 template<>
 struct vertex_traits<vertex_pnjwt>
 {
 	static D3DVERTEXELEMENT9 *get_descr();
-	static size_t get_size() { return sizeof(vertex_pnjwt); }
 };
 
 void bind_vertex(lua_State *L);

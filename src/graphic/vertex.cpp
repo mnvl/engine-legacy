@@ -7,6 +7,33 @@
 namespace graphic
 {
 
+D3DVERTEXELEMENT9 *vertex_traits<vertex_p2t>::get_descr()
+{
+	static D3DVERTEXELEMENT9 descr[] = {
+		{
+			0,
+			offsetof(vertex_p2t, position),
+			D3DDECLTYPE_FLOAT2,
+			D3DDECLMETHOD_DEFAULT,
+			D3DDECLUSAGE_POSITION,
+			0
+		},
+
+		{
+			0,
+			offsetof(vertex_p2t, texcoords),
+			D3DDECLTYPE_FLOAT2,
+			D3DDECLMETHOD_DEFAULT,
+			D3DDECLUSAGE_TEXCOORD,
+			0
+		},
+
+		D3DDECL_END()
+	};
+
+	return descr;
+}
+
 D3DVERTEXELEMENT9 *vertex_traits<vertex_pnt>::get_descr()
 {
 	static D3DVERTEXELEMENT9 descr[] = {
@@ -121,6 +148,11 @@ void bind_vertex(lua_State *L)
 
 	module(L, "graphic")
 	[
+		class_<vertex_p2t>("vertex_p2t")
+		.def(constructor<>())
+		.def_readwrite("position", &vertex_p2t::position)
+		.def_readwrite("texcoords", &vertex_p2t::texcoords),
+
 		class_<vertex_pnt>("vertex_pnt")
 		.def(constructor<>())
 		.def_readwrite("position", &vertex_pnt::position)
