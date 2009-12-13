@@ -6,7 +6,7 @@
 namespace platform
 {
 
-Mouse::Mouse(Input *input_ptr):
+Mouse::Mouse(boost::shared_ptr<Input> const &input_ptr):
 	input_(input_ptr)
 {
 	create();
@@ -106,4 +106,3 @@ void Mouse::update() {
 }
 
 }
-

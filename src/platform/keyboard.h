@@ -2,6 +2,8 @@
 
 #include <dinput.h>
 #include <boost/intrusive_ptr.hpp>
+#include <boost/shared_ptr.hpp>
+#include <lua.h>
 #include <util/boost_com_intrusive_ptr.h>
 #include <platform/window.h>
 
@@ -110,7 +112,7 @@ public:
 
 	static char get_character_by_key(key_t key);
 
-    Keyboard(Input *input_ptr);
+    Keyboard(boost::shared_ptr<Input> const &input_ptr);
     ~Keyboard();
 
     void update();
@@ -120,10 +122,12 @@ public:
         return (state_[key] & 0x80) != 0;
     }
 
+	static void bind(lua_State *L);
+
 private:
 	static size_t const SAMPLE_BUFFER_SIZE=256;
 
-	Input *input_;
+	boost::shared_ptr<Input> const input_;
 	boost::intrusive_ptr<IDirectInputDevice8> device_;
 	BYTE state_[SAMPLE_BUFFER_SIZE];
 

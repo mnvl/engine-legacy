@@ -5,16 +5,9 @@
 namespace platform
 {
 
-Input::Input(Window *window_ptr):
+Input::Input(boost::shared_ptr<Window> const &window_ptr):
 	window_(window_ptr)
 {
-    create();
-}
-
-Input::~Input() {
-}
-
-void Input::create() {
 	HRESULT hr;
 
 	IDirectInput8 *di;
@@ -23,14 +16,9 @@ void Input::create() {
 	if(FAILED(hr)) throw exception::directx_error(hr);
 	driver_.reset(di);
     di->Release();
-
-	keyboard_.reset(new Keyboard(this));
-	mouse_.reset(new Mouse(this));
 }
 
-void Input::update() {
-    keyboard_->update();
-    mouse_->update();
+Input::~Input() {
 }
 
 }

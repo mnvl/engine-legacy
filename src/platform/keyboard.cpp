@@ -6,7 +6,7 @@
 namespace platform
 {
 
-Keyboard::Keyboard(Input *input_ptr):
+Keyboard::Keyboard(boost::shared_ptr<Input> const &input_ptr):
 	input_(input_ptr)
 {
 	memset(state_, 0, sizeof(state_));
