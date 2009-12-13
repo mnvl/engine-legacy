@@ -8,6 +8,9 @@
 #include <graphic/bind.h>
 #include <platform/timer.h>
 #include <platform/window.h>
+#include <platform/input.h>
+#include <platform/keyboard.h>
+#include <platform/mouse.h>
 #include <math/vec.h>
 #include <math/matrix.h>
 #include <util/logger.h>
@@ -33,6 +36,10 @@ public:
         math::bind_matrix(L_);
 
 		util::Logger::bind(L_);
+
+		platform::Input::bind(L_);
+		platform::Keyboard::bind(L_);
+		platform::Mouse::bind(L_);
 	}
 
     ~Main()
