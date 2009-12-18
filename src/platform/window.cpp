@@ -25,12 +25,12 @@ void Window::create(char const *title) {
 	WNDCLASSEX wc;
 	wc.cbSize = sizeof(wc);
 	wc.style = 0;
-	wc.lpfnWndProc  =  dispatch_message;
+	wc.lpfnWndProc = dispatch_message;
 	wc.cbClsExtra = 0;
 	wc.cbWndExtra = 0;
 	wc.hInstance = GetModuleHandle(0);
-	wc.hIcon  =  0;
-	wc.hCursor = GetCursor();
+	wc.hIcon = 0;
+	wc.hCursor = LoadCursor(0, IDC_ARROW);
 	wc.hbrBackground = 0;
 	wc.lpszMenuName = 0;
 	wc.lpszClassName = class_name;
