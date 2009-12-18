@@ -67,6 +67,8 @@ Renderer::~Renderer() {
 void Renderer::postconstruct()
 {
     shared_resources_.reset(new SharedResources(this));
+
+	device_ptr_->SetRenderState(D3DRS_ZENABLE, D3DZB_FALSE);
 }
 
 void Renderer::begin_frame()
