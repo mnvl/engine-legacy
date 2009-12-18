@@ -37,7 +37,7 @@ void Window::create(char const *title) {
 	wc.hIconSm = 0;
 	if(!RegisterClassEx(&wc)) throw exception::winapi_error();
 
-	CreateWindowEx(0, wc.lpszClassName, title, WS_OVERLAPPED|WS_VISIBLE|WS_SYSMENU,
+	handle_ = CreateWindowEx(WS_EX_OVERLAPPEDWINDOW, wc.lpszClassName, title, WS_OVERLAPPEDWINDOW | WS_VISIBLE,
 		CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT,
 		0, 0, wc.hInstance, 0);
 	if(!handle_) throw exception::winapi_error();
