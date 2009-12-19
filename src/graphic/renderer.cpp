@@ -137,6 +137,9 @@ void Renderer::draw_triangles(VertexBuffer *buffer, size_t first_vertex, size_t 
 {
 	if (triangles_count == 0) return;
 
+	device_ptr_->SetRenderState(D3DRS_ZENABLE, D3DZB_FALSE);
+	device_ptr_->SetRenderState(D3DRS_LIGHTING, FALSE);
+
 	HRESULT hr;
 
 	hr = device_ptr_->SetVertexDeclaration(buffer->get_vertex_decl());

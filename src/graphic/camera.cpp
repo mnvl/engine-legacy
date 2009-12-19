@@ -1,4 +1,5 @@
 
+#include <d3dx9.h>
 #include <graphic/camera.h>
 
 namespace graphic
@@ -26,8 +27,9 @@ void Camera::set_orthographic_projection(math::scalar width, math::scalar height
 	near_plane_ = z_near;
 	far_plane_ = z_far;
 
-	view_matrix_.translation(-width/2, -height/2, 0);
-	projection_matrix_.ortho(width, height, z_near, z_far);
+	view_matrix_.identity();
+	D3DXMatrixOrthoLH((D3DXMATRIX *) &projection_matrix_, width, height, z_near, z_far);
+	//projection_matrix_.ortho(width, height, z_near, z_far);
 }
 
 void Camera::set_eye_lookat_up(math::vec<3> const &eye_pt, math::vec<3> const &lookat_pt, math::vec<3> const &up_dir)
