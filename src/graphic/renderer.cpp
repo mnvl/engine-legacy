@@ -137,10 +137,6 @@ void Renderer::draw_triangles(VertexBuffer *buffer, size_t first_vertex, size_t 
 {
 	if (triangles_count == 0) return;
 
-	device_ptr_->SetRenderState(D3DRS_ZENABLE, D3DZB_FALSE);
-	device_ptr_->SetRenderState(D3DRS_LIGHTING, FALSE);
-	device_ptr_->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
-
 	HRESULT hr;
 
 	hr = device_ptr_->SetVertexDeclaration(buffer->get_vertex_decl());
@@ -150,6 +146,20 @@ void Renderer::draw_triangles(VertexBuffer *buffer, size_t first_vertex, size_t 
 	if (FAILED(hr)) throw exception::directx_error(hr);
 
 	hr = device_ptr_->DrawPrimitive(D3DPT_TRIANGLELIST, first_vertex, triangles_count);
+	if (FAILED(hr)) throw exception::directx_error(hr);
+}
+
+void Renderer::enable_draw_everything()
+{
+	HRESULT hr;
+
+	hr = device_ptr_->SetRenderState(D3DRS_ZENABLE, D3DZB_FALSE);
+	if (FAILED(hr)) throw exception::directx_error(hr);
+
+	hr = device_ptr_->SetRenderState(D3DRS_LIGHTING, FALSE);
+	if (FAILED(hr)) throw exception::directx_error(hr);
+
+	hr = device_ptr_->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
 	if (FAILED(hr)) throw exception::directx_error(hr);
 }
 

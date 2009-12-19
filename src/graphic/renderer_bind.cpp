@@ -21,6 +21,7 @@ void graphic::Renderer::bind(lua_State *L)
         .def("set_world_matrix", &Renderer::set_world_matrix)
         .def("draw_triangles", (void (Renderer::*)(VertexBuffer *, size_t))&Renderer::draw_triangles)
         .def("draw_triangles", (void (Renderer::*)(VertexBuffer *, size_t, size_t))&Renderer::draw_triangles)
+		.def("enable_draw_everything", &Renderer::enable_draw_everything)
     ];
 }
 
