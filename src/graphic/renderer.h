@@ -47,7 +47,7 @@ public:
 	void draw_triangles(VertexBuffer *buffer, size_t triangles_count);
 	void draw_triangles(VertexBuffer *buffer, size_t first_vertex, size_t triangles_count);
 
-	void enable_draw_everything();
+	void disable_all_tests();
 
     static void bind(lua_State *L);
 

@@ -29,6 +29,8 @@ public:
 
 	math::vec<3> const &get_eye_point() const { return eye_point_; }
 
+	void set_view_matrix(math::matrix<4,4> const &tf) { view_matrix_ = tf; }
+
 	static void bind(lua_State *L);
 
 private:

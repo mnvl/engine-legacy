@@ -160,7 +160,7 @@ void Renderer::draw_triangles(VertexBuffer *buffer, size_t first_vertex, size_t 
 	if (FAILED(hr)) throw exception::directx_error(hr);
 }
 
-void Renderer::enable_draw_everything()
+void Renderer::disable_all_tests()
 {
 	HRESULT hr;
 
