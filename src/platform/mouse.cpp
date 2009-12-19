@@ -6,17 +6,9 @@
 namespace platform
 {
 
-Mouse::Mouse(boost::shared_ptr<Input> const &input_ptr):
+Mouse::Mouse(boost::shared_ptr<Input> const &input_ptr, bool exclusive, bool absolute):
 	input_(input_ptr)
 {
-	create();
-}
-
-Mouse::~Mouse() {
-	device_->Unacquire();
-}
-
-void Mouse::create() {
 	HRESULT hr;
 
 	IDirectInputDevice8 *id;
@@ -28,7 +20,8 @@ void Mouse::create() {
     if (FAILED(hr = device_->SetDataFormat(&c_dfDIMouse2)))
         throw exception::directx_error(hr);
 
-	hr = device_->SetCooperativeLevel(input_->get_window()->get_handle(), DISCL_FOREGROUND);
+	hr = device_->SetCooperativeLevel(input_->get_window()->get_handle(),
+		DISCL_FOREGROUND | (exclusive ? DISCL_EXCLUSIVE : DISCL_NONEXCLUSIVE));
 	if (FAILED(hr)) throw exception::directx_error(hr);
 
     DIPROPDWORD dipdw;
@@ -45,11 +38,15 @@ void Mouse::create() {
     dipdw.diph.dwHeaderSize = sizeof(DIPROPHEADER);
     dipdw.diph.dwObj        = 0;
     dipdw.diph.dwHow        = DIPH_DEVICE;
-    dipdw.dwData            = DIPROPAXISMODE_REL;
+	dipdw.dwData            = absolute ? DIPROPAXISMODE_ABS : DIPROPAXISMODE_REL;
     hr = device_->SetProperty(DIPROP_AXISMODE, &dipdw.diph);
     if (FAILED(hr)) throw exception::directx_error(hr);
 
     device_->Acquire();
+}
+
+Mouse::~Mouse() {
+	device_->Unacquire();
 }
 
 void Mouse::update() {

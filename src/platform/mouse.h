@@ -13,7 +13,7 @@ class Input;
 
 class Mouse {
 public:
-	Mouse(boost::shared_ptr<Input> const &input_ptr);
+	Mouse(boost::shared_ptr<Input> const &input_ptr, bool exclusive = false, bool absolute = false);
     ~Mouse();
 
 	void update();
@@ -32,8 +32,6 @@ private:
 	boost::intrusive_ptr<IDirectInputDevice8> device_;
 
 	DIMOUSESTATE2 state_;
-
-	void create();
 };
 
 }
