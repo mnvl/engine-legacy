@@ -14,6 +14,7 @@ void graphic::Camera::bind(lua_State *L)
 		.def("set_orthographic_projection", &Camera::set_orthographic_projection)
 		.def("set_eye_lookat_up", &Camera::set_eye_lookat_up)
 		.def("get_eye_point", &Camera::get_eye_point)
+		.def("set_translation_rotation", &Camera::set_translation_rotation)
 		.def("set_view_matrix", &Camera::set_view_matrix)
 	];
 }

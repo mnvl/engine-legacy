@@ -34,15 +34,14 @@ void Camera::set_orthographic_projection(math::scalar width, math::scalar height
 void Camera::set_eye_lookat_up(math::vec<3> const &eye_pt, math::vec<3> const &lookat_pt, math::vec<3> const &up_dir)
 {
     eye_point_ = eye_pt;
-    lookat_point_ = lookat_pt;
-    up_direction_ = up_dir;
+    up_dir_ = up_dir;
 
-    view_dir_ = lookat_point_ - eye_point_;
+    view_dir_ = lookat_pt - eye_point_;
 	view_dir_.normalize();
 
-	cross_dir_ = view_dir_ ^ up_direction_;
+	cross_dir_ = view_dir_ ^ up_dir_;
 
-	view_matrix_.lookat(eye_point_, lookat_point_, up_direction_);
+	view_matrix_.lookat(eye_point_, lookat_pt, up_dir_);
 
 	view_matrix_.inverse(billboard_matrix_);
     billboard_matrix_.ij[3][0] = 0.0f;
@@ -50,26 +49,24 @@ void Camera::set_eye_lookat_up(math::vec<3> const &eye_pt, math::vec<3> const &l
     billboard_matrix_.ij[3][2] = 0.0f;
 }
 
-void Camera::set_position_rotation(math::vec<3> const &pos, math::vec<3> const &rot)
+void Camera::set_translation_rotation(math::vec<3> const &pos, math::vec<3> const &rot)
 {
 	math::matrix<3, 3> tf;
 	tf.rotation(rot);
 
-	math::vec<3> dir = math::vec<3>(1, 0, 0) * tf;
-	math::vec<3> up = math::vec<3>(0, 1, 0) * tf;
+	eye_point_ = pos;
 
-	set_eye_lookat_up(pos, pos + dir, up);
-}
+	view_dir_ = math::vec<3>(1, 0, 0) * tf;
+    up_dir_ = math::vec<3>(0, 1, 0) * tf;
+	cross_dir_ = view_dir_ ^ up_dir_;
 
-void Camera::set_position_quaternion(math::vec<3> const &pos, const math::quaternion<> &rot)
-{
-	math::matrix<3, 3> tf;
-	tf.rotation(rot);
+	view_matrix_.translation(pos);
+	view_matrix_.rotate(rot);
 
-	math::vec<3> dir = math::vec<3>(1, 0, 0) * tf;
-	math::vec<3> up = math::vec<3>(0, 1, 0) * tf;
-
-	set_eye_lookat_up(pos, pos + dir, up);
+	view_matrix_.inverse(billboard_matrix_);
+    billboard_matrix_.ij[3][0] = 0.0f;
+    billboard_matrix_.ij[3][1] = 0.0f;
+    billboard_matrix_.ij[3][2] = 0.0f;
 }
 
 }
