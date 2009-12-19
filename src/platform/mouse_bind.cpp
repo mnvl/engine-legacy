@@ -12,5 +12,6 @@ void platform::Mouse::bind(lua_State *L)
 		class_<Mouse, boost::shared_ptr<Mouse> >("Mouse")
 		.def(constructor<boost::shared_ptr<Input> const &, bool, bool>())
 		.def("update", &Mouse::update)
+		.def("get_position", &Mouse::get_position)
 	];
 }

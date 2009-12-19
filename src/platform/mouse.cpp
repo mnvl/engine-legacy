@@ -61,8 +61,8 @@ void Mouse::update() {
         hr = device_->Acquire();
         while(hr == DIERR_INPUTLOST) hr = device_->Acquire();
 
-        // Hr may be DIERR_OTHERAPPHASPRIO or other errors. This may occur when the app is minimized or
-		// in the process of switching, so just try again later
+        // failure can occur when the app is minimized or in the process of switching,
+		// so we just try again later
         if (hr == DIERR_NOTACQUIRED) throw exception::directx_error(hr);
 
         return;

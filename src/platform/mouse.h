@@ -18,7 +18,7 @@ public:
 
 	void update();
 
-    math::vec<3> get_delta() const
+    math::vec<3> get_position() const
     {
         return math::vec<3>((math::scalar) state_.lX, (math::scalar) state_.lY, (math::scalar) state_.lZ);
     }
