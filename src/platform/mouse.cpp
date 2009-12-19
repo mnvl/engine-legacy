@@ -36,7 +36,7 @@ void Mouse::create() {
     dipdw.diph.dwHeaderSize = sizeof(DIPROPHEADER);
     dipdw.diph.dwObj        = 0;
     dipdw.diph.dwHow        = DIPH_DEVICE;
-    dipdw.dwData            = SAMPLE_BUFFER_SIZE; // Arbitary buffer size
+    dipdw.dwData            = SAMPLE_BUFFER_SIZE;
 
     hr = device_->SetProperty(DIPROP_BUFFERSIZE, &dipdw.diph);
     if (FAILED(hr)) throw exception::directx_error(hr);
@@ -45,7 +45,7 @@ void Mouse::create() {
     dipdw.diph.dwHeaderSize = sizeof(DIPROPHEADER);
     dipdw.diph.dwObj        = 0;
     dipdw.diph.dwHow        = DIPH_DEVICE;
-    dipdw.dwData            = DIPROPAXISMODE_REL; //or ABS here
+    dipdw.dwData            = DIPROPAXISMODE_REL;
     hr = device_->SetProperty(DIPROP_AXISMODE, &dipdw.diph);
     if (FAILED(hr)) throw exception::directx_error(hr);
 
@@ -58,6 +58,7 @@ void Mouse::update() {
 
     memset(&dims2,0,sizeof(dims2));
     hr = device_->GetDeviceState(sizeof(DIMOUSESTATE2), &dims2);
+
     if (FAILED(hr))
     {
         hr = device_->Acquire();
