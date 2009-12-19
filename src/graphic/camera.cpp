@@ -27,9 +27,11 @@ void Camera::set_orthographic_projection(math::scalar width, math::scalar height
 	near_plane_ = z_near;
 	far_plane_ = z_far;
 
+	projection_matrix_.ortho(width, height, z_near, z_far);
+
 	view_matrix_.identity();
-	D3DXMatrixOrthoLH((D3DXMATRIX *) &projection_matrix_, width, height, z_near, z_far);
-	//projection_matrix_.ortho(width, height, z_near, z_far);
+	view_matrix_.ij[1][1] = -1;
+	view_matrix_.translate(-width / 2, height / 2, 0);
 }
 
 void Camera::set_eye_lookat_up(math::vec<3> const &eye_pt, math::vec<3> const &lookat_pt, math::vec<3> const &up_dir)

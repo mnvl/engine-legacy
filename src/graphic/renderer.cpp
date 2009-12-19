@@ -139,6 +139,7 @@ void Renderer::draw_triangles(VertexBuffer *buffer, size_t first_vertex, size_t 
 
 	device_ptr_->SetRenderState(D3DRS_ZENABLE, D3DZB_FALSE);
 	device_ptr_->SetRenderState(D3DRS_LIGHTING, FALSE);
+	device_ptr_->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
 
 	HRESULT hr;
 

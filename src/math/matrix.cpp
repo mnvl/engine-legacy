@@ -465,7 +465,7 @@ math::matrix<4,4,T>::ortho(scalar_type width,scalar_type height,scalar_type z_ne
 	ij[3][0] = 0;
 	ij[3][1] = 0;
 	ij[3][2] = z_near / (z_near - z_far);
-	ij[3][3] = 0;
+	ij[3][3] = 1;
 }
 
 template<class T> void
