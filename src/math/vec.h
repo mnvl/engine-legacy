@@ -693,17 +693,17 @@ operator ^(const math::vec<3,T> &lhs,const math::vec<3,T> &rhs) {
 }
 
 template<class L,class R> inline bool
-operator<(const math::vec<2,L> &left,const math::vec<2,R> &right) {
+operator <(const math::vec<2,L> &left,const math::vec<2,R> &right) {
 	return left.x<right.x && left.y<right.y;
 }
 
 template<class L,class R> inline bool
-operator<(const math::vec<3,L> &left,const math::vec<3,R> &right) {
+operator <(const math::vec<3,L> &left,const math::vec<3,R> &right) {
 	return left.x<right.x && left.y<right.y && left.z<right.z;
 }
 
 template<class L,class R> inline bool
-operator<(const math::vec<4,L> &left,const math::vec<4,R> &right) {
+operator <(const math::vec<4,L> &left,const math::vec<4,R> &right) {
 	return left.x<right.x && left.y<right.y && left.z<right.z && left.w<right.w;
 }
 

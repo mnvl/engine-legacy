@@ -55,6 +55,13 @@ void math::bind_vec(lua_State *L)
 		.def("length_sq", &vec<3>::length_sq)
 		.def("normalize", &vec<3>::normalize),
 
+		class_<vec<3,bool> >("vec3b")
+		.def(constructor<>())
+		.def(constructor<bool, bool, bool>())
+		.def_readwrite("x", &vec<3,bool>::x)
+		.def_readwrite("y", &vec<3,bool>::y)
+		.def_readwrite("z", &vec<3,bool>::z),
+
 		class_<vec<4> >("vec4")
 		.def(constructor<>())
 		.def_readwrite("x", &vec<4>::x)
@@ -67,6 +74,8 @@ void math::bind_vec(lua_State *L)
 		def("dot_product", (scalar (*)(const vec<4> &,const vec<4> &)) dot_product),
 
 		def("cross_product", (math::vec<3> (*)(const vec<3> &,const vec<3> &)) operator ^),
-		def("cross_product", (void (*)(math::vec<3> &, const vec<3> &,const vec<3> &)) math::cross_product)
+		def("cross_product", (void (*)(math::vec<3> &, const vec<3> &,const vec<3> &)) math::cross_product),
+
+		def("less", (bool (*)(const vec<2> &,const vec<2> &)) operator <)
 	];
 }

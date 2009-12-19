@@ -6,19 +6,9 @@
 namespace platform
 {
 
-Window::Window():
+Window::Window(char const *title):
 	handle_(0)
 {
-}
-
-Window::~Window() {
-	if (handle_) {
-		DestroyWindow(handle_);
-		handle_ = 0;
-	}
-}
-
-void Window::create(char const *title) {
 	char class_name[sizeof(Window *)*2+1];
 	sprintf(class_name,"%p",this);
 
@@ -41,6 +31,13 @@ void Window::create(char const *title) {
 		CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT,
 		0, 0, wc.hInstance, 0);
 	if(!handle_) throw exception::winapi_error();
+}
+
+Window::~Window() {
+	if (handle_) {
+		DestroyWindow(handle_);
+		handle_ = 0;
+	}
 }
 
 bool Window::run_message_loop() {
@@ -71,6 +68,28 @@ LRESULT Window::dispatch_message(HWND hWnd,UINT uMsg,WPARAM wParam,LPARAM lParam
 
 LRESULT Window::process_message(UINT uMsg, WPARAM wParam, LPARAM lParam) {
 	switch (uMsg) {
+	case WM_MOUSEMOVE:
+	{
+		POINT p;
+		p.x = LOWORD(lParam);
+		p.y = HIWORD(lParam);
+		ScreenToClient(GetParent(handle_), &p);
+		mouse_position_ = math::vec<2>(float(p.x), float(p.y));
+
+		// note: fall through
+	}
+
+	case WM_LBUTTONDOWN:
+	case WM_LBUTTONUP:
+	case WM_MBUTTONDOWN:
+	case WM_MBUTTONUP:
+	case WM_RBUTTONDOWN:
+	case WM_RBUTTONUP:
+		mouse_buttons_.A = ((wParam & MK_LBUTTON) != 0);
+		mouse_buttons_.B = ((wParam & MK_MBUTTON) != 0);
+		mouse_buttons_.C = ((wParam & MK_RBUTTON) != 0);
+		break;
+
 	case WM_CLOSE:
 		PostQuitMessage(0);
 		break;
