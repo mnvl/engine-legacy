@@ -73,7 +73,7 @@ LRESULT Window::process_message(UINT uMsg, WPARAM wParam, LPARAM lParam) {
 		POINT p;
 		p.x = LOWORD(lParam);
 		p.y = HIWORD(lParam);
-		ScreenToClient(handle_, &p);
+		ScreenToClient(GetParent(handle_), &p);
 		mouse_position_ = math::vec<2>(float(p.x), float(p.y));
 
 		// note: fall through

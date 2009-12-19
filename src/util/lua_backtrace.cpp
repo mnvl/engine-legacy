@@ -9,7 +9,8 @@ int make_lua_backtrace(lua_State *L)
 {
 	std::stringstream formatter;
 
-	formatter << lua_tostring(L, -1) << '\n';
+	char const *error_message = lua_tostring(L, -1);
+	formatter << (error_message ? error_message : "unknown error") << '\n';
 	lua_pop(L, 1);
 
 	lua_Debug d;

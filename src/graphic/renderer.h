@@ -23,7 +23,7 @@ class Material;
 
 class Renderer: public boost::enable_shared_from_this<Renderer>, public boost::noncopyable {
 public:
-	Renderer(boost::shared_ptr<platform::Window> const &window, int width = 800, int height = 600,
+	Renderer(boost::shared_ptr<platform::Window> const &window, int width = 0, int height = 0,
 		bool fullscreen = false);
 	~Renderer();
 

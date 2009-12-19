@@ -17,6 +17,17 @@ Renderer::Renderer(boost::shared_ptr<platform::Window> const &window, int width,
 	height_(height),
 	fullscreen_(fullscreen)
 {
+	if (!width_ || !height_)
+	{
+		RECT rc;
+		GetClientRect(window->get_handle(), &rc);
+
+		width_ = rc.right - rc.left;
+		height_ = rc.bottom - rc.top;
+
+		LOG_INFO("no width or height specified, taking both from window sizes: " << width_ << 'x' << height_);
+	}
+
 	{
 		IDirect3D9 *direct3d_ptr = Direct3DCreate9(D3D_SDK_VERSION);
 		direct3d_ptr_.reset(direct3d_ptr);
