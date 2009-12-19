@@ -18,9 +18,9 @@ SharedResources::SharedResources(Renderer * const renderer_ptr):
 {
     {
         IDirect3DVertexDeclaration9 *decl_ptr;
-        HRESULT hr = renderer_ptr_->get_device()->CreateVertexDeclaration(vertex_traits<vertex_p2t>::get_descr(), &decl_ptr);
+        HRESULT hr = renderer_ptr_->get_device()->CreateVertexDeclaration(vertex_traits<vertex_pt>::get_descr(), &decl_ptr);
         if (FAILED(hr)) throw exception::directx_error(hr);
-        p2t_decl_.reset(decl_ptr);
+        pt_decl_.reset(decl_ptr);
     }
 
     {

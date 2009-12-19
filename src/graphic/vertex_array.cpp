@@ -30,9 +30,13 @@ VertexBuffer::~VertexBuffer()
 {
 }
 
-void *VertexBuffer::lock()
+void *VertexBuffer::lock(bool discard)
 {
-	HRESULT hr = buffer_->Lock(0, 0, (void **) &begin_, 0);
+	DWORD flags = 0;
+
+	if (discard) flags |= D3DLOCK_DISCARD;
+
+	HRESULT hr = buffer_->Lock(0, 0, (void **) &begin_, flags);
 	if(FAILED(hr)) throw exception::directx_error(hr);
 
 	return begin_;
@@ -53,14 +57,14 @@ void VertexBuffer::unlock() const
 }
 
 template<>
-IDirect3DVertexDeclaration9 *VertexArrayP2T::get_vertex_decl() const
+IDirect3DVertexDeclaration9 *VertexArrayPT::get_vertex_decl() const
 {
-	return renderer_->get_shared_resources()->get_vertex_decl<vertex_p2t>();
+	return renderer_->get_shared_resources()->get_vertex_decl<vertex_pt>();
 }
 
 template<>
-size_t VertexArrayP2T::get_vertex_size() const {
-	return sizeof(vertex_p2t);
+size_t VertexArrayPT::get_vertex_size() const {
+	return sizeof(vertex_pt);
 }
 
 template<>
@@ -93,21 +97,21 @@ void bind_vertex_array(lua_State *L)
 	[
 		class_<VertexBuffer, boost::shared_ptr<VertexBuffer> >("VertexBuffer"),
 
-		class_<VertexArrayP2T, VertexBuffer, boost::shared_ptr<VertexArrayP2T> >("VertexArrayP2T")
+		class_<VertexArrayPT, VertexBuffer, boost::shared_ptr<VertexArrayPT> >("VertexArrayPT")
 		.def(constructor<boost::shared_ptr<Renderer> const &, size_t, bool, bool>())
-		.def("lock", (vertex_p2t *(VertexArrayP2T::*)()) &VertexArrayP2T::lock)
-		.def("unlock", &VertexArrayP2T::unlock)
-		.def("at", (vertex_p2t *(VertexArrayP2T::*)(size_t)) &VertexArrayP2T::at),
+		.def("lock", (vertex_pt *(VertexArrayPT::*)(bool)) &VertexArrayPT::lock)
+		.def("unlock", &VertexArrayPT::unlock)
+		.def("at", (vertex_pt *(VertexArrayPT::*)(size_t)) &VertexArrayPT::at),
 
 		class_<VertexArrayPNT, VertexBuffer, boost::shared_ptr<VertexArrayPNT> >("VertexArrayPNT")
 		.def(constructor<boost::shared_ptr<Renderer> const &, size_t, bool, bool>())
-		.def("lock", (vertex_pnt *(VertexArrayPNT::*)()) &VertexArrayPNT::lock)
+		.def("lock", (vertex_pnt *(VertexArrayPNT::*)(bool)) &VertexArrayPNT::lock)
 		.def("unlock", &VertexArrayPNT::unlock)
 		.def("at", (vertex_pnt *(VertexArrayPNT::*)(size_t)) &VertexArrayPNT::at),
 
 		class_<VertexArrayPNJWT, VertexBuffer, boost::shared_ptr<VertexArrayPNJWT> >("VertexArrayPNJWT")
 		.def(constructor<boost::shared_ptr<Renderer> const &, size_t, bool, bool>())
-		.def("lock", (vertex_pnjwt *(VertexArrayPNJWT::*)()) &VertexArrayPNJWT::lock)
+		.def("lock", (vertex_pnjwt *(VertexArrayPNJWT::*)(bool)) &VertexArrayPNJWT::lock)
 		.def("unlock", &VertexArrayPNJWT::unlock)
 		.def("at", (vertex_pnjwt *(VertexArrayPNJWT::*)(size_t)) &VertexArrayPNJWT::at)
 	];

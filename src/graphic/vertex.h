@@ -8,9 +8,9 @@ namespace graphic
 {
 
 #pragma pack(push, 1)
-struct vertex_p2t
+struct vertex_pt
 {
-	math::vec<2> position;
+	math::vec<3> position;
 	math::vec<2> texcoords;
 };
 
@@ -35,7 +35,7 @@ template <class T>
 struct vertex_traits;
 
 template<>
-struct vertex_traits<vertex_p2t>
+struct vertex_traits<vertex_pt>
 {
 	static D3DVERTEXELEMENT9 *get_descr();
 };

@@ -24,9 +24,9 @@ public:
     IDirect3DVertexDeclaration9 *get_vertex_decl() const;
 
     template<>
-    IDirect3DVertexDeclaration9 *get_vertex_decl<vertex_p2t>() const
+    IDirect3DVertexDeclaration9 *get_vertex_decl<vertex_pt>() const
     {
-        return p2t_decl_.get();
+        return pt_decl_.get();
     }
 
     template<>
@@ -48,7 +48,7 @@ public:
 private:
 	Renderer * const renderer_ptr_;
 
-    boost::intrusive_ptr<IDirect3DVertexDeclaration9> p2t_decl_;
+    boost::intrusive_ptr<IDirect3DVertexDeclaration9> pt_decl_;
     boost::intrusive_ptr<IDirect3DVertexDeclaration9> pnt_decl_;
     boost::intrusive_ptr<IDirect3DVertexDeclaration9> pnjwt_decl_;
 

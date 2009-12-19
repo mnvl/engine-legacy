@@ -18,7 +18,7 @@ public:
 		bool dynamic = false, bool writeonly = false);
 	~VertexBuffer();
 
-	void *lock();
+	void *lock(bool discard = true);
 	const void *lock() const;
 	void unlock() const;
 
@@ -50,7 +50,7 @@ public:
 	{
 	}
 
-	vertex_t *lock() { return (vertex_t *) VertexBuffer::lock(); }
+	vertex_t *lock(bool discard) { return (vertex_t *) VertexBuffer::lock(discard); }
 	vertex_t const *lock() const { return (vertex_t const *) VertexBuffer::lock(); }
 
 	vertex_t *begin() { return (vertex_t *) VertexBuffer::begin(); }
@@ -63,7 +63,7 @@ public:
 	virtual size_t get_vertex_size() const;
 };
 
-typedef VertexArray<vertex_p2t> VertexArrayP2T;
+typedef VertexArray<vertex_pt> VertexArrayPT;
 typedef VertexArray<vertex_pnt> VertexArrayPNT;
 typedef VertexArray<vertex_pnjwt> VertexArrayPNJWT;
 
