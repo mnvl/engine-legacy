@@ -8,6 +8,7 @@ void camera_views_are_equal(graphic::Camera &c1, graphic::Camera &c2)
 	BOOST_ASSERT ((c1.get_up_dir() - c2.get_up_dir()).length_sq() < math::EPSILON);
 	BOOST_ASSERT ((c1.get_view_dir() - c2.get_view_dir()).length_sq() < math::EPSILON);
 	BOOST_ASSERT ((c1.get_cross_dir() - c2.get_cross_dir()).length_sq() < math::EPSILON);
+	BOOST_ASSERT (c1.get_view_matrix() == c2.get_view_matrix());
 }
 
 BOOST_AUTO_TEST_SUITE (test_camera)
