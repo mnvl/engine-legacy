@@ -50,7 +50,7 @@ void test_rotation(math::vec<3> const &src, math::vec<3> const &angles, math::ve
 
 BOOST_AUTO_TEST_SUITE (test_matrix)
 
-BOOST_AUTO_TEST_CASE (test_rotation_2)
+BOOST_AUTO_TEST_CASE (test_ijk)
 {
 	math::vec<3> const i(1, 0, 0), j(0, 1, 0), k(0, 0, 1);
 
@@ -62,6 +62,44 @@ BOOST_AUTO_TEST_CASE (test_rotation_2)
 
 	test_axis_angle(k, i, -math::PI / 2, j);
 	test_rotation(k, -math::PI / 2 * i, j);
+}
+
+BOOST_AUTO_TEST_CASE (test_pi4)
+{
+	{
+		math::vec<3> src(1, 0, 0);
+		math::vec<3> res = math::normalize(math::vec<3>(1, -1, 0));
+
+		test_rotation(src, math::vec<3>(0, 0, -math::PI / 4), res);
+		test_axis_angle(src, math::vec<3>(0, 0, 1), -math::PI / 4, res);
+	}
+
+	{
+		math::vec<3> src(0, 1, 0);
+		math::vec<3> res = math::normalize(math::vec<3>(1, 1, 0));
+
+		test_rotation(src, math::vec<3>(0, 0, -math::PI / 4), res);
+		test_axis_angle(src, math::vec<3>(0, 0, 1), -math::PI / 4, res);
+	}
+}
+
+BOOST_AUTO_TEST_CASE (test_pi4_number_2)
+{
+	{
+		math::vec<3> src(1, 0, 0);
+		math::vec<3> res = math::normalize(math::vec<3>(1, 1, 0));
+
+		test_rotation(src, math::vec<3>(0, 0, math::PI / 4), res);
+		test_axis_angle(src, math::vec<3>(0, 0, 1), math::PI / 4, res);
+	}
+
+	{
+		math::vec<3> src(0, 1, 0);
+		math::vec<3> res = math::normalize(math::vec<3>(-1, 1, 0));
+
+		test_rotation(src, math::vec<3>(0, 0, math::PI / 4), res);
+		test_axis_angle(src, math::vec<3>(0, 0, 1), math::PI / 4, res);
+	}
 }
 
 BOOST_AUTO_TEST_SUITE_END()
