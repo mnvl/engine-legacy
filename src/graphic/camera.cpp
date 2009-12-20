@@ -30,40 +30,35 @@ void Camera::set_orthographic_projection(math::scalar width, math::scalar height
 	projection_matrix_.ortho(width, height, z_near, z_far);
 }
 
+void Camera::set_view_matrix(math::matrix<4,4> const &tf)
+{
+	view_matrix_ = tf;
+
+	cross_dir_.set(tf.ij[0][0], tf.ij[0][1], tf.ij[0][2]);
+	up_dir_.set(tf.ij[1][0], tf.ij[1][1], tf.ij[1][2]);
+	view_dir_.set(tf.ij[2][0], tf.ij[2][1], tf.ij[2][2]);
+
+	// view matrices with scaling are not supported
+	assert (math::abs(cross_dir_.length_sq() - 1.0f) < math::EPSILON);
+	assert (math::abs(up_dir_.length_sq() - 1.0f) < math::EPSILON);
+	assert (math::abs(view_dir_.length_sq() - 1.0f) < math::EPSILON);
+
+	eye_point_.set(-tf.ij[3][0], -tf.ij[3][1], -tf.ij[3][2]);
+}
+
 void Camera::set_eye_lookat_up(math::vec<3> const &eye_pt, math::vec<3> const &lookat_pt, math::vec<3> const &up_dir)
 {
-    eye_point_ = eye_pt;
-
-	view_matrix_.lookat(eye_point_, lookat_pt, up_dir_);
-
-	view_dir_.set(view_matrix_.ij[0][0], view_matrix_.ij[0][1], view_matrix_.ij[0][2]);
-	up_dir_.set(view_matrix_.ij[1][0], view_matrix_.ij[1][1], view_matrix_.ij[1][2]);
-	up_dir_.set(view_matrix_.ij[2][0], view_matrix_.ij[2][1], view_matrix_.ij[2][2]);
-
-	view_matrix_.inverse(billboard_matrix_);
-    billboard_matrix_.ij[3][0] = 0.0f;
-    billboard_matrix_.ij[3][1] = 0.0f;
-    billboard_matrix_.ij[3][2] = 0.0f;
+	math::matrix<4,4> tf;
+	tf.lookat(eye_pt, lookat_pt, up_dir);
+	set_view_matrix(tf);
 }
 
 void Camera::set_translation_rotation(math::vec<3> const &tl, math::vec<3> const &rot)
 {
-	math::matrix<3, 3> tf;
-	tf.rotation(rot);
-
-	eye_point_ = -tl;
-
-	view_dir_ = math::vec<3>(1, 0, 0) * tf;
-    up_dir_ = math::vec<3>(0, 1, 0) * tf;
-	cross_dir_ = view_dir_ ^ up_dir_;
-
-	view_matrix_.translation(tl);
-	view_matrix_.rotate(rot);
-
-	view_matrix_.inverse(billboard_matrix_);
-    billboard_matrix_.ij[3][0] = 0.0f;
-    billboard_matrix_.ij[3][1] = 0.0f;
-    billboard_matrix_.ij[3][2] = 0.0f;
+	math::matrix<4, 4> tf;
+	tf.translation(tl);
+	tf.rotate(rot);
+	set_view_matrix(tf);
 }
 
 }
