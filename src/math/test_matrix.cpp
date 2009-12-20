@@ -1,6 +1,6 @@
 
 #include <boost/test/unit_test.hpp>
-#include <math/matrix.h>
+#include "matrix.h"
 
 BOOST_AUTO_TEST_SUITE (test_matrix)
 

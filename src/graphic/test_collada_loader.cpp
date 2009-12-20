@@ -1,7 +1,7 @@
 
-#include <boost/test/included/unit_test.hpp>
-#include <graphic/memory_model.h>
-#include <graphic/collada_loader.h>
+#include <boost/test/unit_test.hpp>
+#include "memory_model.h"
+#include "collada_loader.h"
 
 namespace
 {
