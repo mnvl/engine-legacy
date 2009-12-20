@@ -39,8 +39,8 @@ BOOST_AUTO_TEST_CASE (test_view_3)
 BOOST_AUTO_TEST_CASE (test_view_4)
 {
 	graphic::Camera c1, c2;
-	c1.set_eye_lookat_up(math::vec<3>(0, 0, 0), math::vec<3>(-1, -1, 0), math::vec<3>(-sqrt(2), sqrt(2), 0));
-	c2.set_translation_rotation(math::vec<3>(0, 0, 0), math::vec<3>(-math::PI / 4, 0, 0));
+	c1.set_eye_lookat_up(math::vec<3>(0, 0, 0), math::vec<3>(-1, -1, 0), math::vec<3>(1, 1, 0));
+	c2.set_translation_rotation(math::vec<3>(0, 0, 0), math::vec<3>(0, 0, -math::PI / 4));
 	camera_views_are_equal(c1, c2);
 }
 

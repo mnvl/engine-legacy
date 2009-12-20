@@ -33,10 +33,8 @@ void Camera::set_orthographic_projection(math::scalar width, math::scalar height
 void Camera::set_eye_lookat_up(math::vec<3> const &eye_pt, math::vec<3> const &lookat_pt, math::vec<3> const &up_dir)
 {
     eye_point_ = eye_pt;
-    up_dir_ = up_dir;
-
-    view_dir_ = lookat_pt - eye_point_;
-	view_dir_.normalize();
+	up_dir_ = math::normalize(up_dir);
+	view_dir_ = math::normalize(lookat_pt - eye_point_);
 
 	cross_dir_ = view_dir_ ^ up_dir_;
 
