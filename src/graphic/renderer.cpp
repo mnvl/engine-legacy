@@ -3,10 +3,10 @@
 #include <exception/directx_error.h>
 #include <platform/timer.h>
 #include <util/logger.h>
-#include <graphic/camera.h>
-#include <graphic/font.h>
-#include <graphic/material.h>
-#include <graphic/renderer.h>
+#include "camera.h"
+#include "font.h"
+#include "material.h"
+#include "renderer.h"
 
 namespace graphic
 {
