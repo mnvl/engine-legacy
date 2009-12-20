@@ -93,7 +93,7 @@ BOOST_AUTO_TEST_CASE (test_equal_3)
 {
 	graphic::Camera c1, c2;
 	c1.set_eye_lookat_up(math::vec<3>(0, 1, 0), math::vec<3>(0, 0, 0), math::vec<3>(1, 0, 0));
-	c2.set_translation_rotation(math::vec<3>(0, -1, 0), math::vec<3>(0, -math::PI/2, 0));
+	c2.set_translation_rotation(math::vec<3>(0, -1, 0), math::vec<3>(0, 0, -math::PI/2));
 	camera_views_are_equal(c1, c2);
 }
 

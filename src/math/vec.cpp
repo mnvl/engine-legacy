@@ -45,6 +45,7 @@ void math::bind_vec(lua_State *L)
 		class_<vec<3> >("vec3")
 		.def(constructor<>())
 		.def(constructor<scalar, scalar, scalar>())
+		.def(constructor<vec<3> const &>())
 		.def_readwrite("x", &vec<3>::x)
 		.def_readwrite("y", &vec<3>::y)
 		.def_readwrite("z", &vec<3>::z)
@@ -54,7 +55,8 @@ void math::bind_vec(lua_State *L)
 		.def(const_self * other<scalar>())
 		.def("length", &vec<3>::length)
 		.def("length_sq", &vec<3>::length_sq)
-		.def("normalize", &vec<3>::normalize),
+		.def("normalize", &vec<3>::normalize)
+		.def("set", &vec<3>::set),
 
 		class_<vec<3,bool> >("vec3b")
 		.def(constructor<>())
