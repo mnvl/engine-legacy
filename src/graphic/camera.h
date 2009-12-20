@@ -14,6 +14,7 @@ public:
 		return view_matrix_;
 	}
 
+	// TODO: update eye_point_, up_dir_ etc.
 	void set_view_matrix(math::matrix<4,4> const &tf) {
 		view_matrix_ = tf;
 	}
@@ -23,6 +24,9 @@ public:
 	}
 
 	math::vec<3> const &get_eye_point() const { return eye_point_; }
+	math::vec<3> const &get_up_dir() const { return up_dir_; }
+	math::vec<3> const &get_view_dir() const { return view_dir_; }
+	math::vec<3> const &get_cross_dir() const { return cross_dir_; }
 
 	void set_perspective_projection(math::scalar fFOV,math::scalar fAspect,math::scalar fNearPlane,
 		math::scalar fFarPlane);
@@ -30,7 +34,7 @@ public:
 		math::scalar fFarPlane);
 
    	void set_eye_lookat_up(math::vec<3> const &eye_pt, math::vec<3> const &lookat_pt, math::vec<3> const &up_dir);
-	void set_translation_rotation(math::vec<3> const &pos, math::vec<3> const &rot);
+	void set_translation_rotation(math::vec<3> const &tl, math::vec<3> const &rot);
 
 	static void bind(lua_State *L);
 

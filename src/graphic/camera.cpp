@@ -28,7 +28,6 @@ void Camera::set_orthographic_projection(math::scalar width, math::scalar height
 	far_plane_ = z_far;
 
 	projection_matrix_.ortho(width, height, z_near, z_far);
-	view_matrix_.identity();
 }
 
 void Camera::set_eye_lookat_up(math::vec<3> const &eye_pt, math::vec<3> const &lookat_pt, math::vec<3> const &up_dir)
@@ -49,18 +48,18 @@ void Camera::set_eye_lookat_up(math::vec<3> const &eye_pt, math::vec<3> const &l
     billboard_matrix_.ij[3][2] = 0.0f;
 }
 
-void Camera::set_translation_rotation(math::vec<3> const &pos, math::vec<3> const &rot)
+void Camera::set_translation_rotation(math::vec<3> const &tl, math::vec<3> const &rot)
 {
 	math::matrix<3, 3> tf;
 	tf.rotation(rot);
 
-	eye_point_ = pos;
+	eye_point_ = -tl;
 
 	view_dir_ = math::vec<3>(1, 0, 0) * tf;
     up_dir_ = math::vec<3>(0, 1, 0) * tf;
 	cross_dir_ = view_dir_ ^ up_dir_;
 
-	view_matrix_.translation(pos);
+	view_matrix_.translation(tl);
 	view_matrix_.rotate(rot);
 
 	view_matrix_.inverse(billboard_matrix_);
