@@ -40,7 +40,8 @@ void math::bind_vec(lua_State *L)
 		.def(constructor<>())
 		.def(constructor<scalar, scalar>())
 		.def_readwrite("x", &vec<2>::x)
-		.def_readwrite("y", &vec<2>::y),
+		.def_readwrite("y", &vec<2>::y)
+		.def("set", &vec<2>::set),
 
 		class_<vec<3> >("vec3")
 		.def(constructor<>())

@@ -33,17 +33,25 @@ void Camera::set_orthographic_projection(math::scalar width, math::scalar height
 void Camera::set_view_matrix(math::matrix<4,4> const &tf)
 {
 	view_matrix_ = tf;
+	view_matrix_.inverse(billboard_matrix_);
 
-	cross_dir_.set(tf.ij[0][0], tf.ij[0][1], tf.ij[0][2]);
-	up_dir_.set(tf.ij[1][0], tf.ij[1][1], tf.ij[1][2]);
-	view_dir_.set(tf.ij[2][0], tf.ij[2][1], tf.ij[2][2]);
+	{
+		math::matrix<4,4> &bb = billboard_matrix_;
+
+		cross_dir_.set(bb.ij[0][0], bb.ij[0][1], bb.ij[0][2]);
+		up_dir_.set(bb.ij[1][0], bb.ij[1][1], bb.ij[1][2]);
+		view_dir_.set(bb.ij[2][0], bb.ij[2][1], bb.ij[2][2]);
+		eye_point_.set(bb.ij[3][0], bb.ij[3][1], bb.ij[3][2]);
+
+		bb.ij[3][0] = 0;
+		bb.ij[3][1] = 0;
+		bb.ij[3][2] = 0;
+	}
 
 	// view matrices with scaling are not supported
 	assert (math::abs(cross_dir_.length_sq() - 1.0f) < math::EPSILON);
 	assert (math::abs(up_dir_.length_sq() - 1.0f) < math::EPSILON);
 	assert (math::abs(view_dir_.length_sq() - 1.0f) < math::EPSILON);
-
-	eye_point_.set(-tf.ij[3][0], -tf.ij[3][1], -tf.ij[3][2]);
 }
 
 void Camera::set_eye_lookat_up(math::vec<3> const &eye_pt, math::vec<3> const &lookat_pt, math::vec<3> const &up_dir)

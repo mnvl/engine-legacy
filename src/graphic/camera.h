@@ -40,6 +40,7 @@ private:
 	math::vec<3> view_dir_;
 	math::vec<3> cross_dir_;
 	math::matrix<4,4> view_matrix_;
+	math::matrix<4,4> billboard_matrix_;
 
 	math::scalar field_of_view_;
 	math::scalar aspect_ratio_;
