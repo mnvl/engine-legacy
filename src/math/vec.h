@@ -5,62 +5,63 @@
 #include <lua.h>
 #include <math/scalar.h>
 
-namespace math {
-	template<int N,class T=math::scalar> class vec;
-	template<class T> class quaternion;
-	template<class T> class vec<2,T>;
-	template<class T> class vec<3,T>;
-	template<class T> class vec<4,T>;
+namespace math
+{
 
-	template<class T> inline void add(vec<2,T> &c,const vec<2,T> &a,const vec<2,T> &b);
-	template<class T> inline void add(vec<3,T> &c,const vec<3,T> &a,const vec<3,T> &b);
-	template<class T> inline void add(vec<4,T> &c,const vec<4,T> &a,const vec<4,T> &b);
-	template<int N,class T> inline void add(vec<N,T> &c,const vec<N,T> &a,const vec<N,T> &b);
+template<int N,class T=scalar> class vec;
+template<class T> class quaternion;
+template<class T> class vec<2,T>;
+template<class T> class vec<3,T>;
+template<class T> class vec<4,T>;
 
-	template<class T> inline void sub(vec<2,T> &c,const vec<2,T> &a,const vec<2,T> &b);
-	template<class T> inline void sub(vec<3,T> &c,const vec<3,T> &a,const vec<3,T> &b);
-	template<class T> inline void sub(vec<4,T> &c,const vec<4,T> &a,const vec<4,T> &b);
-	template<int N,class T> inline void sub(vec<N,T> &c,const vec<N,T> &a,const vec<N,T> &b);
+template<class T> inline void add(vec<2,T> &c,const vec<2,T> &a,const vec<2,T> &b);
+template<class T> inline void add(vec<3,T> &c,const vec<3,T> &a,const vec<3,T> &b);
+template<class T> inline void add(vec<4,T> &c,const vec<4,T> &a,const vec<4,T> &b);
+template<int N,class T> inline void add(vec<N,T> &c,const vec<N,T> &a,const vec<N,T> &b);
 
-	template<class T> inline void mul(vec<2,T> &c,const vec<2,T> &a,const vec<2,T> &b);
-	template<class T> inline void mul(vec<3,T> &c,const vec<3,T> &a,const vec<3,T> &b);
-	template<class T> inline void mul(vec<4,T> &c,const vec<4,T> &a,const vec<4,T> &b);
-	template<int N,class T> inline void mul(vec<N,T> &c,const vec<N,T> &a,const vec<N,T> &b);
+template<class T> inline void sub(vec<2,T> &c,const vec<2,T> &a,const vec<2,T> &b);
+template<class T> inline void sub(vec<3,T> &c,const vec<3,T> &a,const vec<3,T> &b);
+template<class T> inline void sub(vec<4,T> &c,const vec<4,T> &a,const vec<4,T> &b);
+template<int N,class T> inline void sub(vec<N,T> &c,const vec<N,T> &a,const vec<N,T> &b);
 
-	template<class T> inline void mul(vec<2,T> &c,const vec<2,T> &a,T b);
-	template<class T> inline void mul(vec<3,T> &c,const vec<3,T> &a,T b);
-	template<class T> inline void mul(vec<4,T> &c,const vec<4,T> &a,T b);
-	template<int N,class T> inline void mul(vec<N,T> &c,const vec<N,T> &a,T b);
+template<class T> inline void mul(vec<2,T> &c,const vec<2,T> &a,const vec<2,T> &b);
+template<class T> inline void mul(vec<3,T> &c,const vec<3,T> &a,const vec<3,T> &b);
+template<class T> inline void mul(vec<4,T> &c,const vec<4,T> &a,const vec<4,T> &b);
+template<int N,class T> inline void mul(vec<N,T> &c,const vec<N,T> &a,const vec<N,T> &b);
 
-	template<class T> inline void div(vec<2,T> &c,const vec<2,T> &a,const vec<2,T> &b);
-	template<class T> inline void div(vec<3,T> &c,const vec<3,T> &a,const vec<3,T> &b);
-	template<class T> inline void div(vec<4,T> &c,const vec<4,T> &a,const vec<4,T> &b);
-	template<int N,class T> inline void div(vec<N,T> &c,const vec<N,T> &a,const vec<N,T> &b);
+template<class T> inline void mul(vec<2,T> &c,const vec<2,T> &a,T b);
+template<class T> inline void mul(vec<3,T> &c,const vec<3,T> &a,T b);
+template<class T> inline void mul(vec<4,T> &c,const vec<4,T> &a,T b);
+template<int N,class T> inline void mul(vec<N,T> &c,const vec<N,T> &a,T b);
 
-	template<class T> inline void div(vec<2,T> &c,const vec<2,T> &a,T b);
-	template<class T> inline void div(vec<3,T> &c,const vec<3,T> &a,T b);
-	template<class T> inline void div(vec<4,T> &c,const vec<4,T> &a,T b);
-	template<int N,class T> inline void div(vec<N,T> &c,const vec<N,T> &a,T b);
+template<class T> inline void div(vec<2,T> &c,const vec<2,T> &a,const vec<2,T> &b);
+template<class T> inline void div(vec<3,T> &c,const vec<3,T> &a,const vec<3,T> &b);
+template<class T> inline void div(vec<4,T> &c,const vec<4,T> &a,const vec<4,T> &b);
+template<int N,class T> inline void div(vec<N,T> &c,const vec<N,T> &a,const vec<N,T> &b);
 
-	template<class T> inline T dot_product(const vec<2,T> &a,const vec<2,T> &b);
-	template<class T> inline T dot_product(const vec<3,T> &a,const vec<3,T> &b);
-	template<class T> inline T dot_product(const vec<4,T> &a,const vec<4,T> &b);
-	template<int N,class T> inline T dot_product(const vec<N,T> &a,const vec<N,T> &b);
+template<class T> inline void div(vec<2,T> &c,const vec<2,T> &a,T b);
+template<class T> inline void div(vec<3,T> &c,const vec<3,T> &a,T b);
+template<class T> inline void div(vec<4,T> &c,const vec<4,T> &a,T b);
+template<int N,class T> inline void div(vec<N,T> &c,const vec<N,T> &a,T b);
 
-	template<class T> inline void cross_product(vec<3,T> &u,const vec<3,T> &v1,const vec<3,T> &v2);
+template<class T> inline T dot_product(const vec<2,T> &a,const vec<2,T> &b);
+template<class T> inline T dot_product(const vec<3,T> &a,const vec<3,T> &b);
+template<class T> inline T dot_product(const vec<4,T> &a,const vec<4,T> &b);
+template<int N,class T> inline T dot_product(const vec<N,T> &a,const vec<N,T> &b);
 
-	template<class T> inline void minmax(vec<2,T> &v1,vec<2,T> &v2);
-	template<class T> inline void minmax(vec<3,T> &v1,vec<3,T> &v2);
-	template<class T> inline void minmax(vec<4,T> &v1,vec<4,T> &v2);
+template<class T> inline void cross_product(vec<3,T> &u,const vec<3,T> &v1,const vec<3,T> &v2);
 
-	template<int N,class T> inline vec<N,T> normalize(const vec<N,T> &v);
+template<class T> inline void minmax(vec<2,T> &v1,vec<2,T> &v2);
+template<class T> inline void minmax(vec<3,T> &v1,vec<3,T> &v2);
+template<class T> inline void minmax(vec<4,T> &v1,vec<4,T> &v2);
 
-	void bind_vec(lua_State *L);
-}
+template<int N,class T> inline vec<N,T> normalize(const vec<N,T> &v);
+
+void bind_vec(lua_State *L);
 
 #pragma pack(push, 1)
 template<class T>
-class math::vec<2,T> {
+class vec<2,T> {
 public:
 	typedef T scalar_type;
 	typedef size_t size_type;
@@ -158,6 +159,14 @@ public:
 		return *this;
 	}
 
+	bool operator <(vec_type const &rhs) const {
+		return x < rhs.x && y < rhs.y;
+	}
+
+	bool operator >(vec_type const &rhs) const {
+		return x > rhs.x && y > rhs.y;
+	}
+
 	scalar_type length_sq() const {
 		return dot_product(*this, *this);
 	}
@@ -211,7 +220,7 @@ public:
 
 #pragma pack(push, 1)
 template<class T>
-class math::vec<3,T> {
+class vec<3,T> {
 public:
 	typedef T scalar_type;
 	typedef size_t size_type;
@@ -349,6 +358,14 @@ public:
 		return vec_type(x * s, y * s, z * s);
 	}
 
+	bool operator <(vec_type const &rhs) const {
+		return x < rhs.x && y < rhs.y && z < rhs.z;
+	}
+
+	bool operator >(vec_type const &rhs) const {
+		return x > rhs.x && y > rhs.y && z > rhs.z;
+	}
+
 	scalar_type length_sq() const {
 		return dot_product(*this, *this);
 	}
@@ -398,7 +415,7 @@ public:
 
 #pragma pack(push, 1)
 template<class T>
-class math::vec<4,T> {
+class vec<4,T> {
 public:
 	typedef T scalar_type;
 	typedef size_t size_type;
@@ -509,6 +526,14 @@ public:
 		return *this;
 	}
 
+	bool operator <(vec_type const &rhs) const {
+		return x < rhs.x && y < rhs.y && z < rhs.z && w < rhs.w;
+	}
+
+	bool operator >(vec_type const &rhs) const {
+		return x > rhs.x && y > rhs.y && z > rhs.z && w > rhs.w;
+	}
+
 	scalar_type length_sq() const {
 		return dot_product(*this, *this);
 	}
@@ -560,7 +585,7 @@ public:
 
 #pragma pack(push, 1)
 template<int N,class T>
-class math::vec {
+class vec {
 public:
     typedef size_t size_type;
 	static const size_type arity=N;
@@ -616,6 +641,18 @@ public:
 		return *this;
 	}
 
+	bool operator <(vec_type const &rhs) const {
+		for (size_t n = 0; n < arity; n++)
+			if (i[n] >= rhs.i[n]) return false;
+		return true;
+	}
+
+	bool operator >(vec_type const &rhs) const {
+		for (size_t n = 0; n > arity; n++)
+			if (i[n] <= rhs.i[n]) return false;
+		return true;
+	}
+
 	scalar_type length_sq() const {
 		return dot_product(*this, *this);
 	}
@@ -630,6 +667,259 @@ public:
 	}
 };
 #pragma pack(pop)
+
+template<class L,class R> inline bool lexicagraphical_less(const vec<2,L> &left,const vec<2,R> &right) {
+	if (left.x < right.x) return true;
+	if (left.x > right.x) return false;
+
+	return left.y < right.y;
+}
+
+template<class L,class R> inline bool lexicagraphical_less(const vec<3,L> &left,const vec<3,R> &right) {
+	if (left.x < right.x) return true;
+	if (left.x > right.x) return false;
+
+	if (left.y < right.y) return true;
+	if (left.y > right.y) return false;
+
+	return left.z < right.z;
+}
+
+template<class L,class R> inline bool lexicagraphical_less(const vec<4,L> &left,const vec<4,R> &right) {
+	if (left.x < right.x) return true;
+	if (left.x > right.x) return false;
+
+	if (left.y < right.y) return true;
+	if (left.y > right.y) return false;
+
+	if (left.z < right.z) return true;
+	if (left.z > right.z) return false;
+
+	return left.w < right.w;
+}
+
+template<int N,class L,class R> inline bool lexicagraphical_greater(const vec<N,L> &left,const vec<N,R> &right) {
+	return lexicagraphical_less(right, left);
+}
+
+template<class T> void
+add(vec<2,T> &c,const vec<2,T> &a,const vec<2,T> &b) {
+	c.i[0] = a.i[0] + b.i[0];
+	c.i[1] = a.i[1] + b.i[1];
+}
+
+template<class T> void
+add(vec<3,T> &c,const vec<3,T> &a,const vec<3,T> &b) {
+	c.i[0] = a.i[0] + b.i[0];
+	c.i[1] = a.i[1] + b.i[1];
+	c.i[2] = a.i[2] + b.i[2];
+}
+
+template<class T> void
+add(vec<4,T> &c,const vec<4,T> &a,const vec<4,T> &b) {
+	c.i[0] = a.i[0] + b.i[0];
+	c.i[1] = a.i[1] + b.i[1];
+	c.i[2] = a.i[2] + b.i[2];
+	c.i[3] = a.i[3] + b.i[3];
+}
+
+template<int N,class T> void
+add(vec<N,T> &c,const vec<N,T> &a,const vec<N,T> &b) {
+	for(int i=0; i<N; i++)
+		c.i[i] = a.i[i] + b.i[i];
+}
+
+template<class T> void
+sub(vec<2,T> &c,const vec<2,T> &a,const vec<2,T> &b) {
+	c.i[0] = a.i[0] - b.i[0];
+	c.i[1] = a.i[1] - b.i[1];
+}
+
+template<class T> void
+sub(vec<3,T> &c,const vec<3,T> &a,const vec<3,T> &b) {
+	c.i[0] = a.i[0] - b.i[0];
+	c.i[1] = a.i[1] - b.i[1];
+	c.i[2] = a.i[2] - b.i[2];
+}
+template<class T> void
+sub(vec<4,T> &c,const vec<4,T> &a,const vec<4,T> &b) {
+	c.i[0] = a.i[0] - b.i[0];
+	c.i[1] = a.i[1] - b.i[1];
+	c.i[2] = a.i[2] - b.i[2];
+	c.i[3] = a.i[3] - b.i[3];
+}
+
+template<int N,class T> void
+sub(vec<N,T> &c,const vec<N,T> &a,const vec<N,T> &b) {
+	for(int i=0; i<N; i++)
+		c.i[i] = a.i[i] - b.i[i];
+}
+
+template<class T> void
+mul(vec<2,T> &c,const vec<2,T> &a,const vec<2,T> &b) {
+	c.i[0] = a.i[0] * b.i[0];
+	c.i[1] = a.i[1] * b.i[1];
+}
+
+template<class T> void
+mul(vec<3,T> &c,const vec<3,T> &a,const vec<3,T> &b) {
+	c.i[0] = a.i[0] * b.i[0];
+	c.i[1] = a.i[1] * b.i[1];
+	c.i[2] = a.i[2] * b.i[2];
+}
+
+template<class T> void
+mul(vec<4,T> &c,const vec<4,T> &a,const vec<4,T> &b) {
+	c.i[0] = a.i[0] * b.i[0];
+	c.i[1] = a.i[1] * b.i[1];
+	c.i[2] = a.i[2] * b.i[2];
+	c.i[3] = a.i[3] * b.i[3];
+}
+
+template<int N,class T> void
+mul(vec<N,T> &c,const vec<N,T> &a,const vec<N,T> &b) {
+	for(int i=0; i<N; i++)
+		c.i[0] = a.i[0] * b.i[0];
+}
+
+template<class T> void
+mul(vec<2,T> &c,const vec<2,T> &a,T b) {
+	c.i[0] = a.i[0] * b;
+	c.i[1] = a.i[1] * b;
+}
+
+template<class T> void
+mul(vec<3,T> &c,const vec<3,T> &a,T b) {
+	c.i[0] = a.i[0] * b;
+	c.i[1] = a.i[1] * b;
+	c.i[2] = a.i[2] * b;
+}
+
+template<class T> void
+mul(vec<4,T> &c,const vec<4,T> &a,T b) {
+	c.i[0] = a.i[0] * b;
+	c.i[1] = a.i[1] * b;
+	c.i[2] = a.i[2] * b;
+	c.i[3] = a.i[3] * b;
+}
+
+template<int N,class T> void
+mul(vec<N,T> &c,const vec<N,T> &a,T b) {
+	for(int i=0; i<N; i++)
+		c.i[i] = a.i[i] * b;
+}
+
+template<class T> void
+div(vec<2,T> &c,const vec<2,T> &a,const vec<2,T> &b) {
+	c.i[0] = a.i[0] / b.i[0];
+	c.i[1] = a.i[1] / b.i[1];
+}
+
+template<class T> void
+div(vec<3,T> &c,const vec<3,T> &a,const vec<3,T> &b) {
+	c.i[0] = a.i[0] / b.i[0];
+	c.i[1] = a.i[1] / b.i[1];
+	c.i[2] = a.i[2] / b.i[2];
+}
+
+template<class T> void
+div(vec<4,T> &c,const vec<4,T> &a,const vec<4,T> &b) {
+	c.i[0] = a.i[0] / b.i[0];
+	c.i[1] = a.i[1] / b.i[1];
+	c.i[2] = a.i[2] / b.i[2];
+	c.i[3] = a.i[3] / b.i[3];
+}
+
+template<int N,class T> void
+div(vec<N,T> &c,const vec<N,T> &a,const vec<N,T> &b) {
+	for(int i=0; i<N; i++)
+		c.i[0] = a.i[0] / b.i[0];
+}
+
+template<class T> void
+div(vec<2,T> &c,const vec<2,T> &a,T b) {
+	c.i[0] = a.i[0] / b;
+	c.i[1] = a.i[1] / b;
+}
+
+template<class T> void
+div(vec<3,T> &c,const vec<3,T> &a,T b) {
+	c.i[0] = a.i[0] / b;
+	c.i[1] = a.i[1] / b;
+	c.i[2] = a.i[2] / b;
+}
+
+template<class T> void
+div(vec<4,T> &c,const vec<4,T> &a,T b) {
+	c.i[0] = a.i[0] / b;
+	c.i[1] = a.i[1] / b;
+	c.i[2] = a.i[2] / b;
+	c.i[3] = a.i[3] / b;
+}
+
+template<int N,class T> void
+div(vec<N,T> &c,const vec<N,T> &a,T b) {
+	for(int i=0; i<N; i++)
+		c.i[i] = a.i[i] / b;
+}
+
+template<class T> T
+dot_product(const vec<2,T> &a,const vec<2,T> &b) {
+	return a.i[0]*b.i[0] + a.i[1]*b.i[1];
+}
+
+template<class T> T
+dot_product(const vec<3,T> &a,const vec<3,T> &b) {
+	return a.i[0]*b.i[0] + a.i[1]*b.i[1] + a.i[2]*b.i[2];
+}
+
+template<class T> T
+dot_product(const vec<4,T> &a,const vec<4,T> &b) {
+	return a.i[0]*b.i[0] + a.i[1]*b.i[1] + a.i[2]*b.i[2] + a.i[3]*b.i[3];
+}
+template<int N,class T> T
+dot_product(const vec<N,T> &a,const vec<N,T> &b) {
+	T sum=a.i[0]*b.i[0];
+	for(int i=1; i<N; i++)
+		sum += a.i[i]*b.i[i];
+}
+
+template<class T> void
+cross_product(vec<3,T> &u,const vec<3,T> &v1,const vec<3,T> &v2) {
+	u.x = v1.y * v2.z - v1.z * v2.y;
+	u.y = v1.z * v2.x - v1.x * v2.z;
+	u.z = v1.x * v2.y - v1.y * v2.x;
+}
+
+template<class T> inline void
+minmax(vec<2,T> &v1,vec<2,T> &v2) {
+	if(v1.x>v2.x) std::swap(v1.x,v2.x);
+	if(v1.y>v2.y) std::swap(v1.y,v2.y);
+}
+
+template<class T> inline void
+minmax(vec<3,T> &v1,vec<3,T> &v2) {
+	if(v1.x>v2.x) std::swap(v1.x,v2.x);
+	if(v1.y>v2.y) std::swap(v1.y,v2.y);
+	if(v1.z>v2.z) std::swap(v1.z,v2.z);
+}
+
+template<class T> inline void
+minmax(vec<4,T> &v1,vec<4,T> &v2) {
+	if(v1.x>v2.x) std::swap(v1.x,v2.x);
+	if(v1.y>v2.y) std::swap(v1.y,v2.y);
+	if(v1.z>v2.z) std::swap(v1.z,v2.z);
+	if(v1.w>v2.w) std::swap(v1.w,v2.w);
+}
+
+template<int N,class T> vec<N,T>
+normalize(const vec<N,T> &v) {
+	vec<N,T> temp(v);
+	temp.normalize();
+	return temp;
+}
+
+}
 
 template<int N,class T> inline math::vec<N,T>
 operator *(const math::vec<N,T> &lhs,T rhs) {
@@ -690,281 +980,6 @@ operator ^(const math::vec<3,T> &lhs,const math::vec<3,T> &rhs) {
 	math::vec<3,T> res;
 	math::cross_product(res, lhs, rhs);
 	return res;
-}
-
-template<class L,class R> inline bool
-operator <(const math::vec<2,L> &left,const math::vec<2,R> &right) {
-	return left.x<right.x && left.y<right.y;
-}
-
-template<class L,class R> inline bool
-operator <(const math::vec<3,L> &left,const math::vec<3,R> &right) {
-	return left.x<right.x && left.y<right.y && left.z<right.z;
-}
-
-template<class L,class R> inline bool
-operator <(const math::vec<4,L> &left,const math::vec<4,R> &right) {
-	return left.x<right.x && left.y<right.y && left.z<right.z && left.w<right.w;
-}
-
-template<class L,class R> inline bool
-operator <=(const math::vec<2,L> &left,const math::vec<2,R> &right) {
-	if (left.x < right.x) return true;
-	if (left.x > right.x) return false;
-
-	return left.y < right.y;
-}
-
-template<class L,class R> inline bool
-operator <=(const math::vec<3,L> &left,const math::vec<3,R> &right) {
-	if (left.x < right.x) return true;
-	if (left.x > right.x) return false;
-
-	if (left.y < right.y) return true;
-	if (left.y > right.y) return false;
-
-	return left.z < right.z;
-}
-
-template<class L,class R> inline bool
-operator <=(const math::vec<4,L> &left,const math::vec<4,R> &right) {
-	if (left.x < right.x) return true;
-	if (left.x > right.x) return false;
-
-	if (left.y < right.y) return true;
-	if (left.y > right.y) return false;
-
-	if (left.z < right.z) return true;
-	if (left.z > right.z) return false;
-
-	return left.w < right.w;
-}
-
-template<int N,class L,class R> inline bool
-operator >(const math::vec<N,L> &left,const math::vec<N,R> &right) {
-	return right<left;
-}
-
-template<int N,class L,class R> inline bool
-operator >=(const math::vec<N,L> &left,const math::vec<N,R> &right) {
-	return right <= left;
-}
-
-template<class T> void
-math::add(vec<2,T> &c,const vec<2,T> &a,const vec<2,T> &b) {
-	c.i[0] = a.i[0] + b.i[0];
-	c.i[1] = a.i[1] + b.i[1];
-}
-
-template<class T> void
-math::add(vec<3,T> &c,const vec<3,T> &a,const vec<3,T> &b) {
-	c.i[0] = a.i[0] + b.i[0];
-	c.i[1] = a.i[1] + b.i[1];
-	c.i[2] = a.i[2] + b.i[2];
-}
-
-template<class T> void
-math::add(vec<4,T> &c,const vec<4,T> &a,const vec<4,T> &b) {
-	c.i[0] = a.i[0] + b.i[0];
-	c.i[1] = a.i[1] + b.i[1];
-	c.i[2] = a.i[2] + b.i[2];
-	c.i[3] = a.i[3] + b.i[3];
-}
-
-template<int N,class T> void
-math::add(vec<N,T> &c,const vec<N,T> &a,const vec<N,T> &b) {
-	for(int i=0; i<N; i++)
-		c.i[i] = a.i[i] + b.i[i];
-}
-
-template<class T> void
-math::sub(vec<2,T> &c,const vec<2,T> &a,const vec<2,T> &b) {
-	c.i[0] = a.i[0] - b.i[0];
-	c.i[1] = a.i[1] - b.i[1];
-}
-
-template<class T> void
-math::sub(vec<3,T> &c,const vec<3,T> &a,const vec<3,T> &b) {
-	c.i[0] = a.i[0] - b.i[0];
-	c.i[1] = a.i[1] - b.i[1];
-	c.i[2] = a.i[2] - b.i[2];
-}
-template<class T> void
-math::sub(vec<4,T> &c,const vec<4,T> &a,const vec<4,T> &b) {
-	c.i[0] = a.i[0] - b.i[0];
-	c.i[1] = a.i[1] - b.i[1];
-	c.i[2] = a.i[2] - b.i[2];
-	c.i[3] = a.i[3] - b.i[3];
-}
-
-template<int N,class T> void
-math::sub(vec<N,T> &c,const vec<N,T> &a,const vec<N,T> &b) {
-	for(int i=0; i<N; i++)
-		c.i[i] = a.i[i] - b.i[i];
-}
-
-template<class T> void
-math::mul(vec<2,T> &c,const vec<2,T> &a,const vec<2,T> &b) {
-	c.i[0] = a.i[0] * b.i[0];
-	c.i[1] = a.i[1] * b.i[1];
-}
-
-template<class T> void
-math::mul(vec<3,T> &c,const vec<3,T> &a,const vec<3,T> &b) {
-	c.i[0] = a.i[0] * b.i[0];
-	c.i[1] = a.i[1] * b.i[1];
-	c.i[2] = a.i[2] * b.i[2];
-}
-
-template<class T> void
-math::mul(vec<4,T> &c,const vec<4,T> &a,const vec<4,T> &b) {
-	c.i[0] = a.i[0] * b.i[0];
-	c.i[1] = a.i[1] * b.i[1];
-	c.i[2] = a.i[2] * b.i[2];
-	c.i[3] = a.i[3] * b.i[3];
-}
-
-template<int N,class T> void
-math::mul(vec<N,T> &c,const vec<N,T> &a,const vec<N,T> &b) {
-	for(int i=0; i<N; i++)
-		c.i[0] = a.i[0] * b.i[0];
-}
-
-template<class T> void
-math::mul(vec<2,T> &c,const vec<2,T> &a,T b) {
-	c.i[0] = a.i[0] * b;
-	c.i[1] = a.i[1] * b;
-}
-
-template<class T> void
-math::mul(vec<3,T> &c,const vec<3,T> &a,T b) {
-	c.i[0] = a.i[0] * b;
-	c.i[1] = a.i[1] * b;
-	c.i[2] = a.i[2] * b;
-}
-
-template<class T> void
-math::mul(vec<4,T> &c,const vec<4,T> &a,T b) {
-	c.i[0] = a.i[0] * b;
-	c.i[1] = a.i[1] * b;
-	c.i[2] = a.i[2] * b;
-	c.i[3] = a.i[3] * b;
-}
-
-template<int N,class T> void
-math::mul(vec<N,T> &c,const vec<N,T> &a,T b) {
-	for(int i=0; i<N; i++)
-		c.i[i] = a.i[i] * b;
-}
-
-template<class T> void
-math::div(vec<2,T> &c,const vec<2,T> &a,const vec<2,T> &b) {
-	c.i[0] = a.i[0] / b.i[0];
-	c.i[1] = a.i[1] / b.i[1];
-}
-
-template<class T> void
-math::div(vec<3,T> &c,const vec<3,T> &a,const vec<3,T> &b) {
-	c.i[0] = a.i[0] / b.i[0];
-	c.i[1] = a.i[1] / b.i[1];
-	c.i[2] = a.i[2] / b.i[2];
-}
-
-template<class T> void
-math::div(vec<4,T> &c,const vec<4,T> &a,const vec<4,T> &b) {
-	c.i[0] = a.i[0] / b.i[0];
-	c.i[1] = a.i[1] / b.i[1];
-	c.i[2] = a.i[2] / b.i[2];
-	c.i[3] = a.i[3] / b.i[3];
-}
-
-template<int N,class T> void
-math::div(vec<N,T> &c,const vec<N,T> &a,const vec<N,T> &b) {
-	for(int i=0; i<N; i++)
-		c.i[0] = a.i[0] / b.i[0];
-}
-
-template<class T> void
-math::div(vec<2,T> &c,const vec<2,T> &a,T b) {
-	c.i[0] = a.i[0] / b;
-	c.i[1] = a.i[1] / b;
-}
-
-template<class T> void
-math::div(vec<3,T> &c,const vec<3,T> &a,T b) {
-	c.i[0] = a.i[0] / b;
-	c.i[1] = a.i[1] / b;
-	c.i[2] = a.i[2] / b;
-}
-
-template<class T> void
-math::div(vec<4,T> &c,const vec<4,T> &a,T b) {
-	c.i[0] = a.i[0] / b;
-	c.i[1] = a.i[1] / b;
-	c.i[2] = a.i[2] / b;
-	c.i[3] = a.i[3] / b;
-}
-
-template<int N,class T> void
-math::div(vec<N,T> &c,const vec<N,T> &a,T b) {
-	for(int i=0; i<N; i++)
-		c.i[i] = a.i[i] / b;
-}
-
-template<class T> T
-math::dot_product(const vec<2,T> &a,const vec<2,T> &b) {
-	return a.i[0]*b.i[0] + a.i[1]*b.i[1];
-}
-
-template<class T> T
-math::dot_product(const vec<3,T> &a,const vec<3,T> &b) {
-	return a.i[0]*b.i[0] + a.i[1]*b.i[1] + a.i[2]*b.i[2];
-}
-
-template<class T> T
-math::dot_product(const vec<4,T> &a,const vec<4,T> &b) {
-	return a.i[0]*b.i[0] + a.i[1]*b.i[1] + a.i[2]*b.i[2] + a.i[3]*b.i[3];
-}
-template<int N,class T> T
-math::dot_product(const vec<N,T> &a,const vec<N,T> &b) {
-	T sum=a.i[0]*b.i[0];
-	for(int i=1; i<N; i++)
-		sum += a.i[i]*b.i[i];
-}
-
-template<class T> void
-math::cross_product(vec<3,T> &u,const vec<3,T> &v1,const vec<3,T> &v2) {
-	u.x = v1.y * v2.z - v1.z * v2.y;
-	u.y = v1.z * v2.x - v1.x * v2.z;
-	u.z = v1.x * v2.y - v1.y * v2.x;
-}
-
-template<class T> inline void
-math::minmax(vec<2,T> &v1,vec<2,T> &v2) {
-	if(v1.x>v2.x) std::swap(v1.x,v2.x);
-	if(v1.y>v2.y) std::swap(v1.y,v2.y);
-}
-
-template<class T> inline void
-math::minmax(vec<3,T> &v1,vec<3,T> &v2) {
-	if(v1.x>v2.x) std::swap(v1.x,v2.x);
-	if(v1.y>v2.y) std::swap(v1.y,v2.y);
-	if(v1.z>v2.z) std::swap(v1.z,v2.z);
-}
-
-template<class T> inline void
-math::minmax(vec<4,T> &v1,vec<4,T> &v2) {
-	if(v1.x>v2.x) std::swap(v1.x,v2.x);
-	if(v1.y>v2.y) std::swap(v1.y,v2.y);
-	if(v1.z>v2.z) std::swap(v1.z,v2.z);
-	if(v1.w>v2.w) std::swap(v1.w,v2.w);
-}
-
-template<int N,class T> math::vec<N,T>
-math::normalize(const math::vec<N,T> &v) {
-	math::vec<N,T> temp(v);
-	temp.normalize();
-	return temp;
 }
 
 template<class T>

@@ -78,7 +78,7 @@ contact_info<3> heightfield<T>::trace(ray<3> const &r, scalar max_distance)
 
     line<3> l(r.origin * world_to_local_,
 		(r.origin + normalize(r.direction) * max_distance) * world_to_local_);
-    if (l.A >= l.B) std::swap(l.A, l.B);
+    if (lexicagraphical_less(l.A, l.B)) std::swap(l.A, l.B);
 
     vec<3> const &v0 = l.A;
     vec<3> dv = l.B - l.A;

@@ -717,19 +717,19 @@ namespace collada_elements
             {
 				if ((lhs.position - rhs.position).length_sq() > math::EPSILON)
 				{
-					if (lhs.position <= rhs.position) return true;
-					if (lhs.position >= rhs.position) return false;
+					if (math::lexicagraphical_less(lhs.position, rhs.position)) return true;
+					if (math::lexicagraphical_greater(lhs.position, rhs.position)) return false;
 				}
 
 				if ((lhs.normal - rhs.normal).length_sq() > math::EPSILON)
 				{
-					if (lhs.normal <= rhs.normal) return true;
-					if (lhs.normal >= rhs.normal) return false;
+					if (math::lexicagraphical_less(lhs.normal, rhs.normal)) return true;
+					if (math::lexicagraphical_greater(lhs.normal, rhs.normal)) return false;
 				}
 
 				if ((lhs.texcoords - rhs.texcoords).length_sq() > math::EPSILON)
 				{
-					return lhs.texcoords <= rhs.texcoords;
+					if (math::lexicagraphical_less(lhs.texcoords, rhs.texcoords)) return true;
 				}
 
 				return false;
