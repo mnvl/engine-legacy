@@ -19,5 +19,7 @@ void graphic::Camera::bind(lua_State *L)
 		.def("get_up_dir", &Camera::get_up_dir)
 		.def("get_view_dir", &Camera::get_view_dir)
 		.def("get_cross_dir", &Camera::get_cross_dir)
+		.def("get_inverted_view_matrix", &Camera::get_inverted_view_matrix)
+		.def("get_inverted_projection_matrix", &Camera::get_inverted_projection_matrix)
 	];
 }

@@ -18,6 +18,7 @@ void Camera::set_perspective_projection(math::scalar fov, math::scalar aspect, m
 	far_plane_ = z_far;
 
 	projection_matrix_.perspective(fov, aspect, z_near, z_far);
+	projection_matrix_.inverse(inverted_projection_matrix_);
 }
 
 void Camera::set_orthographic_projection(math::scalar width, math::scalar height, math::scalar z_near, math::scalar z_far)
@@ -28,12 +29,14 @@ void Camera::set_orthographic_projection(math::scalar width, math::scalar height
 	far_plane_ = z_far;
 
 	projection_matrix_.ortho(width, height, z_near, z_far);
+	projection_matrix_.inverse(inverted_projection_matrix_);
 }
 
 void Camera::set_view_matrix(math::matrix<4,4> const &tf)
 {
 	view_matrix_ = tf;
-	view_matrix_.inverse(billboard_matrix_);
+	tf.inverse(inverted_view_matrix_);
+	billboard_matrix_ = inverted_view_matrix_;
 
 	{
 		math::matrix<4,4> &bb = billboard_matrix_;

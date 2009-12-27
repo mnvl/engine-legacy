@@ -14,7 +14,15 @@ public:
 		return view_matrix_;
 	}
 
+    math::matrix<4,4> const &get_inverted_view_matrix() const {
+		return inverted_view_matrix_;
+	}
+
     math::matrix<4,4> const &get_projection_matrix() const {
+		return projection_matrix_;
+	}
+
+    math::matrix<4,4> const &get_inverted_projection_matrix() const {
 		return projection_matrix_;
 	}
 
@@ -40,6 +48,7 @@ private:
 	math::vec<3> view_dir_;
 	math::vec<3> cross_dir_;
 	math::matrix<4,4> view_matrix_;
+	math::matrix<4,4> inverted_view_matrix_;
 	math::matrix<4,4> billboard_matrix_;
 
 	math::scalar field_of_view_;
@@ -47,6 +56,7 @@ private:
 	math::scalar near_plane_;
 	math::scalar far_plane_;
 	math::matrix<4,4> projection_matrix_;
+	math::matrix<4,4> inverted_projection_matrix_;
 };
 
 }

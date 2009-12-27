@@ -1,16 +1,14 @@
 #pragma once
 
-#include <math/scalar.h>
-#include <math/vec.h>
-#include <math/ray.h>
+#include <lua.h>
+#include "scalar.h"
+#include "vec.h"
+#include "ray.h"
 
 namespace math {
-	template<class T=scalar>
-	class plane;
-}
 
-template<class T>
-class math::plane {
+template<class T = scalar>
+class plane {
 public:
 	typedef T scalar_type;
 	typedef std::numeric_limits<scalar_type> limits_type;
@@ -61,12 +59,16 @@ public:
 		return !intersects(r);
 	}
 
+	scalar_type trace(const ray_type &r) const {
+		scalar_type a_n = A*r.direction.x + B*r.direction.y + C*r.direction.z;
+		return -(A*r.origin.x + B*r.origin.y + C*r.origin.z + D) / a_n;
+	}
+
 	// найти пересечение с лучом r
 	// r -- данный луч
 	// t -- параметр в уравнении прямой r = r.origin + r.direction * t;
 	bool trace(const ray_type &r,scalar_type &t,scalar_type t_min = 0, scalar_type t_max = 1) const {
-		scalar_type a_n = A*r.direction.x + B*r.direction.y + C*r.direction.z;
-		t = -(A*r.origin.x + B*r.origin.y + C*r.origin.z + D) / a_n;
+		t = trace(r);
 		return t >= t_min && t <= t_max;
 	}
 
@@ -87,7 +89,7 @@ public:
 	bool intersect(const plane_type &pl, ray_type &r) const {
 		r.direction = vec_type(A,B,C) ^ vec_type(pl.A, pl.B, pl.C);
 		vec_type dir2 = r.direction * r.direction;
-		
+
 		scalar_type invdet;
 		if(dir2.z > dir2.y && dir2.z > dir2.x && dir2.z > EPSILON)
 		{
@@ -125,8 +127,11 @@ public:
 
 		invdet = scalar_type(1) / sqrt(dir2.x + dir2.y + dir2.z);
 		r.direction *= invdet;
-		
+
 		return true;
 	}
 };
 
+void bind_plane(lua_State *L);
+
+}

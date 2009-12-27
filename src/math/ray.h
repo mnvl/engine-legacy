@@ -1,8 +1,9 @@
 #pragma once
 
+#include <limits>
+#include <lua.h>
 #include <math/scalar.h>
 #include <math/vec.h>
-#include <limits>
 
 namespace math {
 
@@ -20,19 +21,23 @@ public:
     ray() {
     }
 
-    ray(const vec_type &r0,const vec_type &a) {
-        construct(r0, a);
+    ray(const vec_type &r0,const vec_type &a):
+		origin(r0),
+		direction(a)
+	{
     }
 
     void construct(const vec_type &r0,const vec_type &a) {
         origin = r0;
-        direction = a;
+		direction = a;
     }
 
     vec_type apply(scalar_type t) const {
         return origin + direction * t;
     }
 };
+
+void bind_ray(lua_State *L);
 
 }
 

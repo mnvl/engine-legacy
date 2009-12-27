@@ -3,18 +3,21 @@
 #include <luabind/operator.hpp>
 #include <math/vec.h>
 
-template class math::vec<2>;
-template class math::vec<3>;
-template class math::vec<4>;
+namespace math
+{
+
+template class vec<2>;
+template class vec<3>;
+template class vec<4>;
 
 template<class T> void
-math::vec<2,T>::to_polar(scalar_type &modulus,scalar_type &angle) const {
+vec<2,T>::to_polar(scalar_type &modulus,scalar_type &angle) const {
 	modulus = length();
 	angle = atan2(y, x);
 }
 
 template<class T> void
-math::vec<3,T>::to_axis_angle(vec_type &axis, scalar_type &angle) const {
+vec<3,T>::to_axis_angle(vec_type &axis, scalar_type &angle) const {
 	const vec_type original(1,0,0);
 
 	axis = original ^ *this;
@@ -30,7 +33,7 @@ math::vec<3,T>::to_axis_angle(vec_type &axis, scalar_type &angle) const {
 	xy.to_polar(t, angle);
 }
 
-void math::bind_vec(lua_State *L)
+void bind_vec(lua_State *L)
 {
 	using namespace luabind;
 
@@ -82,7 +85,9 @@ void math::bind_vec(lua_State *L)
 		def("dot_product", (scalar (*)(const vec<3> &,const vec<3> &)) dot_product),
 		def("dot_product", (scalar (*)(const vec<4> &,const vec<4> &)) dot_product),
 
-		def("cross_product", (math::vec<3> (*)(const vec<3> &,const vec<3> &)) operator ^),
-		def("cross_product", (void (*)(math::vec<3> &, const vec<3> &,const vec<3> &)) math::cross_product)
+		def("cross_product", (vec<3> (*)(const vec<3> &,const vec<3> &)) operator ^),
+		def("cross_product", (void (*)(vec<3> &, const vec<3> &,const vec<3> &)) cross_product)
 	];
+}
+
 }

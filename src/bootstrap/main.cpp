@@ -13,6 +13,8 @@
 #include <platform/mouse.h>
 #include <math/vec.h>
 #include <math/matrix.h>
+#include <math/ray.h>
+#include <math/plane.h>
 #include <util/logger.h>
 #include <util/lua_backtrace.h>
 
@@ -34,6 +36,8 @@ public:
 
 		math::bind_vec(L_);
         math::bind_matrix(L_);
+		math::bind_ray(L_);
+		math::bind_plane(L_);
 
 		util::Logger::bind(L_);
 
