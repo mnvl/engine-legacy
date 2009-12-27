@@ -72,10 +72,10 @@ Logger::Message::~Message()
 {
 	if (logger_ptr_->is_source_position_enabled())
 	{
-		stream_ << "\t["
+		stream_ << "\n\t"
 				<< filename_ << ':' << line_;
 		if (pretty_function_) stream_  << ' ' << pretty_function_;
-		stream_ << "]\n";
+		stream_ << '\n';
 	}
 	else
 	{
