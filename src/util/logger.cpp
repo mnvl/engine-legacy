@@ -29,6 +29,7 @@ public:
 	void print_line(char const *message)
 	{
 		fwrite(message, 1, strlen(message), stdout);
+		fflush(stdout);
 	}
 };
 
@@ -38,6 +39,7 @@ public:
 	void print_line(char const *message)
 	{
 		fwrite(message, 1, strlen(message), stderr);
+		fflush(stderr);
 	}
 };
 
