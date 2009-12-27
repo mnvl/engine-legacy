@@ -16,16 +16,18 @@ int make_lua_backtrace(lua_State *L)
 	lua_Debug d;
 	int frame = 1;
 
-	while (lua_getstack(L, frame++, &d))
+	while (lua_getstack(L, frame, &d))
 	{
 		lua_getinfo(L, "Sln", &d);
 
-		formatter << '\t' << d.short_src << ":" << d.currentline
+		formatter << '\t' << frame << ' ' << d.short_src << ":" << d.currentline
 			<< " " << d.namewhat;
-		
+
 		if (d.name) formatter << " " << d.name;
 
 		formatter << '\n';
+
+		frame++;
 	}
 
 	std::string const &error = formatter.str();
