@@ -102,4 +102,20 @@ BOOST_AUTO_TEST_CASE (test_pi4_number_2)
 	}
 }
 
+BOOST_AUTO_TEST_CASE (test_inverse_4x4)
+{
+	math::matrix<4,4> M, I, R, U;
+
+	M.scaling(math::scalar(rand() + 1), math::scalar(rand() + 1), math::scalar(rand() + 1));
+	M.rotate(math::scalar(rand()) / RAND_MAX, math::scalar(rand()) / RAND_MAX, math::scalar(rand()) / RAND_MAX);
+	M.translate(math::scalar(rand()), math::scalar(rand()), math::scalar(rand()));
+
+	M.inverse(I);
+
+	R = M * I;
+	U.identity();
+
+	BOOST_ASSERT(R == U);
+}
+
 BOOST_AUTO_TEST_SUITE_END()
