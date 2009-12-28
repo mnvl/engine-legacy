@@ -75,6 +75,8 @@ void bind_vec(lua_State *L)
 
 		class_<vec<4> >("vec4")
 		.def(constructor<>())
+		.def(constructor<scalar, scalar, scalar, scalar>())
+		.def(constructor<vec<4> const &>())
 		.def_readwrite("x", &vec<4>::x)
 		.def_readwrite("y", &vec<4>::y)
 		.def_readwrite("z", &vec<4>::z)

@@ -1,6 +1,7 @@
 
 #include <d3dx9.h>
-#include <graphic/camera.h>
+#include <stdexcept>
+#include "camera.h"
 
 namespace graphic
 {
@@ -29,7 +30,9 @@ void Camera::set_orthographic_projection(math::scalar width, math::scalar height
 	far_plane_ = z_far;
 
 	projection_matrix_.ortho(width, height, z_near, z_far);
-	projection_matrix_.inverse(inverted_projection_matrix_);
+
+	if (!projection_matrix_.inverse(inverted_projection_matrix_))
+		throw std::runtime_error("can't invert projection matrix");
 }
 
 void Camera::set_view_matrix(math::matrix<4,4> const &tf)

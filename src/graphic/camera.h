@@ -23,7 +23,7 @@ public:
 	}
 
     math::matrix<4,4> const &get_inverted_projection_matrix() const {
-		return projection_matrix_;
+		return inverted_projection_matrix_;
 	}
 
 	math::vec<3> const &get_eye_point() const { return eye_point_; }
