@@ -203,7 +203,8 @@ public:
 	// r0, r1, r2 -- индексы столбцов минора
 	// c0, c1, c2 -- индексы строк минора
 	scalar_type minor(int r0,int r1,int r2,int c0,int c1,int c2) const {
-		return  ij[r0][c0] * (ij[r1][c1] * ij[r2][c2] - ij[r2][c1] * ij[r1][c2]) -
+		return
+			ij[r0][c0] * (ij[r1][c1] * ij[r2][c2] - ij[r2][c1] * ij[r1][c2]) -
 			ij[r0][c1] * (ij[r1][c0] * ij[r2][c2] - ij[r2][c0] * ij[r1][c2]) +
 			ij[r0][c2] * (ij[r1][c0] * ij[r2][c1] - ij[r2][c0] * ij[r1][c1]); 
 	}
@@ -228,7 +229,8 @@ public:
 	}
 
 	scalar_type determinant() const {
-		return  ij[0][0] * minor(1, 2, 3, 1, 2, 3) -
+		return
+			ij[0][0] * minor(1, 2, 3, 1, 2, 3) -
 			ij[0][1] * minor(1, 2, 3, 0, 2, 3) +
 			ij[0][2] * minor(1, 2, 3, 0, 1, 3) -
 			ij[0][3] * minor(1, 2, 3, 0, 1, 2);
@@ -237,7 +239,7 @@ public:
 	// вычислить обратную матрицу и записать ее в M
 	// возвращает false если детерминант равен нулю
 	bool inverse(matrix_type &M) const {
-		scalar_type det=determinant();
+		scalar_type det = determinant();
 		if(det == 0) return false;
 		adjoint(M);
 		M /= det;

@@ -135,7 +135,7 @@ BOOST_AUTO_TEST_CASE (test_matrix_inverse_4x4_3)
 {
 	math::matrix<4,4> M, I, R, U;
 
-	M.translation(math::scalar(rand() + 1), math::scalar(rand() + 1), math::scalar(rand() + 1));
+	M.translation(rand() * 10.0f / RAND_MAX, rand() * 10.0f / RAND_MAX, rand() * 10.0f / RAND_MAX);
 
 	M.inverse(I);
 
@@ -149,7 +149,7 @@ BOOST_AUTO_TEST_CASE (test_matrix_inverse_4x4_4)
 {
 	math::matrix<4,4> M, I, R, U;
 
-	M.translation(math::scalar(rand() + 1), math::scalar(rand() + 1), math::scalar(rand() + 1));
+	M.translation(rand() * 10.0f / RAND_MAX, rand() * 10.0f / RAND_MAX, rand() * 10.0f / RAND_MAX);
 	M.rotate(rand() * math::PI / RAND_MAX , rand() * math::PI / RAND_MAX, rand() * math::PI / RAND_MAX);
 
 	M.inverse(I);
