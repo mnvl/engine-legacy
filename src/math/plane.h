@@ -43,7 +43,7 @@ public:
 
 	// пересечение с прямой
 	bool intersects(const ray_type &r) const {
-		return abs(A*r.direction.x + B*r.direction.y + C*r.direction.z)>EPSILON
+		return abs(A*r.a.x + B*r.a.y + C*r.a.z)>EPSILON
 			|| contains(r);
 	}
 
@@ -52,7 +52,7 @@ public:
 	}
 
 	bool contains(const ray_type &r) const {
-		return abs(A*r.direction.x + B*r.direction.y + C*r.direction.z) < EPSILON && contains(r.origin);
+		return abs(A*r.a.x + B*r.a.y + C*r.a.z) < EPSILON && contains(r.r0);
 	}
 
 	bool parallel(const ray_type &r) const {
@@ -60,8 +60,8 @@ public:
 	}
 
 	scalar_type trace(const ray_type &r) const {
-		scalar_type a_n = A*r.direction.x + B*r.direction.y + C*r.direction.z;
-		return -(A*r.origin.x + B*r.origin.y + C*r.origin.z + D) / a_n;
+		scalar_type a_n = A*r.a.x + B*r.a.y + C*r.a.z;
+		return -(A*r.r0.x + B*r.r0.y + C*r.r0.z + D) / a_n;
 	}
 
 	// найти пересечение с лучом r
@@ -78,7 +78,7 @@ public:
 	// v -- точка пересечения
 	bool trace(const ray_type &r,scalar_type &t,vec_type &v,scalar_type t_min = 0, scalar_type t_max = 1) const {
 		if(!trace(r,t,t_min,t_max)) return false;
-		v = r.origin + r.direction * t;
+		v = r.r0 + r.a * t;
 		return true;
 	}
 
@@ -87,46 +87,46 @@ public:
 	// result -- искомая прямая пересечения
 	// если плоскости параллельны -- возвращает false
 	bool intersect(const plane_type &pl, ray_type &r) const {
-		r.direction = vec_type(A,B,C) ^ vec_type(pl.A, pl.B, pl.C);
-		vec_type dir2 = r.direction * r.direction;
+		r.a = vec_type(A,B,C) ^ vec_type(pl.A, pl.B, pl.C);
+		vec_type dir2 = r.a * r.a;
 
 		scalar_type invdet;
 		if(dir2.z > dir2.y && dir2.z > dir2.x && dir2.z > EPSILON)
 		{
 			/* then get a point on the XY plane */
-			invdet = scalar_type(1) / r.direction.z;
+			invdet = scalar_type(1) / r.a.z;
 			/* solve < pl1.x * xpt.x + pl1.y * xpt.y = - pl1.w >
 			< pl2.x * xpt.x + pl2.y * xpt.y = - pl2.w > */
-			r.origin.x = B * pl.D - pl.B *D;
-			r.origin.y = pl.A * D - A * pl.D;
-			r.origin.z = 0;
+			r.r0.x = B * pl.D - pl.B *D;
+			r.r0.y = pl.A * D - A * pl.D;
+			r.r0.z = 0;
 		}
 		else if (dir2.y > dir2.x && dir2.y > EPSILON)
 		{
 			/* then get a point on the XZ plane */
-			invdet = scalar_type(1) / r.direction.y;
+			invdet = scalar_type(1) / r.a.y;
 			/* solve < pl1.x * xpt.x + pl1.z * xpt.z = -pl1.w >
 			< pl2.x * xpt.x + pl2.z * xpt.z = -pl2.w > */
-			r.origin.x = C * pl.D - pl.C * D;
-			r.origin.y = 0;
-			r.origin.z = pl.A * D -A * pl.D;
+			r.r0.x = C * pl.D - pl.C * D;
+			r.r0.y = 0;
+			r.r0.z = pl.A * D -A * pl.D;
 		}
 		else if (dir2.x > EPSILON)
 		{
 			/* then get a point on the YZ plane */
-			invdet = scalar_type(1) / r.direction.x;
+			invdet = scalar_type(1) / r.a.x;
 			/* solve < pl1.y * xpt.y + pl1.z * xpt.z = - pl1.w >
 			< pl2.y * xpt.y + pl2.z * xpt.z = - pl2.w > */
-			r.origin.x = 0;
-			r.origin.y = C * pl.D - pl.C * D;
-			r.origin.z = pl.B * D -B * pl.D;
+			r.r0.x = 0;
+			r.r0.y = C * pl.D - pl.C * D;
+			r.r0.z = pl.B * D -B * pl.D;
 		}
 		else return false;
 
-		r.origin *= invdet;
+		r.r0 *= invdet;
 
 		invdet = scalar_type(1) / sqrt(dir2.x + dir2.y + dir2.z);
-		r.direction *= invdet;
+		r.a *= invdet;
 
 		return true;
 	}

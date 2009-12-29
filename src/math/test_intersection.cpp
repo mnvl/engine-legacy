@@ -9,15 +9,15 @@ BOOST_AUTO_TEST_CASE (ray_ray_intersection)
 	math::ray<2> r1, r2;
 	math::scalar s;
 
-	r1.origin.set(0, 0);
-	r1.direction.set(100, 500);
+	r1.r0.set(0, 0);
+	r1.a.set(100, 500);
 
-	r2.origin.set(1, 0);
-	r2.direction.set(-1, 3);
+	r2.r0.set(1, 0);
+	r2.a.set(-1, 3);
 
 	math::intersect(r1, r2, s);
 
-	math::vec<2> p1 = r1.origin + r1.direction * s;
+	math::vec<2> p1 = r1.r0 + r1.a * s;
 	BOOST_ASSERT (math::intersect(r2, p1));
 
 	BOOST_ASSERT (math::abs(s - 0.00375f) < math::EPSILON);

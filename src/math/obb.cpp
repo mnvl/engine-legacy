@@ -10,55 +10,55 @@ math::obb<3,T>::trace(const ray_type &r,scalar_type t_min, scalar_type t_max) co
 	forward_ray(r1, r);
 	
 	// пересечение прямой r1 с плоскостьями x=0 и x=1
-	if(abs(r1.direction.x) > EPSILON) {
-		scalar_type dx = 1 / r1.direction.x;
+	if(abs(r1.a.x) > EPSILON) {
+		scalar_type dx = 1 / r1.a.x;
 	
-		scalar_type t = -r1.origin.x * dx;
+		scalar_type t = -r1.r0.x * dx;
 		vec_type v;
 		if(t >= t_min && t <= t_max) {
-			v = r1.origin + r1.direction * t;
+			v = r1.r0 + r1.a * t;
 			if(v.y>=0 && v.y<=1 && v.z>=0 && v.z<=1) return true;
 		}
 	
 		t = dx - t;
 		if(t >= t_min && t <= t_max) {
-			v += r1.direction * dx;
+			v += r1.a * dx;
 			if(v.y>=0 && v.y<=1 && v.z>=0 && v.z<=1) return true;
 		}
 	}
 	
 	// пересечение прямой r1 с плоскостьями y=0 и y=1
-	if(abs(r1.direction.y) > EPSILON) {
-		scalar_type dy = 1 / r1.direction.y;
+	if(abs(r1.a.y) > EPSILON) {
+		scalar_type dy = 1 / r1.a.y;
 	
-		scalar_type t = -r1.origin.y * dy;
+		scalar_type t = -r1.r0.y * dy;
 		vec_type v;
 		if(t >= t_min && t <= t_max) {
-			v = r1.origin + r1.direction * t;
+			v = r1.r0 + r1.a * t;
 			if(v.x>=0 && v.x<=1 && v.z>=0 && v.z<=1) return true;
 		}
 	
 		t = dy - t;
 		if(t >= t_min && t <= t_max) {
-			v += r1.direction * dy;
+			v += r1.a * dy;
 			if(v.x>=0 && v.x<=1 && v.z>=0 && v.z<=1) return true;
 		}
 	}
 	
 	// пересечение прямой r1 с плоскостьями z=0 и z=1
-	if(abs(r1.direction.z) > EPSILON) {
-		scalar_type dz = 1 / r1.direction.z;
+	if(abs(r1.a.z) > EPSILON) {
+		scalar_type dz = 1 / r1.a.z;
 	
-		scalar_type t = -r1.origin.z * dz;
+		scalar_type t = -r1.r0.z * dz;
 		vec_type v;
 		if(t >= t_min && t <= t_max) {
-			v = r1.origin + r1.direction * t;
+			v = r1.r0 + r1.a * t;
 			if(v.x>=0 && v.x<=1 && v.y>=0 && v.y<=1) return true;
 		}
 	
 		t = dz - t;
 		if(t >= t_min && t <= t_max) {
-			v += r1.direction * dz;
+			v += r1.a * dz;
 			if(v.x>=0 && v.x<=1 && v.y>=0 && v.y<=1) return true;
 		}
 	}

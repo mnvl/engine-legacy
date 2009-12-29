@@ -77,9 +77,9 @@ public:
 		// B=(a,x0-r0)*2
 		// C=(x0-r0,x0-r0)-R
 
-		scalar_type A = r.direction.length_sq();
-		scalar_type B = 2 * (r.direction & (r.origin - centre));
-		scalar_type C = (r.origin - centre).length_sq() - radius * radius;
+		scalar_type A = r.a.length_sq();
+		scalar_type B = 2 * (r.a & (r.r0 - centre));
+		scalar_type C = (r.r0 - centre).length_sq() - radius * radius;
 
 		return B * B - 4 * A * C >= 0;
 	}
@@ -88,20 +88,20 @@ public:
 	// r -- луч
 	// v1, v2 -- точки пересечения
 	bool intersect(const ray_type &r, vec_type &v1, vec_type &v2) const {
-		vec_type delta = r.origin - centre;
-		scalar_type A = r.direction.length_sq();
-		scalar_type B = 2 * (r.direction & delta);
+		vec_type delta = r.r0 - centre;
+		scalar_type A = r.a.length_sq();
+		scalar_type B = 2 * (r.a & delta);
 		scalar_type C = delta.length_sq() - radius * radius;
 
 		scalar_type discriminant = B * B - 4 * A * C;
 		if(discriminant < 0) return false;
 
 		if(abs(discriminant) < EPSILON) {
-			v1 = v2 = r.origin + r.direction * (-B / (2 * A));
+			v1 = v2 = r.r0 + r.a * (-B / (2 * A));
 		} else {
 			scalar_type discriminant_sqrt = sqrt(discriminant);
-			v1 = r.origin + r.direction * ((-B + discriminant_sqrt) / (2 * A));
-			v2 = r.origin + r.direction * ((-B - discriminant_sqrt) / (2 * A));
+			v1 = r.r0 + r.a * ((-B + discriminant_sqrt) / (2 * A));
+			v2 = r.r0 + r.a * ((-B - discriminant_sqrt) / (2 * A));
 		}
 
 		return true;

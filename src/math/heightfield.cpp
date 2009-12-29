@@ -76,22 +76,22 @@ contact_info<3> heightfield<T>::trace(ray<3> const &r, scalar max_distance)
     // x0 + dx * t = x(t)
     // t(x) = (x - x0) / dx = x * 1 / dx - x0 / dx
 
-    line<3> l(r.origin * world_to_local_,
-		(r.origin + normalize(r.direction) * max_distance) * world_to_local_);
-    if (lexicagraphical_greater(l.A, l.B)) std::swap(l.A, l.B);
+    line<3> l(r.r0 * world_to_local_,
+		(r.r0 + normalize(r.a) * max_distance) * world_to_local_);
+    if (lexicographical_greater(l.A, l.B)) std::swap(l.A, l.B);
 
     vec<3> const &v0 = l.A;
     vec<3> dv = l.B - l.A;
 
 	if (abs(dv.x) < EPSILON && abs(dv.z) < EPSILON) {
-		scalar y = y_at(r.origin);
+		scalar y = y_at(r.r0);
 
-		if (y * r.direction.y > 0)
+		if (y * r.a.y > 0)
 		{
 			contact_info<3> ci;
 			ci.happened = true;
             ci.penetrated = false;
-			ci.position.set(r.origin.x, y, r.origin.z);
+			ci.position.set(r.r0.x, y, r.r0.z);
 
 			int col = int(ci.position.x), row = int(ci.position.z);
 
@@ -106,7 +106,7 @@ contact_info<3> heightfield<T>::trace(ray<3> const &r, scalar max_distance)
 			if (tri1.contains_on_plane(ci.position)) ci.normal = tri1.get_normal();
 			else ci.normal = tri2.get_normal();
 
-			ci.time = (ci.position - r.origin).length() / r.direction.length();
+			ci.time = (ci.position - r.r0).length() / r.a.length();
 
 			return ci;
 		}

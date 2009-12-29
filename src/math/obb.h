@@ -228,8 +228,8 @@ namespace math {
 	
 		// перенести прямую в локальную систему координат
 		void forward_ray(ray_type &r,const ray_type &r0) const {
-			forward_point(r.origin,r0.origin);
-			forward_vector(r.direction,r0.direction);
+			forward_point(r.r0,r0.r0);
+			forward_vector(r.a,r0.a);
 		}
 	
 		// проверить принадлежность точки
