@@ -18,6 +18,10 @@ public:
 		return inverted_view_matrix_;
 	}
 
+	math::matrix<4,4> const &get_billboard_matrix() const {
+		return billboard_matrix_;
+	}
+
     math::matrix<4,4> const &get_projection_matrix() const {
 		return projection_matrix_;
 	}
