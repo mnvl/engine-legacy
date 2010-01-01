@@ -6,7 +6,7 @@ namespace ps
 {
 
 template<class P>
-class simple_lifespan
+class simple_lifespan_controller
 {
 public:
 	typedef P particle_t;
