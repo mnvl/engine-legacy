@@ -32,8 +32,8 @@ public:
 	void emit(particle_t &particle)
 	{
 		particle.position = position_;
-		particle.velocity = direction_ * ((rand() * (velocity_max_ - velocity_min_)) / RAND_MAX + velocity_min_);
-		particle.acceleration = direction_ * ((rand() * (acceleration_max_ - acceleration_min_)) / RAND_MAX + acceleration_min_);
+		particle.velocity = direction_ * (rand() * (velocity_max_ - velocity_min_) / RAND_MAX + velocity_min_);
+		particle.acceleration = direction_ * (rand() * (acceleration_max_ - acceleration_min_) / RAND_MAX + acceleration_min_);
 	}
 
 protected:
