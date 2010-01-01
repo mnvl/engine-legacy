@@ -4,35 +4,36 @@
 #include <math/vec.h>
 #include <math/matrix.h>
 
-namespace math {
-	template<int N,int M,class T> class matrix;
-	template<class T = scalar> class quaternion;
+namespace math
+{
 
-	template<class T> inline T
-	inner_product(const quaternion<T> &q0, const quaternion<T> &q1);
+template<int N,int M,class T> class matrix;
+template<class T = scalar> class quaternion;
 
-	template<class T> inline quaternion<T>
-	lerp_unit(const quaternion<T> &q1, const quaternion<T> &q2, T t);
+template<class T> inline T
+inner_product(const quaternion<T> &q0, const quaternion<T> &q1);
 
-	template<class T = scalar> class quaternion_lerper;
-	template<class T = scalar> class quaternion_slerper;
+template<class T> inline quaternion<T>
+lerp_unit(const quaternion<T> &q1, const quaternion<T> &q2, T t);
 
-	template<class T> inline vec<3,T>
-	ortho_project_on_sphere(T x , T y);
+template<class T = scalar> class quaternion_lerper;
+template<class T = scalar> class quaternion_slerper;
 
-	template<class T> inline quaternion<T> 
-	arcball(const vec<3,T> &from, const vec<3,T> &to);
+template<class T> inline vec<3,T>
+ortho_project_on_sphere(T x , T y);
 
-	template<class T> inline quaternion<T>
-	trackball(const vec<3,T> &from, const vec<3,T> &to);
+template<class T> inline quaternion<T>
+arcball(const vec<3,T> &from, const vec<3,T> &to);
 
-	template<class T> inline void
-	swing_twist_decomposition(const math::quaternion<T> &rotation,const math::vec<3,T> &direction,
-		math::quaternion<T> &swing,math::quaternion<T> &twist);
-}
+template<class T> inline quaternion<T>
+trackball(const vec<3,T> &from, const vec<3,T> &to);
+
+template<class T> inline void
+swing_twist_decomposition(const quaternion<T> &rotation,const vec<3,T> &direction,
+	quaternion<T> &swing,quaternion<T> &twist);
 
 template<class T>
-class math::quaternion {
+class quaternion {
 public:
 	// типы и константы
 	typedef T scalar_type;
@@ -59,7 +60,7 @@ public:
 		y = y0;
 		z = z0;
 		w = w0;
-    	}
+	}
 
     void set(const quaternion_type& q) {
        	x = q.x;
@@ -84,13 +85,13 @@ public:
     void conjugated(quaternion_type &q) const {
        	q = *this;
 		q.conjugate();
-    } 
+    }
 
     quaternion_type conjugated() const {
        	quaternion_type q;
 		conjugated(q);
 		return q;
-    } 
+    }
 
     void scale(scalar_type s) {
 		x *= s;
@@ -121,12 +122,12 @@ public:
 		quaternion_type q;
 		inverted(q);
 		return q;
-    } 
+    }
 
     /**
-	stabilize quaternion length within 1 - 1/4
-    this operation is a lot faster than normalization
-    and preserve length goes to 0 or infinity
+	   stabilize quaternion length within 1 - 1/4
+	   this operation is a lot faster than normalization
+	   and preserve length goes to 0 or infinity
     */
     void stabilize_length() {
 		scalar_type cs = (scalar_type)(fabs(x) + fabs(y) + fabs(z) + fabs(w));
@@ -137,66 +138,66 @@ public:
     }
 
    	/**
- 	  scale quaternion that its norm goes to 1 
-          the appearing of 0 magnitude or near is a error,
-          so we can be sure that can divide by magnitude
-    	*/
+	   scale quaternion that its norm goes to 1 
+	   the appearing of 0 magnitude or near is a error,
+	   so we can be sure that can divide by magnitude
+	*/
    	void normalize() {
-        	scalar_type m = magnitude();
-        	if(m < EPSILON) {
-            		stabilize_length();
-            		m = magnitude();
-        	}
-        	scale(1/m);
-    	}
+		scalar_type m = magnitude();
+		if(m < EPSILON) {
+			stabilize_length();
+			m = magnitude();
+		}
+		scale(1/m);
+	}
 
-    	bool equal(const quaternion_type& q){
+	bool equal(const quaternion_type& q){
 		return (fabs(q.x - x) < EPSILON) &&
-               (fabs(q.y - y) < EPSILON) &&
-               (fabs(q.z - z) < EPSILON) &&
-               (fabs(q.w - w) < EPSILON);
-    	}
+			(fabs(q.y - y) < EPSILON) &&
+			(fabs(q.z - z) < EPSILON) &&
+			(fabs(q.w - w) < EPSILON);
+	}
 
-    	//----operators------------------------------------------------
+	//----operators------------------------------------------------
 	inline quaternion_type operator +() const {
-       		return *this;
+		return *this;
  	}
 
-    	quaternion_type operator -() const {
-        	return quaternion_type(-x, -y, -z, -w);
-    	}
+	quaternion_type operator -() const {
+		return quaternion_type(-x, -y, -z, -w);
+	}
 
-    	quaternion_type &operator +=(const quaternion_type& q) {
-        	x += q.x;
+	quaternion_type &operator +=(const quaternion_type& q) {
+		x += q.x;
 		y += q.y;
 		z += q.z;
 		w += q.w;
 
 		return *this;
-    	}
+	}
 
-    	quaternion_type &operator -=(const quaternion& q) {
-       		x -= q.x;
+	quaternion_type &operator -=(const quaternion& q) {
+		x -= q.x;
 		y -= q.y;
 		z -= q.z;
 		w -= q.w;
 
 		return *this;
-    	}
+	}
 
-    	quaternion_type &operator *=(scalar_type s) {
-       		x *= s;
+	quaternion_type &operator *=(scalar_type s) {
+		x *= s;
 		y *= s;
 		z *= s;
 		w *= s;
 
 		return *this;
-    	}
+	}
 
-    	/**
-      	q(cross(v,v') + wv' + w'v, ww' - dot(v,v'))
-    	*/
-    	quaternion_type &operator *=(const quaternion& q) {
+	/**
+	   q(cross(v,v') + wv' + w'v, ww' - dot(v,v'))
+	*/
+	quaternion_type &operator *=(const quaternion& q) {
 		quaternion_type p=*this;
 		x = p.w*q.x + p.x*q.w + p.y*q.z - p.z*q.y;
 		y = p.w*q.y + p.y*q.w + p.z*q.x - p.x*q.z;
@@ -204,10 +205,10 @@ public:
 		w = p.w*q.w - p.x*q.x - p.y*q.y - p.z*q.z;
 
 		return *this;
-   	}
+	}
 
     /**
-      return rotation angle from -PI to PI 
+	   return rotation angle from -PI to PI
     */
     scalar_type get_rotation_angle() const {
        	if(w < 0) return 2 * atan2(-sqrt(x*x + y*y + z*z), -w);
@@ -215,15 +216,15 @@ public:
     }
 
     /**
-      create a unit quaternion from axis angle representation
+	   create a unit quaternion from axis angle representation
     */
     void rotation(const vec_type &axis, scalar_type angle) {
 		if(angle) {
-	        	vec_type v(axis);
-        		v.normalize();
-        		scalar_type half_angle = angle * scalar_type(0.5);
-        		scalar_type sin_a = (scalar_type) sin(half_angle);
-        		set(v.x*sin_a, v.y*sin_a, v.z*sin_a, cos(half_angle));
+			vec_type v(axis);
+			v.normalize();
+			scalar_type half_angle = angle * scalar_type(0.5);
+			scalar_type sin_a = (scalar_type) sin(half_angle);
+			set(v.x*sin_a, v.y*sin_a, v.z*sin_a, cos(half_angle));
 		} else {
 			identity();
 		}
@@ -259,8 +260,8 @@ public:
 	}
 
    	/**
-	  convert a quaternion to axis angle representation, 
-	  preserve the axis direction and angle from -PI to +PI
+	   convert a quaternion to axis angle representation, 
+	   preserve the axis direction and angle from -PI to +PI
     */
     void decompose(vec_type &axis, scalar_type &angle)const {
        	scalar_type vl = sqrt(x*x + y*y + z*z);
@@ -272,25 +273,25 @@ public:
        		else
            		angle = 2 * atan2(vl,  w); //0,PI 
       	} else {
-         		axis.set(0,0,0);
-          		angle = 0;
+			axis.set(0,0,0);
+			angle = 0;
       	}
 	}
 
    	/**
-	  create a unit quaternion by rotation matrix
-          martix must contain only rotation (not scale or shear)
+	   create a unit quaternion by rotation matrix
+	   martix must contain only rotation (not scale or shear)
 
-          For numerical stability we find first the greatest component of quaternion
-          and than search others from this one
+	   For numerical stability we find first the greatest component of quaternion
+	   and than search others from this one
 	*/
 	template <int M, int N, class X>
    	void set_unit(matrix<M, N, X> const &m)
    	{
        	scalar_type tr = m.ij[0][0] + m.ij[1][1] + m.ij[2][2];	// trace of martix
        	if (tr > 0) {	// if trace positive than "w" is biggest component
-           		set(m.ij[1][2] - m.ij[2][1], m.ij[2][0] - m.ij[0][2], m.ij[0][1] - m.ij[1][0], tr+1);
-           		scale(scalar_type(0.5) / scalar_type(sqrt(w)));	// "w" contain the "norm * 4"
+			set(m.ij[1][2] - m.ij[2][1], m.ij[2][0] - m.ij[0][2], m.ij[0][1] - m.ij[1][0], tr+1);
+			scale(scalar_type(0.5) / scalar_type(sqrt(w)));	// "w" contain the "norm * 4"
        	} else {
 			// Some of vector components is bigger
        		if((m.ij[0][0] > m.ij[1][1]) && (m.ij[0][0] > m.ij[2][2])) {
@@ -304,44 +305,44 @@ public:
            			scale(scalar_type(0.5) / scalar_type(sqrt(y)));
        			} else {
 		        	set(m.ij[2][0] + m.ij[0][2], m.ij[2][1] + m.ij[1][2],
-               				1 + m.ij[2][2] - m.ij[0][0] - m.ij[1][1],
-					m.ij[0][1] - m.ij[1][0]);
-           				scale(scalar_type(0.5) / scalar_type(sqrt(z)));
+						1 + m.ij[2][2] - m.ij[0][0] - m.ij[1][1],
+						m.ij[0][1] - m.ij[1][0]);
+					scale(scalar_type(0.5) / scalar_type(sqrt(z)));
 				}
 			}
 		}
 	}
 
    	/**
-     create a nonunit quaternion from rotation matrix 
-     martix must contain only rotation (not scale or shear)
-     the result quaternion length is numerical stable 
+	   create a nonunit quaternion from rotation matrix 
+	   martix must contain only rotation (not scale or shear)
+	   the result quaternion length is numerical stable 
     */
 	template <int M, int N, class X>
   	void set(matrix<M, N, X> const &m) {
        	scalar_type tr = m.ij[0][0] + m.ij[1][1] + m.ij[2][2]; // trace of martix
        	if (tr > 0){  // if trace positive than "w" is biggest component
-           		set(m.ij[1][2] - m.ij[2][1], m.ij[2][0] - m.ij[0][2], m.ij[0][1] - m.ij[1][0], tr + 1);
+			set(m.ij[1][2] - m.ij[2][1], m.ij[2][0] - m.ij[0][2], m.ij[0][1] - m.ij[1][0], tr + 1);
        	} else {
 			// Some of vector components is bigger
        		if((m.ij[0][0] > m.ij[1][1]) && (m.ij[0][0] > m.ij[2][2])) {
       			set(1 + m.ij[0][0] - m.ij[1][1] - m.ij[2][2], m.ij[1][0] + m.ij[0][1],
-                		m.ij[2][0] + m.ij[0][2], m.ij[1][2] - m.ij[2][1]);
-		} else {
-			if (m.ij[1][1] > m.ij[2][2]) {
-    			set(m.ij[1][0] + m.ij[0][1], 1 + m.ij[1][1] - m.ij[0][0] - m.ij[2][2],
+					m.ij[2][0] + m.ij[0][2], m.ij[1][2] - m.ij[2][1]);
+			} else {
+				if (m.ij[1][1] > m.ij[2][2]) {
+					set(m.ij[1][0] + m.ij[0][1], 1 + m.ij[1][1] - m.ij[0][0] - m.ij[2][2],
            				m.ij[2][1] + m.ij[1][2], m.ij[2][0] - m.ij[0][2]); 
-    		} else {
-	            set(m.ij[2][0] + m.ij[0][2], m.ij[2][1] + m.ij[1][2],
-		                 1 + m.ij[2][2] - m.ij[0][0] - m.ij[1][1], m.ij[0][1] - m.ij[1][0]);
+				} else {
+					set(m.ij[2][0] + m.ij[0][2], m.ij[2][1] + m.ij[1][2],
+						1 + m.ij[2][2] - m.ij[0][0] - m.ij[1][1], m.ij[0][1] - m.ij[1][0]);
 				}
 			}
 		}
     }
 
   	/**
-	  shortest arc quaternion rotate one vector to another by shortest path.
-	  create rotation from -> to, for any length vectors.
+	   shortest arc quaternion rotate one vector to another by shortest path.
+	   create rotation from -> to, for any length vectors.
     */
     void shortest_arc(const vec_type &from, const vec_type &to)
     {
@@ -353,36 +354,36 @@ public:
        	{
      		if((from.z*from.z) > (from.x*from.x))
           		set(0, from.z, - from.y, w); //from*vector3(1,0,0) 
-    		else 
+    		else
           		set(from.y, - from.x, 0, w); //from*vector3(0,0,1) 
       	}
 
-      	normalize(); 
+      	normalize();
   	}
 };
 
 template<class T> T
-math::inner_product(const quaternion<T> &q0, const quaternion<T> &q1) {
+inner_product(const quaternion<T> &q0, const quaternion<T> &q1) {
     return q0.x*q1.x + q0.y*q1.y + q0.z*q1.z + q0.w*q1.w;
 }
 
-template<class T> inline math::quaternion<T>
-operator +(const math::quaternion<T> &lhs, const math::quaternion<T> &rhs) {
-	math::quaternion<T> temp = lhs;
+template<class T> inline quaternion<T>
+operator +(const quaternion<T> &lhs, const quaternion<T> &rhs) {
+	quaternion<T> temp = lhs;
 	temp += rhs;
 	return temp;
 }
 
-template<class T> inline math::quaternion<T>
-operator *(const math::quaternion<T> &lhs, const T &rhs) {
-	math::quaternion<T> temp = lhs;
+template<class T> inline quaternion<T>
+operator *(const quaternion<T> &lhs, const T &rhs) {
+	quaternion<T> temp = lhs;
 	temp *= rhs;
 	return temp;
 }
 
-template<class T> inline math::quaternion<T>
-operator *(const math::quaternion<T> &lhs, const math::quaternion<T> &rhs) {
-	math::quaternion<T> temp = lhs;
+template<class T> inline quaternion<T>
+operator *(const quaternion<T> &lhs, const quaternion<T> &rhs) {
+	quaternion<T> temp = lhs;
 	temp *= rhs;
 	return temp;
 }
@@ -391,8 +392,8 @@ operator *(const math::quaternion<T> &lhs, const math::quaternion<T> &rhs) {
   perform linear interpolation (approximate rotation interpolation) of two unit quats,
   result quaternion nonunit, its length lay between. sqrt(2)/2  and 1.0
 */
-template<class T> inline math::quaternion<T>
-math::lerp_unit(const math::quaternion<T> &q1, const math::quaternion<T> &q2, T t) {
+template<class T> inline quaternion<T>
+lerp_unit(const quaternion<T> &q1, const quaternion<T> &q2, T t) {
     T inner = inner_product(q1, q2);
     if(inner < 0){
         return q1 - (q2+q1)*t;
@@ -405,7 +406,7 @@ math::lerp_unit(const math::quaternion<T> &q1, const math::quaternion<T> &q2, T 
   result quaternion nonunit, its length lay between. sqrt(2)/2  and 1.0
 */
 template<class T>
-class math::quaternion_lerper {
+class quaternion_lerper {
 public:
 	typedef T scalar_type;
 	typedef quaternion<scalar_type> quaternion_type;
@@ -444,7 +445,7 @@ public:
  return unit length quaternion 
 */
 template<class T>
-class math::quaternion_slerper
+class quaternion_slerper
 {
 public:
 	typedef T scalar_type;
@@ -462,7 +463,7 @@ public:
             cos_omega = -cos_omega;
             q2 = -q2;
         }
-		if(cos_omega > (1 - math::EPSILON)) cos_omega = 1 - math::EPSILON;
+		if(cos_omega > (1 - EPSILON)) cos_omega = 1 - EPSILON;
         omega = (scalar_type) acos(cos_omega);
         scalar_type inv_sin_omega = (scalar_type)(1/sin(omega));
         q1.scale(inv_sin_omega);
@@ -493,8 +494,8 @@ public:
  orthogonal projection on sphere of radius 1, 
  standing in (x = 0, y = 0)
 */
-template<class T> math::vec<3,T>
-math::ortho_project_on_sphere(T x , T y)
+template<class T> vec<3,T>
+ortho_project_on_sphere(T x , T y)
 {
     vec<3,T> p(x, y, 0);
     scalar ls = p.length_sq();
@@ -509,11 +510,11 @@ math::ortho_project_on_sphere(T x , T y)
   calculate rotation of arcball user input,
   used to perform object rotation by mouse.
   "from" and "to" the mouse on screen coordinates (with - x,y on screen) 
-  in range of -1 to +1 
+  in range of -1 to +1
   the arcball radius is 1.0 and it stand in a centre (x = 0, y = 0)
 */
-template<class T> math::quaternion<T>
-math::arcball(const vec<3,T> &from, const vec<3,T> &to)
+template<class T> quaternion<T>
+arcball(const vec<3,T> &from, const vec<3,T> &to)
 {
     vec<3,T> p_f = ortho_project_on_sphere(from.x, from.y);
     vec<3,T> p_t = ortho_project_on_sphere(to.x, to.y);
@@ -525,8 +526,8 @@ math::arcball(const vec<3,T> &from, const vec<3,T> &to)
 /**
  rotate as a half arcball, more realistic manner (like 3dmax).
 */
-template<class T> math::quaternion<T>
-math::trackball(const vec<3,T> &from, const vec<3,T> &to)
+template<class T> quaternion<T>
+trackball(const vec<3,T> &from, const vec<3,T> &to)
 {
     quaternion<T> rot;
     rot.shortest_arc(ortho_project_on_sphere(from.x, from.y),
@@ -546,8 +547,7 @@ math::trackball(const vec<3,T> &from, const vec<3,T> &to)
    if input quaternion unit, output is unit both
 */
 template<class T> inline void
-math::swing_twist_decomposition(const math::quaternion<T> &rotation,const math::vec<3,T> &direction,
-	math::quaternion<T> &swing,math::quaternion<T> &twist)
+swing_twist_decomposition(const quaternion<T> &rotation,const vec<3,T> &direction, quaternion<T> &swing, quaternion<T> &twist)
 {
     vec<3,T> ra(rotation.x, rotation.y, rotation.z); // rotation axis
     vec<3,T> p(ra.x * direction.x, ra.y * direction.y, ra.z * direction.z);
@@ -556,3 +556,4 @@ math::swing_twist_decomposition(const math::quaternion<T> &rotation,const math::
     swing = rotation * twist.conjugated();
 }
 
+}

@@ -8,7 +8,7 @@ namespace ps
 {
 
 template<class P>
-class particle_keeper
+class simple_keeper
 {
 public:
 	typedef P particle_t;
