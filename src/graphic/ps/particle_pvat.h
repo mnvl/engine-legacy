@@ -1,6 +1,11 @@
 #pragma once
 
 #include <math/vec.h>
+#include "directional_emitter.h"
+#include "particle_system.h"
+#include "simple_lifespan_controller.h"
+#include "uniform_count_controller.h"
+#include "simple_keeper.h"
 
 namespace graphic
 {
@@ -25,6 +30,16 @@ struct particle_pvat
 		return ttl > 0;
 	}
 };
+
+typedef particle_system
+<
+	particle_pvat,
+	directional_emitter,
+	simple_lifespan_controller,
+	uniform_count_controller,
+	simple_keeper
+>
+fire_particle_system;
 
 }
 }
