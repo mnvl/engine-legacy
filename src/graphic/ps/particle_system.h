@@ -1,7 +1,6 @@
 #pragma once
 
 #include <boost/shared_ptr.hpp>
-#include <lua.h>
 #include <luabind/luabind.hpp>
 
 namespace graphic
