@@ -79,8 +79,6 @@ INT WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpstrCmdLine, INT
     {
 		luabind::set_pcall_callback(util::make_lua_backtrace);
 
-		util::Logger::instance().enable_source_position();
-
 		Main().run(lpstrCmdLine);
     }
     catch (std::exception const &error)
