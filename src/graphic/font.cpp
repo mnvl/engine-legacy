@@ -52,6 +52,15 @@ void Font::bind(lua_State *L)
     [
         class_<Font, boost::shared_ptr<Font> >("Font")
         .def(constructor<boost::shared_ptr<Renderer> const &, std::string const &, int>())
+		.enum_("flags")
+		[
+			value("FLAG_ALIGN_LEFT", FLAG_ALIGN_LEFT),
+			value("FLAG_ALIGN_HCENTER", FLAG_ALIGN_HCENTER),
+			value("FLAG_ALIGN_RIGHT", FLAG_ALIGN_RIGHT),
+			value("FLAG_ALIGN_TOP", FLAG_ALIGN_TOP),
+			value("FLAG_ALIGN_VCENTER", FLAG_ALIGN_VCENTER),
+			value("FLAG_ALIGN_BOTTOM", FLAG_ALIGN_BOTTOM)
+		]
     ];
 }
 

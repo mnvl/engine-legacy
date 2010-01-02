@@ -21,6 +21,13 @@ public:
 
 	ID3DXFont *get() const { return font_ptr_.get(); }
 
+	static DWORD const FLAG_ALIGN_LEFT = DT_LEFT;
+	static DWORD const FLAG_ALIGN_HCENTER = DT_CENTER;
+	static DWORD const FLAG_ALIGN_RIGHT = DT_RIGHT;
+	static DWORD const FLAG_ALIGN_TOP = DT_TOP;
+	static DWORD const FLAG_ALIGN_VCENTER = DT_VCENTER;
+	static DWORD const FLAG_ALIGN_BOTTOM = DT_BOTTOM;
+
 	void draw(math::vec<2> const &left_top, math::vec<2> const &right_bottom, char const *text, unsigned align,
 		math::vec<4> const &color);
 
