@@ -29,7 +29,7 @@ public:
 	static DWORD const FLAG_ALIGN_BOTTOM = DT_BOTTOM;
 
 	void draw(math::vec<2> const &left_top, math::vec<2> const &right_bottom, char const *text, unsigned align,
-		math::vec<4> const &color);
+		math::vec<3> const &color);
 
 	static void bind(lua_State *L);
 

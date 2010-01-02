@@ -24,7 +24,7 @@ Font::~Font() {
 }
 
 void Font::draw(math::vec<2> const &left_top, math::vec<2> const &right_bottom, char const *text, unsigned flags,
-	math::vec<4> const &color)
+	math::vec<3> const &color)
 {
 	RECT rc;
 	rc.left = (LONG) left_top.x;
@@ -61,6 +61,7 @@ void Font::bind(lua_State *L)
 			value("FLAG_ALIGN_VCENTER", FLAG_ALIGN_VCENTER),
 			value("FLAG_ALIGN_BOTTOM", FLAG_ALIGN_BOTTOM)
 		]
+		.def("draw", &Font::draw)
     ];
 }
 
