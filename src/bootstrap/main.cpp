@@ -11,6 +11,7 @@
 #include <platform/input.h>
 #include <platform/keyboard.h>
 #include <platform/mouse.h>
+#include <math/interval.h>
 #include <math/vec.h>
 #include <math/matrix.h>
 #include <math/ray.h>
@@ -34,6 +35,7 @@ public:
 		platform::Timer::bind(L_);
 		platform::Window::bind(L_);
 
+		math::bind_interval(L_);
 		math::bind_vec(L_);
         math::bind_matrix(L_);
 		math::bind_ray(L_);

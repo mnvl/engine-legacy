@@ -13,6 +13,16 @@ class UniformCountController
 public:
 	typedef P particle_t;
 
+	UniformCountController():
+		next_emission_time_left_(0)
+	{
+	}
+
+	void emissions_per_sec(math::interval<> const &emissions_per_sec)
+	{
+		emissions_per_sec_ = emissions_per_sec;
+	}
+
 	size_t move(math::scalar dt)
 	{
 		size_t count = 0;
@@ -27,8 +37,7 @@ public:
 	}
 
 private:
-	size_t count_limit_;
-	math::interval<> const emissions_per_sec_;
+	math::interval<> emissions_per_sec_;
 	math::scalar next_emission_time_left_;
 };
 

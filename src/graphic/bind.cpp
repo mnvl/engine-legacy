@@ -10,6 +10,7 @@
 #include "camera.h"
 #include "texture.h"
 #include "renderer.h"
+#include "ps/fire_particle_system.h"
 #include "bind.h"
 
 namespace graphic
@@ -28,6 +29,7 @@ void bind(lua_State *L)
 	Camera::bind(L);
 	Texture::bind(L);
     Renderer::bind(L);
+	ps::FireParticleSystem::bind(L, "FireParticleSystem");
 }
 
 }

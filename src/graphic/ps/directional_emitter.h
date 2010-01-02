@@ -25,7 +25,7 @@ public:
 		direction_ = math::vec<3>(1, 0, 0) * orientation;
 	}
 
-	void emit(particle_t &particle)
+	void init(particle_t &particle)
 	{
 		particle.position = position_;
 		particle.velocity = direction_ * (rand() * (velocity_max_ - velocity_min_) / RAND_MAX + velocity_min_);

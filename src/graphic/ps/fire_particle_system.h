@@ -23,7 +23,5 @@ typedef ParticleSystem
 >
 FireParticleSystem;
 
-void bind_fire_particle_system(lua_State *L);
-
 }
 }

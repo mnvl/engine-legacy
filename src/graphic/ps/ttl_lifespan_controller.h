@@ -13,7 +13,7 @@ class TtlLifespanController
 public:
 	typedef P particle_t;
 
-	void emit(particle_t &particle)
+	void init(particle_t &particle)
 	{
 		particle.ttl = lifespan_.random();
 	}

@@ -1,7 +1,7 @@
 
 #include <luabind/luabind.hpp>
 #include <luabind/operator.hpp>
-#include <math/vec.h>
+#include "vec.h"
 
 namespace math
 {

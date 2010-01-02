@@ -13,6 +13,11 @@ class SimpleKeeper
 public:
 	typedef P particle_t;
 
+	void add_particle(particle_t const &particle)
+	{
+		particles_.push_back(particle);
+	}
+
 	void move(math::scalar dt)
 	{
 		particles_t::iterator it = particles_.begin();
@@ -32,11 +37,13 @@ public:
 		}
 	}
 
+	size_t get_particles_count() const {
+		return particles_.size();
+	}
+
 private:
 	typedef std::deque<particle_t> particles_t;
-
 	particles_t particles_;
-	size_t const nparticles_limit_;
 };
 
 }
