@@ -1,7 +1,7 @@
 #pragma once
 
 #include <math/vec.h>
-#include <math/quoternion.h>
+#include <math/matrix.h>
 
 namespace graphic
 {
@@ -10,14 +10,10 @@ namespace ps
 
 // emits particles along x axis from position (0, 0, 0)
 template <class P>
-class directional_emitter
+class DirectionalEmitter
 {
 public:
 	typedef P particle_t;
-
-	directional_emitter()
-	{
-	}
 
 	void set_position(math::vec<3> const &position)
 	{

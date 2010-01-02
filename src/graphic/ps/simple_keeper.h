@@ -8,13 +8,10 @@ namespace ps
 {
 
 template<class P>
-class simple_keeper
+class SimpleKeeper
 {
 public:
 	typedef P particle_t;
-
-	particle_system(size_t const nparticles_limit);
-	~particle_system();
 
 	void move(math::scalar dt)
 	{

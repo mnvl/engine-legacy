@@ -1,10 +1,10 @@
 #pragma once
 
-#include <math/vec.h>
-#include <math/line.h>
-#include <math/matrix.h>
-#include <math/collision.h>
 #include <vector>
+#include "vec.h"
+#include "line.h"
+#include "matrix.h"
+#include "collision.h"
 
 namespace math
 {

@@ -5,8 +5,8 @@
 namespace math
 {
 
-tempalte<class T = math::scalar>
-class range
+template<class T = scalar>
+class interval
 {
 public:
 	typedef T scalar_t;
@@ -14,7 +14,7 @@ public:
 	scalar_t low, high;
 
 	scalar_t length() const { return high - low; }
-	scalar_t random() const { return length() * rand() / RAND_MAX + low;
+	scalar_t random() const { return length() * rand() / RAND_MAX + low; }
 };
 
 }

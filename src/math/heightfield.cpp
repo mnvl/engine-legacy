@@ -3,7 +3,7 @@
 #include <utility>
 #include <boost/cstdint.hpp>
 #include <util/file_handle.h>
-#include <math/heightfield.h>
+#include "heightfield.h"
 
 namespace math
 {

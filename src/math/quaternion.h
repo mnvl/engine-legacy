@@ -1,8 +1,8 @@
 #pragma once
 
-#include <math/scalar.h>
-#include <math/vec.h>
-#include <math/matrix.h>
+#include "scalar.h"
+#include "vec.h"
+#include "matrix.h"
 
 namespace math
 {
@@ -374,20 +374,6 @@ operator +(const quaternion<T> &lhs, const quaternion<T> &rhs) {
 	return temp;
 }
 
-template<class T> inline quaternion<T>
-operator *(const quaternion<T> &lhs, const T &rhs) {
-	quaternion<T> temp = lhs;
-	temp *= rhs;
-	return temp;
-}
-
-template<class T> inline quaternion<T>
-operator *(const quaternion<T> &lhs, const quaternion<T> &rhs) {
-	quaternion<T> temp = lhs;
-	temp *= rhs;
-	return temp;
-}
-
 /**
   perform linear interpolation (approximate rotation interpolation) of two unit quats,
   result quaternion nonunit, its length lay between. sqrt(2)/2  and 1.0
@@ -556,4 +542,18 @@ swing_twist_decomposition(const quaternion<T> &rotation,const vec<3,T> &directio
     swing = rotation * twist.conjugated();
 }
 
+}
+
+template<class T> inline math::quaternion<T>
+operator *(const math::quaternion<T> &lhs, const T &rhs) {
+	math::quaternion<T> temp = lhs;
+	temp *= rhs;
+	return temp;
+}
+
+template<class T> inline math::quaternion<T>
+operator *(const math::quaternion<T> &lhs, const math::quaternion<T> &rhs) {
+	math::quaternion<T> temp = lhs;
+	temp *= rhs;
+	return temp;
 }

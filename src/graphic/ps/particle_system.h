@@ -5,8 +5,15 @@ namespace graphic
 namespace ps
 {
 
-template<class P, class<class> Emitter, class<class> LifespanController, class<class> CountController, class<class> Keeper>
-class particle_system
+template
+<
+	class P,
+	template<class> class Emitter,
+	template<class> class LifespanController,
+	template<class> class CountController,
+	template<class> class Keeper
+>
+class ParticleSystem
 {
 public:
 	typedef P particle_t;

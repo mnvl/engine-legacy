@@ -164,16 +164,6 @@ public:
 	matrix() {
 	}
 
-	#if defined(D3DMATRIX_DEFINED)
-	matrix(const D3DMATRIX &right) {
-		for(size_type i=0; i<width; i++) {
-			for(size_type j=0; j<height; j++) {
-				ij[i][j] = scalar_type(right.m[i][j]);
-			}
-		}
-	}
-	#endif
-
 	void identity();
 	void translation(scalar_type x,scalar_type y,scalar_type z);
 	void translation(const point_type &p);
@@ -206,7 +196,7 @@ public:
 		return
 			ij[r0][c0] * (ij[r1][c1] * ij[r2][c2] - ij[r2][c1] * ij[r1][c2]) -
 			ij[r0][c1] * (ij[r1][c0] * ij[r2][c2] - ij[r2][c0] * ij[r1][c2]) +
-			ij[r0][c2] * (ij[r1][c0] * ij[r2][c1] - ij[r2][c0] * ij[r1][c1]); 
+			ij[r0][c2] * (ij[r1][c0] * ij[r2][c1] - ij[r2][c0] * ij[r1][c1]);
 	}
 
 	void adjoint(matrix_type &M) const {
@@ -266,19 +256,6 @@ public:
 		tp.transpose(*this);
 	}
 
-	// операции
-	#if defined(D3DMATRIX_DEFINED)
-	operator D3DMATRIX() const {
-		D3DMATRIX result;
-		for(size_type i=0; i<width; i++) {
-			for(size_type j=0; j<height; j++) {
-				result.m[i][j] = float(ij[i][j]);
-			}
-		}
-		return result;
-	}
-	#endif
-
 	matrix_type &operator *=(scalar_type k) {
 		ij[0][0]*=k;	ij[0][1]*=k;	ij[0][2]*=k;	ij[0][3]*=k;
 		ij[1][0]*=k;	ij[1][1]*=k;	ij[1][2]*=k;	ij[1][3]*=k;
@@ -326,8 +303,8 @@ operator *(const math::vec<N-1,T> &left, const math::matrix<M,N,T> &right) {
 	return result;
 }
 
-template<int M,int N,class T>
-inline math::vec<N,T> operator *(const math::vec<N,T> &left, const math::matrix<M,N,T> &right) {
+template<int M,int N,class T> inline math::vec<N,T>
+operator *(const math::vec<N,T> &left, const math::matrix<M,N,T> &right) {
 	math::vec<N,T> result;
 	mul(result,left,right);
 	return result;
