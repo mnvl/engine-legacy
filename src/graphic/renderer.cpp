@@ -13,19 +13,19 @@ namespace graphic
 
 Renderer::Renderer(boost::shared_ptr<platform::Window> const &window, int width, int height, bool fullscreen):
 	window_ptr_(window),
-	width_(width),
-	height_(height),
+	screen_width_(width),
+	screen_height_(height),
 	fullscreen_(fullscreen)
 {
-	if (!width_ || !height_)
+	if (!screen_width_ || !screen_height_)
 	{
 		RECT rc;
 		GetClientRect(window->get_handle(), &rc);
 
-		width_ = rc.right - rc.left;
-		height_ = rc.bottom - rc.top;
+		screen_width_ = rc.right - rc.left;
+		screen_height_ = rc.bottom - rc.top;
 
-		LOG_INFO("no width or height specified, taking both from window sizes: " << width_ << 'x' << height_);
+		LOG_INFO("no width or height specified, taking both from window sizes: " << screen_width_ << 'x' << screen_height_);
 	}
 
 	{
@@ -38,8 +38,8 @@ Renderer::Renderer(boost::shared_ptr<platform::Window> const &window, int width,
 		IDirect3DDevice9 *device_ptr;
 
 		D3DPRESENT_PARAMETERS pp;
-		pp.BackBufferWidth = width_;
-		pp.BackBufferHeight = height_;
+		pp.BackBufferWidth = screen_width_;
+		pp.BackBufferHeight = screen_height_;
 		pp.BackBufferCount = 1;
 		pp.BackBufferFormat = D3DFMT_A8R8G8B8;
 		pp.MultiSampleType = D3DMULTISAMPLE_NONE;
@@ -102,7 +102,7 @@ void Renderer::finish_frame()
 		char buffer[4096];
 		sprintf(buffer, "%4.0lf msecs, %3d fps", last_frame_time_ * 1000.0, frame_times_.size());
 
-		RECT rc = { 0, 0, width_, height_ };
+		RECT rc = { 0, 0, screen_width_, screen_height_ };
 
 		get_shared_resources()->get_default_font()->get()->DrawText(0, buffer, strlen(buffer), &rc, DT_LEFT | DT_TOP, D3DCOLOR_XRGB(255, 255, 255));
 	}

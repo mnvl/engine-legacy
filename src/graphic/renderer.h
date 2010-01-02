@@ -27,8 +27,8 @@ public:
 		bool fullscreen = false);
 	~Renderer();
 
-	int const get_width() const { return width_; }
-	int const get_height() const { return height_; }
+	int const get_screen_width() const { return screen_width_; }
+	int const get_screen_height() const { return screen_height_; }
 
 	void postconstruct();
 
@@ -53,7 +53,7 @@ public:
 
 private:
 	boost::shared_ptr<platform::Window> const window_ptr_;
-	int width_, height_;
+	int screen_width_, screen_height_;
 	bool fullscreen_;
 
     math::matrix<4,4> world_matrix_;

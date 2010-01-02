@@ -1,11 +1,14 @@
 
 #include <exception/directx_error.h>
-#include <graphic/renderer.h>
-#include <graphic/font.h>
+#include <luabind/luabind.hpp>
+#include "renderer.h"
+#include "font.h"
 
-namespace graphic {
+namespace graphic
+{
 
-Font::Font(boost::shared_ptr<Renderer> const &renderer, std::string const &face_name, int height) {
+Font::Font(boost::shared_ptr<Renderer> const &renderer, std::string const &face_name, int height)
+{
 	HRESULT hr;
 
 	ID3DXFont *font_ptr;
@@ -18,6 +21,38 @@ Font::Font(boost::shared_ptr<Renderer> const &renderer, std::string const &face_
 }
 
 Font::~Font() {
+}
+
+void Font::draw(math::vec<2> const &left_top, math::vec<2> const &right_bottom, char const *text, unsigned flags,
+	math::vec<4> const &color)
+{
+	RECT rc;
+	rc.left = (LONG) left_top.x;
+	rc.top = (LONG) left_top.y;
+	rc.right = (LONG) right_bottom.x;
+	rc.bottom = (LONG) right_bottom.y;
+
+	BYTE r = BYTE(color.r * 255);
+	BYTE g = BYTE(color.g * 255);
+	BYTE b = BYTE(color.b * 255);
+
+	INT status = get()->DrawText(0, text, strlen(text), &rc, flags, D3DCOLOR_XRGB(r, g, b));
+
+	if (!status)
+	{
+		throw std::runtime_error("can't draw text");
+	}
+}
+
+void Font::bind(lua_State *L)
+{
+    using namespace luabind;
+
+    module_(L, "graphic")
+    [
+        class_<Font, boost::shared_ptr<Font> >("Font")
+        .def(constructor<boost::shared_ptr<Renderer> const &, std::string const &, int>())
+    ];
 }
 
 }
