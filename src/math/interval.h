@@ -1,5 +1,6 @@
 #pragma once
 
+#include <lua.h>
 #include "scalar.h"
 
 namespace math

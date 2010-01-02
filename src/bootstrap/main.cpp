@@ -15,6 +15,8 @@
 #include <util/logger.h>
 #include <util/lua_backtrace.h>
 
+LUALIB_API int luaopen_bit(lua_State *L);
+
 class Main
 {
 public:
@@ -24,6 +26,7 @@ public:
 		xercesc::XMLPlatformUtils::Initialize();
 
 		luaL_openlibs(L_);
+		luaopen_bit(L_);
 		luabind::open(L_);
 
 		graphic::bind(L_);

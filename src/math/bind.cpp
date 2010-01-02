@@ -11,11 +11,11 @@ namespace math
 
 void bind(lua_State *L)
 {
-	bind_interval(L_);
-	bind_vec(L_);
-	bind_matrix(L_);
-	bind_ray(L_);
-	bind_plane(L_);
+	bind_interval(L);
+	bind_vec(L);
+	bind_matrix(L);
+	bind_ray(L);
+	bind_plane(L);
 }
 
 }
