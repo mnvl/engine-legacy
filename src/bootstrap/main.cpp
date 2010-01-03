@@ -57,6 +57,10 @@ public:
 
 		switch (result)
 		{
+		case 0:
+			// success
+			break;
+
 		case LUA_ERRSYNTAX:
 			throw std::runtime_error("syntax eror");
 
