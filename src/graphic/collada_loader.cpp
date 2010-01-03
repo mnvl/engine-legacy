@@ -1163,8 +1163,13 @@ namespace collada_elements
 
 				// target is in form <node>/<transform>.<param>, <param> may be omitted
 				std::vector<std::string> parsed_target_components;
-				using namespace boost::lambda;
-				boost::split(parsed_target_components, it->target_url, _1 == '/' || _1 == '.', boost::algorithm::token_compress_on);
+
+				{
+					using namespace boost::lambda;
+					using boost::lambda::_1;
+					boost::split(parsed_target_components, it->target_url, _1 == '/' || _1 == '.', boost::algorithm::token_compress_on);
+				}
+
 				if (parsed_target_components.size() == 2) parsed_target_components.push_back(std::string());
 				if (parsed_target_components.size() != 3) throw std::logic_error("invalid url " + it->target_url);
 

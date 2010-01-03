@@ -1,5 +1,6 @@
 
 #include <d3dx9.h>
+#include <boost/bind.hpp>
 #include <exception/directx_error.h>
 #include <platform/timer.h>
 #include <util/logger.h>
@@ -25,7 +26,8 @@ Renderer::Renderer(boost::shared_ptr<platform::Window> const &window, int width,
 		screen_width_ = rc.right - rc.left;
 		screen_height_ = rc.bottom - rc.top;
 
-		LOG_INFO("no width or height specified, taking both from window sizes: " << screen_width_ << 'x' << screen_height_);
+		LOG_INFO("no width or height specified, taking dimensions from window client dimensions "
+			<< screen_width_ << 'x' << screen_height_);
 	}
 
 	{
@@ -37,24 +39,23 @@ Renderer::Renderer(boost::shared_ptr<platform::Window> const &window, int width,
 	{
 		IDirect3DDevice9 *device_ptr;
 
-		D3DPRESENT_PARAMETERS pp;
-		pp.BackBufferWidth = screen_width_;
-		pp.BackBufferHeight = screen_height_;
-		pp.BackBufferCount = 1;
-		pp.BackBufferFormat = D3DFMT_A8R8G8B8;
-		pp.MultiSampleType = D3DMULTISAMPLE_NONE;
-		pp.MultiSampleQuality = 0;
-		pp.SwapEffect = D3DSWAPEFFECT_FLIP;
-		pp.hDeviceWindow = window_ptr_->get_handle();
-		pp.Windowed = !fullscreen_;
-		pp.EnableAutoDepthStencil = TRUE;
-		pp.AutoDepthStencilFormat = D3DFMT_D24S8;
-		pp.Flags = D3DPRESENTFLAG_DEVICECLIP;
-		pp.FullScreen_RefreshRateInHz = 0;
-		pp.PresentationInterval = D3DPRESENT_INTERVAL_DEFAULT;
+		pp_.BackBufferWidth = screen_width_;
+		pp_.BackBufferHeight = screen_height_;
+		pp_.BackBufferCount = 1;
+		pp_.BackBufferFormat = D3DFMT_A8R8G8B8;
+		pp_.MultiSampleType = D3DMULTISAMPLE_NONE;
+		pp_.MultiSampleQuality = 0;
+		pp_.SwapEffect = D3DSWAPEFFECT_FLIP;
+		pp_.hDeviceWindow = window_ptr_->get_handle();
+		pp_.Windowed = !fullscreen_;
+		pp_.EnableAutoDepthStencil = TRUE;
+		pp_.AutoDepthStencilFormat = D3DFMT_D24S8;
+		pp_.Flags = D3DPRESENTFLAG_DEVICECLIP;
+		pp_.FullScreen_RefreshRateInHz = 0;
+		pp_.PresentationInterval = D3DPRESENT_INTERVAL_DEFAULT;
 
 		HRESULT hr = direct3d_ptr_->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL,
-			window_ptr_->get_handle(), D3DCREATE_HARDWARE_VERTEXPROCESSING, &pp, &device_ptr);
+			window_ptr_->get_handle(), D3DCREATE_HARDWARE_VERTEXPROCESSING, &pp_, &device_ptr);
 
 		if (FAILED(hr))
 		{
@@ -62,7 +63,7 @@ Renderer::Renderer(boost::shared_ptr<platform::Window> const &window, int width,
 				<< ", trying sw vertex processing");
 
 			hr = direct3d_ptr_->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL,
-				window_ptr_->get_handle(), D3DCREATE_SOFTWARE_VERTEXPROCESSING, &pp, &device_ptr);
+				window_ptr_->get_handle(), D3DCREATE_SOFTWARE_VERTEXPROCESSING, &pp_, &device_ptr);
 		}
 
 		if (FAILED(hr)) throw exception::directx_error(hr);
@@ -78,6 +79,7 @@ Renderer::~Renderer() {
 void Renderer::postconstruct()
 {
     shared_resources_.reset(new SharedResources(this));
+	window_ptr_->signal_resize.connect(boost::bind(&Renderer::thunk_resize, boost::weak_ptr<Renderer>(shared_from_this())));
 }
 
 void Renderer::begin_frame()
@@ -172,6 +174,34 @@ void Renderer::disable_all_tests()
 
 	hr = device_ptr_->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
 	if (FAILED(hr)) throw exception::directx_error(hr);
+}
+
+void Renderer::handle_resize()
+{
+	if (!fullscreen_)
+	{
+		RECT rc;
+		GetClientRect(window_ptr_->get_handle(), &rc);
+
+		screen_width_ = rc.right - rc.left;
+		screen_height_ = rc.bottom - rc.top;
+
+		LOG_INFO("window resized, new client dimensions are " << screen_width_ << 'x' << screen_height_);
+
+		pp_.BackBufferWidth = screen_width_;
+		pp_.BackBufferHeight = screen_height_;
+
+		HRESULT hr = get_device()->Reset(&pp_);
+		if (FAILED(hr)) throw exception::directx_error(hr);		
+	}
+}
+
+void Renderer::thunk_resize(boost::weak_ptr<Renderer> renderer)
+{
+	if (boost::shared_ptr<Renderer> self = renderer.lock())
+	{
+		self->handle_resize();
+	}
 }
 
 }

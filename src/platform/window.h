@@ -1,13 +1,17 @@
 #pragma once
 
 #include <windows.h>
+#include <boost/signals2/signal.hpp>
 #include <lua.h>
 #include <math/vec.h>
 
-namespace platform {
+namespace platform
+{
 
 class Window {
 public:
+	boost::signals2::signal0<void> signal_resize;
+
 	Window(char const *title);
 	~Window();
 

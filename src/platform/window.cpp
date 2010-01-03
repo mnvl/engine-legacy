@@ -90,6 +90,10 @@ LRESULT Window::process_message(UINT uMsg, WPARAM wParam, LPARAM lParam) {
 		mouse_buttons_.C = ((wParam & MK_RBUTTON) != 0);
 		break;
 
+	case WM_SIZE:
+		signal_resize();
+		break;
+
 	case WM_CLOSE:
 		PostQuitMessage(0);
 		break;

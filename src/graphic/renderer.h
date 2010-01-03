@@ -15,7 +15,8 @@
 #include "shared_resources.h"
 #include "vertex_array.h"
 
-namespace graphic {
+namespace graphic
+{
 
 class Camera;
 class Font;
@@ -55,6 +56,7 @@ private:
 	boost::shared_ptr<platform::Window> const window_ptr_;
 	int screen_width_, screen_height_;
 	bool fullscreen_;
+	D3DPRESENT_PARAMETERS pp_;
 
     math::matrix<4,4> world_matrix_;
 	math::matrix<4,4> view_matrix_;
@@ -67,6 +69,9 @@ private:
 
 	double frame_start_time_, last_frame_time_;
 	std::deque<double> frame_times_;
+
+	void handle_resize();
+	static void thunk_resize(boost::weak_ptr<Renderer> renderer);
 };
 
 }
