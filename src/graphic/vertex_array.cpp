@@ -19,7 +19,7 @@ VertexBuffer::VertexBuffer(boost::shared_ptr<Renderer> const &renderer, size_t s
 	if(writeonly) usage_ |= D3DUSAGE_WRITEONLY;
 
 	IDirect3DVertexBuffer9 *buffer;
-	HRESULT hr = renderer->get_device()->CreateVertexBuffer(size, usage_, 0, pool_, &buffer, 0);
+	HRESULT hr = renderer_->get_device()->CreateVertexBuffer(size, usage_, 0, pool_, &buffer, 0);
 	if(FAILED(hr)) throw exception::directx_error(hr);
 
 	buffer_.reset(buffer);
