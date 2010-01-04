@@ -51,8 +51,7 @@ public:
 
 	boost::shared_ptr<Texture> create_texture(std::string const &filename)
 	{
-		boost::shared_ptr<Texture> texture(new Texture(shared_from_this()));
-		if (!filename.empty()) texture->load_from_file(filename);
+		boost::shared_ptr<Texture> texture(new Texture(shared_from_this(), filename));
 		resources_directory_->add_resource(texture);
 		return texture;
 	}

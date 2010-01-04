@@ -5,5 +5,5 @@ MAKE_CHAR_ARRAY_FROM_FILES(DUMPED_FILES animated_model.fx)
 ADD_LIBRARY(graphic STATIC ${GRAPHIC_SOURCES} ${DUMPED_FILES})
 
 ADD_EXECUTABLE(test_graphic ${GRAPHIC_TEST_SOURCES})
-TARGET_LINK_LIBRARIES(test_graphic ${ENGINE_LIBRARIES} graphic util math xerces-c_static_3D d3d9 d3dx9 dxerr)
+TARGET_LINK_LIBRARIES(test_graphic ${ENGINE_LIBRARIES} graphic platform util math xerces-c_static_3D d3d9 d3dx9 dxerr)
 ADD_TEST(test_graphic ${EXECUTABLE_OUTPUT_PATH}/test_graphic "${CMAKE_CURRENT_SOURCE_DIR}")

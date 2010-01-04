@@ -8,9 +8,10 @@
 namespace graphic
 {
 
-Texture::Texture(boost::shared_ptr<Renderer> const &renderer_ptr):
+Texture::Texture(boost::shared_ptr<Renderer> const &renderer_ptr, std::string const &filename):
 	renderer_ptr_(renderer_ptr)
 {
+	load_from_file(filename);
 }
 
 Texture::~Texture()

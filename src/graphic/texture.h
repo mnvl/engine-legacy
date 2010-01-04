@@ -18,10 +18,8 @@ class Texture: public Resource {
 	friend Renderer;
 
 public:
-	Texture(boost::shared_ptr<Renderer> const &renderer_ptr);
+	Texture(boost::shared_ptr<Renderer> const &renderer_ptr, std::string const &filename);
 	~Texture();
-
-	void load_from_file(std::string const &filename);
 
 	std::string const &get_filename() const
 	{
@@ -44,6 +42,8 @@ private:
 	boost::shared_ptr<Renderer> renderer_ptr_;
 	std::string filename_;
 	boost::intrusive_ptr<IDirect3DTexture9> texture_ptr_;
+
+	void load_from_file(std::string const &filename);
 };
 
 }
