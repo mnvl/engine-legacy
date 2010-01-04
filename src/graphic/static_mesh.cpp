@@ -86,7 +86,7 @@ void BasicStaticMesh<T>::lock()
 {
     HRESULT hr;
 
-    vertex_buffer_locked_ = (T *) vertex_buffer_->lock();
+    vertex_buffer_locked_ = (T *) vertex_buffer_->lock(true);
 
     hr = index_buffer_->Lock(0, 0, (void **) &index_buffer_locked_, 0);
     if (FAILED(hr)) throw exception::directx_error(hr);

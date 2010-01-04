@@ -140,8 +140,6 @@ void Renderer::draw_triangles(VertexBuffer *buffer, size_t triangles_count)
 
 void Renderer::draw_triangles(VertexBuffer *buffer, size_t first_vertex, size_t triangles_count)
 {
-	return;
-
 	if (triangles_count == 0) return;
 
 	HRESULT hr;
