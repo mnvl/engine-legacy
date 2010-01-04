@@ -33,8 +33,8 @@ public:
 
 	void select();
 
-	virtual void handle_device_lost();
-	virtual void restore_after_device_lost();
+	virtual void handle_lost_device();
+	virtual void handle_reset_device();
 
 	static void bind(lua_State *L);
 

@@ -51,7 +51,7 @@ public:
 	void draw_animated(Joint *joint_ptr) const;
 
 private:
-	#pragma  pack(push, 1)
+	#pragma pack(push, 1)
 	struct vertex_weights
 	{
 		math::vec<8, unsigned> joints;

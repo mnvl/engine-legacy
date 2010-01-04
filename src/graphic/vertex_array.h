@@ -33,8 +33,8 @@ public:
 	virtual IDirect3DVertexDeclaration9 *get_vertex_decl() const { return 0; }
 	virtual size_t get_vertex_size() const { return 0; }
 
-	virtual void handle_device_lost();
-	virtual void restore_after_device_lost();
+	virtual void handle_lost_device();
+	virtual void handle_reset_device();
 
 protected:
 	boost::shared_ptr<Renderer> const &renderer_;

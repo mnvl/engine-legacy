@@ -47,7 +47,7 @@ boost::shared_ptr<Font> SharedResources::get_default_font()
 	boost::shared_ptr<Font> font = default_font_.lock();
 	if (font) return font;
 
-    font.reset(new Font(renderer_ptr_->shared_from_this(), "Courier New"));
+    font = renderer_ptr_->create_font("Courier New");
 	default_font_ = font;
 
 	return font;

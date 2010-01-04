@@ -188,14 +188,14 @@ void Renderer::handle_resize()
 		}
 
 		LOG_INFO("preparing all resources to Direct3D device reset...");
-		resources_directory_->handle_device_lost();
+		resources_directory_->handle_lost_device();
 
 		LOG_INFO("resetting Direct3D device...");
 		HRESULT hr = get_device()->Reset(&pp_);
 		if (FAILED(hr)) throw exception::directx_error(hr);
 
 		LOG_INFO("restoring all resources...");
-		resources_directory_->restore_after_device_lost();
+		resources_directory_->handle_reset_device();
 	}
 }
 

@@ -44,6 +44,16 @@ void Font::draw(math::vec<2> const &left_top, math::vec<2> const &right_bottom, 
 	}
 }
 
+void Font::handle_lost_device()
+{
+	get()->OnLostDevice();
+}
+
+void Font::handle_reset_device()
+{
+	get()->OnResetDevice();
+}
+
 void Font::bind(lua_State *L)
 {
     using namespace luabind;
@@ -51,7 +61,6 @@ void Font::bind(lua_State *L)
     module_(L, "graphic")
     [
         class_<Font, boost::shared_ptr<Font> >("Font")
-        .def(constructor<boost::shared_ptr<Renderer> const &, std::string const &, int>())
 		.enum_("flags")
 		[
 			value("FLAG_ALIGN_LEFT", FLAG_ALIGN_LEFT),

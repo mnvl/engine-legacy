@@ -49,12 +49,12 @@ void Texture::select()
 	if (FAILED(hr)) throw exception::directx_error(hr);
 }
 
-void Texture::handle_device_lost()
+void Texture::handle_lost_device()
 {
 	texture_ptr_.reset();
 }
 
-void Texture::restore_after_device_lost()
+void Texture::handle_reset_device()
 {
 	if (renderer_ptr_)
 	{

@@ -57,12 +57,12 @@ void VertexBuffer::unlock()
 	if(FAILED(hr)) throw exception::directx_error(hr);
 }
 
-void VertexBuffer::handle_device_lost()
+void VertexBuffer::handle_lost_device()
 {
 	buffer_.reset();
 }
 
-void VertexBuffer::restore_after_device_lost()
+void VertexBuffer::handle_reset_device()
 {
 	IDirect3DVertexBuffer9 *buffer;
 	HRESULT hr = renderer_->get_device()->CreateVertexBuffer(clone_.size(), usage_, 0, pool_, &buffer, 0);

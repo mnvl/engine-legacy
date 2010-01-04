@@ -34,7 +34,7 @@ void ResourcesDirectory::add_resource(ResourcePtr const &resource)
 	}
 }
 
-void ResourcesDirectory::handle_device_lost()
+void ResourcesDirectory::handle_lost_device()
 {
 	storage_t::iterator it = storage_.begin();
 
@@ -42,7 +42,7 @@ void ResourcesDirectory::handle_device_lost()
 	{
 		if (ResourcePtr resource = it->lock())
 		{
-			resource->handle_device_lost();
+			resource->handle_lost_device();
 			++it;
 		}
 		else
@@ -54,7 +54,7 @@ void ResourcesDirectory::handle_device_lost()
 	resources_added_after_last_cleanup_ = 0;
 }
 
-void ResourcesDirectory::restore_after_device_lost()
+void ResourcesDirectory::handle_reset_device()
 {
 	storage_t::iterator it = storage_.begin();
 
@@ -62,7 +62,7 @@ void ResourcesDirectory::restore_after_device_lost()
 	{
 		if (ResourcePtr resource = it->lock())
 		{
-			resource->restore_after_device_lost();
+			resource->handle_reset_device();
 			++it;
 		}
 		else

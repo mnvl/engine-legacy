@@ -16,6 +16,7 @@
 #include "shared_resources.h"
 #include "vertex_array.h"
 #include "texture.h"
+#include "font.h"
 
 namespace graphic
 {
@@ -70,6 +71,14 @@ public:
 		boost::shared_ptr<VertexArray<V> > vertex_array(new VertexArray<V>(shared_from_this(), count, dynamic, writeonly));
 		resources_directory_->add_resource(vertex_array);
 		return vertex_array;
+	}
+
+	boost::shared_ptr<Font>
+	create_font(std::string const &face_name, int height = 16)
+	{
+		boost::shared_ptr<Font> font(new Font(shared_from_this(), face_name, height));
+		resources_directory_->add_resource(font);
+		return font;
 	}
 
 	void draw_triangles(VertexBuffer *buffer, size_t triangles_count);

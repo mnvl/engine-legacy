@@ -14,8 +14,8 @@ class Resource: public boost::noncopyable
 public:
 	virtual ~Resource();
 
-	virtual void handle_device_lost() = 0;
-	virtual void restore_after_device_lost() = 0;
+	virtual void handle_lost_device() = 0;
+	virtual void handle_reset_device() = 0;
 
 	static void bind(lua_State *L);
 };
@@ -29,8 +29,8 @@ public:
 	ResourcesDirectory();
 
 	void add_resource(ResourcePtr const &resource);
-	void handle_device_lost();
-	void restore_after_device_lost();
+	void handle_lost_device();
+	void handle_reset_device();
 	void cleanup();
 
 private:
