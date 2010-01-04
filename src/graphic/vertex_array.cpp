@@ -46,12 +46,12 @@ void *VertexBuffer::lock(bool discard)
 
 void VertexBuffer::unlock()
 {
-	void *buffer_begin;
+	void *ptr = 0;
 
-	HRESULT hr = buffer_->Lock(0, 0, (void **) &buffer_begin, D3DLOCK_DISCARD);
+	HRESULT hr = buffer_->Lock(0, 0, (void **) &ptr, D3DLOCK_DISCARD);
 	if(FAILED(hr)) throw exception::directx_error(hr);
 
-	memcpy(buffer_begin, &clone_[0], clone_.size());
+	memcpy(ptr, &clone_[0], clone_.size());
 
 	hr = buffer_->Unlock();
 	if(FAILED(hr)) throw exception::directx_error(hr);

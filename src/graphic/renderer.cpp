@@ -43,7 +43,7 @@ Renderer::Renderer(boost::shared_ptr<platform::Window> const &window, int width,
 		pp_.BackBufferWidth = screen_width_;
 		pp_.BackBufferHeight = screen_height_;
 		pp_.BackBufferCount = 1;
-		pp_.BackBufferFormat = D3DFMT_A8R8G8B8;
+		pp_.BackBufferFormat = D3DFMT_X8R8G8B8;
 		pp_.MultiSampleType = D3DMULTISAMPLE_NONE;
 		pp_.MultiSampleQuality = 0;
 		pp_.SwapEffect = D3DSWAPEFFECT_FLIP;
@@ -140,6 +140,8 @@ void Renderer::draw_triangles(VertexBuffer *buffer, size_t triangles_count)
 
 void Renderer::draw_triangles(VertexBuffer *buffer, size_t first_vertex, size_t triangles_count)
 {
+	return;
+
 	if (triangles_count == 0) return;
 
 	HRESULT hr;
