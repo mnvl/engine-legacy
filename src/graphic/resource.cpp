@@ -40,7 +40,7 @@ void ResourcesDirectory::handle_lost_device()
 
 	while (it != storage_.end())
 	{
-		if (ResourcePtr resource = it->lock())
+		if (ResourcePtr const &resource = it->lock())
 		{
 			resource->handle_lost_device();
 			++it;
@@ -60,7 +60,7 @@ void ResourcesDirectory::handle_reset_device()
 
 	while (it != storage_.end())
 	{
-		if (ResourcePtr resource = it->lock())
+		if (ResourcePtr const &resource = it->lock())
 		{
 			resource->handle_reset_device();
 			++it;

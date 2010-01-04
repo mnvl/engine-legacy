@@ -37,7 +37,7 @@ public:
 	virtual void handle_reset_device();
 
 protected:
-	boost::shared_ptr<Renderer> const &renderer_;
+	boost::shared_ptr<Renderer> renderer_;
 
 	VertexBuffer(boost::shared_ptr<Renderer> const &renderer, size_t size,
 		bool dynamic = false, bool writeonly = false);

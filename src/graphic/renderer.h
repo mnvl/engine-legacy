@@ -53,7 +53,7 @@ public:
 	boost::shared_ptr<Texture> create_texture(std::string const &filename)
 	{
 		boost::shared_ptr<Texture> texture(new Texture(shared_from_this(), filename));
-		resources_directory_->add_resource(texture);
+		resources_directory_->add_resource(boost::static_pointer_cast<Resource>(texture));
 		return texture;
 	}
 
@@ -61,7 +61,7 @@ public:
 	create_vertex_buffer(size_t size, bool dynamic = false, bool writeonly = false)
 	{
 		boost::shared_ptr<VertexBuffer> vertex_buffer(new VertexBuffer(shared_from_this(), size, dynamic, writeonly));
-		resources_directory_->add_resource(vertex_buffer);
+		resources_directory_->add_resource(boost::static_pointer_cast<Resource>(vertex_buffer));
 		return vertex_buffer;
 	}
 
@@ -69,7 +69,7 @@ public:
 	create_vertex_array(size_t count, bool dynamic = false, bool writeonly = false)
 	{
 		boost::shared_ptr<VertexArray<V> > vertex_array(new VertexArray<V>(shared_from_this(), count, dynamic, writeonly));
-		resources_directory_->add_resource(vertex_array);
+		resources_directory_->add_resource(boost::static_pointer_cast<Resource>(vertex_array));
 		return vertex_array;
 	}
 
@@ -77,7 +77,7 @@ public:
 	create_font(std::string const &face_name, int height = 16)
 	{
 		boost::shared_ptr<Font> font(new Font(shared_from_this(), face_name, height));
-		resources_directory_->add_resource(font);
+		resources_directory_->add_resource(boost::static_pointer_cast<Resource>(font));
 		return font;
 	}
 
