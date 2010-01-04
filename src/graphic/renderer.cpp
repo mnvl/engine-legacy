@@ -196,6 +196,8 @@ void Renderer::handle_resize()
 
 		LOG_INFO("restoring all resources...");
 		resources_directory_->handle_reset_device();
+
+		LOG_INFO("Direct3D device reset completed successfully...");
 	}
 }
 
