@@ -9,8 +9,10 @@ namespace platform
 Window::Window(char const *title):
 	handle_(0)
 {
-	char class_name[sizeof(Window *)*2+1];
-	sprintf(class_name,"%p",this);
+	static int seed = 1;
+
+	char class_name[256];
+	sprintf(class_name,"%p %d", this, ++seed);
 
 	WNDCLASSEX wc;
 	wc.cbSize = sizeof(wc);

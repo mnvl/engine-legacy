@@ -5,7 +5,6 @@
 
 namespace
 {
-
 struct Fixture
 {
     Fixture()
@@ -18,17 +17,18 @@ struct Fixture
         xercesc::XMLPlatformUtils::Terminate();
     }
 };
+}
 
-std::string sources_directory;
+BOOST_AUTO_TEST_SUITE (test_collada_loader)
 
-void test_plane()
+BOOST_AUTO_TEST_CASE (test_plane)
 {
 	Fixture dummy;
 
     std::auto_ptr<graphic::MemoryModel> model_ptr(new graphic::MemoryModel());
 
     graphic::ColladaLoader loader(model_ptr.get());
-	loader.load(sources_directory + "/test_collada_loader_plane.xml");
+	loader.load("test_collada_loader_plane.xml");
 	loader.build_model();
 
     BOOST_ASSERT (model_ptr->meshes.size() == 1);
@@ -54,14 +54,14 @@ void test_plane()
     BOOST_ASSERT (mesh_ptr->get_index_buffer()[5] == 3);
 }
 
-void test_joint()
+BOOST_AUTO_TEST_CASE (test_joint)
 {
 	Fixture dummy;
 
     std::auto_ptr<graphic::MemoryModel> model_ptr(new graphic::MemoryModel());
 
     graphic::ColladaLoader loader(model_ptr.get());
-	loader.load(sources_directory + "/test_collada_loader_joint.xml");
+	loader.load("test_collada_loader_joint.xml");
 	loader.build_model();
 
     BOOST_ASSERT (model_ptr->meshes.size() == 1);
@@ -90,13 +90,13 @@ void test_joint()
     BOOST_ASSERT (abs(vertices2[0].position.y - 1.0f) < 0.1f);
 }
 
-void test_animation()
+BOOST_AUTO_TEST_CASE (test_animation)
 {
 	Fixture dummy;
 
     std::auto_ptr<graphic::MemoryModel> model_ptr(new graphic::MemoryModel());
     graphic::ColladaLoader loader(model_ptr.get());
-	loader.load(sources_directory + "/test_collada_loader_animation.xml");
+	loader.load("test_collada_loader_animation.xml");
 	loader.build_model();
 
     BOOST_ASSERT (model_ptr->meshes.size() == 1);
@@ -136,14 +136,14 @@ void test_animation()
     BOOST_ASSERT((vertices2[3].position - math::vec<3>(2.0f, 0.0f, -0.3f)).length_sq() < 0.1f);
 }
 
-void test_materials()
+BOOST_AUTO_TEST_CASE (test_materials)
 {
 	Fixture dummy;
 
     std::auto_ptr<graphic::MemoryModel> model_ptr(new graphic::MemoryModel());
 
     graphic::ColladaLoader loader(model_ptr.get());
-	loader.load(sources_directory + "/test_collada_loader_materials.xml");
+	loader.load("test_collada_loader_materials.xml");
 	loader.build_model();
 
     BOOST_ASSERT (model_ptr->meshes.size() == 2);
@@ -227,19 +227,5 @@ void test_materials()
         BOOST_ASSERT (t2.vertices_count == 3);
     }
 }
-}
 
-boost::unit_test::test_suite*
-init_unit_test_suite(int argc, char *argv[])
-{
-	BOOST_ASSERT (argc == 2);
-
-	sources_directory = argv[1];
-	boost::unit_test::framework::master_test_suite().p_name.value = "test_collada_loader";
-	boost::unit_test::framework::master_test_suite().add(BOOST_TEST_CASE(&test_plane), 0, 0);
-	boost::unit_test::framework::master_test_suite().add(BOOST_TEST_CASE(&test_joint), 0, 0);
-	boost::unit_test::framework::master_test_suite().add(BOOST_TEST_CASE(&test_animation), 0, 0);
-	boost::unit_test::framework::master_test_suite().add(BOOST_TEST_CASE(&test_materials), 0, 0);
-
-    return 0;
-}
+BOOST_AUTO_TEST_SUITE_END()

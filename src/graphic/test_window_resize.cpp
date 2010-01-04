@@ -75,17 +75,13 @@ BOOST_AUTO_TEST_CASE (test_with_postconstruct_and_texture)
 	boost::shared_ptr<graphic::Renderer> renderer(new graphic::Renderer(window));
 	renderer->postconstruct();
 
-	boost::intrusive_ptr<IDirect3DTexture9> texture;
+	boost::shared_ptr<graphic::Texture> texture;
 
 	for (int i = 0; i < 20 && window->run_message_loop(); i++)
 	{
 		if (i == 5)
 		{
-			IDirect3DTexture9 *ptr;
-			HRESULT hr = renderer->get_device()->CreateTexture(256, 256, 0, D3DUSAGE_WRITEONLY, D3DFMT_DXT1, D3DPOOL_DEFAULT, &ptr, 0); 
-			BOOST_ASSERT (SUCCEEDED(hr));
-			texture.reset(ptr);
-			ptr->Release();
+			texture = renderer->create_texture("test_white.tga");
 		}
 
 		if (i == 15)
