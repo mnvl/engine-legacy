@@ -1,4 +1,5 @@
 
+#include "resource.h"
 #include "vertex.h"
 #include "vertex_array.h"
 #include "texture.h"
@@ -19,6 +20,7 @@ namespace graphic
 
 void bind(lua_State *L)
 {
+	Resource::bind(L);
 	bind_vertex(L);
 	bind_vertex_array(L);
 	Texture::bind(L);

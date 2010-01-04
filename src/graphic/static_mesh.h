@@ -4,6 +4,7 @@
 #include <util/boost_com_intrusive_ptr.h>
 #include "index.h"
 #include "vertex.h"
+#include "vertex_array.h"
 #include "mesh.h"
 
 namespace graphic {
@@ -37,7 +38,7 @@ public:
 
 protected:
     size_t vertices_count_;
-	boost::intrusive_ptr<IDirect3DVertexBuffer9> vertex_buffer_;
+	boost::shared_ptr<VertexBuffer> vertex_buffer_;
     vertex_t *vertex_buffer_locked_;
 
     size_t indices_count_;

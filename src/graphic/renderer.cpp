@@ -7,6 +7,7 @@
 #include "camera.h"
 #include "font.h"
 #include "material.h"
+#include "vertex_array.h"
 #include "renderer.h"
 
 namespace graphic
@@ -79,15 +80,13 @@ Renderer::~Renderer() {
 void Renderer::postconstruct()
 {
     shared_resources_.reset(new SharedResources(this));
+	resources_directory_.reset(new ResourcesDirectory());
 	window_ptr_->signal_resize.connect(boost::bind(&Renderer::thunk_resize, boost::weak_ptr<Renderer>(shared_from_this())));
 }
 
 void Renderer::begin_frame()
 {
 	HRESULT hr;
-
-	frame_start_time_ = platform::Timer::get_current_time();
-	frame_times_.push_back(frame_start_time_);
 
 	hr = device_ptr_->Clear(0, 0, D3DCLEAR_STENCIL | D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, D3DCOLOR_XRGB(0, 0, 0), 1.0f, 0);
 	if (FAILED(hr)) throw exception::directx_error(hr);
@@ -100,24 +99,17 @@ void Renderer::finish_frame()
 {
 	HRESULT hr;
 
-	{
-		char buffer[4096];
-		sprintf(buffer, "%4.0lf msecs, %3d fps", last_frame_time_ * 1000.0, frame_times_.size());
-
-		RECT rc = { 0, 0, screen_width_, screen_height_ };
-
-		get_shared_resources()->get_default_font()->get()->DrawText(0, buffer, strlen(buffer), &rc, DT_LEFT | DT_TOP, D3DCOLOR_XRGB(255, 255, 255));
-	}
-
 	hr = device_ptr_->EndScene();
 	if (FAILED(hr)) throw exception::directx_error(hr);
 
 	hr = device_ptr_->Present(0, 0, 0, 0);
 	if (FAILED(hr)) throw exception::directx_error(hr);
 
+	/*
 	double current_time = platform::Timer::get_current_time();
 	last_frame_time_ = current_time - frame_start_time_;
 	while (!frame_times_.empty() && (current_time - frame_times_.front()) > 1.0) frame_times_.pop_front();
+	*/
 }
 
 void Renderer::set_view_projection_from_camera(Camera const &c)
@@ -191,8 +183,15 @@ void Renderer::handle_resize()
 		pp_.BackBufferWidth = screen_width_;
 		pp_.BackBufferHeight = screen_height_;
 
+		LOG_INFO("preparing all resources to Direct3D device reset...");
+		resources_directory_->handle_device_lost();
+
+		LOG_INFO("resetting Direct3D device...");
 		HRESULT hr = get_device()->Reset(&pp_);
-		if (FAILED(hr)) throw exception::directx_error(hr);		
+		if (FAILED(hr)) throw exception::directx_error(hr);
+
+		LOG_INFO("restoring all resources...");
+		resources_directory_->restore_after_device_lost();
 	}
 }
 

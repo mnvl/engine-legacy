@@ -8,6 +8,7 @@ namespace graphic
 {
 
 template StaticMesh;
+
 template PnjwtStaticMesh;
 
 template<class T>
@@ -48,7 +49,7 @@ void BasicStaticMesh<T>::draw(Joint *joint_ptr)
 	}
 
 	device_ptr->SetVertexDeclaration(shared_resources_ptr->get_vertex_decl<vertex_t>());
-    device_ptr->SetStreamSource(0, vertex_buffer_.get(), 0, sizeof(vertex_t));
+    device_ptr->SetStreamSource(0, vertex_buffer_->get(), 0, sizeof(vertex_t));
 
     device_ptr->SetIndices(index_buffer_.get());
 
@@ -58,12 +59,7 @@ void BasicStaticMesh<T>::draw(Joint *joint_ptr)
 template<class T>
 void BasicStaticMesh<T>::set_vertices_count(size_t count)
 {
-    IDirect3DVertexBuffer9 *vb;
-    HRESULT hr = get_model()->get_renderer()->get_device()->CreateVertexBuffer(count * sizeof(vertex_t), 0, 0, D3DPOOL_MANAGED, &vb, 0);
-    if (FAILED(hr)) throw exception::directx_error(hr);
-    vertex_buffer_.reset(vb);
-    vb->Release();
-
+	vertex_buffer_ = get_model()->get_renderer()->create_vertex_buffer(count * sizeof(vertex_t), false, true);
     vertices_count_ = count;
 }
 
@@ -90,8 +86,7 @@ void BasicStaticMesh<T>::lock()
 {
     HRESULT hr;
 
-    hr = vertex_buffer_->Lock(0, 0, (void **) &vertex_buffer_locked_, 0);
-    if (FAILED(hr)) throw exception::directx_error(hr);
+    vertex_buffer_locked_ = (T *) vertex_buffer_->lock();
 
     hr = index_buffer_->Lock(0, 0, (void **) &index_buffer_locked_, 0);
     if (FAILED(hr)) throw exception::directx_error(hr);
@@ -180,8 +175,7 @@ void BasicStaticMesh<T>::unlock()
 {
     HRESULT hr;
 
-    hr = vertex_buffer_->Unlock();
-    if (FAILED(hr)) throw exception::directx_error(hr);
+    vertex_buffer_->unlock();
     vertex_buffer_locked_ = 0;
 
     hr = index_buffer_->Unlock();

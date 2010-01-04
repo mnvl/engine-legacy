@@ -2,6 +2,7 @@
 #include <boost/filesystem.hpp>
 #include <luabind/luabind.hpp>
 #include <util/logger.h>
+#include "renderer.h"
 #include "texture.h"
 
 namespace graphic
@@ -47,14 +48,30 @@ void Texture::select()
 	if (FAILED(hr)) throw exception::directx_error(hr);
 }
 
+void Texture::handle_device_lost()
+{
+	texture_ptr_.reset();
+}
+
+void Texture::restore_after_device_lost()
+{
+	if (renderer_ptr_)
+	{
+		IDirect3DTexture9 *texture_ptr;
+		HRESULT hr = D3DXCreateTextureFromFile(renderer_ptr_->get_device(), filename_.c_str(), &texture_ptr);
+		if (FAILED(hr)) throw exception::directx_error(hr);
+		texture_ptr_.reset(texture_ptr);
+		texture_ptr->Release();
+	}
+}
+
 void Texture::bind(lua_State *L)
 {
 	using namespace luabind;
 
 	module(L, "graphic")
 	[
-		class_<Texture>("Texture")
-		.def(constructor<boost::shared_ptr<Renderer> const &>())
+		class_<Texture, Resource, boost::shared_ptr<Texture> >("Texture")
 		.def("load_from_file", &Texture::load_from_file)
 		.def("select", &Texture::select)
 	];

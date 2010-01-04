@@ -10,16 +10,16 @@ namespace graphic
 VertexBuffer::VertexBuffer(boost::shared_ptr<Renderer> const &renderer, size_t size,
 	bool dynamic, bool writeonly)
 :
-	renderer_(renderer)
+	renderer_(renderer),
+	clone_(size),
+	usage_(0),
+	pool_(dynamic ? D3DPOOL_DEFAULT : D3DPOOL_MANAGED)
 {
-	DWORD usage = 0;
-	if(dynamic) usage |= D3DUSAGE_DYNAMIC;
-	if(writeonly) usage |= D3DUSAGE_WRITEONLY;
-
-	D3DPOOL pool = dynamic ? D3DPOOL_DEFAULT : D3DPOOL_MANAGED;
+	if(dynamic) usage_ |= D3DUSAGE_DYNAMIC;
+	if(writeonly) usage_ |= D3DUSAGE_WRITEONLY;
 
 	IDirect3DVertexBuffer9 *buffer;
-	HRESULT hr = renderer->get_device()->CreateVertexBuffer(size, usage, 0, pool, &buffer, 0);
+	HRESULT hr = renderer->get_device()->CreateVertexBuffer(size, usage_, 0, pool_, &buffer, 0);
 	if(FAILED(hr)) throw exception::directx_error(hr);
 
 	buffer_.reset(buffer);
@@ -30,30 +30,50 @@ VertexBuffer::~VertexBuffer()
 {
 }
 
-void *VertexBuffer::lock(bool discard)
-{
-	DWORD flags = 0;
-
-	if (discard) flags |= D3DLOCK_DISCARD;
-
-	HRESULT hr = buffer_->Lock(0, 0, (void **) &begin_, flags);
-	if(FAILED(hr)) throw exception::directx_error(hr);
-
-	return begin_;
-}
-
 const void *VertexBuffer::lock() const
 {
-	HRESULT hr = buffer_->Lock(0, 0, (void **) &begin_, D3DLOCK_READONLY);
-	if(FAILED(hr)) throw exception::directx_error(hr);
-
-	return begin_;
+	return &clone_[0];
 }
 
 void VertexBuffer::unlock() const
 {
-	HRESULT hr = buffer_->Unlock();
+}
+
+void *VertexBuffer::lock(bool discard)
+{
+	return &clone_[0];
+}
+
+void VertexBuffer::unlock()
+{
+	void *buffer_begin;
+
+	HRESULT hr = buffer_->Lock(0, 0, (void **) &buffer_begin, D3DLOCK_DISCARD);
 	if(FAILED(hr)) throw exception::directx_error(hr);
+
+	memcpy(buffer_begin, &clone_[0], clone_.size());
+
+	hr = buffer_->Unlock();
+	if(FAILED(hr)) throw exception::directx_error(hr);
+}
+
+void VertexBuffer::handle_device_lost()
+{
+	buffer_.reset();
+}
+
+void VertexBuffer::restore_after_device_lost()
+{
+	IDirect3DVertexBuffer9 *buffer;
+	HRESULT hr = renderer_->get_device()->CreateVertexBuffer(clone_.size(), usage_, 0, pool_, &buffer, 0);
+	if(FAILED(hr)) throw exception::directx_error(hr);
+
+	buffer_.reset(buffer);
+	buffer->Release();
+
+	// unlock will restore contents of buffer
+	lock();
+	unlock();
 }
 
 template<>
@@ -95,24 +115,21 @@ void bind_vertex_array(lua_State *L)
 
 	module_(L, "graphic")
 	[
-		class_<VertexBuffer, boost::shared_ptr<VertexBuffer> >("VertexBuffer"),
+		class_<VertexBuffer, Resource, boost::shared_ptr<VertexBuffer> >("VertexBuffer"),
 
 		class_<VertexArrayPT, VertexBuffer, boost::shared_ptr<VertexArrayPT> >("VertexArrayPT")
-		.def(constructor<boost::shared_ptr<Renderer> const &, size_t, bool, bool>())
 		.def("lock", (vertex_pt *(VertexArrayPT::*)(bool)) &VertexArrayPT::lock)
-		.def("unlock", &VertexArrayPT::unlock)
+		.def("unlock", (void (VertexArrayPT::*)()) &VertexArrayPT::unlock)
 		.def("at", (vertex_pt *(VertexArrayPT::*)(size_t)) &VertexArrayPT::at),
 
 		class_<VertexArrayPNT, VertexBuffer, boost::shared_ptr<VertexArrayPNT> >("VertexArrayPNT")
-		.def(constructor<boost::shared_ptr<Renderer> const &, size_t, bool, bool>())
 		.def("lock", (vertex_pnt *(VertexArrayPNT::*)(bool)) &VertexArrayPNT::lock)
-		.def("unlock", &VertexArrayPNT::unlock)
+		.def("unlock", (void (VertexArrayPNT::*)()) &VertexArrayPNT::unlock)
 		.def("at", (vertex_pnt *(VertexArrayPNT::*)(size_t)) &VertexArrayPNT::at),
 
 		class_<VertexArrayPNJWT, VertexBuffer, boost::shared_ptr<VertexArrayPNJWT> >("VertexArrayPNJWT")
-		.def(constructor<boost::shared_ptr<Renderer> const &, size_t, bool, bool>())
 		.def("lock", (vertex_pnjwt *(VertexArrayPNJWT::*)(bool)) &VertexArrayPNJWT::lock)
-		.def("unlock", &VertexArrayPNJWT::unlock)
+		.def("unlock", (void (VertexArrayPNJWT::*)()) &VertexArrayPNJWT::unlock)
 		.def("at", (vertex_pnjwt *(VertexArrayPNJWT::*)(size_t)) &VertexArrayPNJWT::at)
 	];
 }

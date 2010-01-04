@@ -12,8 +12,10 @@
 #include <math/matrix.h>
 #include <util/boost_com_intrusive_ptr.h>
 #include <platform/window.h>
+#include "resource.h"
 #include "shared_resources.h"
 #include "vertex_array.h"
+#include "texture.h"
 
 namespace graphic
 {
@@ -21,6 +23,8 @@ namespace graphic
 class Camera;
 class Font;
 class Material;
+class Texture;
+class IndexBuffer;
 
 class Renderer: public boost::enable_shared_from_this<Renderer>, public boost::noncopyable {
 public:
@@ -45,6 +49,30 @@ public:
 	void set_view_projection_from_camera(Camera const &c);
     void set_world_matrix(math::matrix<4,4> const &tf);
 
+	boost::shared_ptr<Texture> create_texture(std::string const &filename)
+	{
+		boost::shared_ptr<Texture> texture(new Texture(shared_from_this()));
+		if (!filename.empty()) texture->load_from_file(filename);
+		resources_directory_->add_resource(texture);
+		return texture;
+	}
+
+	boost::shared_ptr<VertexBuffer>
+	create_vertex_buffer(size_t size, bool dynamic = false, bool writeonly = false)
+	{
+		boost::shared_ptr<VertexBuffer> vertex_buffer(new VertexBuffer(shared_from_this(), size, dynamic, writeonly));
+		resources_directory_->add_resource(vertex_buffer);
+		return vertex_buffer;
+	}
+
+	template <class V> boost::shared_ptr<VertexArray<V> >
+	create_vertex_array(size_t count, bool dynamic = false, bool writeonly = false)
+	{
+		boost::shared_ptr<VertexArray<V> > vertex_array(new VertexArray<V>(shared_from_this(), count, dynamic, writeonly));
+		resources_directory_->add_resource(vertex_array);
+		return vertex_array;
+	}
+
 	void draw_triangles(VertexBuffer *buffer, size_t triangles_count);
 	void draw_triangles(VertexBuffer *buffer, size_t first_vertex, size_t triangles_count);
 
@@ -66,9 +94,7 @@ private:
 	boost::intrusive_ptr<IDirect3DDevice9> device_ptr_;
 
     boost::scoped_ptr<SharedResources> shared_resources_;
-
-	double frame_start_time_, last_frame_time_;
-	std::deque<double> frame_times_;
+	boost::scoped_ptr<ResourcesDirectory> resources_directory_;
 
 	void handle_resize();
 	static void thunk_resize(boost::weak_ptr<Renderer> renderer);

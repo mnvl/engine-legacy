@@ -7,12 +7,16 @@
 #include <boost/intrusive_ptr.hpp>
 #include <util/boost_com_intrusive_ptr.h>
 #include <exception/directx_error.h>
-#include <graphic/renderer.h>
+#include "resource.h"
 
 namespace graphic
 {
 
-class Texture {
+class Renderer;
+
+class Texture: public Resource {
+	friend Renderer;
+
 public:
 	Texture(boost::shared_ptr<Renderer> const &renderer_ptr);
 	~Texture();
@@ -30,6 +34,9 @@ public:
 	}
 
 	void select();
+
+	virtual void handle_device_lost();
+	virtual void restore_after_device_lost();
 
 	static void bind(lua_State *L);
 
