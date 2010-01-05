@@ -30,8 +30,8 @@ public:
 
 	IDirect3DVertexBuffer9 *get() const { return buffer_.get(); }
 
-	virtual IDirect3DVertexDeclaration9 *get_vertex_decl() const { return 0; }
-	virtual size_t get_vertex_size() const { return 0; }
+	virtual IDirect3DVertexDeclaration9 *get_vertex_decl() const = 0;
+	virtual size_t get_vertex_size() const = 0;
 
 	virtual void handle_lost_device();
 	virtual void handle_reset_device();

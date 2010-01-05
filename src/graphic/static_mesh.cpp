@@ -13,9 +13,7 @@ template PnjwtStaticMesh;
 
 template<class T>
 BasicStaticMesh<T>::BasicStaticMesh(Model *model_ptr):
-    Mesh(model_ptr),
-    vertex_buffer_locked_(0),
-    index_buffer_locked_(0)
+    Mesh(model_ptr)
 {
 }
 
@@ -51,7 +49,7 @@ void BasicStaticMesh<T>::draw(Joint *joint_ptr)
 	device_ptr->SetVertexDeclaration(shared_resources_ptr->get_vertex_decl<vertex_t>());
     device_ptr->SetStreamSource(0, vertex_buffer_->get(), 0, sizeof(vertex_t));
 
-    device_ptr->SetIndices(index_buffer_.get());
+    device_ptr->SetIndices(index_buffer_->get());
 
     draw_triangles_list();
 }
@@ -59,7 +57,7 @@ void BasicStaticMesh<T>::draw(Joint *joint_ptr)
 template<class T>
 void BasicStaticMesh<T>::set_vertices_count(size_t count)
 {
-	vertex_buffer_ = get_model()->get_renderer()->create_vertex_buffer(count * sizeof(vertex_t), false, true);
+	vertex_buffer_ = get_model()->get_renderer()->create_vertex_array<vertex_t>(count, false, true);
     vertices_count_ = count;
 }
 
@@ -72,30 +70,21 @@ size_t BasicStaticMesh<T>::get_vertices_count()
 template<class T>
 void BasicStaticMesh<T>::set_indices_count(size_t count)
 {
-    IDirect3DIndexBuffer9 *ib;
-    HRESULT hr = get_model()->get_renderer()->get_device()->CreateIndexBuffer(count * sizeof(index_t), 0, INDEX_FORMAT, D3DPOOL_MANAGED, &ib, 0);
-    if (FAILED(hr)) throw exception::directx_error(hr);
-    index_buffer_.reset(ib);
-    ib->Release();
-
+	index_buffer_ = get_model()->get_renderer()->create_index_array<index_t>(count, false, true);
     indices_count_ = count;
 }
 
 template<class T>
 void BasicStaticMesh<T>::lock()
 {
-    HRESULT hr;
-
-    vertex_buffer_locked_ = (T *) vertex_buffer_->lock(true);
-
-    hr = index_buffer_->Lock(0, 0, (void **) &index_buffer_locked_, 0);
-    if (FAILED(hr)) throw exception::directx_error(hr);
+    vertex_buffer_->lock(false);
+    index_buffer_->lock(false);
 }
 
 template<class T>
 void BasicStaticMesh<T>::set_positions(math::vec<3> const *buffer)
 {
-    vertex_t *p = vertex_buffer_locked_;
+    vertex_t *p = (T *) vertex_buffer_->begin();
 
     for (size_t i = 0; i < vertices_count_; i++, p++, buffer++)
     {
@@ -106,7 +95,7 @@ void BasicStaticMesh<T>::set_positions(math::vec<3> const *buffer)
 template<class T>
 void BasicStaticMesh<T>::set_normals(math::vec<3> const *buffer)
 {
-    vertex_t *p = vertex_buffer_locked_;
+    vertex_t *p = (T *) vertex_buffer_->begin();
 
     for (size_t i = 0; i < vertices_count_; i++, p++, buffer++)
     {
@@ -123,7 +112,7 @@ void BasicStaticMesh<vertex_pnt>::set_joint_indices(math::vec<8, unsigned> const
 template<>
 void BasicStaticMesh<vertex_pnjwt>::set_joint_indices(math::vec<8, unsigned> const *buffer)
 {
-    vertex_t *p = vertex_buffer_locked_;
+    vertex_t *p = vertex_buffer_->begin();
 
     for (size_t i = 0; i < vertices_count_; i++, p++, buffer++)
     {
@@ -140,7 +129,7 @@ void BasicStaticMesh<vertex_pnt>::set_joint_weights(math::vec<8> const *buffer)
 template<>
 void BasicStaticMesh<vertex_pnjwt>::set_joint_weights(math::vec<8> const *buffer)
 {
-    vertex_t *p = vertex_buffer_locked_;
+    vertex_t *p = vertex_buffer_->begin();
 
     for (size_t i = 0; i < vertices_count_; i++, p++, buffer++)
     {
@@ -151,7 +140,7 @@ void BasicStaticMesh<vertex_pnjwt>::set_joint_weights(math::vec<8> const *buffer
 template<class T>
 void BasicStaticMesh<T>::set_texcoords(math::vec<2> const *buffer)
 {
-    vertex_t *p = vertex_buffer_locked_;
+    vertex_t *p = (T *) vertex_buffer_->begin();
 
     for (size_t i = 0; i < vertices_count_; i++, p++, buffer++)
     {
@@ -162,7 +151,7 @@ void BasicStaticMesh<T>::set_texcoords(math::vec<2> const *buffer)
 template<class T>
 void BasicStaticMesh<T>::set_face_indices(unsigned *buffer)
 {
-    index_t *p = index_buffer_locked_;
+    index_t *p = index_buffer_->begin();
 
     for (size_t i = 0; i < indices_count_; i++, p++, buffer++)
     {
@@ -173,14 +162,8 @@ void BasicStaticMesh<T>::set_face_indices(unsigned *buffer)
 template<class T>
 void BasicStaticMesh<T>::unlock()
 {
-    HRESULT hr;
-
     vertex_buffer_->unlock();
-    vertex_buffer_locked_ = 0;
-
-    hr = index_buffer_->Unlock();
-    if (FAILED(hr)) throw exception::directx_error(hr);
-    index_buffer_locked_ = 0;
+    index_buffer_->unlock();
 }
 
 template<class T>

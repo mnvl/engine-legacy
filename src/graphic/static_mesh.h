@@ -2,19 +2,20 @@
 
 #include <d3d9.h>
 #include <util/boost_com_intrusive_ptr.h>
-#include "index.h"
 #include "vertex.h"
 #include "vertex_array.h"
+#include "index.h"
+#include "index_array.h"
 #include "mesh.h"
 
 namespace graphic {
 
 class StaticModel;
 
-template<class T = vertex_pnt>
+template<class V = vertex_pnt>
 class BasicStaticMesh: public Mesh {
 public:
-	typedef T vertex_t;
+	typedef V vertex_t;
 
 	BasicStaticMesh(Model *model_ptr);
 	~BasicStaticMesh();
@@ -37,13 +38,14 @@ public:
 	virtual void unlock();
 
 protected:
-    size_t vertices_count_;
-	boost::shared_ptr<VertexBuffer> vertex_buffer_;
-    vertex_t *vertex_buffer_locked_;
+	typedef VertexArray<V> vertex_buffer_t;
+	typedef IndexArray16 index_buffer_t;
 
+    size_t vertices_count_;
     size_t indices_count_;
-	boost::intrusive_ptr<IDirect3DIndexBuffer9> index_buffer_;
-    index_t *index_buffer_locked_;
+
+	boost::shared_ptr<vertex_buffer_t> vertex_buffer_;
+	boost::shared_ptr<index_buffer_t> index_buffer_;
 
     void draw_triangles_list();
 };

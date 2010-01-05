@@ -64,6 +64,8 @@ void VertexBuffer::handle_lost_device()
 
 void VertexBuffer::handle_reset_device()
 {
+	if (pool_ == D3DPOOL_MANAGED) return;
+
 	IDirect3DVertexBuffer9 *buffer;
 	HRESULT hr = renderer_->get_device()->CreateVertexBuffer(clone_.size(), usage_, 0, pool_, &buffer, 0);
 	if(FAILED(hr)) throw exception::directx_error(hr);

@@ -15,6 +15,7 @@
 #include "resource.h"
 #include "shared_resources.h"
 #include "vertex_array.h"
+#include "index_array.h"
 #include "texture.h"
 #include "font.h"
 
@@ -57,20 +58,20 @@ public:
 		return texture;
 	}
 
-	boost::shared_ptr<VertexBuffer>
-	create_vertex_buffer(size_t size, bool dynamic = false, bool writeonly = false)
-	{
-		boost::shared_ptr<VertexBuffer> vertex_buffer(new VertexBuffer(shared_from_this(), size, dynamic, writeonly));
-		resources_directory_->add_resource(boost::static_pointer_cast<Resource>(vertex_buffer));
-		return vertex_buffer;
-	}
-
 	template <class V> boost::shared_ptr<VertexArray<V> >
 	create_vertex_array(size_t count, bool dynamic = false, bool writeonly = false)
 	{
 		boost::shared_ptr<VertexArray<V> > vertex_array(new VertexArray<V>(shared_from_this(), count, dynamic, writeonly));
 		resources_directory_->add_resource(boost::static_pointer_cast<Resource>(vertex_array));
 		return vertex_array;
+	}
+
+	template <class I> boost::shared_ptr<IndexArray<I> >
+	create_index_array(size_t count, bool dynamic = false, bool writeonly = false)
+	{
+		boost::shared_ptr<IndexArray<I> > index_array(new IndexArray<I>(shared_from_this(), count, dynamic, writeonly));
+		resources_directory_->add_resource(boost::static_pointer_cast<Resource>(index_array));
+		return index_array;
 	}
 
 	boost::shared_ptr<Font>

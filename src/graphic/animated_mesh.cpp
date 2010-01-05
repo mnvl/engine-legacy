@@ -72,7 +72,7 @@ void AnimatedMesh::draw(Joint *joint_ptr)
     hr = device_ptr->SetStreamSource(0, vertex_buffer_->get(), 0, sizeof(vertex_t));
 	if (FAILED(hr)) throw exception::directx_error(hr);
 
-    hr = device_ptr->SetIndices(index_buffer_.get());
+    hr = device_ptr->SetIndices(index_buffer_->get());
 	if (FAILED(hr)) throw exception::directx_error(hr);
 
     UINT passes_count;
