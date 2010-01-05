@@ -1,9 +1,10 @@
 #pragma once
 
+#include <stdio.h>
 #include <iosfwd>
 #include <algorithm>
 #include <lua.h>
-#include <math/scalar.h>
+#include "scalar.h"
 
 namespace math
 {
@@ -206,6 +207,13 @@ public:
 	}
 
 	void to_polar(scalar_type &modulus, scalar_type &angle) const;
+
+	std::string to_string() const
+	{
+		char buf[256];
+		sprintf(buf, "%f %f", x, y);
+		return buf;
+	}
 };
 #pragma pack(pop)
 
@@ -382,6 +390,13 @@ public:
 	}
 
 	void to_axis_angle(vec_type &axis, scalar_type &angle) const;
+
+	std::string to_string() const
+	{
+		char buf[256];
+		sprintf(buf, "%f %f %f", x, y, z);
+		return buf;
+	}
 };
 #pragma pack(pop)
 
@@ -498,6 +513,26 @@ public:
 		return *this;
 	}
 
+	vec_type operator +(vec_type const &rhs) const
+	{
+		return vec_type(x + rhs.x, y + rhs.y, z + rhs.z, w + rhs.w);
+	}
+
+	vec_type operator -(vec_type const &rhs) const
+	{
+		return vec_type(x - rhs.x, y - rhs.y, z - rhs.z, w - rhs.w);
+	}
+
+	vec_type operator *(scalar_type const k) const
+	{
+		return vec_type(x * k, y * k, z * k, w * k);
+	}
+
+	vec_type operator /(scalar_type const k) const
+	{
+		return vec_type(x / k, y / k, z / k, w / k);
+	}
+
 	bool operator <(vec_type const &rhs) const
 	{
 		return x < rhs.x && y < rhs.y && z < rhs.z && w < rhs.w;
@@ -530,6 +565,13 @@ public:
 		y = -y;
 		z = -z;
 		w = -w;
+	}
+
+	std::string to_string() const
+	{
+		char buf[256];
+		sprintf(buf, "%f %f %f %f", x, y, z, w);
+		return buf;
 	}
 };
 #pragma pack(pop)
@@ -754,13 +796,13 @@ normalize(const vec<N,T> &v)
 }
 
 template<int N,class T> inline math::vec<N,T>
-operator *(T lhs, const math::vec<N,T> &rhs)
+operator *(T lhs, math::vec<N,T> const &rhs)
 {
 	return rhs * lhs;
 }
 
 template<int N,class T> inline T
-operator &(const math::vec<N,T> &lhs,const math::vec<N,T> &rhs)
+operator &(math::vec<N,T> const &lhs,math::vec<N,T> const &rhs)
 {
 	return math::dot_product(lhs, rhs);
 }
@@ -773,14 +815,38 @@ operator ^(const math::vec<3,T> &lhs,const math::vec<3,T> &rhs)
 	return res;
 }
 
-template<class T>
-std::istream &operator >>(std::istream &is, math::vec<3, T> &v)
+template<class Ch, class ChT, class T>
+std::basic_istream<Ch, ChT> &operator >>(std::basic_istream<Ch, ChT> &is, math::vec<2,T> const &v)
+{
+	return is >> v.x >> v.y;
+}
+
+template<class Ch, class ChT, class T>
+std::basic_ostream<Ch, ChT> &operator <<(std::basic_ostream<Ch, ChT> &os, math::vec<2,T> const &v)
+{
+	return os << v.x << ' ' << v.y;
+}
+
+template<class Ch, class ChT, class T>
+std::basic_istream<Ch, ChT> &operator >>(std::basic_istream<Ch, ChT> &is, math::vec<3,T> const &v)
 {
 	return is >> v.x >> v.y >> v.z;
 }
 
-template<class T>
-std::ostream &operator <<(std::ostream &os, math::vec<3, T> &v)
+template<class Ch, class ChT, class T>
+std::basic_ostream<Ch, ChT> &operator <<(std::basic_ostream<Ch, ChT> &os, math::vec<3,T> const &v)
 {
 	return os << v.x << ' ' << v.y << ' ' << v.z;
+}
+
+template<class Ch, class ChT, class T>
+std::basic_istream<Ch, ChT> &operator >>(std::basic_istream<Ch, ChT> &is, math::vec<4,T> const &v)
+{
+	return is >> v.x >> v.y >> v.z >> v.w;
+}
+
+template<class Ch, class ChT, class T>
+std::basic_ostream<Ch, ChT> &operator <<(std::basic_ostream<Ch, ChT> &os, math::vec<4,T> const &v)
+{
+	return os << v.x << ' ' << v.y << ' ' << v.z << ' ' << v.w;
 }

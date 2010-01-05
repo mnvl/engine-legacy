@@ -1,18 +1,19 @@
 #pragma once
 
-#include <math/scalar.h>
-#include <math/vec.h>
-#include <math/ray.h>
-#include <math/line.h>
+#include <iosfwd>
 
-namespace math {
-	template<int N,class T=scalar> class aabb;
+#include "scalar.h"
+#include "vec.h"
+#include "ray.h"
+#include "line.h"
 
-	template<int N,class T> class triangle;
-}
+namespace math
+{
 
-template<int N,class T>
-class math::aabb {
+template<int N,class T> class triangle;
+
+template<int N,class T = scalar>
+class aabb {
 public:
 	// типы и константы
 	typedef T scalar_type;
@@ -191,3 +192,10 @@ public:
 	}
 };
 
+}
+
+template<int N, class T>
+std::ostream &operator <<(std::ostream &lhs, math::aabb<N,T> &rhs)
+{
+	return lhs << rhs.min << " x " << rhs.max;
+}
