@@ -69,6 +69,38 @@ BOOST_AUTO_TEST_CASE (test_with_postconstruct_and_vertex_array)
 	}
 }
 
+BOOST_AUTO_TEST_CASE (test_with_postconstruct_and_index_array)
+{
+	boost::shared_ptr<platform::Window> window(new platform::Window("test_window_resize"));
+
+	boost::shared_ptr<graphic::Renderer> renderer(new graphic::Renderer(window));
+	renderer->postconstruct();
+
+	boost::shared_ptr<graphic::IndexArray16> index_array1;
+	boost::shared_ptr<graphic::IndexArray16> index_array2;
+	boost::shared_ptr<graphic::IndexArray16> index_array3;
+	boost::shared_ptr<graphic::IndexArray16> index_array4;
+
+	for (int i = 0; i < 20 && window->run_message_loop(); i++)
+	{
+		if (i == 5)
+		{
+			index_array1 = renderer->create_index_array<graphic::index_pt>(100, false, false);
+			index_array2 = renderer->create_index_array<graphic::index_pt>(100, false, true);
+			index_array3 = renderer->create_index_array<graphic::index_pt>(100, true, false);
+			index_array4 = renderer->create_index_array<graphic::index_pt>(100, true, true);
+		}
+
+		if (i == 15)
+		{
+			MoveWindow(window->get_handle(), 100, 100, 900, 700, TRUE);
+		}
+
+		renderer->begin_frame();
+		renderer->finish_frame();
+	}
+}
+
 BOOST_AUTO_TEST_CASE (test_with_postconstruct_and_texture)
 {
 	boost::shared_ptr<platform::Window> window(new platform::Window("test_window_resize"));
