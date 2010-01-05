@@ -1,20 +1,18 @@
 //-----------------------------------------------------------------------------
-// Copyright (c) 2004, 2005, 2006 Manvel Avetisian.
+// Copyright (c) 2004 - 2010 Manvel Avetisian.
 // All Rights Reserved.
 //
-// These coded instructions, statements, and computer programs
-// contain unpublished proprietary information of Manvel Avetisian.
-// They may not be disclosed to third parties or copied or duplicated
-// in any form, in whole or in part, without the prior written
-// permission of Manvel Avetisian.
+// This source code contains unpublished, confidential and proprietary
+// information of Manvel Avetisian and may not be disclosed to third parties
+// or copied or duplicated in any form, in whole or in part, without the
+// prior written consent of Manvel Avetisian.
 //-----------------------------------------------------------------------------
 
 #include <maya/MObject.h>
 #include <maya/MFnPlugin.h>
 
-#include <precompiled.h>
-#include <Translator/MeshTranslator.h>
-#include <Translator/SceneTranslator.h>
+#include "mesh_translator.h"
+#include "scene_translator.h"
 
 MStatus initializePlugin(MObject obj)
 {
@@ -42,7 +40,7 @@ MStatus initializePlugin(MObject obj)
 }
 
 
-MStatus uninitializePlugin(MObject obj) 
+MStatus uninitializePlugin(MObject obj)
 {
 	MStatus   status;
 	MFnPlugin plugin( obj );
