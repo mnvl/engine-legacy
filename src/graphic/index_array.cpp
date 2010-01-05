@@ -78,6 +78,11 @@ void IndexBuffer::handle_reset_device()
 	unlock();
 }
 
+D3DFORMAT IndexArray<index_t>::get_format() const
+{
+	return INDEX_FORMAT;
+}
+
 void bind_index_array(lua_State *L)
 {
 	using namespace luabind;

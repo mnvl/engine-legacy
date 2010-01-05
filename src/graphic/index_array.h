@@ -65,7 +65,7 @@ public:
 	index_t *at(size_t index) { return &begin()[index]; }
 	index_t const *at(size_t index) const { return &begin()[index]; }
 
-	D3DFORMAT get_format() const { return INDEX_FORMAT; }
+	virtual D3DFORMAT get_format() const;
 
 protected:
 	IndexArray(boost::shared_ptr<Renderer> const &renderer, size_t count,
