@@ -2,6 +2,7 @@
 
 #include <stdio.h>
 #include <iosfwd>
+#include <string>
 #include <algorithm>
 #include <lua.h>
 #include "scalar.h"

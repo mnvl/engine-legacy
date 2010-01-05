@@ -1,9 +1,9 @@
 
 INCLUDE_DIRECTORIES("c:\\Program Files\\Maya2009\\include")
+LINK_DIRECTORIES("c:\\Program Files\\Maya2009\\lib")
 
 ADD_DEFINITIONS(-D_BOOL)
 ADD_DEFINITIONS(-DREQUIRE_IOSTREAM)
 FILE (GLOB TRANSLATOR_SOURCES *.h *.cpp)
 ADD_LIBRARY (translator SHARED ${TRANSLATOR_SOURCES})
-TARGET_LINK_LIBRARIES(translator ${ENGINE_LIBRARIES} Foundation OpenMaya d3d9 dxerr9 d3dx9 util graphic math)
-
+TARGET_LINK_LIBRARIES(translator ${ENGINE_LIBRARIES} Foundation OpenMaya d3d9 dxerr d3dx9 util graphic math)
