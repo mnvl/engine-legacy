@@ -1,6 +1,7 @@
 
 #include <boost/test/unit_test.hpp>
 #include <platform/window.h>
+#include <util/get_sources_path.h>
 #include "font.h"
 #include "renderer.h"
 
@@ -81,7 +82,7 @@ BOOST_AUTO_TEST_CASE (test_with_postconstruct_and_texture)
 	{
 		if (i == 5)
 		{
-			texture = renderer->create_texture("test_white.tga");
+			texture = renderer->create_texture(util::get_graphic_sources_path() + "test_white.tga");
 		}
 
 		if (i == 15)

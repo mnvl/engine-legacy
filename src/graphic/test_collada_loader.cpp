@@ -1,10 +1,12 @@
 
 #include <boost/test/unit_test.hpp>
+#include <util/get_sources_path.h>
 #include "memory_model.h"
 #include "collada_loader.h"
 
 namespace
 {
+
 struct Fixture
 {
     Fixture()
@@ -17,18 +19,19 @@ struct Fixture
         xercesc::XMLPlatformUtils::Terminate();
     }
 };
+
 }
 
 BOOST_AUTO_TEST_SUITE (test_collada_loader)
 
 BOOST_AUTO_TEST_CASE (test_plane)
 {
-	Fixture dummy;
+	Fixture fixture;
 
     std::auto_ptr<graphic::MemoryModel> model_ptr(new graphic::MemoryModel());
 
     graphic::ColladaLoader loader(model_ptr.get());
-	loader.load("test_collada_loader_plane.xml");
+	loader.load(util::get_graphic_sources_path() + "test_collada_loader_plane.xml");
 	loader.build_model();
 
     BOOST_ASSERT (model_ptr->meshes.size() == 1);
@@ -56,12 +59,12 @@ BOOST_AUTO_TEST_CASE (test_plane)
 
 BOOST_AUTO_TEST_CASE (test_joint)
 {
-	Fixture dummy;
+	Fixture fixture;
 
     std::auto_ptr<graphic::MemoryModel> model_ptr(new graphic::MemoryModel());
 
     graphic::ColladaLoader loader(model_ptr.get());
-	loader.load("test_collada_loader_joint.xml");
+	loader.load(util::get_graphic_sources_path() + "test_collada_loader_joint.xml");
 	loader.build_model();
 
     BOOST_ASSERT (model_ptr->meshes.size() == 1);
@@ -92,11 +95,11 @@ BOOST_AUTO_TEST_CASE (test_joint)
 
 BOOST_AUTO_TEST_CASE (test_animation)
 {
-	Fixture dummy;
+	Fixture fixture;
 
     std::auto_ptr<graphic::MemoryModel> model_ptr(new graphic::MemoryModel());
     graphic::ColladaLoader loader(model_ptr.get());
-	loader.load("test_collada_loader_animation.xml");
+	loader.load(util::get_graphic_sources_path() + "test_collada_loader_animation.xml");
 	loader.build_model();
 
     BOOST_ASSERT (model_ptr->meshes.size() == 1);
@@ -138,12 +141,12 @@ BOOST_AUTO_TEST_CASE (test_animation)
 
 BOOST_AUTO_TEST_CASE (test_materials)
 {
-	Fixture dummy;
+	Fixture fixture;
 
     std::auto_ptr<graphic::MemoryModel> model_ptr(new graphic::MemoryModel());
 
     graphic::ColladaLoader loader(model_ptr.get());
-	loader.load("test_collada_loader_materials.xml");
+	loader.load(util::get_graphic_sources_path() + "test_collada_loader_materials.xml");
 	loader.build_model();
 
     BOOST_ASSERT (model_ptr->meshes.size() == 2);
