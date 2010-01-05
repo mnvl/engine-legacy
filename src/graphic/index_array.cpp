@@ -7,10 +7,11 @@
 namespace graphic
 {
 
-IndexBuffer::IndexBuffer(boost::shared_ptr<Renderer> const &renderer, size_t size,
+IndexBuffer::IndexBuffer(boost::shared_ptr<Renderer> const &renderer, D3DFORMAT format, size_t size,
 	bool dynamic, bool writeonly)
 :
 	renderer_(renderer),
+	format_(format),
 	clone_(size),
 	usage_(0),
 	pool_(dynamic ? D3DPOOL_DEFAULT : D3DPOOL_MANAGED)
@@ -19,7 +20,7 @@ IndexBuffer::IndexBuffer(boost::shared_ptr<Renderer> const &renderer, size_t siz
 	if(writeonly) usage_ |= D3DUSAGE_WRITEONLY;
 
 	IDirect3DIndexBuffer9 *buffer;
-	HRESULT hr = renderer_->get_device()->CreateIndexBuffer(size, usage_, get_format(), pool_, &buffer, 0);
+	HRESULT hr = renderer_->get_device()->CreateIndexBuffer(size, usage_, format_, pool_, &buffer, 0);
 	if(FAILED(hr)) throw exception::directx_error(hr);
 
 	buffer_.reset(buffer);
@@ -59,6 +60,8 @@ void IndexBuffer::unlock()
 
 void IndexBuffer::handle_lost_device()
 {
+	if (pool_ == D3DPOOL_MANAGED) return;
+
 	buffer_.reset();
 }
 
@@ -67,7 +70,7 @@ void IndexBuffer::handle_reset_device()
 	if (pool_ == D3DPOOL_MANAGED) return;
 
 	IDirect3DIndexBuffer9 *buffer;
-	HRESULT hr = renderer_->get_device()->CreateIndexBuffer(clone_.size(), usage_, get_format(), pool_, &buffer, 0);
+	HRESULT hr = renderer_->get_device()->CreateIndexBuffer(clone_.size(), usage_, format_, pool_, &buffer, 0);
 	if(FAILED(hr)) throw exception::directx_error(hr);
 
 	buffer_.reset(buffer);
@@ -76,11 +79,6 @@ void IndexBuffer::handle_reset_device()
 	// unlock will restore contents of buffer
 	lock();
 	unlock();
-}
-
-D3DFORMAT IndexArray<index_t>::get_format() const
-{
-	return INDEX_FORMAT;
 }
 
 void bind_index_array(lua_State *L)

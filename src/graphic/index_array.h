@@ -30,18 +30,17 @@ public:
 
 	IDirect3DIndexBuffer9 *get() const { return buffer_.get(); }
 
-	virtual D3DFORMAT get_format() const = 0;
-
 	virtual void handle_lost_device();
 	virtual void handle_reset_device();
 
 protected:
 	boost::shared_ptr<Renderer> renderer_;
 
-	IndexBuffer(boost::shared_ptr<Renderer> const &renderer, size_t size,
+	IndexBuffer(boost::shared_ptr<Renderer> const &renderer, D3DFORMAT format, size_t size,
 		bool dynamic = false, bool writeonly = false);
 
 private:
+	D3DFORMAT format_;
 	boost::intrusive_ptr<IDirect3DIndexBuffer9> buffer_;
 	std::vector<char> clone_;
 	DWORD usage_;
@@ -65,13 +64,11 @@ public:
 	index_t *at(size_t index) { return &begin()[index]; }
 	index_t const *at(size_t index) const { return &begin()[index]; }
 
-	virtual D3DFORMAT get_format() const;
-
 protected:
 	IndexArray(boost::shared_ptr<Renderer> const &renderer, size_t count,
 		bool dynamic = false, bool writeonly = false)
 	:
-		IndexBuffer(renderer, count * sizeof(index_t), dynamic, writeonly)
+		IndexBuffer(renderer, INDEX_FORMAT, count * sizeof(index_t), dynamic, writeonly)
 	{
 	}
 };

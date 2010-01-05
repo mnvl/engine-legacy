@@ -59,6 +59,8 @@ void VertexBuffer::unlock()
 
 void VertexBuffer::handle_lost_device()
 {
+	if (pool_ == D3DPOOL_MANAGED) return;
+
 	buffer_.reset();
 }
 
