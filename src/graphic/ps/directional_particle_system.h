@@ -12,6 +12,7 @@
 #include "directional_emitter.h"
 #include "regular_timespan_controller.h"
 #include "basic_keeper.h"
+#include "billboard_drawer.h"
 #include "particle_system.h"
 
 namespace graphic
@@ -19,7 +20,7 @@ namespace graphic
 namespace ps
 {
 
-typedef ParticleSystem<DirectionalEmitter, RegularTimespanController, BasicKeeper> DirectionalParticleSystem;
+typedef ParticleSystem<DirectionalEmitter, RegularTimespanController, BasicKeeper, BillboardDrawer> DirectionalParticleSystem;
 
 }
 }

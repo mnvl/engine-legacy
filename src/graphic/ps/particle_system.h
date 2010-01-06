@@ -20,7 +20,8 @@ template
 <
 	class Emitter,
 	template<class> class Controller,
-	template<class> class Keeper
+	template<class> class Keeper,
+	template<class> class Drawer
 >
 class ParticleSystem
 {
@@ -29,6 +30,7 @@ public:
 	typedef typename emitter_t::particle_t particle_t;
 	typedef Controller<particle_t> controller_t;
 	typedef Keeper<particle_t> keeper_t;
+	typedef Drawer<particle_t> drawer_t;
 
 	ParticleSystem():
 		max_nparticles_(1000)
@@ -55,6 +57,14 @@ public:
 
 	void draw()
 	{
+		drawer_.begin();
+
+		for (keeper_t::iterator_t it = keeper_.begin(); it != keeper_.end(); it++)
+		{
+			drawer_.draw(&*it);
+		}
+
+		drawer_.end();
 	}
 
 private:
@@ -63,6 +73,7 @@ private:
 	emitter_t emitter_;
 	controller_t controller_;
 	keeper_t keeper_;
+	drawer_t drawer_;
 };
 
 }
