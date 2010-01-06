@@ -10,7 +10,7 @@
 
 #pragma once
 
-#include <deque>
+#include <math/interval.h>
 
 namespace graphic
 {
@@ -18,42 +18,37 @@ namespace ps
 {
 
 template<class P>
-class SimpleKeeper
+class RegularTimespanController
 {
 public:
 	typedef P particle_t;
 
-	void add_particle(particle_t const &particle)
+	RegularTimespanController():
+		next_emission_time_left_(0)
 	{
-		particles_.push_back(particle);
 	}
 
-	void move(math::scalar dt)
+	void set_emissions_per_sec(math::interval<> const &emissions_per_sec)
 	{
-		particles_t::iterator it = particles_.begin();
+		emissions_per_sec_ = emissions_per_sec;
+	}
 
-		while (it != particles_.end())
+	size_t move(math::scalar dt)
+	{
+		size_t count = 0;
+
+		while (next_emission_time_left_ < dt)
 		{
-			it->move(dt);
-
-			if (it->should_die())
-			{
-				it = particles_.erase(it);
-			}
-			else
-			{
-				++it;
-			}
+			count++;
+			next_emission_time_left_ = -dt + 1 / emissions_per_sec_.random();
 		}
-	}
 
-	size_t get_particles_count() const {
-		return particles_.size();
+		return count;
 	}
 
 private:
-	typedef std::deque<particle_t> particles_t;
-	particles_t particles_;
+	math::interval<> emissions_per_sec_;
+	math::scalar next_emission_time_left_;
 };
 
 }

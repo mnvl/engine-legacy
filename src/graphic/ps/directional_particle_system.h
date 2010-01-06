@@ -7,30 +7,19 @@
 // or copied or duplicated in any form, in whole or in part, without the
 // prior written consent of Manvel Avetisian.
 //-----------------------------------------------------------------------------
-
 #pragma once
 
-#include <math/interval.h>
+#include "directional_emitter.h"
+#include "regular_timespan_controller.h"
+#include "basic_keeper.h"
+#include "particle_system.h"
 
 namespace graphic
 {
 namespace ps
 {
 
-template<class P>
-class TtlLifespanController
-{
-public:
-	typedef P particle_t;
-
-	void init(particle_t &particle)
-	{
-		particle.ttl = lifespan_.random();
-	}
-
-private:
-	math::interval<> lifespan_;
-};
+typedef ParticleSystem<DirectionalEmitter, RegularTimespanController, BasicKeeper> DirectionalParticleSystem;
 
 }
 }

@@ -10,42 +10,80 @@
 
 #pragma once
 
+#include <math/interval.h>
 #include <math/vec.h>
-#include <math/matrix.h>
 
 namespace graphic
 {
 namespace ps
 {
 
-// emits particles along x axis from position (0, 0, 0)
-template <class P>
-class DirectionalEmitter
-{
+class DirectionalEmitter {
 public:
-	typedef P particle_t;
-
-	void set_position(math::vec<3> const &position)
+	class Particle
 	{
-		position_ = position;
+	public:
+		Particle(DirectionalEmitter *emitter):
+			position_(emitter->origin_),
+			velocity_(emitter->direction_ * emitter->velocity_.random()),
+			acceleration_(emitter->direction_ * emitter->acceleration_.random()),
+			ttl_(emitter->ttl_.random())
+		{
+		}
+
+		void move(math::scalar dt)
+		{
+			velocity_ += acceleration_ * dt;
+			position_ += velocity_ * dt;
+			ttl_ -= dt;
+		}
+
+		bool should_die()
+		{
+			return ttl_ > 0;
+		}
+
+	private:
+		math::vec<3> position_;
+		math::vec<3> velocity_;
+		math::vec<3> acceleration_;
+		math::scalar ttl_;
+	};
+
+	typedef Particle particle_t;
+
+	void set_origin(math::vec<3> const &origin)
+	{
+		origin_ = origin;
 	}
 
-	void set_orientation(math::matrix<3,3> const &orientation)
+	void set_direction(math::vec<3> const &direction)
 	{
-		direction_ = math::vec<3>(1, 0, 0) * orientation;
+		direction_ = direction_;
 	}
 
-	void init(particle_t &particle)
+	void set_velocity_interval(math::interval<> const &velocity)
 	{
-		particle.position = position_;
-		particle.velocity = direction_ * (rand() * (velocity_max_ - velocity_min_) / RAND_MAX + velocity_min_);
-		particle.acceleration = direction_ * (rand() * (acceleration_max_ - acceleration_min_) / RAND_MAX + acceleration_min_);
+		velocity_ = velocity;
+	}
+
+	void set_acceleration_interval(math::interval<> const &acceleration)
+	{
+		acceleration_ = acceleration;
+	}
+
+	void set_ttl_interval(math::interval<> const &ttl)
+	{
+		ttl_ = ttl;
 	}
 
 protected:
-	math::vec<3> position_, direction_;
-	math::scalar velocity_min_, velocity_max_;
-	math::scalar acceleration_min_, acceleration_max_;
+	friend Particle;
+
+	math::vec<3> origin_, direction_;
+	math::interval<> velocity_;
+	math::interval<> acceleration_;
+	math::interval<> ttl_;
 };
 
 }

@@ -20,7 +20,6 @@
 #include "collada_loader.h"
 #include "camera.h"
 #include "font.h"
-#include "ps/fire_particle_system.h"
 #include "renderer.h"
 #include "bind.h"
 
@@ -42,7 +41,6 @@ void bind(lua_State *L)
 	Camera::bind(L);
 	Font::bind(L);
     Renderer::bind(L);
-	ps::FireParticleSystem::bind(L, "FireParticleSystem");
 }
 
 }

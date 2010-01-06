@@ -10,7 +10,7 @@
 
 #pragma once
 
-#include <math/interval.h>
+#include <deque>
 
 namespace graphic
 {
@@ -18,37 +18,42 @@ namespace ps
 {
 
 template<class P>
-class UniformCountController
+class BasicKeeper
 {
 public:
 	typedef P particle_t;
 
-	UniformCountController():
-		next_emission_time_left_(0)
+	void add_particle(particle_t const &particle)
 	{
+		particles_.push_back(particle);
 	}
 
-	void emissions_per_sec(math::interval<> const &emissions_per_sec)
+	void move(math::scalar dt)
 	{
-		emissions_per_sec_ = emissions_per_sec;
-	}
+		particles_t::iterator it = particles_.begin();
 
-	size_t move(math::scalar dt)
-	{
-		size_t count = 0;
-
-		while (next_emission_time_left_ < dt)
+		while (it != particles_.end())
 		{
-			count++;
-			next_emission_time_left_ = -dt + 1 / emissions_per_sec_.random();
-		}
+			it->move(dt);
 
-		return count;
+			if (it->should_die())
+			{
+				it = particles_.erase(it);
+			}
+			else
+			{
+				++it;
+			}
+		}
+	}
+
+	size_t get_particles_count() const {
+		return particles_.size();
 	}
 
 private:
-	math::interval<> emissions_per_sec_;
-	math::scalar next_emission_time_left_;
+	typedef std::deque<particle_t> particles_t;
+	particles_t particles_;
 };
 
 }
