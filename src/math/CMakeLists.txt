@@ -5,4 +5,4 @@ ADD_LIBRARY(math STATIC ${MATH_SOURCES})
 
 ADD_EXECUTABLE(test_math ${MATH_TEST_SOURCES})
 TARGET_LINK_LIBRARIES(test_math ${ENGINE_LIBRARIES} math util)
-ADD_TEST(test_math ${EXECUTABLE_OUTPUT_PATH}/test_math)
+ADD_TEST(test_math ${EXECUTABLE_OUTPUT_PATH}/test_math --log_level=test_suite)

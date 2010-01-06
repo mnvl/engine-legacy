@@ -5,4 +5,4 @@ ADD_LIBRARY(rpc STATIC ${RPC_SOURCES})
 
 ADD_EXECUTABLE(test_rpc ${RPC_TEST_SOURCES})
 TARGET_LINK_LIBRARIES(test_rpc ${ENGINE_LIBRARIES} rpc util)
-ADD_TEST(test_rpc ${EXECUTABLE_OUTPUT_PATH}/test_rpc)
+ADD_TEST(test_rpc ${EXECUTABLE_OUTPUT_PATH}/test_rpc --log_level=test_suite)
