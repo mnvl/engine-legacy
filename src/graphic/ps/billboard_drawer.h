@@ -26,7 +26,8 @@ public:
 
 	BillboardDrawer(boost::shared_ptr<Renderer> const &renderer, size_t max_nparticles):
 		renderer_(renderer),
-		max_nparticles_(max_nparticles)
+		max_nparticles_(max_nparticles),
+		cursor_(0)
 	{
 		vertex_array_ = renderer->create_vertex_array<graphic::vertex_pnt>(max_nparticles_ * VERTICES_PER_PARTICLE, true, true);
 	}
@@ -39,14 +40,20 @@ public:
 	void begin()
 	{
 		texture_->select();
+
+		cursor_ = vertex_array_->lock(true);
+		particles_to_draw_ = 0;
 	}
 
 	void draw(particle_t const *particle)
 	{
+		
 	}
 
 	void end()
 	{
+		vertex_array_->unlock();
+		cursor_ = 0;
 	}
 
 private:
@@ -57,6 +64,9 @@ private:
 
 	boost::shared_ptr<Texture> texture_;
 	boost::shared_ptr<VertexArrayPNT> vertex_array_;
+
+	vertex_pnt *cursor_;
+	size_t particles_to_draw_;
 };
 
 }
