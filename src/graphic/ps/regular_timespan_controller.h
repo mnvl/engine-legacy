@@ -24,7 +24,8 @@ public:
 	typedef P particle_t;
 
 	RegularTimespanController():
-		next_emission_time_left_(0)
+		time_accumulated_(0),
+		next_emission_time_(0)
 	{
 	}
 
@@ -35,12 +36,15 @@ public:
 
 	size_t move(math::scalar dt)
 	{
+		time_accumulated_ += dt;
+
 		size_t count = 0;
 
-		while (next_emission_time_left_ < dt)
+		while (next_emission_time_ > time_accumulated_)
 		{
-			count++;
-			next_emission_time_left_ = -dt + 1 / emissions_per_sec_.random();
+			time_accumulated_ -= next_emission_time_;
+			next_emission_time_ = 1 / emissions_per_sec_.random();
+			++count;
 		}
 
 		return count;
@@ -48,7 +52,7 @@ public:
 
 private:
 	math::interval<> emissions_per_sec_;
-	math::scalar next_emission_time_left_;
+	math::scalar time_accumulated_, next_emission_time_;
 };
 
 }

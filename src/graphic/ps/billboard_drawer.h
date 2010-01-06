@@ -11,6 +11,7 @@
 
 #include <graphic/texture.h>
 #include <graphic/vertex_array.h>
+#include <graphic/renderer.h>
 
 namespace graphic
 {
@@ -28,6 +29,11 @@ public:
 		max_nparticles_(max_nparticles)
 	{
 		vertex_array_ = renderer->create_vertex_array<graphic::vertex_pnt>(max_nparticles_ * VERTICES_PER_PARTICLE, true, true);
+	}
+
+	void set_texture(std::string const &filename)
+	{
+		texture_ = renderer_->create_texture(filename);
 	}
 
 	void begin()

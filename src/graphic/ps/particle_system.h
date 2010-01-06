@@ -42,6 +42,7 @@ public:
 	emitter_t &get_emitter() { return emitter_; }
 	controller_t &get_controller() { return controller_; }
 	keeper_t &get_keeper() { return keeper_; }
+	drawer_t &get_drawer() { return drawer_; }
 
 	void move(math::scalar dt)
 	{

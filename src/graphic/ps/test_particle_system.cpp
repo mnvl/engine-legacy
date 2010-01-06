@@ -11,6 +11,7 @@
 #include <boost/test/unit_test.hpp>
 #include <platform/timer.h>
 #include <platform/window.h>
+#include <util/get_sources_path.h>
 #include <graphic/renderer.h>
 #include "directional_particle_system.h"
 
@@ -32,6 +33,7 @@ BOOST_AUTO_TEST_CASE (test_directional_ps)
 	ps->get_emitter().set_acceleration_interval(math::interval<>(-3, -1));
 	ps->get_emitter().set_ttl_interval(math::interval<>(5, 10));
 	ps->get_controller().set_emissions_per_sec(math::interval<>(100, 100));
+	ps->get_drawer().set_texture(util::get_graphic_sources_path() + "test_white.tga");
 
 	double prev_t = timer.get_current_time();
 
