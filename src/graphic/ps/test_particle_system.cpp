@@ -21,26 +21,28 @@ BOOST_AUTO_TEST_CASE (test_directional_ps)
 	boost::shared_ptr<platform::Window> window(new platform::Window("test_window_resize"));
 	boost::shared_ptr<graphic::Renderer> renderer(new graphic::Renderer(window));
 
-	platform::Timer timer;
-	graphic::ps::DirectionalParticleSystem ps;
+	renderer->postconstruct();
 
-	ps.get_emitter().set_origin(math::vec<3>(0, 0, 0));
-	ps.get_emitter().set_direction(math::vec<3>(0, 1, 0));
-	ps.get_emitter().set_velocity_interval(math::interval<>(10, 20));
-	ps.get_emitter().set_acceleration_interval(math::interval<>(-3, -1));
-	ps.get_emitter().set_ttl_interval(math::interval<>(5, 10));
-	ps.get_controller().set_emissions_per_sec(math::interval<>(100, 100));
+	platform::Timer timer;
+	boost::shared_ptr<graphic::ps::DirectionalParticleSystem> ps(new graphic::ps::DirectionalParticleSystem(renderer));
+
+	ps->get_emitter().set_origin(math::vec<3>(0, 0, 0));
+	ps->get_emitter().set_direction(math::vec<3>(0, 1, 0));
+	ps->get_emitter().set_velocity_interval(math::interval<>(10, 20));
+	ps->get_emitter().set_acceleration_interval(math::interval<>(-3, -1));
+	ps->get_emitter().set_ttl_interval(math::interval<>(5, 10));
+	ps->get_controller().set_emissions_per_sec(math::interval<>(100, 100));
 
 	double prev_t = timer.get_current_time();
 
 	for (int i = 0; i < 100 && window->run_message_loop(); i++)
 	{
 		double t = timer.get_current_time();
-		ps.move(math::scalar(t - prev_t));
+		ps->move(math::scalar(t - prev_t));
 		prev_t = t;
 
 		renderer->begin_frame();
-		ps.draw();
+		ps->draw();
 		renderer->finish_frame();
 	}
 }

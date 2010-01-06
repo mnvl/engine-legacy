@@ -10,6 +10,7 @@
 #pragma once
 
 #include <graphic/texture.h>
+#include <graphic/vertex_array.h>
 
 namespace graphic
 {
@@ -21,6 +22,13 @@ class BillboardDrawer
 {
 public:
 	typedef P particle_t;
+
+	BillboardDrawer(boost::shared_ptr<Renderer> const &renderer, size_t max_nparticles):
+		renderer_(renderer),
+		max_nparticles_(max_nparticles)
+	{
+		vertex_array_ = renderer->create_vertex_array<graphic::vertex_pnt>(max_nparticles_ * VERTICES_PER_PARTICLE, true, true);
+	}
 
 	void begin()
 	{
@@ -36,7 +44,13 @@ public:
 	}
 
 private:
+	static size_t const VERTICES_PER_PARTICLE = 6;
+
+	boost::shared_ptr<Renderer> const renderer_;
+	size_t const max_nparticles_;
+
 	boost::shared_ptr<Texture> texture_;
+	boost::shared_ptr<VertexArrayPNT> vertex_array_;
 };
 
 }

@@ -9,6 +9,7 @@
 //-----------------------------------------------------------------------------
 #pragma once
 
+#include <graphic/renderer.h>
 #include <boost/shared_ptr.hpp>
 
 namespace graphic
@@ -32,16 +33,15 @@ public:
 	typedef Keeper<particle_t> keeper_t;
 	typedef Drawer<particle_t> drawer_t;
 
-	ParticleSystem():
-		max_nparticles_(1000)
+	ParticleSystem(boost::shared_ptr<Renderer> const &renderer, size_t const max_nparticles = 1000):
+		max_nparticles_(max_nparticles),
+		drawer_(renderer, max_nparticles)
 	{
 	}
 
 	emitter_t &get_emitter() { return emitter_; }
 	controller_t &get_controller() { return controller_; }
 	keeper_t &get_keeper() { return keeper_; }
-
-	void set_max_nparticles(size_t max_nparticles) { max_nparticles_ = max_nparticles; }
 
 	void move(math::scalar dt)
 	{
