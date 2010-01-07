@@ -10,7 +10,6 @@
 
 #pragma once
 
-#include <deque>
 #include <d3d9.h>
 #include <d3dx9.h>
 #include <boost/scoped_ptr.hpp>
@@ -22,6 +21,7 @@
 #include <math/matrix.h>
 #include <util/boost_com_intrusive_ptr.h>
 #include <platform/window.h>
+#include "camera.h"
 #include "resource.h"
 #include "shared_resources.h"
 #include "vertex_array.h"
@@ -54,12 +54,16 @@ public:
 
 	IDirect3DDevice9 *get_device() const { return device_ptr_.get(); }
     SharedResources *get_shared_resources() const { return shared_resources_.get(); }
-	math::matrix<4,4> const &get_view_matrix() const { return view_matrix_; }
-	math::matrix<4,4> const &get_projection_matrix() const { return projection_matrix_; }
-    math::matrix<4,4> const &get_world_matrix() const { return world_matrix_; }
 
-	void set_view_projection_from_camera(Camera const &c);
+	// camera changes not propogated automatically to renderer state, you must
+	// call set_camera() every time you want to update renderer
+	void set_camera(boost::shared_ptr<Camera> const &camera);
+	boost::shared_ptr<Camera> get_camera() const;
+	math::matrix<4,4> const &get_view_matrix() const { return camera_->get_view_matrix(); }
+	math::matrix<4,4> const &get_projection_matrix() const { return camera_->get_projection_matrix(); }
+
     void set_world_matrix(math::matrix<4,4> const &tf);
+	math::matrix<4,4> const &get_world_matrix() const { return world_matrix_; }
 
 	boost::shared_ptr<Texture> create_texture(std::string const &filename)
 	{
@@ -105,9 +109,8 @@ private:
 	bool fullscreen_;
 	D3DPRESENT_PARAMETERS pp_;
 
+	boost::shared_ptr<Camera> camera_;
     math::matrix<4,4> world_matrix_;
-	math::matrix<4,4> view_matrix_;
-	math::matrix<4,4> projection_matrix_;
 
 	boost::intrusive_ptr<IDirect3D9> direct3d_ptr_;
 	boost::intrusive_ptr<IDirect3DDevice9> device_ptr_;

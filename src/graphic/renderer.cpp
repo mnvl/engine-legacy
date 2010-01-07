@@ -113,25 +113,24 @@ void Renderer::finish_frame()
 
 	hr = device_ptr_->Present(0, 0, 0, 0);
 	if (FAILED(hr)) throw exception::directx_error(hr);
-
-	/*
-	double current_time = platform::Timer::get_current_time();
-	last_frame_time_ = current_time - frame_start_time_;
-	while (!frame_times_.empty() && (current_time - frame_times_.front()) > 1.0) frame_times_.pop_front();
-	*/
 }
 
-void Renderer::set_view_projection_from_camera(Camera const &c)
+void Renderer::set_camera(boost::shared_ptr<Camera> const &camera)
 {
     HRESULT hr;
 
-	view_matrix_ = c.get_view_matrix();
-	hr = device_ptr_->SetTransform(D3DTS_VIEW, (D3DMATRIX const *) &c.get_view_matrix());
+	hr = device_ptr_->SetTransform(D3DTS_VIEW, (D3DMATRIX const *) &camera->get_view_matrix());
 	if (FAILED(hr)) throw exception::directx_error(hr);
 
-	projection_matrix_ = c.get_projection_matrix();
-	hr = device_ptr_->SetTransform(D3DTS_PROJECTION, (D3DMATRIX const *) &c.get_projection_matrix());
+	hr = device_ptr_->SetTransform(D3DTS_PROJECTION, (D3DMATRIX const *) &camera->get_projection_matrix());
 	if (FAILED(hr)) throw exception::directx_error(hr);
+
+	camera_ = camera;
+}
+
+boost::shared_ptr<Camera> Renderer::get_camera() const
+{
+	return camera_;
 }
 
 void Renderer::set_world_matrix(math::matrix<4,4> const &tf)

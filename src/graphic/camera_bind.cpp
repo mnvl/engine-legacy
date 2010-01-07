@@ -8,6 +8,7 @@
 // prior written consent of Manvel Avetisian.
 //-----------------------------------------------------------------------------
 
+#include <boost/shared_ptr.hpp>
 #include <luabind/luabind.hpp>
 #include "camera.h"
 
@@ -17,7 +18,7 @@ void graphic::Camera::bind(lua_State *L)
 
 	module(L, "graphic")
 	[
-		class_<Camera>("Camera")
+		class_<Camera, boost::shared_ptr<Camera> >("Camera")
 		.def(constructor<>())
 		.def("set_perspective_projection", &Camera::set_perspective_projection)
 		.def("set_orthographic_projection", &Camera::set_orthographic_projection)
