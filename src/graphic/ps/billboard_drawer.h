@@ -60,12 +60,12 @@ public:
 
 			v->position = position + cross;
 			v->normal = normal;
-			v->texcoords.set(0, 0);
+			v->texcoords.set(0, 1);
 			v++;
 
 			v->position = position + cross - up;
 			v->normal = normal;
-			v->texcoords.set(0, 0);
+			v->texcoords.set(1, 1);
 			v++;
 
 			v[0] = v[-1];
@@ -73,7 +73,7 @@ public:
 
 			v->position = position - up;
 			v->normal = normal;
-			v->texcoords.set(0, 0);
+			v->texcoords.set(1, 0);
 			v++;
 
 			v[0] = v[-5];
@@ -93,7 +93,13 @@ public:
 		if (nparticles_)
 		{
 			material_->select();
-			renderer_->draw_triangles(vertex_array_.get(), nparticles_);
+			renderer_->get_device()->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
+			renderer_->get_device()->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_ONE);
+			renderer_->get_device()->SetRenderState(D3DRS_ZENABLE, FALSE);
+			renderer_->draw_triangles(vertex_array_.get(), nparticles_ * 2);
+			renderer_->get_device()->SetRenderState(D3DRS_ALPHABLENDENABLE, FALSE);
+			renderer_->get_device()->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_ZERO);
+			renderer_->get_device()->SetRenderState(D3DRS_ZENABLE, TRUE);
 		}
 	}
 

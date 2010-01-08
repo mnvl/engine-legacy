@@ -9,9 +9,11 @@
 //-----------------------------------------------------------------------------
 
 #include <exception/directx_error.h>
-#include <graphic/material.h>
+#include <util/logger.h>
+#include "material.h"
 
-namespace graphic {
+namespace graphic
+{
 
 Material::Material(boost::shared_ptr<Renderer> const &renderer_ptr):
 	renderer_ptr_(renderer_ptr)
@@ -29,7 +31,15 @@ Material::~Material()
 
 void Material::set_texture(std::string const &filename)
 {
-	texture_ptr_ = renderer_ptr_->create_texture(filename);
+	if (renderer_ptr_)
+	{
+		texture_ptr_ = renderer_ptr_->create_texture(filename);
+	}
+	else
+	{
+		LOG_WARNING("material without renderer: set_texture() will create texture without renderer"); 
+		texture_ptr_.reset(new Texture(renderer_ptr_, filename));
+	}
 }
 
 void Material::select()

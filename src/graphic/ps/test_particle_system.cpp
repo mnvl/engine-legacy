@@ -16,15 +16,15 @@
 #include <graphic/renderer.h>
 #include "directional_particle_system.h"
 
-BOOST_AUTO_TEST_SUITE (test_particle_systems)
+BOOST_AUTO_TEST_SUITE (test_particle_system)
 
 BOOST_AUTO_TEST_CASE (test_directional_ps)
 {
-	boost::shared_ptr<platform::Window> window(new platform::Window("test_window_resize"));
+	boost::shared_ptr<platform::Window> window(new platform::Window("test_particle_system"));
 	boost::shared_ptr<graphic::Renderer> renderer(new graphic::Renderer(window));
 
 	graphic::Camera camera;
-	camera.set_orthographic_projection(20.0f, 20.0f * renderer->get_screen_width() / renderer->get_screen_height(), 1.0f, 1000.0f);
+	camera.set_orthographic_projection(20.0f, 20.0f * renderer->get_screen_height() / renderer->get_screen_width(), 1.0f, 1000.0f);
 	camera.set_eye_lookat_up(math::vec<3>(10, 10, 10), math::vec<3>(0, 0, 0), math::vec<3>(0, 1, 0));
 
 	renderer->postconstruct();
@@ -33,15 +33,15 @@ BOOST_AUTO_TEST_CASE (test_directional_ps)
 	boost::shared_ptr<graphic::ps::DirectionalParticleSystem> ps(new graphic::ps::DirectionalParticleSystem(renderer));
 
 	boost::shared_ptr<graphic::Material> material(new graphic::Material(renderer));
-	material->set_texture(util::get_graphic_sources_path() + "test_white.tga");
+	material->set_texture(util::get_graphic_sources_path() + "test_particle.png");
 
 	ps->get_emitter().set_origin(math::vec<3>(0, 0, 0));
-	ps->get_emitter().set_size_interval(math::interval<>(2, 4));
+	ps->get_emitter().set_size_interval(math::interval<>(2, 2));
 	ps->get_emitter().set_direction(math::vec<3>(0, 1, 0));
 	ps->get_emitter().set_velocity_interval(math::interval<>(10, 20));
-	ps->get_emitter().set_acceleration_interval(math::interval<>(-3, -1));
-	ps->get_emitter().set_ttl_interval(math::interval<>(5, 10));
-	ps->get_controller().set_emissions_per_sec(math::interval<>(100, 100));
+	ps->get_emitter().set_acceleration_interval(math::interval<>(1, 3));
+	ps->get_emitter().set_ttl_interval(math::interval<>(7, 10));
+	ps->get_controller().set_emissions_per_sec(math::interval<>(500, 500));
 	ps->get_drawer().set_material(material);
 
 	math::scalar total_time = 0;
@@ -68,7 +68,7 @@ BOOST_AUTO_TEST_CASE (test_directional_ps)
 		LOG_DEBUG("\tnparticles = " << ps->get_keeper().get_particles_count());
 
 		BOOST_ASSERT (ps->get_keeper().get_particles_count() == ps->get_particles_count_limit() ||
-			abs(ps->get_keeper().get_particles_count() - 100 * total_time) <= 1);
+			abs(ps->get_keeper().get_particles_count() - 500 * total_time) <= 1);
 	}
 }
 
