@@ -31,7 +31,7 @@ public:
 	typedef typename emitter_t::particle_t particle_t;
 	typedef Controller<particle_t> controller_t;
 	typedef Keeper<particle_t> keeper_t;
-	typedef Drawer<particle_t> drawer_t;
+	typedef Drawer<keeper_t> drawer_t;
 
 	ParticleSystem(boost::shared_ptr<Renderer> const &renderer, size_t const max_nparticles = 1000):
 		max_nparticles_(max_nparticles),
@@ -48,24 +48,23 @@ public:
 	{
 		size_t nparticles_to_emit = controller_.move(dt);
 
-		for (size_t i = 0; i < nparticles_to_emit && max_nparticles_ < keeper_.get_particles_count(); i++)
+		for (size_t i = 0; i < nparticles_to_emit &&  keeper_.get_particles_count() < max_nparticles_; i++)
 		{
 			keeper_.add_particle(particle_t(&emitter_));
 		}
 
 		keeper_.move(dt);
+		drawer_.preprocess(keeper_);
 	}
 
 	void draw()
 	{
-		drawer_.begin();
+		drawer_.draw();
+	}
 
-		for (keeper_t::iterator_t it = keeper_.begin(); it != keeper_.end(); it++)
-		{
-			drawer_.draw(&*it);
-		}
-
-		drawer_.end();
+	size_t get_particles_count_limit() const
+	{
+		return max_nparticles_;
 	}
 
 private:

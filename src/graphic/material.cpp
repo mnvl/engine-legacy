@@ -29,7 +29,7 @@ Material::~Material()
 
 void Material::set_texture(std::string const &filename)
 {
-	texture_ptr_.reset(new Texture(renderer_ptr_, filename));
+	texture_ptr_ = renderer_ptr_->create_texture(filename);
 }
 
 void Material::select()

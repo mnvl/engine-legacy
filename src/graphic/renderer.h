@@ -55,12 +55,10 @@ public:
 	IDirect3DDevice9 *get_device() const { return device_ptr_.get(); }
     SharedResources *get_shared_resources() const { return shared_resources_.get(); }
 
-	// camera changes not propogated automatically to renderer state, you must
-	// call set_camera() every time you want to update renderer
-	void set_camera(boost::shared_ptr<Camera> const &camera);
-	boost::shared_ptr<Camera> get_camera() const;
-	math::matrix<4,4> const &get_view_matrix() const { return camera_->get_view_matrix(); }
-	math::matrix<4,4> const &get_projection_matrix() const { return camera_->get_projection_matrix(); }
+	void set_camera(Camera const &camera); // stores copy of camera
+	Camera const &get_camera() const { return camera_; }
+	math::matrix<4,4> const &get_view_matrix() const { return camera_.get_view_matrix(); }
+	math::matrix<4,4> const &get_projection_matrix() const { return camera_.get_projection_matrix(); }
 
     void set_world_matrix(math::matrix<4,4> const &tf);
 	math::matrix<4,4> const &get_world_matrix() const { return world_matrix_; }
@@ -109,7 +107,7 @@ private:
 	bool fullscreen_;
 	D3DPRESENT_PARAMETERS pp_;
 
-	boost::shared_ptr<Camera> camera_;
+	Camera camera_;
     math::matrix<4,4> world_matrix_;
 
 	boost::intrusive_ptr<IDirect3D9> direct3d_ptr_;

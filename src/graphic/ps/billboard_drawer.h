@@ -9,7 +9,7 @@
 //-----------------------------------------------------------------------------
 #pragma once
 
-#include <graphic/texture.h>
+#include <graphic/material.h>
 #include <graphic/vertex_array.h>
 #include <graphic/renderer.h>
 
@@ -18,55 +18,95 @@ namespace graphic
 namespace ps
 {
 
-template<class P>
+template<class Keeper>
 class BillboardDrawer
 {
 public:
-	typedef P particle_t;
+	typedef Keeper keeper_t;
 
 	BillboardDrawer(boost::shared_ptr<Renderer> const &renderer, size_t max_nparticles):
 		renderer_(renderer),
 		max_nparticles_(max_nparticles),
-		cursor_(0)
+		nparticles_(0)
 	{
 		vertex_array_ = renderer->create_vertex_array<graphic::vertex_pnt>(max_nparticles_ * VERTICES_PER_PARTICLE, true, true);
 	}
 
-	void set_texture(std::string const &filename)
+	void set_material(boost::shared_ptr<Material> const &material)
 	{
-		texture_ = renderer_->create_texture(filename);
+		material_ = material;
 	}
 
-	void begin()
+	void preprocess(keeper_t const &keeper)
 	{
-		texture_->select();
+		Camera const &camera = renderer_->get_camera();
 
-		cursor_ = vertex_array_->lock(true);
-		particles_to_draw_ = 0;
-	}
+		math::vec<3> normal = -camera.get_view_dir();
 
-	void draw(particle_t const *particle)
-	{
-		
-	}
+		vertex_pnt *v = vertex_array_->lock(true);
+		nparticles_ = 0;
 
-	void end()
-	{
+		for (keeper_t::iterator it = keeper.begin(); it != keeper.end(); ++it)
+		{
+			math::vec<3> up = camera.get_up_dir() * it->get_size();
+			math::vec<3> cross = camera.get_cross_dir() * it->get_size();
+
+			math::vec<3> position = it->get_position() + up / math::scalar(2) - cross / math::scalar(2);
+
+			v->position = position;
+			v->normal = normal;
+			v->texcoords.set(0, 0);
+			v++;
+
+			v->position = position + cross;
+			v->normal = normal;
+			v->texcoords.set(0, 0);
+			v++;
+
+			v->position = position + cross - up;
+			v->normal = normal;
+			v->texcoords.set(0, 0);
+			v++;
+
+			v[0] = v[-1];
+			v++;
+
+			v->position = position - up;
+			v->normal = normal;
+			v->texcoords.set(0, 0);
+			v++;
+
+			v[0] = v[-5];
+			v++;
+
+			if (++nparticles_ > max_nparticles_)
+			{
+				throw std::logic_error("trying to preprocess more particles than allowed");
+			}
+		}
+
 		vertex_array_->unlock();
-		cursor_ = 0;
+	}
+
+	void draw()
+	{
+		if (nparticles_)
+		{
+			material_->select();
+			renderer_->draw_triangles(vertex_array_.get(), nparticles_);
+		}
 	}
 
 private:
 	static size_t const VERTICES_PER_PARTICLE = 6;
 
 	boost::shared_ptr<Renderer> const renderer_;
+
 	size_t const max_nparticles_;
+	size_t nparticles_;
 
-	boost::shared_ptr<Texture> texture_;
+	boost::shared_ptr<Material> material_;
 	boost::shared_ptr<VertexArrayPNT> vertex_array_;
-
-	vertex_pnt *cursor_;
-	size_t particles_to_draw_;
 };
 
 }

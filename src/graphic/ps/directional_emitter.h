@@ -25,11 +25,15 @@ public:
 	public:
 		Particle(DirectionalEmitter *emitter):
 			position_(emitter->origin_),
+			size_(emitter->size_.random()),
 			velocity_(emitter->direction_ * emitter->velocity_.random()),
 			acceleration_(emitter->direction_ * emitter->acceleration_.random()),
 			ttl_(emitter->ttl_.random())
 		{
 		}
+
+		math::vec<3> const &get_position() const { return position_; }
+		math::scalar const get_size() const { return size_; }
 
 		void move(math::scalar dt)
 		{
@@ -38,19 +42,25 @@ public:
 			ttl_ -= dt;
 		}
 
-		bool should_die()
+		bool alive()
 		{
 			return ttl_ > 0;
 		}
 
 	private:
 		math::vec<3> position_;
+		math::scalar size_;
 		math::vec<3> velocity_;
 		math::vec<3> acceleration_;
 		math::scalar ttl_;
 	};
 
 	typedef Particle particle_t;
+
+	void set_size_interval(math::interval<> const &size)
+	{
+		size_ = size;
+	}
 
 	void set_origin(math::vec<3> const &origin)
 	{
@@ -59,7 +69,7 @@ public:
 
 	void set_direction(math::vec<3> const &direction)
 	{
-		direction_ = direction_;
+		direction_ = direction;
 	}
 
 	void set_velocity_interval(math::interval<> const &velocity)
@@ -81,6 +91,7 @@ protected:
 	friend Particle;
 
 	math::vec<3> origin_, direction_;
+	math::interval<> size_;
 	math::interval<> velocity_;
 	math::interval<> acceleration_;
 	math::interval<> ttl_;

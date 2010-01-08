@@ -23,7 +23,7 @@ class BasicKeeper
 public:
 	typedef P particle_t;
 	typedef std::deque<particle_t> particles_t;
-	typedef typename particles_t::const_iterator iterator_t;
+	typedef typename particles_t::const_iterator iterator;
 
 	void add_particle(particle_t const &particle)
 	{
@@ -38,23 +38,24 @@ public:
 		{
 			it->move(dt);
 
-			if (it->should_die())
+			if (it->alive())
 			{
-				it = particles_.erase(it);
+				++it;
 			}
 			else
 			{
-				++it;
+				it = particles_.erase(it);
 			}
 		}
 	}
 
-	size_t get_particles_count() const {
+	size_t get_particles_count() const
+	{
 		return particles_.size();
 	}
 
-	iterator_t begin() const { return particles_.begin(); }
-	iterator_t end() const { return particles_.end(); }
+	iterator begin() const { return particles_.begin(); }
+	iterator end() const { return particles_.end(); }
 
 private:
 	particles_t particles_;

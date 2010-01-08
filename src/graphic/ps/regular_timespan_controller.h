@@ -40,7 +40,7 @@ public:
 
 		size_t count = 0;
 
-		while (next_emission_time_ > time_accumulated_)
+		while (next_emission_time_ < time_accumulated_)
 		{
 			time_accumulated_ -= next_emission_time_;
 			next_emission_time_ = 1 / emissions_per_sec_.random();

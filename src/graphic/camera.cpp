@@ -15,7 +15,8 @@
 namespace graphic
 {
 
-Camera::Camera() {
+Camera::Camera()
+{
 	set_perspective_projection(math::PI/4, 1.0f, 1.0f, 10000.0f);
 	set_eye_lookat_up(math::vec<3>(0, 0, 0), math::vec<3>(0, 0, 1), math::vec<3>(0, 1, 0));
 }
