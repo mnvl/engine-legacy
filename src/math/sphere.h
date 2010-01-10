@@ -24,58 +24,58 @@ namespace math {
 template<int N,class T>
 class math::sphere {
 public:
-	typedef size_t size_type;
-	static const size_type arity = N;
-	typedef T scalar_type;
-	typedef std::numeric_limits<scalar_type> limits_type;
-	typedef vec<arity,scalar_type> vec_type;
-	typedef aabb<arity,scalar_type> aabb_type;
-	typedef ray<arity,scalar_type> ray_type;
-	typedef line<arity,scalar_type> line_type;
-	typedef sphere<arity,scalar_type> sphere_type;
+	typedef size_t size_t;
+	static const size_t ARITY = N;
+	typedef T scalar_t;
+	typedef std::numeric_limits<scalar_t> limits_t;
+	typedef vec<ARITY,scalar_t> vec_t;
+	typedef aabb<ARITY,scalar_t> aabb_t;
+	typedef ray<ARITY,scalar_t> ray_t;
+	typedef line<ARITY,scalar_t> line_t;
+	typedef sphere<ARITY,scalar_t> sphere_t;
 
-	vec_type centre;
-	scalar_type radius;
+	vec_t centre;
+	scalar_t radius;
 
 	sphere() {
 	}
 
-	sphere(const aabb_type &a) {
+	sphere(const aabb_t &a) {
 		construct(a);
 	}
 
-	sphere(const vec_type &c, scalar_type r):
+	sphere(const vec_t &c, scalar_t r):
 		centre(c),
 		radius(r)
 	{
 	}
 
-	void construct(const aabb_type &a) {
+	void construct(const aabb_t &a) {
 		centre = (a.min + a.max) / 2;
 		radius = (a.max - centre).length();
 	}
 
-	void construct(const vec_type &c, scalar_type r) {
+	void construct(const vec_t &c, scalar_t r) {
 		centre = c;
 		radius = r;
 	}
 
-	aabb_type get_aabb() const {
-		vec_type r;
+	aabb_t get_aabb() const {
+		vec_t r;
 		r.set_all(radius / 2);
-		return aabb_type(centre - r, centre + r);
+		return aabb_t(centre - r, centre + r);
 	}
 
-	bool contains(const vec_type &v) const {
+	bool contains(const vec_t &v) const {
 		return (v - centre).length_sq() < radius * radius;
 	}
 
-	bool intersects(const sphere_type &sph) const {
+	bool intersects(const sphere_t &sph) const {
 		return (centre - sph.centre).length() < radius + sph.radius;
 	}
 
 	// проверить на пересечение с лучом
-	bool intersects(const ray_type &r) const {
+	bool intersects(const ray_t &r) const {
 		// |x-r0|=R
 		// x=x0+a*t
 		// |x0+a*t-r0|=R
@@ -87,9 +87,9 @@ public:
 		// B=(a,x0-r0)*2
 		// C=(x0-r0,x0-r0)-R
 
-		scalar_type A = r.a.length_sq();
-		scalar_type B = 2 * (r.a & (r.r0 - centre));
-		scalar_type C = (r.r0 - centre).length_sq() - radius * radius;
+		scalar_t A = r.a.length_sq();
+		scalar_t B = 2 * (r.a & (r.r0 - centre));
+		scalar_t C = (r.r0 - centre).length_sq() - radius * radius;
 
 		return B * B - 4 * A * C >= 0;
 	}
@@ -97,19 +97,19 @@ public:
 	// найти точки пересечени€ с лучом (пр€мой) 
 	// r -- луч
 	// v1, v2 -- точки пересечени€
-	bool intersect(const ray_type &r, vec_type &v1, vec_type &v2) const {
-		vec_type delta = r.r0 - centre;
-		scalar_type A = r.a.length_sq();
-		scalar_type B = 2 * (r.a & delta);
-		scalar_type C = delta.length_sq() - radius * radius;
+	bool intersect(const ray_t &r, vec_t &v1, vec_t &v2) const {
+		vec_t delta = r.r0 - centre;
+		scalar_t A = r.a.length_sq();
+		scalar_t B = 2 * (r.a & delta);
+		scalar_t C = delta.length_sq() - radius * radius;
 
-		scalar_type discriminant = B * B - 4 * A * C;
+		scalar_t discriminant = B * B - 4 * A * C;
 		if(discriminant < 0) return false;
 
 		if(abs(discriminant) < EPSILON) {
 			v1 = v2 = r.r0 + r.a * (-B / (2 * A));
 		} else {
-			scalar_type discriminant_sqrt = sqrt(discriminant);
+			scalar_t discriminant_sqrt = sqrt(discriminant);
 			v1 = r.r0 + r.a * ((-B + discriminant_sqrt) / (2 * A));
 			v2 = r.r0 + r.a * ((-B - discriminant_sqrt) / (2 * A));
 		}

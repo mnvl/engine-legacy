@@ -19,36 +19,36 @@ namespace math {
 template<int N,class T=scalar>
 class line {
 public:
-    typedef size_t size_type;
-    static const size_type arity = N;
-    typedef T scalar_type;
-    typedef vec<arity, scalar_type> vec_type;
-    typedef ray<arity, scalar_type> ray_type;
-    typedef line<arity, scalar_type> line_type;
+    typedef size_t size_t;
+    static const size_t ARITY = N;
+    typedef T scalar_t;
+    typedef vec<ARITY, scalar_t> vec_t;
+    typedef ray<ARITY, scalar_t> ray_t;
+    typedef line<ARITY, scalar_t> line_t;
 
-    vec_type A, B;
+    vec_t A, B;
 
     line() {
     }
 
-    line(const vec_type &a,const vec_type &b) {
+    line(const vec_t &a,const vec_t &b) {
         construct(a,b);
     }
 
-    void construct(const vec_type &a,const vec_type &b) {
+    void construct(const vec_t &a,const vec_t &b) {
         A=a;
         B=b;
     }
 
-    vec_type direction() const {
+    vec_t direction() const {
         return B - A;
     }
 
-    ray_type get_ray() const {
-        return ray_type(A, direction());
+    ray_t get_ray() const {
+        return ray_t(A, direction());
     }
 
-    scalar_type length_sq() const {
+    scalar_t length_sq() const {
         return direction().length_sq();
     }
 };

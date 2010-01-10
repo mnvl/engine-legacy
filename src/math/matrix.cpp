@@ -18,56 +18,56 @@ math::matrix<3,3,T>::identity() {
 }
 
 template<class T> void
-math::matrix<3,3,T>::translation(scalar_type x,scalar_type y) {
+math::matrix<3,3,T>::translation(scalar_t x,scalar_t y) {
 	ij[0][0]=1;	ij[0][1]=0;	ij[0][2]=0;
 	ij[1][0]=0;	ij[1][1]=1;	ij[1][2]=0;
 	ij[2][0]=x;	ij[2][1]=y;	ij[2][2]=1;
 }
 
 template<class T> void
-math::matrix<3,3,T>::translation(const point_type &p) {
+math::matrix<3,3,T>::translation(const point_t &p) {
 	translation(p.x,p.y);
 }
 
 template<class T> void
-math::matrix<3,3,T>::translate(scalar_type x,scalar_type y) {
-	matrix_type temp;
+math::matrix<3,3,T>::translate(scalar_t x,scalar_t y) {
+	matrix_t temp;
 	temp.translation(x,y);
 	*this *= temp;
 }
 
 template<class T> void
-math::matrix<3,3,T>::translate(const point_type &p) {
+math::matrix<3,3,T>::translate(const point_t &p) {
 	translate(p.x,p.y);
 }
 
 template<class T> void
-math::matrix<3,3,T>::scaling(scalar_type x, scalar_type y) {
+math::matrix<3,3,T>::scaling(scalar_t x, scalar_t y) {
 	ij[0][0]=x;	ij[0][1]=0;	ij[0][2]=0;
 	ij[1][0]=0;	ij[1][1]=y;	ij[1][2]=0;
 	ij[2][0]=0;	ij[2][1]=0;	ij[2][2]=1;
 }
 
 template<class T> void
-math::matrix<3,3,T>::scaling(const point_type &p) {
+math::matrix<3,3,T>::scaling(const point_t &p) {
 	scaling(p.x, p.y);
 }
 
 template<class T> void
-math::matrix<3,3,T>::scale(scalar_type x, scalar_type y) {
-	matrix_type temp;
+math::matrix<3,3,T>::scale(scalar_t x, scalar_t y) {
+	matrix_t temp;
 	temp.scaling(x,y);
 	*this *= temp;
 }
 
 template<class T> void
-math::matrix<3,3,T>::scale(const point_type &p) {
+math::matrix<3,3,T>::scale(const point_t &p) {
 	scale(p.x, p.y);
 }
 
 template<class T> void
-math::matrix<3,3,T>::rotation(scalar_type alpha,scalar_type beta,scalar_type gamma) {
-	scalar_type sa = sin(alpha),
+math::matrix<3,3,T>::rotation(scalar_t alpha,scalar_t beta,scalar_t gamma) {
+	scalar_t sa = sin(alpha),
 		    ca = cos(alpha),
 		    sb = sin(beta),
 		    cb = cos(beta),
@@ -90,14 +90,14 @@ math::matrix<3,3,T>::rotation(scalar_type alpha,scalar_type beta,scalar_type gam
 }
 
 template<class T> void
-math::matrix<3,3,T>::rotation(const vec_type &v) {
+math::matrix<3,3,T>::rotation(const vec_t &v) {
 	rotation(v.A,v.B,v.C);
 }
 
 template<class T> void
-math::matrix<3,3,T>::rotation(const quaternion_type &q) {
-	scalar_type wx, wy, wz, xx, yy, yz, xy, xz, zz, x2, y2, z2;
-	scalar_type s  = 2 / q.norm();
+math::matrix<3,3,T>::rotation(const quaternion_t &q) {
+	scalar_t wx, wy, wz, xx, yy, yz, xy, xz, zz, x2, y2, z2;
+	scalar_t s  = 2 / q.norm();
 	x2 = q.x * s;    y2 = q.y * s;    z2 = q.z * s;
 	xx = q.x * x2;   xy = q.x * y2;   xz = q.x * z2;
 	yy = q.y * y2;   yz = q.y * z2;   zz = q.z * z2;
@@ -117,20 +117,20 @@ math::matrix<3,3,T>::rotation(const quaternion_type &q) {
 }
 
 template<class T> void
-math::matrix<3,3,T>::rotation(vec_type const &axis, scalar_type angle) {
+math::matrix<3,3,T>::rotation(vec_t const &axis, scalar_t angle) {
 	rotation(axis, sin(angle), cos(angle));
 }
 
 template<class T> void
-math::matrix<3,3,T>::rotation(vec_type const &axis, scalar_type sine, scalar_type cosine) {
-	scalar_type length = axis.length();
-	scalar_type a = axis.x / length;
-	scalar_type b = axis.y / length;
-	scalar_type c = axis.z / length;
-	scalar_type aa = a * a;
-	scalar_type bb = b * b;
-	scalar_type cc = c * c;
-	scalar_type omcos = 1 - cosine;
+math::matrix<3,3,T>::rotation(vec_t const &axis, scalar_t sine, scalar_t cosine) {
+	scalar_t length = axis.length();
+	scalar_t a = axis.x / length;
+	scalar_t b = axis.y / length;
+	scalar_t c = axis.z / length;
+	scalar_t aa = a * a;
+	scalar_t bb = b * b;
+	scalar_t cc = c * c;
+	scalar_t omcos = 1 - cosine;
 
 	ij[0][0] = aa + (1 - aa) * cosine;
 	ij[1][1] = bb + (1 - bb) * cosine;
@@ -144,47 +144,47 @@ math::matrix<3,3,T>::rotation(vec_type const &axis, scalar_type sine, scalar_typ
 }
 
 template<class T> void
-math::matrix<3,3,T>::rotate(scalar_type alpha,scalar_type beta,scalar_type gamma) {
-	matrix_type self = *this, temp;
+math::matrix<3,3,T>::rotate(scalar_t alpha,scalar_t beta,scalar_t gamma) {
+	matrix_t self = *this, temp;
 	temp.rotation(alpha,beta,gamma);
 	mul(*this, self, temp);
 }
 
 template<class T> void
-math::matrix<3,3,T>::rotate(const vec_type &v) {
+math::matrix<3,3,T>::rotate(const vec_t &v) {
 	rotate(v.A,v.B,v.C);
 }
 
 template<class T> void
-math::matrix<3,3,T>::rotate(const quaternion_type &q) {
-	matrix_type self = *this, temp;
+math::matrix<3,3,T>::rotate(const quaternion_t &q) {
+	matrix_t self = *this, temp;
 	self.rotation(q);
 	mul(*this, self, temp);
 }
 
 template<class T> void
-math::matrix<3,3,T>::rotate(vec_type const &axis, scalar_type angle) {
-	matrix_type self = *this, temp;
+math::matrix<3,3,T>::rotate(vec_t const &axis, scalar_t angle) {
+	matrix_t self = *this, temp;
 	temp.rotation(axis, angle);
 	mul(*this, self, temp);
 }
 
 template<class T> void
-math::matrix<3,3,T>::rotate(vec_type const &axis, scalar_type sine, scalar_type cosine) {
-	matrix_type self = *this, temp;
+math::matrix<3,3,T>::rotate(vec_t const &axis, scalar_t sine, scalar_t cosine) {
+	matrix_t self = *this, temp;
 	temp.rotation(axis, sine, cosine);
 	mul(*this, self, temp);
 }
 
 template<class T> void
-math::matrix<3,3,T>::direction(const vec_type &dir) {
-	vec_type x_axis = dir;
+math::matrix<3,3,T>::direction(const vec_t &dir) {
+	vec_t x_axis = dir;
 	x_axis.normalize();
 
-	vec_type y_axis;
+	vec_t y_axis;
 	y_axis.set(0,1,0);
 
-	vec_type z_axis = x_axis ^ y_axis;
+	vec_t z_axis = x_axis ^ y_axis;
 	z_axis.normalize();
 
 	y_axis = z_axis ^ x_axis;
@@ -196,14 +196,14 @@ math::matrix<3,3,T>::direction(const vec_type &dir) {
 }
 
 template<class T> void
-math::matrix<3,3,T>::direct(const vec_type &dir) {
-	matrix_type self = *this, temp;
+math::matrix<3,3,T>::direct(const vec_t &dir) {
+	matrix_t self = *this, temp;
 	temp.direction(dir);
 	mul(*this, self, temp);
 }
 
 template<class T> void
-math::matrix<3,3,T>::decompose(vec_type &rotate) const {
+math::matrix<3,3,T>::decompose(vec_t &rotate) const {
  	rotate.y = asin(-ij[0][2]);
  	if(cos(rotate.y) != 0) {
  		rotate.x = atan2(ij[1][2], ij[2][2]);
@@ -223,7 +223,7 @@ math::matrix<4,4,T>::identity() {
 }
 
 template<class T> void
-math::matrix<4,4,T>::translation(scalar_type x,scalar_type y,scalar_type z) {
+math::matrix<4,4,T>::translation(scalar_t x,scalar_t y,scalar_t z) {
 	ij[0][0]=1;		ij[0][1]=0;		ij[0][2]=0;		ij[0][3]=0;
 	ij[1][0]=0;		ij[1][1]=1;		ij[1][2]=0;		ij[1][3]=0;
 	ij[2][0]=0;		ij[2][1]=0;		ij[2][2]=1;		ij[2][3]=0;
@@ -231,24 +231,24 @@ math::matrix<4,4,T>::translation(scalar_type x,scalar_type y,scalar_type z) {
 }
 
 template<class T> void
-math::matrix<4,4,T>::translation(const point_type &p) {
+math::matrix<4,4,T>::translation(const point_t &p) {
 	translation(p.x,p.y,p.z);
 }
 
 template<class T> void
-math::matrix<4,4,T>::translate(scalar_type x,scalar_type y,scalar_type z) {
-	matrix_type m;
+math::matrix<4,4,T>::translate(scalar_t x,scalar_t y,scalar_t z) {
+	matrix_t m;
 	m.translation(x,y,z);
 	*this *= m;
 }
 
 template<class T> void
-math::matrix<4,4,T>::translate(const point_type &p) {
+math::matrix<4,4,T>::translate(const point_t &p) {
 	translate(p.x,p.y,p.z);
 }
 
 template<class T> void
-math::matrix<4,4,T>::scaling(scalar_type sx,scalar_type sy,scalar_type sz) {
+math::matrix<4,4,T>::scaling(scalar_t sx,scalar_t sy,scalar_t sz) {
 	ij[0][0]=sx;	ij[0][1]=0;	ij[0][2]=0;	ij[0][3]=0;
 	ij[1][0]=0;	ij[1][1]=sy;	ij[1][2]=0;	ij[1][3]=0;
 	ij[2][0]=0;	ij[2][1]=0;	ij[2][2]=sz;	ij[2][3]=0;
@@ -256,26 +256,26 @@ math::matrix<4,4,T>::scaling(scalar_type sx,scalar_type sy,scalar_type sz) {
 }
 
 template<class T> void
-math::matrix<4,4,T>::scaling(const point_type &s) {
+math::matrix<4,4,T>::scaling(const point_t &s) {
 	scaling(s.x,s.y,s.z);
 }
 
 template<class T> void
-math::matrix<4,4,T>::scale(scalar_type sx,scalar_type sy,scalar_type sz) {
+math::matrix<4,4,T>::scale(scalar_t sx,scalar_t sy,scalar_t sz) {
 
-	matrix_type m;
+	matrix_t m;
 	m.scaling(sx,sy,sz);
 	*this *= m;
 }
 
 template<class T> void
-math::matrix<4,4,T>::scale(const point_type &s) {
+math::matrix<4,4,T>::scale(const point_t &s) {
 	scale(s.x,s.y,s.z);
 }
 
 template<class T> void
-math::matrix<4,4,T>::rotation(scalar_type alpha,scalar_type beta,scalar_type gamma) {
-	scalar_type sa = sin(alpha),
+math::matrix<4,4,T>::rotation(scalar_t alpha,scalar_t beta,scalar_t gamma) {
+	scalar_t sa = sin(alpha),
 		    ca = cos(alpha),
 		    sb = sin(beta),
 		    cb = cos(beta),
@@ -306,16 +306,16 @@ math::matrix<4,4,T>::rotation(scalar_type alpha,scalar_type beta,scalar_type gam
 }
 
 template<class T> void
-math::matrix<4,4,T>::rotation(const point_type &v) {
+math::matrix<4,4,T>::rotation(const point_t &v) {
 
 	rotation(v.x, v.y, v.z);
 
 }
 
 template<class T> void
-math::matrix<4,4,T>::rotation(const quaternion_type &q) {
-	scalar_type wx, wy, wz, xx, yy, yz, xy, xz, zz, x2, y2, z2;
-	scalar_type s  = 2 / q.norm();
+math::matrix<4,4,T>::rotation(const quaternion_t &q) {
+	scalar_t wx, wy, wz, xx, yy, yz, xy, xz, zz, x2, y2, z2;
+	scalar_t s  = 2 / q.norm();
 
 	x2 = q.x * s;    y2 = q.y * s;    z2 = q.z * s;
 	xx = q.x * x2;   xy = q.x * y2;   xz = q.x * z2;
@@ -346,15 +346,15 @@ math::matrix<4,4,T>::rotation(const quaternion_type &q) {
 }
 
 template<class T> void
-math::matrix<4,4,T>::rotation(const point_type &axis, scalar_type sine, scalar_type cosine) {
-	scalar_type length = axis.length();
-	scalar_type a = axis.x / length;
-	scalar_type b = axis.y / length;
-	scalar_type c = axis.z / length;
-	scalar_type aa = a * a;
-	scalar_type bb = b * b;
-	scalar_type cc = c * c;
-	scalar_type omcos = 1 - cosine;
+math::matrix<4,4,T>::rotation(const point_t &axis, scalar_t sine, scalar_t cosine) {
+	scalar_t length = axis.length();
+	scalar_t a = axis.x / length;
+	scalar_t b = axis.y / length;
+	scalar_t c = axis.z / length;
+	scalar_t aa = a * a;
+	scalar_t bb = b * b;
+	scalar_t cc = c * c;
+	scalar_t omcos = 1 - cosine;
 
 	ij[0][0] = aa + (1 - aa) * cosine;
 	ij[1][1] = bb + (1 - bb) * cosine;
@@ -370,52 +370,52 @@ math::matrix<4,4,T>::rotation(const point_type &axis, scalar_type sine, scalar_t
 }
 
 template<class T> void
-math::matrix<4,4,T>::rotation(const point_type &axis, scalar_type angle) {
+math::matrix<4,4,T>::rotation(const point_t &axis, scalar_t angle) {
 	rotation(axis, sin(angle), cos(angle));
 }
 
 template<class T> void
-math::matrix<4,4,T>::rotate(scalar_type alpha,scalar_type beta,scalar_type gamma) {
-	matrix_type self = *this, temp;
+math::matrix<4,4,T>::rotate(scalar_t alpha,scalar_t beta,scalar_t gamma) {
+	matrix_t self = *this, temp;
 	temp.rotation(alpha,beta,gamma);
 	mul(*this,self,temp);
 }
 
 template<class T> void
-math::matrix<4,4,T>::rotate(const point_type &v) {
+math::matrix<4,4,T>::rotate(const point_t &v) {
 	rotate(v.A,v.B,v.C);
 }
 
 template<class T> void
-math::matrix<4,4,T>::rotate(const quaternion_type &q) {
-	matrix_type self = *this, temp;
+math::matrix<4,4,T>::rotate(const quaternion_t &q) {
+	matrix_t self = *this, temp;
 	temp.rotation(q);
 	mul(*this,self,temp);
 }
 
 template<class T> void
-math::matrix<4,4,T>::rotate(point_type const &axis, scalar_type sine, scalar_type cosine) {
-	matrix_type self = *this, temp;
+math::matrix<4,4,T>::rotate(point_t const &axis, scalar_t sine, scalar_t cosine) {
+	matrix_t self = *this, temp;
 	temp.rotation(axis, sine, cosine);
 	mul(*this, self, temp);
 }
 
 template<class T> void
-math::matrix<4,4,T>::rotate(point_type const &axis, scalar_type angle) {
-	matrix_type self = *this, temp;
+math::matrix<4,4,T>::rotate(point_t const &axis, scalar_t angle) {
+	matrix_t self = *this, temp;
 	temp.rotation(axis, angle);
 	mul(*this, self, temp);
 }
 
 template<class T> void
-math::matrix<4,4,T>::direction(const point_type &dir) {
-	point_type x_axis = dir;
+math::matrix<4,4,T>::direction(const point_t &dir) {
+	point_t x_axis = dir;
 	x_axis.normalize();
 
-	point_type y_axis;
+	point_t y_axis;
 	y_axis.set(0,1,0);
 
-	point_type z_axis = x_axis ^ y_axis;
+	point_t z_axis = x_axis ^ y_axis;
 	z_axis.normalize();
 
 	y_axis = z_axis ^ x_axis;
@@ -428,16 +428,16 @@ math::matrix<4,4,T>::direction(const point_type &dir) {
 }
 
 template<class T> void
-math::matrix<4,4,T>::direct(const point_type &dir) {
-	matrix_type self = *this, temp;
+math::matrix<4,4,T>::direct(const point_t &dir) {
+	matrix_t self = *this, temp;
 	temp.direction(dir);
 	mul(*this, self, temp);
 }
 
 template<class T> void
-math::matrix<4,4,T>::lookat(const point_type &eye,const point_type &at,const point_type &up)
+math::matrix<4,4,T>::lookat(const point_t &eye,const point_t &at,const point_t &up)
 {
-	point_type x_axis,y_axis,z_axis;
+	point_t x_axis,y_axis,z_axis;
 
 	(z_axis=at-eye).normalize();
 	(x_axis=up^z_axis).normalize();
@@ -454,7 +454,7 @@ math::matrix<4,4,T>::lookat(const point_type &eye,const point_type &at,const poi
 }
 
 template<class T> void
-math::matrix<4,4,T>::ortho(scalar_type width,scalar_type height,scalar_type z_near,scalar_type z_far)
+math::matrix<4,4,T>::ortho(scalar_t width,scalar_t height,scalar_t z_near,scalar_t z_far)
 {
 	ij[0][0] = 2/width;
 	ij[0][1] = 0;
@@ -478,10 +478,10 @@ math::matrix<4,4,T>::ortho(scalar_type width,scalar_type height,scalar_type z_ne
 }
 
 template<class T> void
-math::matrix<4,4,T>::perspective(scalar_type fovy,scalar_type aspect,scalar_type z_near,scalar_type z_far)
+math::matrix<4,4,T>::perspective(scalar_t fovy,scalar_t aspect,scalar_t z_near,scalar_t z_far)
 {
-	scalar_type h = 1 / tan(fovy/2);
-	scalar_type w = h / aspect;
+	scalar_t h = 1 / tan(fovy/2);
+	scalar_t w = h / aspect;
 
 	ij[0][0] = w;
 	ij[0][1] = 0;
@@ -505,15 +505,15 @@ math::matrix<4,4,T>::perspective(scalar_type fovy,scalar_type aspect,scalar_type
 }
 
 template<class T> bool
-math::matrix<4,4,T>::decompose(point_type &scale,point_type &shear,point_type &rotate,
-	point_type &translate,vec_type &persp) const
+math::matrix<4,4,T>::decompose(point_t &scale,point_t &shear,point_t &rotate,
+	point_t &translate,vec_t &persp) const
 {
  	int i, j;
- 	matrix_type locmat, pmat, invpmat, tinvpmat;
+ 	matrix_t locmat, pmat, invpmat, tinvpmat;
 
  	/* Vector4 type and functions need to be added to the common set. */
- 	vec_type prhs, psol;
- 	point_type row[3], pdum3;
+ 	vec_t prhs, psol;
+ 	point_t row[3], pdum3;
 
  	locmat = *this;
 
@@ -525,7 +525,7 @@ math::matrix<4,4,T>::decompose(point_type &scale,point_type &shear,point_type &r
  			locmat.ij[i][j] /= locmat.ij[3][3];
 
  	/* pmat is used to solve for perspective, but it also provides
- 	 * an easy way to test for singularity of the upper 3x3 component.
+ 	 * an easy way to test for singulARITY of the upper 3x3 component.
  	 */
  	pmat = locmat;
  	for(i=0; i<3; i++ )

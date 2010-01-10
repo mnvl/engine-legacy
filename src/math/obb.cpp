@@ -13,17 +13,17 @@
 template class math::obb<3>;
 
 template<class T> bool
-math::obb<3,T>::trace(const ray_type &r,scalar_type t_min, scalar_type t_max) const {
+math::obb<3,T>::trace(const ray_t &r,scalar_t t_min, scalar_t t_max) const {
 	// перенести луч в локальную систему координат
-	ray_type r1;
+	ray_t r1;
 	forward_ray(r1, r);
 	
 	// пересечение прямой r1 с плоскостьями x=0 и x=1
 	if(abs(r1.a.x) > EPSILON) {
-		scalar_type dx = 1 / r1.a.x;
+		scalar_t dx = 1 / r1.a.x;
 	
-		scalar_type t = -r1.r0.x * dx;
-		vec_type v;
+		scalar_t t = -r1.r0.x * dx;
+		vec_t v;
 		if(t >= t_min && t <= t_max) {
 			v = r1.r0 + r1.a * t;
 			if(v.y>=0 && v.y<=1 && v.z>=0 && v.z<=1) return true;
@@ -38,10 +38,10 @@ math::obb<3,T>::trace(const ray_type &r,scalar_type t_min, scalar_type t_max) co
 	
 	// пересечение прямой r1 с плоскостьями y=0 и y=1
 	if(abs(r1.a.y) > EPSILON) {
-		scalar_type dy = 1 / r1.a.y;
+		scalar_t dy = 1 / r1.a.y;
 	
-		scalar_type t = -r1.r0.y * dy;
-		vec_type v;
+		scalar_t t = -r1.r0.y * dy;
+		vec_t v;
 		if(t >= t_min && t <= t_max) {
 			v = r1.r0 + r1.a * t;
 			if(v.x>=0 && v.x<=1 && v.z>=0 && v.z<=1) return true;
@@ -56,10 +56,10 @@ math::obb<3,T>::trace(const ray_type &r,scalar_type t_min, scalar_type t_max) co
 	
 	// пересечение прямой r1 с плоскостьями z=0 и z=1
 	if(abs(r1.a.z) > EPSILON) {
-		scalar_type dz = 1 / r1.a.z;
+		scalar_t dz = 1 / r1.a.z;
 	
-		scalar_type t = -r1.r0.z * dz;
-		vec_type v;
+		scalar_t t = -r1.r0.z * dz;
+		vec_t v;
 		if(t >= t_min && t <= t_max) {
 			v = r1.r0 + r1.a * t;
 			if(v.x>=0 && v.x<=1 && v.y>=0 && v.y<=1) return true;
@@ -75,23 +75,23 @@ math::obb<3,T>::trace(const ray_type &r,scalar_type t_min, scalar_type t_max) co
 	return false;
 }
 
-template<class T> bool math::obb<3,T>::contains(const obb_type &r) const {
+template<class T> bool math::obb<3,T>::contains(const obb_t &r) const {
 	// получить координаты r в локальной системе координат
-	vec_type r_origin, r_tangent, r_normal, r_binormal;
+	vec_t r_origin, r_tangent, r_normal, r_binormal;
 	forward_point(r_origin,r.origin);
 	forward_vector(r_tangent,r.tangent);
 	forward_vector(r_normal,r.normal);
 	forward_vector(r_binormal,r.binormal);
 	
 	// получить координаты вершин obb
-	vec_type v0 = r_origin;
-	vec_type v1 = v0 + r_tangent;
-	vec_type v2 = v1 + r_normal;
-	vec_type v3 = v0 + r_normal;
-	vec_type v4 = v0 + r_binormal;
-	vec_type v5 = v1 + r_binormal;
-	vec_type v6 = v2 + r_binormal;
-	vec_type v7 = v3 + r_binormal;
+	vec_t v0 = r_origin;
+	vec_t v1 = v0 + r_tangent;
+	vec_t v2 = v1 + r_normal;
+	vec_t v3 = v0 + r_normal;
+	vec_t v4 = v0 + r_binormal;
+	vec_t v5 = v1 + r_binormal;
+	vec_t v6 = v2 + r_binormal;
+	vec_t v7 = v3 + r_binormal;
 	
 	// один obb содержить второй если он содержит все вершины второго
 	return (v0.x>=0 && v1.x>=0 && v2.x>=0 && v3.x>=0 && v4.x>=0 && v5.x>=0 && v6.x>=0 && v7.x>=0)
@@ -102,9 +102,9 @@ template<class T> bool math::obb<3,T>::contains(const obb_type &r) const {
 		&& (v1.z<=1 && v1.z<=1 && v2.z<=1 && v3.z<=1 && v4.z<=1 && v5.z<=1 && v6.z<=1 && v7.z<=1);
 }
 	
-template<class T> bool math::obb<3,T>::not_intersects(const triangle_type &r) const {
+template<class T> bool math::obb<3,T>::not_intersects(const triangle_t &r) const {
 	// получить координаты вершин треугольника в локальной системе координат
-	vec_type A, B, C;
+	vec_t A, B, C;
 	forward_point(A, r.A);
 	forward_point(B, r.B);
 	forward_point(C, r.C);
@@ -118,38 +118,38 @@ template<class T> bool math::obb<3,T>::not_intersects(const triangle_type &r) co
 	
 	// если ни одна из сторон obb не является разделяющей плоскостью, то проверить: находится ли obb
 	// целиком в одном из полупространств, задаваемых треугольником
-	vec_type N = (B - A) ^ (C - B);
+	vec_t N = (B - A) ^ (C - B);
 
-	scalar_type k1 = (vec_type(0,0,0) - A) & N;
-	scalar_type k2 = (vec_type(0,0,1) - A) & N;
-	scalar_type k3 = (vec_type(0,1,0) - A) & N;
-	scalar_type k4 = (vec_type(0,1,1) - A) & N;
-	scalar_type k5 = (vec_type(1,0,0) - A) & N;
-	scalar_type k6 = (vec_type(1,0,1) - A) & N;
-	scalar_type k7 = (vec_type(1,1,0) - A) & N;
-	scalar_type k8 = (vec_type(1,1,1) - A) & N;
+	scalar_t k1 = (vec_t(0,0,0) - A) & N;
+	scalar_t k2 = (vec_t(0,0,1) - A) & N;
+	scalar_t k3 = (vec_t(0,1,0) - A) & N;
+	scalar_t k4 = (vec_t(0,1,1) - A) & N;
+	scalar_t k5 = (vec_t(1,0,0) - A) & N;
+	scalar_t k6 = (vec_t(1,0,1) - A) & N;
+	scalar_t k7 = (vec_t(1,1,0) - A) & N;
+	scalar_t k8 = (vec_t(1,1,1) - A) & N;
 	
 	return (k1>0 && k2>0 && k3>0 && k4>0 && k5>0 && k6>0 && k7>0 && k8>0)
 	    || (k1<0 && k2<0 && k3<0 && k4<0 && k5<0 && k6<0 && k7<0 && k8<0);
 }
 	
-template<class T> bool math::obb<3,T>::not_intersects(const obb_type &r) const {
+template<class T> bool math::obb<3,T>::not_intersects(const obb_t &r) const {
 	// получить координаты r в локальной системе координат
-	vec_type r_origin, r_tangent, r_normal, r_binormal;
+	vec_t r_origin, r_tangent, r_normal, r_binormal;
 	forward_point(r_origin,r.origin);
 	forward_vector(r_tangent,r.tangent);
 	forward_vector(r_normal,r.normal);
 	forward_vector(r_binormal,r.binormal);
 	
 	// получить координаты вершин obb
-	vec_type v0 = r_origin;
-	vec_type v1 = v0 + r_tangent;
-	vec_type v2 = v1 + r_normal;
-	vec_type v3 = v0 + r_normal;
-	vec_type v4 = v0 + r_binormal;
-	vec_type v5 = v1 + r_binormal;
-	vec_type v6 = v2 + r_binormal;
-	vec_type v7 = v3 + r_binormal;
+	vec_t v0 = r_origin;
+	vec_t v1 = v0 + r_tangent;
+	vec_t v2 = v1 + r_normal;
+	vec_t v3 = v0 + r_normal;
+	vec_t v4 = v0 + r_binormal;
+	vec_t v5 = v1 + r_binormal;
+	vec_t v6 = v2 + r_binormal;
+	vec_t v7 = v3 + r_binormal;
 
 	// два obb не пересекаются если существует плоскость, которая делит прастранство на
 	// два полупространства, одно из которых содержит первый obb, а второе -- второй
@@ -163,28 +163,28 @@ template<class T> bool math::obb<3,T>::not_intersects(const obb_type &r) const {
 }
 
 template<class T> bool
-math::obb<3,T>::not_collides(const triangle_type &tri, const vec_type &vel, scalar_type t_min,
-	scalar_type t_max) const
+math::obb<3,T>::not_collides(const triangle_t &tri, const vec_t &vel, scalar_t t_min,
+	scalar_t t_max) const
 {
-	vec_type tri_A, tri_B, tri_C, tri_vel;
+	vec_t tri_A, tri_B, tri_C, tri_vel;
 	forward_point(tri_A, tri.A);
 	forward_point(tri_B, tri.B);
 	forward_point(tri_C, tri.C);
 	forward_vector(tri_vel, vel);
 
-        scalar_type t_len = t_max - t_min;
-	vec_type tri_delta = tri_vel * t_len;
+        scalar_t t_len = t_max - t_min;
+	vec_t tri_delta = tri_vel * t_len;
 
 	if(t_min != 0) {
-		vec_type tri_start = tri_vel * t_min;
+		vec_t tri_start = tri_vel * t_min;
 		tri_A -= tri_start;
 		tri_B -= tri_start;
 		tri_C -= tri_start;
 	}
 
-    vec_type tri_A1 = tri_A + tri_delta;
-	vec_type tri_B1 = tri_B + tri_delta;
-	vec_type tri_C1 = tri_C + tri_delta;
+    vec_t tri_A1 = tri_A + tri_delta;
+	vec_t tri_B1 = tri_B + tri_delta;
+	vec_t tri_C1 = tri_C + tri_delta;
 
 	if((tri_A.x<0 && tri_B.x<0 && tri_C.x<0 && tri_A1.x<0 && tri_A1.x<0 && tri_A1.x<0)
 	|| (tri_A.x>1 && tri_B.x>1 && tri_C.x>1 && tri_A1.x>1 && tri_A1.x>1 && tri_A1.x>1)
@@ -196,27 +196,27 @@ math::obb<3,T>::not_collides(const triangle_type &tri, const vec_type &vel, scal
 		return true;
 	}
 
-	vec_type tri_normal = (tri_B - tri_A) ^ (tri_C - tri_B);
+	vec_t tri_normal = (tri_B - tri_A) ^ (tri_C - tri_B);
 
-	scalar_type k1 = (vec_type(0,0,0) - tri_A) & tri_normal;
-	scalar_type k2 = (vec_type(0,0,1) - tri_A) & tri_normal;
-	scalar_type k3 = (vec_type(0,1,0) - tri_A) & tri_normal;
-	scalar_type k4 = (vec_type(0,1,1) - tri_A) & tri_normal;
-	scalar_type k5 = (vec_type(1,0,0) - tri_A) & tri_normal;
-	scalar_type k6 = (vec_type(1,0,1) - tri_A) & tri_normal;
-	scalar_type k7 = (vec_type(1,1,0) - tri_A) & tri_normal;
-	scalar_type k8 = (vec_type(1,1,1) - tri_A) & tri_normal;
+	scalar_t k1 = (vec_t(0,0,0) - tri_A) & tri_normal;
+	scalar_t k2 = (vec_t(0,0,1) - tri_A) & tri_normal;
+	scalar_t k3 = (vec_t(0,1,0) - tri_A) & tri_normal;
+	scalar_t k4 = (vec_t(0,1,1) - tri_A) & tri_normal;
+	scalar_t k5 = (vec_t(1,0,0) - tri_A) & tri_normal;
+	scalar_t k6 = (vec_t(1,0,1) - tri_A) & tri_normal;
+	scalar_t k7 = (vec_t(1,1,0) - tri_A) & tri_normal;
+	scalar_t k8 = (vec_t(1,1,1) - tri_A) & tri_normal;
 
 	return (k1<0 && k2<0 && k3<0 && k4<0 && k5<0 && k6<0 && k7<0 && k8<0)
 	    || (k1>0 && k2>0 && k3>0 && k4>0 && k5>0 && k6>0 && k7>0 && k8>0);
 }
 
 template<class T> bool
-math::obb<3,T>::not_collides(const obb_type &box, const vec_type &vel, scalar_type t_min,
-	scalar_type t_max) const
+math::obb<3,T>::not_collides(const obb_t &box, const vec_t &vel, scalar_t t_min,
+	scalar_t t_max) const
 {
 	// получить координаты box в локальной системе координат
-	vec_type box_origin, box_tangent, box_normal, box_binormal, box_vel;
+	vec_t box_origin, box_tangent, box_normal, box_binormal, box_vel;
 	forward_point(box_origin,box.origin);
 	forward_vector(box_tangent,box.tangent);
 	forward_vector(box_normal,box.normal);
@@ -224,26 +224,26 @@ math::obb<3,T>::not_collides(const obb_type &box, const vec_type &vel, scalar_ty
 	forward_vector(box_vel, vel);
 
 	// вычислить длину интервала
-	scalar_type t_len = t_max - t_min;
-	vec_type delta = box_vel * t_len;
+	scalar_t t_len = t_max - t_min;
+	vec_t delta = box_vel * t_len;
 
 	// получить координаты вершин obb
-	vec_type v0_0 = box_origin - box_vel * t_min;
-	vec_type v1_0 = v0_0 + box_tangent;
-	vec_type v2_0 = v1_0 + box_normal;
-	vec_type v3_0 = v0_0 + box_normal;
-	vec_type v4_0 = v0_0 + box_binormal;
-	vec_type v5_0 = v1_0 + box_binormal;
-	vec_type v6_0 = v2_0 + box_binormal;
-	vec_type v7_0 = v3_0 + box_binormal;
-	vec_type v0_1 = v0_0 + delta;
-	vec_type v1_1 = v1_0 + delta;
-	vec_type v2_1 = v2_0 + delta;
-	vec_type v3_1 = v3_0 + delta;
-	vec_type v4_1 = v4_0 + delta;
-	vec_type v5_1 = v5_0 + delta;
-	vec_type v6_1 = v6_0 + delta;
-	vec_type v7_1 = v7_0 + delta;
+	vec_t v0_0 = box_origin - box_vel * t_min;
+	vec_t v1_0 = v0_0 + box_tangent;
+	vec_t v2_0 = v1_0 + box_normal;
+	vec_t v3_0 = v0_0 + box_normal;
+	vec_t v4_0 = v0_0 + box_binormal;
+	vec_t v5_0 = v1_0 + box_binormal;
+	vec_t v6_0 = v2_0 + box_binormal;
+	vec_t v7_0 = v3_0 + box_binormal;
+	vec_t v0_1 = v0_0 + delta;
+	vec_t v1_1 = v1_0 + delta;
+	vec_t v2_1 = v2_0 + delta;
+	vec_t v3_1 = v3_0 + delta;
+	vec_t v4_1 = v4_0 + delta;
+	vec_t v5_1 = v5_0 + delta;
+	vec_t v6_1 = v6_0 + delta;
+	vec_t v7_1 = v7_0 + delta;
 
 	// два obb не пересекаются если существует плоскость, которая делит прастранство на
 	// два полупространства, одно из которых содержит первый obb, а второе -- второй

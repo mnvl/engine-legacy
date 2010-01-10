@@ -20,29 +20,29 @@ namespace math {
 template<const int N,class T=scalar>
 class ray {
 public:
-    static const int arity = N;
-    typedef T scalar_type;
-    typedef vec<arity,scalar_type> vec_type;
-    typedef ray<arity,scalar_type> ray_type;
-    typedef std::numeric_limits<scalar_type> limits_type;
+    static const int ARITY = N;
+    typedef T scalar_t;
+    typedef vec<ARITY,scalar_t> vec_t;
+    typedef ray<ARITY,scalar_t> ray_t;
+    typedef std::numeric_limits<scalar_t> limits_t;
 
-    vec_type r0, a;
+    vec_t r0, a;
 
     ray() {
     }
 
-    ray(const vec_type &origin, const vec_type &direction):
+    ray(const vec_t &origin, const vec_t &direction):
 		r0(origin),
 		a(direction)
 	{
     }
 
-    void set(const vec_type &origin,const vec_type &direction) {
+    void set(const vec_t &origin,const vec_t &direction) {
         r0 = origin;
 		a = direction;
     }
 
-    vec_type apply(scalar_type t) const
+    vec_t apply(scalar_t t) const
 	{
         return r0 + a * t;
     }

@@ -46,18 +46,18 @@ template<class T>
 class quaternion {
 public:
 	// типы и константы
-	typedef T scalar_type;
-	typedef vec<3,T> vec_type;
-	typedef matrix<3,3,T> matrix_type;
-	typedef quaternion<T> quaternion_type;
+	typedef T scalar_t;
+	typedef vec<3,T> vec_t;
+	typedef matrix<3,3,T> matrix_t;
+	typedef quaternion<T> quaternion_t;
 
 	// данные
-    scalar_type x,y,z,w;
+    scalar_t x,y,z,w;
 
     quaternion() {
 	}
 
-    quaternion(scalar_type x0, scalar_type y0, scalar_type z0, scalar_type w0):
+    quaternion(scalar_t x0, scalar_t y0, scalar_t z0, scalar_t w0):
 		x(x0),
 		y(y0),
 		z(z0),
@@ -65,14 +65,14 @@ public:
 	{
 	}
 
-    void set(scalar_type x0, scalar_type y0, scalar_type z0, scalar_type w0) {
+    void set(scalar_t x0, scalar_t y0, scalar_t z0, scalar_t w0) {
         x = x0;
 		y = y0;
 		z = z0;
 		w = w0;
 	}
 
-    void set(const quaternion_type& q) {
+    void set(const quaternion_t& q) {
        	x = q.x;
 		y = q.y;
 		z = q.z;
@@ -92,44 +92,44 @@ public:
 		z = -z;
     }
 
-    void conjugated(quaternion_type &q) const {
+    void conjugated(quaternion_t &q) const {
        	q = *this;
 		q.conjugate();
     }
 
-    quaternion_type conjugated() const {
-       	quaternion_type q;
+    quaternion_t conjugated() const {
+       	quaternion_t q;
 		conjugated(q);
 		return q;
     }
 
-    void scale(scalar_type s) {
+    void scale(scalar_t s) {
 		x *= s;
 		y *= s;
 		z *= s;
 		w *= s;
     }
 
-    scalar_type norm() const {
+    scalar_t norm() const {
        	return x*x + y*y + z*z + w*w;
     }
 
-    scalar_type magnitude() const {
-       	return (scalar_type) sqrt(norm());
+    scalar_t magnitude() const {
+       	return (scalar_t) sqrt(norm());
     }
 
 	void invert() {
-       	scalar_type in = 1 / norm();
+       	scalar_t in = 1 / norm();
        	set(-x*in, -y*in, -z*in, w*in);
     }
 
-	void inverted(quaternion_type &q) {
+	void inverted(quaternion_t &q) {
 		q=*this;
 		q.invert();
 	}
 
-    quaternion_type inverted() const {
-		quaternion_type q;
+    quaternion_t inverted() const {
+		quaternion_t q;
 		inverted(q);
 		return q;
     }
@@ -140,7 +140,7 @@ public:
 	   and preserve length goes to 0 or infinity
     */
     void stabilize_length() {
-		scalar_type cs = (scalar_type)(fabs(x) + fabs(y) + fabs(z) + fabs(w));
+		scalar_t cs = (scalar_t)(fabs(x) + fabs(y) + fabs(z) + fabs(w));
        	if(cs > 0.0f)
 			set(x/=cs,  y/=cs,  z/=cs,  w/=cs); 
        	else
@@ -153,7 +153,7 @@ public:
 	   so we can be sure that can divide by magnitude
 	*/
    	void normalize() {
-		scalar_type m = magnitude();
+		scalar_t m = magnitude();
 		if(m < EPSILON) {
 			stabilize_length();
 			m = magnitude();
@@ -161,7 +161,7 @@ public:
 		scale(1/m);
 	}
 
-	bool equal(const quaternion_type& q){
+	bool equal(const quaternion_t& q){
 		return (fabs(q.x - x) < EPSILON) &&
 			(fabs(q.y - y) < EPSILON) &&
 			(fabs(q.z - z) < EPSILON) &&
@@ -169,15 +169,15 @@ public:
 	}
 
 	//----operators------------------------------------------------
-	inline quaternion_type operator +() const {
+	inline quaternion_t operator +() const {
 		return *this;
  	}
 
-	quaternion_type operator -() const {
-		return quaternion_type(-x, -y, -z, -w);
+	quaternion_t operator -() const {
+		return quaternion_t(-x, -y, -z, -w);
 	}
 
-	quaternion_type &operator +=(const quaternion_type& q) {
+	quaternion_t &operator +=(const quaternion_t& q) {
 		x += q.x;
 		y += q.y;
 		z += q.z;
@@ -186,7 +186,7 @@ public:
 		return *this;
 	}
 
-	quaternion_type &operator -=(const quaternion& q) {
+	quaternion_t &operator -=(const quaternion& q) {
 		x -= q.x;
 		y -= q.y;
 		z -= q.z;
@@ -195,7 +195,7 @@ public:
 		return *this;
 	}
 
-	quaternion_type &operator *=(scalar_type s) {
+	quaternion_t &operator *=(scalar_t s) {
 		x *= s;
 		y *= s;
 		z *= s;
@@ -207,8 +207,8 @@ public:
 	/**
 	   q(cross(v,v') + wv' + w'v, ww' - dot(v,v'))
 	*/
-	quaternion_type &operator *=(const quaternion& q) {
-		quaternion_type p=*this;
+	quaternion_t &operator *=(const quaternion& q) {
+		quaternion_t p=*this;
 		x = p.w*q.x + p.x*q.w + p.y*q.z - p.z*q.y;
 		y = p.w*q.y + p.y*q.w + p.z*q.x - p.x*q.z;
 		z = p.w*q.z + p.z*q.w + p.x*q.y - p.y*q.x;
@@ -220,7 +220,7 @@ public:
     /**
 	   return rotation angle from -PI to PI
     */
-    scalar_type get_rotation_angle() const {
+    scalar_t get_rotation_angle() const {
        	if(w < 0) return 2 * atan2(-sqrt(x*x + y*y + z*z), -w);
        	else return 2 * atan2(sqrt(x*x + y*y + z*z),  w);
     }
@@ -228,12 +228,12 @@ public:
     /**
 	   create a unit quaternion from axis angle representation
     */
-    void rotation(const vec_type &axis, scalar_type angle) {
+    void rotation(const vec_t &axis, scalar_t angle) {
 		if(angle) {
-			vec_type v(axis);
+			vec_t v(axis);
 			v.normalize();
-			scalar_type half_angle = angle * scalar_type(0.5);
-			scalar_type sin_a = (scalar_type) sin(half_angle);
+			scalar_t half_angle = angle * scalar_t(0.5);
+			scalar_t sin_a = (scalar_t) sin(half_angle);
 			set(v.x*sin_a, v.y*sin_a, v.z*sin_a, cos(half_angle));
 		} else {
 			identity();
@@ -241,29 +241,29 @@ public:
     }
 
 	// построить кватернион поворотов на углы alpha, beta, gamma
-	void rotation(scalar_type alpha, scalar_type beta, scalar_type gamma) {
-		vec_type axis(alpha, beta, gamma);
-		scalar_type angle = axis.length();
+	void rotation(scalar_t alpha, scalar_t beta, scalar_t gamma) {
+		vec_t axis(alpha, beta, gamma);
+		scalar_t angle = axis.length();
 		rotation(axis, angle);
 	}
 
 	// построить кватернион поворотов на углы rot.x, rot.y, rot.z
-	void rotation(const vec_type &rot) {
-		scalar_type angle = rot.length();
+	void rotation(const vec_t &rot) {
+		scalar_t angle = rot.length();
 		rotation(rot, angle);
 	}
 
 	// получить кватернион поворота вектора (1,0,0) в вектор dir
-	void direction(const vec_type &dir) {
-		matrix_type m;
+	void direction(const vec_t &dir) {
+		matrix_t m;
 		m.direction(dir);
 
 		set_unit(m);
 	}
 
 	// умножить настоящий кватернион на кватернион поворота вектора (1,0,0) в вектор dir
-	void direct(const vec_type &dir) {
-		quaternion_type q;
+	void direct(const vec_t &dir) {
+		quaternion_t q;
 		q.direction(dir);
 
 		*this *= dir;
@@ -273,10 +273,10 @@ public:
 	   convert a quaternion to axis angle representation, 
 	   preserve the axis direction and angle from -PI to +PI
     */
-    void decompose(vec_type &axis, scalar_type &angle)const {
-       	scalar_type vl = sqrt(x*x + y*y + z*z);
+    void decompose(vec_t &axis, scalar_t &angle)const {
+       	scalar_t vl = sqrt(x*x + y*y + z*z);
        	if(vl > EPSILON) {
-       		scalar_type ivl = 1 / vl;
+       		scalar_t ivl = 1 / vl;
       		axis.set(x*ivl, y*ivl, z*ivl);
        		if(w < 0)
            		angle = 2 * atan2(-vl, -w); //-PI,0 
@@ -298,26 +298,26 @@ public:
 	template <int M, int N, class X>
    	void set_unit(matrix<M, N, X> const &m)
    	{
-       	scalar_type tr = m.ij[0][0] + m.ij[1][1] + m.ij[2][2];	// trace of martix
+       	scalar_t tr = m.ij[0][0] + m.ij[1][1] + m.ij[2][2];	// trace of martix
        	if (tr > 0) {	// if trace positive than "w" is biggest component
 			set(m.ij[1][2] - m.ij[2][1], m.ij[2][0] - m.ij[0][2], m.ij[0][1] - m.ij[1][0], tr+1);
-			scale(scalar_type(0.5) / scalar_type(sqrt(w)));	// "w" contain the "norm * 4"
+			scale(scalar_t(0.5) / scalar_t(sqrt(w)));	// "w" contain the "norm * 4"
        	} else {
 			// Some of vector components is bigger
        		if((m.ij[0][0] > m.ij[1][1]) && (m.ij[0][0] > m.ij[2][2])) {
       			set(1 + m.ij[0][0] - m.ij[1][1] - m.ij[2][2], m.ij[1][0] + m.ij[0][1],
            			m.ij[2][0] + m.ij[0][2], m.ij[1][2] - m.ij[2][1]);
-      			scale(scalar_type(0.5) / scalar_type(sqrt(x)));
+      			scale(scalar_t(0.5) / scalar_t(sqrt(x)));
        		} else {
       			if (m.ij[1][1] > m.ij[2][2]) {
 		        	set(m.ij[1][0] + m.ij[0][1], 1 + m.ij[1][1] - m.ij[0][0] - m.ij[2][2],
 			        	m.ij[2][1] + m.ij[1][2], m.ij[2][0] - m.ij[0][2]); 
-           			scale(scalar_type(0.5) / scalar_type(sqrt(y)));
+           			scale(scalar_t(0.5) / scalar_t(sqrt(y)));
        			} else {
 		        	set(m.ij[2][0] + m.ij[0][2], m.ij[2][1] + m.ij[1][2],
 						1 + m.ij[2][2] - m.ij[0][0] - m.ij[1][1],
 						m.ij[0][1] - m.ij[1][0]);
-					scale(scalar_type(0.5) / scalar_type(sqrt(z)));
+					scale(scalar_t(0.5) / scalar_t(sqrt(z)));
 				}
 			}
 		}
@@ -330,7 +330,7 @@ public:
     */
 	template <int M, int N, class X>
   	void set(matrix<M, N, X> const &m) {
-       	scalar_type tr = m.ij[0][0] + m.ij[1][1] + m.ij[2][2]; // trace of martix
+       	scalar_t tr = m.ij[0][0] + m.ij[1][1] + m.ij[2][2]; // trace of martix
        	if (tr > 0){  // if trace positive than "w" is biggest component
 			set(m.ij[1][2] - m.ij[2][1], m.ij[2][0] - m.ij[0][2], m.ij[0][1] - m.ij[1][0], tr + 1);
        	} else {
@@ -354,9 +354,9 @@ public:
 	   shortest arc quaternion rotate one vector to another by shortest path.
 	   create rotation from -> to, for any length vectors.
     */
-    void shortest_arc(const vec_type &from, const vec_type &to)
+    void shortest_arc(const vec_t &from, const vec_t &to)
     {
-       	vec_type c(from*to);
+       	vec_t c(from*to);
        	set(c.x, c.y, c.z, from & to);
        	normalize();    // if "from" or "to" not unit, normalize quat
        	w += 1;		// reducing angle to halfangle
@@ -404,34 +404,34 @@ lerp_unit(const quaternion<T> &q1, const quaternion<T> &q2, T t) {
 template<class T>
 class quaternion_lerper {
 public:
-	typedef T scalar_type;
-	typedef quaternion<scalar_type> quaternion_type;
+	typedef T scalar_t;
+	typedef quaternion<scalar_t> quaternion_t;
 
 private:
-    quaternion_type  q1, q2;
+    quaternion_t  q1, q2;
 
 public:
 
-    void setup_from_unit(const quaternion_type & p, const quaternion_type& q){
+    void setup_from_unit(const quaternion_t & p, const quaternion_t& q){
         q1 =  p;
         q2 =  q;
-        scalar_type inner = inner_product(q1, q2);
+        scalar_t inner = inner_product(q1, q2);
         if(inner < 0) q2 = -q2;
         q2 -= q1;
     }
 
-    void setup(const quaternion_type &p, const quaternion_type &q) {
+    void setup(const quaternion_t &p, const quaternion_t &q) {
         q1 =  p;     q1.normalize();
         q2 =  q;     q2.normalize();
         setup_from_unit(q1, q2);
     }
 
-    void interpolate(scalar_type t, quaternion_type & result_q) const {
+    void interpolate(scalar_t t, quaternion_t & result_q) const {
 		result_q = q1 + q2*t;
     }
 
-	quaternion_type interpolate(scalar_type t) const {
-		quaternion_type result_q;
+	quaternion_t interpolate(scalar_t t) const {
+		quaternion_t result_q;
 		interpolate(t, result_q);
 		return result_q;
 	}
@@ -444,29 +444,29 @@ template<class T>
 class quaternion_slerper
 {
 public:
-	typedef T scalar_type;
-	typedef quaternion<T> quaternion_type;
+	typedef T scalar_t;
+	typedef quaternion<T> quaternion_t;
 
 private:
-    quaternion_type q1, q2;
-    scalar_type omega;
+    quaternion_t q1, q2;
+    scalar_t omega;
 
 public:
-    void setup_from_unit(const quaternion_type &p, const quaternion_type &q){
+    void setup_from_unit(const quaternion_t &p, const quaternion_t &q){
         q1 = p;	q2 = q;
-        scalar_type cos_omega = inner_product(q1, q2);
+        scalar_t cos_omega = inner_product(q1, q2);
         if(cos_omega < 0) {
             cos_omega = -cos_omega;
             q2 = -q2;
         }
 		if(cos_omega > (1 - EPSILON)) cos_omega = 1 - EPSILON;
-        omega = (scalar_type) acos(cos_omega);
-        scalar_type inv_sin_omega = (scalar_type)(1/sin(omega));
+        omega = (scalar_t) acos(cos_omega);
+        scalar_t inv_sin_omega = (scalar_t)(1/sin(omega));
         q1.scale(inv_sin_omega);
         q2.scale(inv_sin_omega);
     }
 
-    void setup(const quaternion_type &p, const quaternion_type &q){
+    void setup(const quaternion_t &p, const quaternion_t &q){
         q1 = p;
         q1.normalize();
         q2 = q;
@@ -474,12 +474,12 @@ public:
         setup_from_unit(q1, q2);
     }
 
-    void interpolate(scalar_type t, quaternion_type &result_q) const {
-        result_q = q1*(scalar_type)sin((1 - t)*omega) + q2*(scalar_type)sin(t*omega);
+    void interpolate(scalar_t t, quaternion_t &result_q) const {
+        result_q = q1*(scalar_t)sin((1 - t)*omega) + q2*(scalar_t)sin(t*omega);
     }
 
-	quaternion_type interpolate(scalar_type t) const {
-		quaternion_type result_q;
+	quaternion_t interpolate(scalar_t t) const {
+		quaternion_t result_q;
 		interpolate(t, result_q);
 		return result_q;
 	}
@@ -538,7 +538,7 @@ trackball(const vec<3,T> &from, const vec<3,T> &to)
    The rotation can be composed back by 
    rotation = swing * twist
 
-   have singularity in case of swing_rotation close to 180 degrees rotation.
+   have singulARITY in case of swing_rotation close to 180 degrees rotation.
    input quaternion can be nonunit length, in that case output can be nonunit
    if input quaternion unit, output is unit both
 */

@@ -22,7 +22,7 @@ namespace math
 template<class T>
 class heightfield {
 public:
-    typedef T value_type;
+    typedef T value_t;
 
     heightfield(matrix<4,4> const &tf, size_t nrows, size_t ncols, vec<3> const &scale);
     ~heightfield();
@@ -38,14 +38,14 @@ public:
 
     contact_info<3> trace(ray<3> const &r, scalar max_distance = 1000.0f);
 
-    void load_from_buffer(value_type const *heights);
+    void load_from_buffer(value_t const *heights);
     void load_from_raw_file(std::string const &name);
 
 private:
     matrix<4,4> local_to_world_, world_to_local_;
     size_t nrows_, ncols_;
     vec<3> scale_;
-    std::vector<value_type> heights_;
+    std::vector<value_t> heights_;
 
     size_t nheights()
     {

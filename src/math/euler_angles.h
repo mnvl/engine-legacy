@@ -30,119 +30,119 @@ namespace math {
 template<class T>
 class math::euler_angles {
 public:
-	enum axis_type {
+	enum axis_t {
 		AXIS_X		= 0,
 		AXIS_Y		= 1,
 		AXIS_Z		= 2
 	};
 
-	enum parity_type {
+	enum pARITY_t {
 		PARITY_EVEN	= 0,
 		PARITY_ODD	= 1
 	};
 
-	enum repetition_type {
+	enum repetition_t {
 		REPETITION_NO	= 0,
 		REPETITION_YES  = 1
 	};
 
-	enum frame_type {
+	enum frame_t {
 		FRAME_STATIC	= 0,
-                FRAME_ROTATED	= 1
+        FRAME_ROTATED	= 1
 	};
 
-	typedef unsigned order_type;
+	typedef unsigned order_t;
 
         #if defined(_MSC_VER)
-        template<unsigned axis, unsigned parity, unsigned rep, unsigned frame>
+        template<unsigned axis, unsigned pARITY, unsigned rep, unsigned frame>
         #else
-	template<axis_type axis, parity_type parity, repetition_type rep, frame_type frame>
+	template<axis_t axis, pARITY_t pARITY, repetition_t rep, frame_t frame>
         #endif
 	struct static_order {
-		static order_type const result = (order_type(axis)	<< 3)
-									   | (order_type(parity)<< 2)
-									   | (order_type(rep)	<< 1)
-									   |  order_type(frame);
+		static order_t const result = (order_t(axis)	<< 3)
+									   | (order_t(pARITY)<< 2)
+									   | (order_t(rep)	<< 1)
+									   |  order_t(frame);
 	};
 
-	static order_type const ORDER_XYZs    = static_order<AXIS_X,PARITY_EVEN,REPETITION_NO,FRAME_STATIC>::result;
-	static order_type const ORDER_XYXs    = static_order<AXIS_X,PARITY_EVEN,REPETITION_YES,FRAME_STATIC>::result;
-	static order_type const ORDER_XZYs    = static_order<AXIS_X,PARITY_ODD,REPETITION_NO,FRAME_STATIC>::result;
-	static order_type const ORDER_XZXs    = static_order<AXIS_X,PARITY_ODD,REPETITION_YES,FRAME_STATIC>::result;
-	static order_type const ORDER_YZXs    = static_order<AXIS_Y,PARITY_EVEN,REPETITION_NO,FRAME_STATIC>::result;
-	static order_type const ORDER_YZYs    = static_order<AXIS_Y,PARITY_EVEN,REPETITION_YES,FRAME_STATIC>::result;
-	static order_type const ORDER_YXZs    = static_order<AXIS_Y,PARITY_ODD,REPETITION_NO,FRAME_STATIC>::result;
-	static order_type const ORDER_YXYs    = static_order<AXIS_Y,PARITY_ODD,REPETITION_YES,FRAME_STATIC>::result;
-	static order_type const ORDER_ZXYs    = static_order<AXIS_Z,PARITY_EVEN,REPETITION_NO,FRAME_STATIC>::result;
-	static order_type const ORDER_ZXZs    = static_order<AXIS_Z,PARITY_EVEN,REPETITION_YES,FRAME_STATIC>::result;
-	static order_type const ORDER_ZYXs    = static_order<AXIS_Z,PARITY_ODD,REPETITION_NO,FRAME_STATIC>::result;
-	static order_type const ORDER_ZYZs    = static_order<AXIS_Z,PARITY_ODD,REPETITION_YES,FRAME_STATIC>::result;
+	static order_t const ORDER_XYZs    = static_order<AXIS_X,PARITY_EVEN,REPETITION_NO,FRAME_STATIC>::result;
+	static order_t const ORDER_XYXs    = static_order<AXIS_X,PARITY_EVEN,REPETITION_YES,FRAME_STATIC>::result;
+	static order_t const ORDER_XZYs    = static_order<AXIS_X,PARITY_ODD,REPETITION_NO,FRAME_STATIC>::result;
+	static order_t const ORDER_XZXs    = static_order<AXIS_X,PARITY_ODD,REPETITION_YES,FRAME_STATIC>::result;
+	static order_t const ORDER_YZXs    = static_order<AXIS_Y,PARITY_EVEN,REPETITION_NO,FRAME_STATIC>::result;
+	static order_t const ORDER_YZYs    = static_order<AXIS_Y,PARITY_EVEN,REPETITION_YES,FRAME_STATIC>::result;
+	static order_t const ORDER_YXZs    = static_order<AXIS_Y,PARITY_ODD,REPETITION_NO,FRAME_STATIC>::result;
+	static order_t const ORDER_YXYs    = static_order<AXIS_Y,PARITY_ODD,REPETITION_YES,FRAME_STATIC>::result;
+	static order_t const ORDER_ZXYs    = static_order<AXIS_Z,PARITY_EVEN,REPETITION_NO,FRAME_STATIC>::result;
+	static order_t const ORDER_ZXZs    = static_order<AXIS_Z,PARITY_EVEN,REPETITION_YES,FRAME_STATIC>::result;
+	static order_t const ORDER_ZYXs    = static_order<AXIS_Z,PARITY_ODD,REPETITION_NO,FRAME_STATIC>::result;
+	static order_t const ORDER_ZYZs    = static_order<AXIS_Z,PARITY_ODD,REPETITION_YES,FRAME_STATIC>::result;
 
-	static order_type const ORDER_ZYXr    = static_order<AXIS_X,PARITY_EVEN,REPETITION_NO,FRAME_ROTATED>::result;
-	static order_type const ORDER_XYXr    = static_order<AXIS_X,PARITY_EVEN,REPETITION_YES,FRAME_ROTATED>::result;
-	static order_type const ORDER_YZXr    = static_order<AXIS_X,PARITY_ODD,REPETITION_NO,FRAME_ROTATED>::result;
-	static order_type const ORDER_XZXr    = static_order<AXIS_X,PARITY_ODD,REPETITION_YES,FRAME_ROTATED>::result;
-	static order_type const ORDER_XZYr    = static_order<AXIS_Y,PARITY_EVEN,REPETITION_NO,FRAME_ROTATED>::result;
-	static order_type const ORDER_YZYr    = static_order<AXIS_Y,PARITY_EVEN,REPETITION_YES,FRAME_ROTATED>::result;
-	static order_type const ORDER_ZXYr    = static_order<AXIS_Y,PARITY_ODD,REPETITION_NO,FRAME_ROTATED>::result;
-	static order_type const ORDER_YXYr    = static_order<AXIS_Y,PARITY_ODD,REPETITION_YES,FRAME_ROTATED>::result;
-	static order_type const ORDER_YXZr    = static_order<AXIS_Z,PARITY_EVEN,REPETITION_NO,FRAME_ROTATED>::result;
-	static order_type const ORDER_ZXZr    = static_order<AXIS_Z,PARITY_EVEN,REPETITION_YES,FRAME_ROTATED>::result;
-	static order_type const ORDER_XYZr    = static_order<AXIS_Z,PARITY_ODD,REPETITION_NO,FRAME_ROTATED>::result;
-	static order_type const ORDER_ZYZr    = static_order<AXIS_Z,PARITY_ODD,REPETITION_YES,FRAME_ROTATED>::result;
+	static order_t const ORDER_ZYXr    = static_order<AXIS_X,PARITY_EVEN,REPETITION_NO,FRAME_ROTATED>::result;
+	static order_t const ORDER_XYXr    = static_order<AXIS_X,PARITY_EVEN,REPETITION_YES,FRAME_ROTATED>::result;
+	static order_t const ORDER_YZXr    = static_order<AXIS_X,PARITY_ODD,REPETITION_NO,FRAME_ROTATED>::result;
+	static order_t const ORDER_XZXr    = static_order<AXIS_X,PARITY_ODD,REPETITION_YES,FRAME_ROTATED>::result;
+	static order_t const ORDER_XZYr    = static_order<AXIS_Y,PARITY_EVEN,REPETITION_NO,FRAME_ROTATED>::result;
+	static order_t const ORDER_YZYr    = static_order<AXIS_Y,PARITY_EVEN,REPETITION_YES,FRAME_ROTATED>::result;
+	static order_t const ORDER_ZXYr    = static_order<AXIS_Y,PARITY_ODD,REPETITION_NO,FRAME_ROTATED>::result;
+	static order_t const ORDER_YXYr    = static_order<AXIS_Y,PARITY_ODD,REPETITION_YES,FRAME_ROTATED>::result;
+	static order_t const ORDER_YXZr    = static_order<AXIS_Z,PARITY_EVEN,REPETITION_NO,FRAME_ROTATED>::result;
+	static order_t const ORDER_ZXZr    = static_order<AXIS_Z,PARITY_EVEN,REPETITION_YES,FRAME_ROTATED>::result;
+	static order_t const ORDER_XYZr    = static_order<AXIS_Z,PARITY_ODD,REPETITION_NO,FRAME_ROTATED>::result;
+	static order_t const ORDER_ZYZr    = static_order<AXIS_Z,PARITY_ODD,REPETITION_YES,FRAME_ROTATED>::result;
 
-	typedef T scalar_type;
-	typedef math::quaternion<scalar_type> quaternion_type;	
-	typedef matrix<3,3,scalar_type> matrix_type;
+	typedef T scalar_t;
+	typedef math::quaternion<scalar_t> quaternion_t;	
+	typedef matrix<3,3,scalar_t> matrix_t;
 
-	scalar_type x, y, z;
-	order_type order;
+	scalar_t x, y, z;
+	order_t order;
 
-	static frame_type get_frame(order_type order) {
-		return frame_type(order & 1);
+	static frame_t get_frame(order_t order) {
+		return frame_t(order & 1);
         }
 
-	static repetition_type get_repetition(order_type order) {
-		return repetition_type((order >> 1) & 1);
+	static repetition_t get_repetition(order_t order) {
+		return repetition_t((order >> 1) & 1);
 	}
 
-	static parity_type get_parity(order_type order) {
-		return parity_type((order >> 2) & 1);
+	static pARITY_t get_pARITY(order_t order) {
+		return pARITY_t((order >> 2) & 1);
 	}
 
-	static axis_type get_axis_i(order_type order) {
-		return (axis_type) safe[(unsigned(order) >> 3) & 3];
+	static axis_t get_axis_i(order_t order) {
+		return (axis_t) safe[(unsigned(order) >> 3) & 3];
 	}
 
-	static axis_type get_axis_j(order_type order) {
-		return (axis_type) next[get_axis_i(order) + (get_parity(order) == PARITY_ODD)];
+	static axis_t get_axis_j(order_t order) {
+		return (axis_t) next[get_axis_i(order) + (get_pARITY(order) == PARITY_ODD)];
 	}
 
-	static axis_type get_axis_k(order_type order) {
-		return (axis_type) next[get_axis_i(order) + (get_parity(order) == PARITY_EVEN)];
+	static axis_t get_axis_k(order_t order) {
+		return (axis_t) next[get_axis_i(order) + (get_pARITY(order) == PARITY_EVEN)];
 	}
 
-	static axis_type get_axis_h(order_type order) {
-		return (axis_type) (get_repetition(order) == REPETITION_NO) ? get_axis_k(order) : get_axis_i(order);
+	static axis_t get_axis_h(order_t order) {
+		return (axis_t) (get_repetition(order) == REPETITION_NO) ? get_axis_k(order) : get_axis_i(order);
 	}
 
-	static void unpack_order(order_type order, frame_type &frame, repetition_type &rep,
-		parity_type &parity,axis_type &i, axis_type &j, axis_type &k, axis_type &h)
+	static void unpack_order(order_t order, frame_t &frame, repetition_t &rep,
+		pARITY_t &pARITY,axis_t &i, axis_t &j, axis_t &k, axis_t &h)
 	{
 		frame = get_frame(order);
 		rep = get_repetition(order);
-		parity = get_parity(order);
+		pARITY = get_pARITY(order);
 		i = get_axis_i(order);
 		j = get_axis_j(order);
 		k = get_axis_k(order);
 		h = get_axis_h(order);
 	}
 
-	void load(matrix_type const &M, order_type ord);
-	void load(quaternion_type const &Q, order_type ord);
+	void load(matrix_t const &M, order_t ord);
+	void load(quaternion_t const &Q, order_t ord);
 
-	void save(matrix_type &M) const;
-	void save(quaternion_type &Q) const;
+	void save(matrix_t &M) const;
+	void save(quaternion_t &Q) const;
 
 private:
 	static char const safe[], next[];

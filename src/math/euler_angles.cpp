@@ -17,17 +17,17 @@ template<class T> char const math::euler_angles<T>::next[] = "\001\002\000\001";
 template class math::euler_angles<>;
 
 template<class T> void
-math::euler_angles<T>::load(matrix_type const &M, order_type ord) {
+math::euler_angles<T>::load(matrix_t const &M, order_t ord) {
 	order = ord;
 
-	axis_type i,j,k,h;
-	parity_type n;
-	repetition_type s;
-	frame_type f;
+	axis_t i,j,k,h;
+	pARITY_t n;
+	repetition_t s;
+	frame_t f;
 	unpack_order(order, f, s, n, i, j, k, h);
 
 	if (s == REPETITION_YES) {
-		scalar_type sy = sqrt(M.ij[i][j]*M.ij[i][j] + M.ij[i][k]*M.ij[i][k]);
+		scalar_t sy = sqrt(M.ij[i][j]*M.ij[i][j] + M.ij[i][k]*M.ij[i][k]);
 		if (sy > 16*EPSILON) {
 			x = atan2(M.ij[i][j], M.ij[i][k]);
 			y = atan2(sy, M.ij[i][i]);
@@ -38,7 +38,7 @@ math::euler_angles<T>::load(matrix_type const &M, order_type ord) {
 			z = 0;
 		}
 	} else {
-		scalar_type cy = sqrt(M.ij[i][i]*M.ij[i][i] + M.ij[j][i]*M.ij[j][i]);
+		scalar_t cy = sqrt(M.ij[i][i]*M.ij[i][i] + M.ij[j][i]*M.ij[j][i]);
 		if (cy > 16*EPSILON) {
 			x = atan2(M.ij[k][j], M.ij[k][k]);
 			y = atan2(-M.ij[k][i], cy);
@@ -56,29 +56,29 @@ math::euler_angles<T>::load(matrix_type const &M, order_type ord) {
 	}
 	
 	if (f == FRAME_ROTATED) {
-		scalar_type t = x;
+		scalar_t t = x;
 		x = z;
 		z = t;
 	}
 }
 
 template<class T> void
-math::euler_angles<T>::load(quaternion_type const &Q, order_type ord) {
-	matrix_type M;
+math::euler_angles<T>::load(quaternion_t const &Q, order_t ord) {
+	matrix_t M;
 	M.rotation(Q);
 
 	load(M, ord);
 }
 
 template<class T> void
-math::euler_angles<T>::save(matrix_type &M) const {
+math::euler_angles<T>::save(matrix_t &M) const {
 	euler_angles<T> ea = *this;
-	scalar_type ti, tj, th, ci, cj, ch, si, sj, sh, cc, cs, sc, ss;
+	scalar_t ti, tj, th, ci, cj, ch, si, sj, sh, cc, cs, sc, ss;
 
-	axis_type i,j,k,h;
-	parity_type n;
-	repetition_type s;
-	frame_type f;
+	axis_t i,j,k,h;
+	pARITY_t n;
+	repetition_t s;
+	frame_t f;
 	unpack_order(order, f, s, n, i, j, k, h);
 
 	if(f == FRAME_ROTATED)
@@ -107,14 +107,14 @@ math::euler_angles<T>::save(matrix_type &M) const {
 }
 
 template<class T> void
-math::euler_angles<T>::save(quaternion_type &Q) const {
+math::euler_angles<T>::save(quaternion_t &Q) const {
 	euler_angles<T> ea = *this;
-	scalar_type a[3], ti, tj, th, ci, cj, ch, si, sj, sh, cc, cs, sc, ss;
+	scalar_t a[3], ti, tj, th, ci, cj, ch, si, sj, sh, cc, cs, sc, ss;
 
-	axis_type i,j,k,h;
-	parity_type n;
-	repetition_type s;
-	frame_type f;
+	axis_t i,j,k,h;
+	pARITY_t n;
+	repetition_t s;
+	frame_t f;
 	unpack_order(order, f, s, n, i, j, k, h);
 
 	if(f == FRAME_ROTATED)

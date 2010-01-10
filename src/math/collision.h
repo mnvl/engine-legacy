@@ -25,16 +25,16 @@ namespace math {
 
 	template<int N, class S = math::scalar>
 	struct contact_info {
-		static int const arity = N;
-		typedef S scalar_type;
-		typedef vec<arity, scalar_type> vec_type;
-		typedef contact_info<arity, scalar_type> contact_info_type;
+		static int const ARITY = N;
+		typedef S scalar_t;
+		typedef vec<ARITY, scalar_t> vec_t;
+		typedef contact_info<ARITY, scalar_t> contact_info_t;
 
 		bool happened, penetrated;
-		vec_type position, normal;
-		scalar_type time, penetration_depth;
+		vec_t position, normal;
+		scalar_t time, penetration_depth;
 
-		bool worse_than(contact_info_type const &ci) const {
+		bool worse_than(contact_info_t const &ci) const {
 			if (ci.happened == false) return false;
 			if (happened == false) return true;
 			if (penetrated == false && ci.penetrated == true) return true;

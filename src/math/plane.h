@@ -20,26 +20,26 @@ namespace math {
 template<class T = scalar>
 class plane {
 public:
-	typedef T scalar_type;
-	typedef std::numeric_limits<scalar_type> limits_type;
-	typedef size_t size_type;
-	static const size_type arity=3;
-	typedef vec<arity,scalar_type> vec_type;
-	typedef ray<arity,scalar_type> ray_type;
-	typedef plane<scalar_type> plane_type;
+	typedef T scalar_t;
+	typedef std::numeric_limits<scalar_t> limits_t;
+	typedef size_t size_t;
+	static const size_t ARITY=3;
+	typedef vec<ARITY,scalar_t> vec_t;
+	typedef ray<ARITY,scalar_t> ray_t;
+	typedef plane<scalar_t> plane_t;
 
 	// данные
-	scalar_type A, B, C, D;
+	scalar_t A, B, C, D;
 
 	// конструкторы
 	plane() {
 	}
 
-	plane(const vec_type &o,const vec_type &n) {
+	plane(const vec_t &o,const vec_t &n) {
 		construct(o,n);
 	}
 
-	void construct(const vec_type &o,const vec_type &n) {
+	void construct(const vec_t &o,const vec_t &n) {
 		A = n.x;
 		B = n.y;
 		C = n.z;
@@ -47,37 +47,37 @@ public:
 	}
 
 	// расположение точки
-	scalar_type position(const vec_type &v) const {
+	scalar_t position(const vec_t &v) const {
 		return A*v.x + B*v.y + C*v.z + D;
 	}
 
 	// пересечение с прямой
-	bool intersects(const ray_type &r) const {
+	bool intersects(const ray_t &r) const {
 		return abs(A*r.a.x + B*r.a.y + C*r.a.z)>EPSILON
 			|| contains(r);
 	}
 
-	bool contains(vec_type const &p) const {
+	bool contains(vec_t const &p) const {
 		return abs(A * p.x + B * p.y + C * p.z + D) < EPSILON;
 	}
 
-	bool contains(const ray_type &r) const {
+	bool contains(const ray_t &r) const {
 		return abs(A*r.a.x + B*r.a.y + C*r.a.z) < EPSILON && contains(r.r0);
 	}
 
-	bool parallel(const ray_type &r) const {
+	bool parallel(const ray_t &r) const {
 		return !intersects(r);
 	}
 
-	scalar_type trace(const ray_type &r) const {
-		scalar_type a_n = A*r.a.x + B*r.a.y + C*r.a.z;
+	scalar_t trace(const ray_t &r) const {
+		scalar_t a_n = A*r.a.x + B*r.a.y + C*r.a.z;
 		return -(A*r.r0.x + B*r.r0.y + C*r.r0.z + D) / a_n;
 	}
 
 	// найти пересечение с лучом r
 	// r -- данный луч
 	// t -- параметр в уравнении прямой r = r.origin + r.direction * t;
-	bool trace(const ray_type &r,scalar_type &t,scalar_type t_min = 0, scalar_type t_max = 1) const {
+	bool trace(const ray_t &r,scalar_t &t,scalar_t t_min = 0, scalar_t t_max = 1) const {
 		t = trace(r);
 		return t >= t_min && t <= t_max;
 	}
@@ -86,7 +86,7 @@ public:
 	// r -- данный луч
 	// t -- параметр в уравнении прямой r = r.origin + r.direction * t;
 	// v -- точка пересечения
-	bool trace(const ray_type &r,scalar_type &t,vec_type &v,scalar_type t_min = 0, scalar_type t_max = 1) const {
+	bool trace(const ray_t &r,scalar_t &t,vec_t &v,scalar_t t_min = 0, scalar_t t_max = 1) const {
 		if(!trace(r,t,t_min,t_max)) return false;
 		v = r.r0 + r.a * t;
 		return true;
@@ -96,15 +96,15 @@ public:
 	// pl -- плоскость
 	// result -- искомая прямая пересечения
 	// если плоскости параллельны -- возвращает false
-	bool intersect(const plane_type &pl, ray_type &r) const {
-		r.a = vec_type(A,B,C) ^ vec_type(pl.A, pl.B, pl.C);
-		vec_type dir2 = r.a * r.a;
+	bool intersect(const plane_t &pl, ray_t &r) const {
+		r.a = vec_t(A,B,C) ^ vec_t(pl.A, pl.B, pl.C);
+		vec_t dir2 = r.a * r.a;
 
-		scalar_type invdet;
+		scalar_t invdet;
 		if(dir2.z > dir2.y && dir2.z > dir2.x && dir2.z > EPSILON)
 		{
 			/* then get a point on the XY plane */
-			invdet = scalar_type(1) / r.a.z;
+			invdet = scalar_t(1) / r.a.z;
 			/* solve < pl1.x * xpt.x + pl1.y * xpt.y = - pl1.w >
 			< pl2.x * xpt.x + pl2.y * xpt.y = - pl2.w > */
 			r.r0.x = B * pl.D - pl.B *D;
@@ -114,7 +114,7 @@ public:
 		else if (dir2.y > dir2.x && dir2.y > EPSILON)
 		{
 			/* then get a point on the XZ plane */
-			invdet = scalar_type(1) / r.a.y;
+			invdet = scalar_t(1) / r.a.y;
 			/* solve < pl1.x * xpt.x + pl1.z * xpt.z = -pl1.w >
 			< pl2.x * xpt.x + pl2.z * xpt.z = -pl2.w > */
 			r.r0.x = C * pl.D - pl.C * D;
@@ -124,7 +124,7 @@ public:
 		else if (dir2.x > EPSILON)
 		{
 			/* then get a point on the YZ plane */
-			invdet = scalar_type(1) / r.a.x;
+			invdet = scalar_t(1) / r.a.x;
 			/* solve < pl1.y * xpt.y + pl1.z * xpt.z = - pl1.w >
 			< pl2.y * xpt.y + pl2.z * xpt.z = - pl2.w > */
 			r.r0.x = 0;
@@ -135,7 +135,7 @@ public:
 
 		r.r0 *= invdet;
 
-		invdet = scalar_type(1) / sqrt(dir2.x + dir2.y + dir2.z);
+		invdet = scalar_t(1) / sqrt(dir2.x + dir2.y + dir2.z);
 		r.a *= invdet;
 
 		return true;

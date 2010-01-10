@@ -24,34 +24,34 @@ template<class T>
 class math::frustum {
 public:
 	// типы и константы
-	typedef T scalar_type;
-	typedef size_t size_type;
-	static const size_type arity=3;
-	typedef vec<arity,scalar_type> vec_type;
-	typedef matrix<arity,arity,scalar_type> matrix_type;
-	typedef line<arity,scalar_type> edge_type;
-	typedef aabb<arity,scalar_type> aabb_type;
-	typedef triangle<arity,scalar_type> triangle_t;
-	typedef frustum<scalar_type> frustum_type;
+	typedef T scalar_t;
+	typedef size_t size_t;
+	static const size_t ARITY=3;
+	typedef vec<ARITY,scalar_t> vec_t;
+	typedef matrix<ARITY,ARITY,scalar_t> matrix_t;
+	typedef line<ARITY,scalar_t> edge_t;
+	typedef aabb<ARITY,scalar_t> aabb_t;
+	typedef triangle<ARITY,scalar_t> triangle_t;
+	typedef frustum<scalar_t> frustum_t;
 
 	// данные
-	vec_type origin,bisector;
-	scalar_type bisector_length;
+	vec_t origin,bisector;
+	scalar_t bisector_length;
 	triangle_t top,bottom,left,right;
 
 	// конструкторы
-	void construct(const vec_type &o,const vec_type &b,scalar_type fovx,scalar_type fovy) {
+	void construct(const vec_t &o,const vec_t &b,scalar_t fovx,scalar_t fovy) {
 		origin=o;
 		bisector=b;
 
 		fovx/=2;
 		fovy/=2;
 
-		vec_type A,B,C,D;
-		rotate(A,bisector,origin,-fovx,-fovy,(scalar_type)0);
-		rotate(B,bisector,origin, fovx,-fovy,(scalar_type)0);
-		rotate(C,bisector,origin, fovx, fovy,(scalar_type)0);
-		rotate(D,bisector,origin,-fovx, fovy,(scalar_type)0);
+		vec_t A,B,C,D;
+		rotate(A,bisector,origin,-fovx,-fovy,(scalar_t)0);
+		rotate(B,bisector,origin, fovx,-fovy,(scalar_t)0);
+		rotate(C,bisector,origin, fovx, fovy,(scalar_t)0);
+		rotate(D,bisector,origin,-fovx, fovy,(scalar_t)0);
 
 		bisector-=origin;
 		bisector_length=bisector.length();
@@ -68,21 +68,21 @@ public:
 	}
 
 	// пересечение с aabb
-	bool contains(const vec_type &v) const {
+	bool contains(const vec_t &v) const {
 		return top.position(v)>=0 && bottom.position(v)>=0
 			&& left.position(v)>=0 && right.position(v)>=0;
 	}
 
-	bool contains(const aabb_type &b) const {
+	bool contains(const aabb_t &b) const {
 		return contains(b.min) || contains(b.max);
 	}
 
-	bool intersects(const aabb_type &b) const {
+	bool intersects(const aabb_t &b) const {
 		if(contains(b)) return true;
 
-		vec_type v;
-		edge_type e;
-		for(int i=0; i<aabb_type::edges_count; i++) {
+		vec_t v;
+		edge_t e;
+		for(int i=0; i<aabb_t::edges_count; i++) {
 			b.get_edge(i,e);
 			if(top.intersect(e,v) || bottom.intersect(e,v)
 				|| left.intersect(e,v) || right.intersect(e,v)) return true;

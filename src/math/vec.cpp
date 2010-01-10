@@ -20,25 +20,25 @@ template class vec<3>;
 template class vec<4>;
 
 template<class T> void
-vec<2,T>::to_polar(scalar_type &modulus,scalar_type &angle) const {
+vec<2,T>::to_polar(scalar_t &modulus,scalar_t &angle) const {
 	modulus = length();
 	angle = atan2(y, x);
 }
 
 template<class T> void
-vec<3,T>::to_axis_angle(vec_type &axis, scalar_type &angle) const {
-	const vec_type original(1,0,0);
+vec<3,T>::to_axis_angle(vec_t &axis, scalar_t &angle) const {
+	const vec_t original(1,0,0);
 
 	axis = original ^ *this;
 	axis.normalize();
 
-	vec_type basis_y = axis ^ original;
+	vec_t basis_y = axis ^ original;
 
 	vec<2,T> xy;
 	xy.x = x / length();
 	xy.y = *this & basis_y;
 
-	scalar_type t;
+	scalar_t t;
 	xy.to_polar(t, angle);
 }
 

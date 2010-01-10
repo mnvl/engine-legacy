@@ -46,50 +46,50 @@ template<class T>
 class math::matrix<3,3,T> {
 public:
 	// типы и константы
-	typedef size_t size_type;
-	static const size_type width=3,height=3;
-	typedef T scalar_type;
-	typedef vec<width-1,scalar_type> point_type;
-	typedef vec<width,scalar_type> vec_type;
-	typedef quaternion<scalar_type> quaternion_type;
-	typedef matrix<width,height,scalar_type> matrix_type;
+	typedef size_t size_t;
+	static const size_t WIDTH=3,HEIGHT=3;
+	typedef T scalar_t;
+	typedef vec<WIDTH-1,scalar_t> point_t;
+	typedef vec<WIDTH,scalar_t> vec_t;
+	typedef quaternion<scalar_t> quaternion_t;
+	typedef matrix<WIDTH,HEIGHT,scalar_t> matrix_t;
 
 	// данные
-	scalar_type ij[width][height];
+	scalar_t ij[WIDTH][HEIGHT];
 
 	// конструкторы
 	void identity();
-	void translation(scalar_type x,scalar_type y);
-	void translation(const point_type &p);
-	void translate(scalar_type x,scalar_type y);
-	void translate(const point_type &p);
-	void scaling(scalar_type x, scalar_type y);
-	void scaling(const point_type &p);
-	void scale(scalar_type x, scalar_type y);
-	void scale(const point_type &p);
-	void rotation(scalar_type alpha,scalar_type beta,scalar_type gamma);
-	void rotation(scalar_type gamma) { rotation(0, 0, gamma); }
-	void rotation(const vec_type &v);
-	void rotation(const quaternion_type &q);
-	void rotation(vec_type const &axis, scalar_type sine, scalar_type cosine);
-	void rotation(vec_type const &axis, scalar_type angle);
-	void rotate(scalar_type alpha,scalar_type beta,scalar_type gamma);
-	void rotate(scalar_type gamma) { rotation(0, 0, gamma); }
-	void rotate(const vec_type &v);
-	void rotate(const quaternion_type &q);
-	void rotate(vec_type const &axis, scalar_type sine, scalar_type cosine);
-	void rotate(vec_type const &axis, scalar_type angle);
-	void direction(const vec_type &dir);
-	void direct(const vec_type &dir);
+	void translation(scalar_t x,scalar_t y);
+	void translation(const point_t &p);
+	void translate(scalar_t x,scalar_t y);
+	void translate(const point_t &p);
+	void scaling(scalar_t x, scalar_t y);
+	void scaling(const point_t &p);
+	void scale(scalar_t x, scalar_t y);
+	void scale(const point_t &p);
+	void rotation(scalar_t alpha,scalar_t beta,scalar_t gamma);
+	void rotation(scalar_t gamma) { rotation(0, 0, gamma); }
+	void rotation(const vec_t &v);
+	void rotation(const quaternion_t &q);
+	void rotation(vec_t const &axis, scalar_t sine, scalar_t cosine);
+	void rotation(vec_t const &axis, scalar_t angle);
+	void rotate(scalar_t alpha,scalar_t beta,scalar_t gamma);
+	void rotate(scalar_t gamma) { rotation(0, 0, gamma); }
+	void rotate(const vec_t &v);
+	void rotate(const quaternion_t &q);
+	void rotate(vec_t const &axis, scalar_t sine, scalar_t cosine);
+	void rotate(vec_t const &axis, scalar_t angle);
+	void direction(const vec_t &dir);
+	void direct(const vec_t &dir);
 
 	// вычислить детерминант минора
 	// r0, r1 -- индексы столбцов минора
 	// c0, c1 -- индексы строк минора
-	scalar_type minor(int r0,int r1,int c0,int c1) const {
+	scalar_t minor(int r0,int r1,int c0,int c1) const {
 		return ij[r0][c0] * ij[r1][c1] - ij[r1][c0] * ij[r0][c1];
 	}
 
-	void adjoint(matrix_type &M) const {
+	void adjoint(matrix_t &M) const {
 		M.ij[0][0] =  minor( 1, 2, 1, 2);
 		M.ij[0][1] = -minor( 0, 2, 1, 2);
 		M.ij[0][2] =  minor( 0, 1, 1, 2);
@@ -101,20 +101,20 @@ public:
 		M.ij[2][2] =  minor( 0, 1, 0, 1);
 	}
 
-	scalar_type determinant() const {
+	scalar_t determinant() const {
 		return 	ij[0][0] * minor(1, 2, 1, 2) -
 			ij[0][1] * minor(1, 2, 0, 2) +
 			ij[0][2] * minor(1, 2, 0, 1);
 	}
 
-	scalar_type trace() const {
+	scalar_t trace() const {
 		return ij[0][0] + ij[1][1] + ij[2][2];
 	}
 
 	// вычислить обратную матрицу и записать ее в M
 	// возвращает false если детерминант равен нулю
-	bool inverse(matrix_type &M) const {
-		scalar_type det = determinant();
+	bool inverse(matrix_t &M) const {
+		scalar_t det = determinant();
 		if(det == 0) return false;
 		adjoint(M);
 		M /= det;
@@ -128,30 +128,30 @@ public:
 	}
 
 	// записать в T транспонированную матрицу
-	void transpose(matrix_type &tp) {
+	void transpose(matrix_t &tp) {
         tp.ij[0][0] = ij[0][0];		tp.ij[0][1] = ij[1][0];		tp.ij[0][2] = ij[2][0];
 		tp.ij[1][0] = ij[0][1];		tp.ij[1][1] = ij[1][1];		tp.ij[1][2] = ij[2][1];
 		tp.ij[2][0] = ij[0][2];		tp.ij[2][1] = ij[1][2];		tp.ij[2][2] = ij[2][2];
 	}
 
-	matrix_type &operator *=(scalar_type k) {
+	matrix_t &operator *=(scalar_t k) {
 		ij[0][0]*=k;	ij[0][1]*=k;	ij[0][2]*=k;
 		ij[1][0]*=k;	ij[1][1]*=k;	ij[1][2]*=k;
 		ij[2][0]*=k;	ij[2][1]*=k;	ij[2][2]*=k;
 		return *this;
 	}
 
-	matrix_type &operator *=(const matrix_type &m) {
-		matrix_type n=*this;
+	matrix_t &operator *=(const matrix_t &m) {
+		matrix_t n=*this;
 		mul(*this,n,m);
 		return *this;
 	}
 
-	matrix_type &operator /=(scalar_type k) {
+	matrix_t &operator /=(scalar_t k) {
 		return *this *= 1/k;
 	}
 
-	void decompose(vec_type &rotation) const;
+	void decompose(vec_t &rotation) const;
 };
 
 // must be binary-compatible with D3DMATRIX, see graphic/renderer.cpp
@@ -159,57 +159,57 @@ template<class T>
 class math::matrix<4,4,T> {
 public:
 	// типы и константы
-	typedef size_t size_type;
-	static size_type const width=4,height=4;
-	typedef T scalar_type;
-	typedef vec<width,scalar_type> vec_type;
-	typedef vec<width-1,scalar_type> point_type;
-	typedef quaternion<scalar_type> quaternion_type;
-	typedef matrix<width,height,scalar_type> matrix_type;
+	typedef size_t size_t;
+	static size_t const WIDTH=4,HEIGHT=4;
+	typedef T scalar_t;
+	typedef vec<WIDTH,scalar_t> vec_t;
+	typedef vec<WIDTH-1,scalar_t> point_t;
+	typedef quaternion<scalar_t> quaternion_t;
+	typedef matrix<WIDTH,HEIGHT,scalar_t> matrix_t;
 
 	// данные
-	scalar_type ij[width][height];
+	scalar_t ij[WIDTH][HEIGHT];
 
 	// конструкторы
 	matrix() {
 	}
 
 	void identity();
-	void translation(scalar_type x,scalar_type y,scalar_type z);
-	void translation(const point_type &p);
-	void translate(scalar_type x,scalar_type y,scalar_type z);
-	void translate(const point_type &p);
-	void scaling(scalar_type sx,scalar_type sy,scalar_type sz);
-	void scaling(const point_type &s);
-	void scale(scalar_type sx,scalar_type sy,scalar_type sz);
-	void scale(const point_type &s);
-	void rotation(scalar_type alpha,scalar_type beta,scalar_type gamma);
-	void rotation(const point_type &v);
-	void rotation(const quaternion_type &q);
-	void rotation(point_type const &axis, scalar_type sine, scalar_type cosine);
-	void rotation(point_type const &axis, scalar_type angle);
-	void rotate(scalar_type alpha,scalar_type beta,scalar_type gamma);
-	void rotate(const point_type &v);
-	void rotate(const quaternion_type &q);
-	void rotate(point_type const &axis, scalar_type sine, scalar_type cosine);
-  	void rotate(point_type const &axis, scalar_type angle);
-	void direction(const point_type &dir);
-	void direct(const point_type &dir);
-	void lookat(const point_type &eye,const point_type &at,const point_type &up);
-	void ortho(scalar_type width,scalar_type height,scalar_type z_near,scalar_type z_far);
-	void perspective(scalar_type fovy,scalar_type aspect,scalar_type z_near,scalar_type z_far);
+	void translation(scalar_t x,scalar_t y,scalar_t z);
+	void translation(const point_t &p);
+	void translate(scalar_t x,scalar_t y,scalar_t z);
+	void translate(const point_t &p);
+	void scaling(scalar_t sx,scalar_t sy,scalar_t sz);
+	void scaling(const point_t &s);
+	void scale(scalar_t sx,scalar_t sy,scalar_t sz);
+	void scale(const point_t &s);
+	void rotation(scalar_t alpha,scalar_t beta,scalar_t gamma);
+	void rotation(const point_t &v);
+	void rotation(const quaternion_t &q);
+	void rotation(point_t const &axis, scalar_t sine, scalar_t cosine);
+	void rotation(point_t const &axis, scalar_t angle);
+	void rotate(scalar_t alpha,scalar_t beta,scalar_t gamma);
+	void rotate(const point_t &v);
+	void rotate(const quaternion_t &q);
+	void rotate(point_t const &axis, scalar_t sine, scalar_t cosine);
+  	void rotate(point_t const &axis, scalar_t angle);
+	void direction(const point_t &dir);
+	void direct(const point_t &dir);
+	void lookat(const point_t &eye,const point_t &at,const point_t &up);
+	void ortho(scalar_t width,scalar_t height,scalar_t z_near,scalar_t z_far);
+	void perspective(scalar_t fovy,scalar_t aspect,scalar_t z_near,scalar_t z_far);
 
 	// вычислить детерминант минора
 	// r0, r1, r2 -- индексы столбцов минора
 	// c0, c1, c2 -- индексы строк минора
-	scalar_type minor(int r0,int r1,int r2,int c0,int c1,int c2) const {
+	scalar_t minor(int r0,int r1,int r2,int c0,int c1,int c2) const {
 		return
 			ij[r0][c0] * (ij[r1][c1] * ij[r2][c2] - ij[r2][c1] * ij[r1][c2]) -
 			ij[r0][c1] * (ij[r1][c0] * ij[r2][c2] - ij[r2][c0] * ij[r1][c2]) +
 			ij[r0][c2] * (ij[r1][c0] * ij[r2][c1] - ij[r2][c0] * ij[r1][c1]);
 	}
 
-	void adjoint(matrix_type &M) const {
+	void adjoint(matrix_t &M) const {
 		M.ij[0][0] =  minor( 1, 2, 3, 1, 2, 3);
 		M.ij[0][1] = -minor( 0, 2, 3, 1, 2, 3);
 		M.ij[0][2] =  minor( 0, 1, 3, 1, 2, 3);
@@ -228,7 +228,7 @@ public:
 		M.ij[3][3] =  minor( 0, 1, 2, 0, 1, 2);
 	}
 
-	scalar_type determinant() const {
+	scalar_t determinant() const {
 		return
 			ij[0][0] * minor(1, 2, 3, 1, 2, 3) -
 			ij[0][1] * minor(1, 2, 3, 0, 2, 3) +
@@ -238,8 +238,8 @@ public:
 
 	// вычислить обратную матрицу и записать ее в M
 	// возвращает false если детерминант равен нулю
-	bool inverse(matrix_type &M) const {
-		scalar_type det = determinant();
+	bool inverse(matrix_t &M) const {
+		scalar_t det = determinant();
 		if(det == 0) return false;
 		adjoint(M);
 		M /= det;
@@ -249,11 +249,11 @@ public:
 	// инвертирует матрицу
 	// возвращает false если детерминант равен нулю
 	bool invert() {
-		return matrix_type(*this).inverse(*this);
+		return matrix_t(*this).inverse(*this);
 	}
 
 	// записать в T транспонированную матрицу
-	void transpose(matrix_type &tp) const {
+	void transpose(matrix_t &tp) const {
        	tp.ij[0][0] = ij[0][0];	tp.ij[0][1] = ij[1][0];	tp.ij[0][2] = ij[2][0]; tp.ij[0][3] = ij[3][0];
 		tp.ij[1][0] = ij[0][1];	tp.ij[1][1] = ij[1][1];	tp.ij[1][2] = ij[2][1]; tp.ij[1][3] = ij[3][1];
 		tp.ij[2][0] = ij[0][2];	tp.ij[2][1] = ij[1][2];	tp.ij[2][2] = ij[2][2]; tp.ij[2][3] = ij[3][2];
@@ -261,12 +261,12 @@ public:
 	}
 
 	void transpose_inplace() {
-		matrix_type tp;
+		matrix_t tp;
 		tp = *this;
 		tp.transpose(*this);
 	}
 
-	matrix_type &operator *=(scalar_type k) {
+	matrix_t &operator *=(scalar_t k) {
 		ij[0][0]*=k;	ij[0][1]*=k;	ij[0][2]*=k;	ij[0][3]*=k;
 		ij[1][0]*=k;	ij[1][1]*=k;	ij[1][2]*=k;	ij[1][3]*=k;
 		ij[2][0]*=k;	ij[2][1]*=k;	ij[2][2]*=k;	ij[2][3]*=k;
@@ -274,36 +274,36 @@ public:
 		return *this;
 	}
 
-	matrix_type &operator /=(scalar_type k) {
+	matrix_t &operator /=(scalar_t k) {
 		return *this *= 1/k;
 	}
 
-	matrix_type &operator *=(const matrix_type &m) {
-		matrix_type n=*this;
+	matrix_t &operator *=(const matrix_t &m) {
+		matrix_t n=*this;
 		mul(*this,n,m);
 		return *this;
 	}
 
-	point_type projected_column(size_type column_index) const {
-		return point_type(ij[column_index][0], ij[column_index][1], ij[column_index][2]);
+	point_t projected_column(size_t column_index) const {
+		return point_t(ij[column_index][0], ij[column_index][1], ij[column_index][2]);
 	}
 
-	vec_type column(size_type column_index) const {
-		return vec_type(ij[column_index][0], ij[column_index][1], ij[column_index][2],
+	vec_t column(size_t column_index) const {
+		return vec_t(ij[column_index][0], ij[column_index][1], ij[column_index][2],
 			ij[column_index][3]);
 	}
 
-	point_type projected_row(size_type row_index) const {
-		return point_type(ij[0][row_index], ij[1][row_index], ij[2][row_index]);
+	point_t projected_row(size_t row_index) const {
+		return point_t(ij[0][row_index], ij[1][row_index], ij[2][row_index]);
 	}
 
-	vec_type row(size_type row_index) const {
-		return vec_type(ij[0][row_index], ij[1][row_index], ij[2][row_index],
+	vec_t row(size_t row_index) const {
+		return vec_t(ij[0][row_index], ij[1][row_index], ij[2][row_index],
 			ij[3][row_index]);
 	}
 
-	bool decompose(point_type &scale,point_type &shear,point_type &rotate,point_type &translate,
-		vec_type &persp) const;
+	bool decompose(point_t &scale,point_t &shear,point_t &rotate,point_t &translate,
+		vec_t &persp) const;
 };
 
 template<int M,int N,class T> inline math::vec<N-1,T>
