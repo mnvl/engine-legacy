@@ -9,6 +9,17 @@
 // prior written consent of Manvel Avetisian.
 //-----------------------------------------------------------------------------
 
+#include <d3d9.h>
+#include <util/boost_com_intrusive_ptr.h>
+#include "vertex.h"
+#include "vertex_array.h"
+#include "index.h"
+#include "index_array.h"
+#include "mesh.h"
+
+namespace graphic
+{
+
 class StaticModel;
 
 template<class V = vertex_pnt>
@@ -52,4 +63,4 @@ protected:
 typedef BasicStaticMesh<> StaticMesh;
 typedef BasicStaticMesh<vertex_pnjwt> PnjwtStaticMesh;
 
-};
+}

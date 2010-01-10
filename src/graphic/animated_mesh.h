@@ -9,7 +9,7 @@
 // prior written consent of Manvel Avetisian.
 //-----------------------------------------------------------------------------
 
-#include <graphic/static_mesh.h>
+#include "static_mesh.h"
 
 namespace graphic
 {

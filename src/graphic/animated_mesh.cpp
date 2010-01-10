@@ -10,10 +10,10 @@
 
 #include <d3d9.h>
 #include <vector>
-#include <graphic/shader.h>
-#include <graphic/animated_model.h>
-#include <graphic/renderer.h>
-#include <graphic/animated_mesh.h>
+#include "shader.h"
+#include "animated_model.h"
+#include "renderer.h"
+#include "animated_mesh.h"
 
 namespace graphic
 {

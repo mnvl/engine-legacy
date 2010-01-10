@@ -91,12 +91,12 @@ public:
 		minmax(min,max);
 	}
 
-	vec_t unit() const {
-		return max-min;
+	vec_t diagonal() const {
+		return max - min;
 	}
 
 	vec_t centre() const {
-		return min + unit() / scalar_t(2);
+		return (min + max) / scalar_t(2);
 	}
 
 	void extend(const vec_t &v) {
@@ -136,7 +136,7 @@ public:
 		// пересечение прямой r1 с плоскостьями x=0 и x=1
 		if(abs(r1.a.x) > EPSILON) {
 			scalar_t dx = 1 / r1.a.x;
-		
+
 			scalar_t t = -r1.r0.x * dx;
 			vec_t v;
 			if(t >= t_min && t <= t_max) {
@@ -154,7 +154,7 @@ public:
 		// пересечение прямой r1 с плоскостьями y=0 и y=1
 		if(abs(r1.a.y) > EPSILON) {
 			scalar_t dy = 1 / r1.a.y;
-			
+
 			scalar_t t = -r1.r0.y * dy;
 			vec_t v;
 			if(t >= t_min && t <= t_max) {
@@ -188,16 +188,6 @@ public:
 		}
 
 		return false;
-	}
-
-	void get_segment(size_t segment_number, aabb_t &segment_aabb) {
-		vec_t half_unit = (max - min) / scalar_t(2);
-
-		vec_t half_unit_projection = half_unit;
-		half_unit_projection.projection(segment_number);
-
-		segment_aabb.min = min + half_unit_projection;
-		segment_aabb.max = segment_aabb.min + half_unit;
 	}
 };
 

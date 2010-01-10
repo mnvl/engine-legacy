@@ -9,7 +9,7 @@
 //-----------------------------------------------------------------------------
 
 #include <boost/test/unit_test.hpp>
-#include <math/collision.h>
+#include "collision.h"
 
 BOOST_AUTO_TEST_SUITE (test_collision)
 
