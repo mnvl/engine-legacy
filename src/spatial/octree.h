@@ -9,6 +9,8 @@
 // prior written consent of Manvel Avetisian.
 //-----------------------------------------------------------------------------
 
+#include <set>
+#include <vector>
 #include <math/vec.h>
 #include <math/aabb.h>
 #include "shape.h"
@@ -21,14 +23,26 @@ class Octree
 public:
 	Octree(math::aabb<3> const &bounds);
 
-	math::aabb<3> get_subcluster_bounds(unsigned index);
-	unsigned get_subcluster_by_point(math::vec<3> const &point);
+	math::aabb<3> get_subcluster_bounds(unsigned index) const;
+	unsigned get_subcluster_by_point(math::vec<3> const &point) const;
+
+	bool is_leaf() const;
+
+	void add_shape(Shape const *shape);
+	void add_shape(Shape const *shape, math::aabb<3> const &bounds);
 
 private:
-	static size_t const X_MASK = 1, Y_MASK = 2, Z_MASK = 4;
+	static unsigned const X_MASK = 1, Y_MASK = 2, Z_MASK = 4;
+	static size_t const SUBCLUSTERS_COUNT = 8;
+
+	typedef std::set<Shape const *> shapes_t;
+	typedef std::vector<Octree> subclusters_t;
 
 	math::aabb<3> bounds_;
 	math::vec<3> centre_;
+
+	shapes_t shapes_;
+	subclusters_t subclusters_;
 };
 
 }

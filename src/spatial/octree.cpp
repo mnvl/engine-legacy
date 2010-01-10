@@ -19,7 +19,7 @@ Octree::Octree(math::aabb<3> const &bounds):
 {
 }
 
-math::aabb<3> Octree::get_subcluster_bounds(unsigned index)
+math::aabb<3> Octree::get_subcluster_bounds(unsigned index) const
 {
 	math::vec<3> origin = bounds_.min;
 	math::vec<3> extents = bounds_.diagonal() / math::scalar(2);
@@ -31,7 +31,7 @@ math::aabb<3> Octree::get_subcluster_bounds(unsigned index)
 	return math::aabb<3>(origin, origin + extents);
 }
 
-unsigned Octree::get_subcluster_by_point(math::vec<3> const &point)
+unsigned Octree::get_subcluster_by_point(math::vec<3> const &point) const
 {
 	unsigned index = 0;
 
@@ -40,6 +40,20 @@ unsigned Octree::get_subcluster_by_point(math::vec<3> const &point)
 	if (point.z > centre_.z) index |= Z_MASK;
 
 	return index;
+}
+
+bool Octree::is_leaf() const
+{
+	return subclusters_.empty();
+}
+
+void Octree::add_shape(Shape const *shape)
+{
+	add_shape(shape, shape->get_bounds());
+}
+
+void Octree::add_shape(Shape const *shape, math::aabb<3> const &bounds)
+{
 }
 
 }
