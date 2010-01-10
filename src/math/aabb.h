@@ -113,7 +113,7 @@ public:
 
 	// пересечения
 	bool contains(const vec_t &right) const {
-		return min<right && right<max;
+		return min <= right && right <= max;
 	}
 
 	bool contains(const aabb_t &right) const {
