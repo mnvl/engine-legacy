@@ -1,3 +1,4 @@
+#pragma once
 //-----------------------------------------------------------------------------
 // Copyright (c) 2004 - 2010 Manvel Avetisian.
 // All Rights Reserved.
@@ -7,8 +8,6 @@
 // or copied or duplicated in any form, in whole or in part, without the
 // prior written consent of Manvel Avetisian.
 //-----------------------------------------------------------------------------
-#pragma once
-
 #include <graphic/renderer.h>
 #include <boost/shared_ptr.hpp>
 

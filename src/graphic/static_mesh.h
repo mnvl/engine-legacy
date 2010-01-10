@@ -1,14 +1,13 @@
 #pragma once
-
-#include <d3d9.h>
-#include <util/boost_com_intrusive_ptr.h>
-#include "vertex.h"
-#include "vertex_array.h"
-#include "index.h"
-#include "index_array.h"
-#include "mesh.h"
-
-namespace graphic {
+//-----------------------------------------------------------------------------
+// Copyright (c) 2004 - 2010 Manvel Avetisian.
+// All Rights Reserved.
+//
+// This source code contains unpublished, confidential and proprietary
+// information of Manvel Avetisian and may not be disclosed to third parties
+// or copied or duplicated in any form, in whole or in part, without the
+// prior written consent of Manvel Avetisian.
+//-----------------------------------------------------------------------------
 
 class StaticModel;
 
