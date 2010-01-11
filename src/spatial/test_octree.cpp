@@ -83,4 +83,41 @@ BOOST_AUTO_TEST_CASE (test_subcluster_by_point)
 	}
 }
 
+BOOST_AUTO_TEST_CASE (test_subclusters_mask_by_aabb)
+{
+	spatial::Octree octree(math::aabb<3>(math::vec<3>(-5, -5, -5), math::vec<3>(5, 5, 5)));
+
+	// -2,-2 -1,-2 | +1,-2 +2,-2
+    // -2,-1 -1,-1 | +1,-1 +2,-1
+	// ------------+------------
+    // -2,+1 -1,+1 | +1,+1 +2,+1
+    // -2,+1 -1,+2 | +1,+1 +2,+2
+
+	BOOST_ASSERT (octree.get_subclusters_mask_by_aabb(math::aabb<3>(math::vec<3>(-2, -2, -2), math::vec<3>(-1, -1, -1))) == 1);
+	BOOST_ASSERT (octree.get_subclusters_mask_by_aabb(math::aabb<3>(math::vec<3>(1, -2, -2), math::vec<3>(2, -1, -1))) == 2);
+	BOOST_ASSERT (octree.get_subclusters_mask_by_aabb(math::aabb<3>(math::vec<3>(-2, 1, -2), math::vec<3>(-1, 2, -1))) == 4);
+	BOOST_ASSERT (octree.get_subclusters_mask_by_aabb(math::aabb<3>(math::vec<3>(1, 1, -2), math::vec<3>(2, 2, -1))) == 8);
+
+	BOOST_ASSERT (octree.get_subclusters_mask_by_aabb(math::aabb<3>(math::vec<3>(-2, -2, 1), math::vec<3>(-1, -1, 2))) == 16);
+	BOOST_ASSERT (octree.get_subclusters_mask_by_aabb(math::aabb<3>(math::vec<3>(1, -2, 1), math::vec<3>(2, -1, 2))) == 32);
+	BOOST_ASSERT (octree.get_subclusters_mask_by_aabb(math::aabb<3>(math::vec<3>(-2, 1, 1), math::vec<3>(-1, 2, 2))) == 64);
+	BOOST_ASSERT (octree.get_subclusters_mask_by_aabb(math::aabb<3>(math::vec<3>(1, 1, 1), math::vec<3>(2, 2, 2))) == 128);
+
+	BOOST_ASSERT (octree.get_subclusters_mask_by_aabb(math::aabb<3>(math::vec<3>(-2, -2, -2), math::vec<3>(2, -1, -1))) == (1 | 2));
+	BOOST_ASSERT (octree.get_subclusters_mask_by_aabb(math::aabb<3>(math::vec<3>(-2, -2, -2), math::vec<3>(-1, 2, -1))) == (1 | 4));
+	BOOST_ASSERT (octree.get_subclusters_mask_by_aabb(math::aabb<3>(math::vec<3>(1, -2, -2), math::vec<3>(2, 2, -1))) == (2 | 8));
+	BOOST_ASSERT (octree.get_subclusters_mask_by_aabb(math::aabb<3>(math::vec<3>(-2, 1, -2), math::vec<3>(2, 2, -1))) == (4 | 8));
+
+	BOOST_ASSERT (octree.get_subclusters_mask_by_aabb(math::aabb<3>(math::vec<3>(-2, -2, 1), math::vec<3>(2, -1, 2))) == (16 | 32));
+	BOOST_ASSERT (octree.get_subclusters_mask_by_aabb(math::aabb<3>(math::vec<3>(-2, -2, 1), math::vec<3>(-1, 2, 2))) == (16 | 64));
+	BOOST_ASSERT (octree.get_subclusters_mask_by_aabb(math::aabb<3>(math::vec<3>(1, -2, 1), math::vec<3>(2, 2, 2))) == (32 | 128));
+	BOOST_ASSERT (octree.get_subclusters_mask_by_aabb(math::aabb<3>(math::vec<3>(-2, 1, 1), math::vec<3>(2, 2, 2))) == (64 | 128));
+
+
+	BOOST_ASSERT (octree.get_subclusters_mask_by_aabb(math::aabb<3>(math::vec<3>(-2, -2, -2), math::vec<3>(2, 2, -1))) == (1 | 2 | 4 | 8));
+	BOOST_ASSERT (octree.get_subclusters_mask_by_aabb(math::aabb<3>(math::vec<3>(-2, -2, 1), math::vec<3>(2, 2, 2))) == (16 | 32 | 64 | 128));
+
+	BOOST_ASSERT (octree.get_subclusters_mask_by_aabb(math::aabb<3>(math::vec<3>(-2, -2, -2), math::vec<3>(2, 2, 2))) == (1 | 2 | 4 | 8 | 16 | 32 | 64 | 128));
+}
+
 BOOST_AUTO_TEST_SUITE_END()

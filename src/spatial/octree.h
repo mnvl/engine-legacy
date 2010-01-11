@@ -26,6 +26,9 @@ public:
 	math::aabb<3> get_subcluster_bounds(unsigned index) const;
 	unsigned get_subcluster_by_point(math::vec<3> const &point) const;
 
+	// mask & (1 << i) is set if bounds intersects subcluster with index i
+	unsigned get_subclusters_mask_by_aabb(math::aabb<3> const &bounds) const;
+
 	bool is_leaf() const;
 
 	void add_shape(Shape const *shape);
