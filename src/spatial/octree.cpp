@@ -49,7 +49,7 @@ unsigned Octree::get_subclusters_mask_by_aabb(math::aabb<3> const &bounds) const
 	unsigned c2 = get_subcluster_by_point(bounds.max);
 
 	if (c1 == c2) return 1u << c1;
-	if (c1 == 0 && c2 == SUBCLUSTERS_COUNT - 1) return (1u << SUBCLUSTERS_COUNT) - 1;
+	if (c1 == 0 && c2 == SUBCLUSTERS_COUNT - 1) return ALL_SUBCLUSTERS_MASK;
 
 	unsigned diff = c1 ^ c2;
 
@@ -58,7 +58,7 @@ unsigned Octree::get_subclusters_mask_by_aabb(math::aabb<3> const &bounds) const
 
 	assert ((c1 | lo | hi) == c2);
 
-	if (hi) return (1u << c1) | (1u << c1 + lo) | (1u << c1 + hi) | (1u << c2);
+	if (hi) return (1u << c1) | (1u << (c1 + lo)) | (1u << (c1 + hi)) | (1u << c2);
 	else return (1u << c1) | (1u << c2);
 }
 
@@ -74,6 +74,72 @@ void Octree::add_shape(Shape const *shape)
 
 void Octree::add_shape(Shape const *shape, math::aabb<3> const &bounds)
 {
+	if (is_leaf())
+	{
+		shapes_.insert(shape);
+
+		if (shapes_.size() > LEAF_SHAPES_THRESHOLD)
+		{
+			build_subclusters();
+		}
+	}
+	else
+	{
+		unsigned mask = get_subclusters_mask_by_aabb(bounds);
+
+		if (mask == ALL_SUBCLUSTERS_MASK)
+		{
+			shapes_.insert(shape);
+		}
+		else
+		{
+			for (size_t i = 0; i < SUBCLUSTERS_COUNT; i++)
+			{
+				if ((1u << i) & mask)
+				{
+					subclusters_[i].add_shape(shape, bounds);
+				}
+			}
+		}
+	}
+}
+
+void Octree::build_subclusters()
+{
+	// create subclusters
+	subclusters_.reserve(SUBCLUSTERS_COUNT);
+
+	for (size_t i = 0; i < SUBCLUSTERS_COUNT; i++)
+	{
+		subclusters_.push_back(Octree(get_subcluster_bounds(i)));
+	}
+
+	// move some shapes to subclusters
+	shapes_t::iterator it = shapes_.begin();
+
+	while (it != shapes_.end())
+	{
+		math::aabb<3> bounds = (*it)->get_bounds();
+
+		unsigned mask = get_subclusters_mask_by_aabb(bounds);
+
+		if (mask == ALL_SUBCLUSTERS_MASK)
+		{
+			it++;
+		}
+		else
+		{
+			for (size_t i = 0; i < SUBCLUSTERS_COUNT; i++)
+			{
+				if ((1u << i) & mask)
+				{
+					subclusters_[i].add_shape(*it, bounds);
+				}
+			}
+
+			it = shapes_.erase(it);
+		}
+	}
 }
 
 }

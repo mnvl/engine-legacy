@@ -37,6 +37,8 @@ public:
 private:
 	static unsigned const X_MASK = 1, Y_MASK = 2, Z_MASK = 4;
 	static size_t const SUBCLUSTERS_COUNT = 8;
+	static unsigned const ALL_SUBCLUSTERS_MASK = (1u << SUBCLUSTERS_COUNT) - 1;
+	static size_t const LEAF_SHAPES_THRESHOLD = 32;
 
 	typedef std::set<Shape const *> shapes_t;
 	typedef std::vector<Octree> subclusters_t;
@@ -46,6 +48,8 @@ private:
 
 	shapes_t shapes_;
 	subclusters_t subclusters_;
+
+	void build_subclusters();
 };
 
 }
