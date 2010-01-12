@@ -18,7 +18,6 @@ class Shape
 {
 public:
 	virtual ~Shape();
-
 	virtual math::aabb<3> get_bounds() const = 0;
 };
 

@@ -9,12 +9,12 @@
 // prior written consent of Manvel Avetisian.
 //-----------------------------------------------------------------------------
 
-#include <math/scalar.h>
-#include <math/vec.h>
-#include <math/sphere.h>
-#include <math/line.h>
-#include <math/aabb.h>
-#include <math/obb.h>
+#include "scalar.h"
+#include "vec.h"
+#include "sphere.h"
+#include "line.h"
+#include "aabb.h"
+#include "obb.h"
 
 namespace math {
 	template<int N, class S>

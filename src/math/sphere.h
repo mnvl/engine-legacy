@@ -36,11 +36,13 @@ public:
 	vec_t centre;
 	scalar_t radius;
 
-	sphere() {
+	sphere()
+	{
 	}
 
-	sphere(const aabb_t &a) {
-		construct(a);
+	sphere(const aabb_t &a)
+	{
+		set(a);
 	}
 
 	sphere(const vec_t &c, scalar_t r):
@@ -49,12 +51,14 @@ public:
 	{
 	}
 
-	void construct(const aabb_t &a) {
+	void construct(const aabb_t &a)
+	{
 		centre = (a.min + a.max) / 2;
 		radius = (a.max - centre).length();
 	}
 
-	void construct(const vec_t &c, scalar_t r) {
+	void set(const vec_t &c, scalar_t r)
+	{
 		centre = c;
 		radius = r;
 	}
