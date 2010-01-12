@@ -58,7 +58,7 @@ unsigned Octree::get_subclusters_mask_by_aabb(math::aabb<3> const &bounds) const
 
 	assert ((c1 | lo | hi) == c2);
 
-	if (hi) return (1u << c1) | (1u << (c1 + lo)) | (1u << (c1 + hi)) | (1u << c2);
+	if (hi) return (1u << c1) | (1u << (c1 | lo)) | (1u << (c1 | hi)) | (1u << c2);
 	else return (1u << c1) | (1u << c2);
 }
 
