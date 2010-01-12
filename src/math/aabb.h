@@ -125,7 +125,7 @@ public:
 	}
 
 	bool intersects(const aabb_t &right) const {
-		return right.max>min && max>right.min;
+		return right.max >= min && max >= right.min;
 	}
 
 	bool trace(const ray_t &r, scalar_t t_min = 0, scalar_t t_max = 1) const {

@@ -23,6 +23,9 @@ public:
 	virtual ~SphereShape();
 
 	virtual math::aabb<3> get_bounds() const;
+
+	virtual bool intersects(Shape const *shape) const;
+	virtual bool intersects(SphereShape const *shape) const;
 };
 
 }

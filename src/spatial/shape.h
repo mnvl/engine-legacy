@@ -14,11 +14,16 @@
 namespace spatial
 {
 
+class SphereShape;
+
 class Shape
 {
 public:
 	virtual ~Shape();
 	virtual math::aabb<3> get_bounds() const = 0;
+
+	virtual bool intersects(Shape const *shape) const = 0;
+	virtual bool intersects(SphereShape const *shape) const = 0;
 };
 
 }

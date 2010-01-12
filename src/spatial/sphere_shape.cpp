@@ -31,4 +31,14 @@ math::aabb<3> SphereShape::get_bounds() const
 	return get_aabb();
 }
 
+bool SphereShape::intersects(Shape const *shape) const
+{
+	return shape->intersects(this);
+}
+
+bool SphereShape::intersects(SphereShape const *shape) const
+{
+	return sphere::intersects(*shape);
+}
+
 }

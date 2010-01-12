@@ -63,18 +63,21 @@ public:
 		radius = r;
 	}
 
-	aabb_t get_aabb() const {
+	aabb_t get_aabb() const
+	{
 		vec_t r;
 		r.set_all(radius / 2);
 		return aabb_t(centre - r, centre + r);
 	}
 
-	bool contains(const vec_t &v) const {
+	bool contains(const vec_t &v) const
+	{
 		return (v - centre).length_sq() < radius * radius;
 	}
 
-	bool intersects(const sphere_t &sph) const {
-		return (centre - sph.centre).length() < radius + sph.radius;
+	bool intersects(const sphere_t &s) const
+	{
+		return (centre - s.centre).length_sq() <= square(radius + s.radius);
 	}
 
 	// проверить на пересечение с лучом

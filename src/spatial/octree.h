@@ -32,7 +32,11 @@ public:
 	bool is_leaf() const;
 
 	void add_shape(Shape const *shape);
-	void add_shape(Shape const *shape, math::aabb<3> const &bounds);
+
+	// does not clear result
+	void intersect(Shape const *shape, std::set<Shape const *> &result) const;
+
+	void build_subclusters();
 
 private:
 	static unsigned const X_MASK = 1, Y_MASK = 2, Z_MASK = 4;
@@ -48,8 +52,6 @@ private:
 
 	shapes_t shapes_;
 	subclusters_t subclusters_;
-
-	void build_subclusters();
 };
 
 }

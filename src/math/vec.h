@@ -283,7 +283,7 @@ public:
 	{
 	}
 
-	void set(const scalar_t x0,const scalar_t y0,const scalar_t z0)
+	void set(scalar_t x0,scalar_t y0,scalar_t z0)
 	{
 		x = x0;
 		y = y0;

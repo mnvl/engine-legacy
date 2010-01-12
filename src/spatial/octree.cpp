@@ -36,9 +36,9 @@ unsigned Octree::get_subcluster_by_point(math::vec<3> const &point) const
 {
 	unsigned index = 0;
 
-	if (point.x > centre_.x) index |= X_MASK;
-	if (point.y > centre_.y) index |= Y_MASK;
-	if (point.z > centre_.z) index |= Z_MASK;
+	if (point.x >= centre_.x) index |= X_MASK;
+	if (point.y >= centre_.y) index |= Y_MASK;
+	if (point.z >= centre_.z) index |= Z_MASK;
 
 	return index;
 }
@@ -69,11 +69,8 @@ bool Octree::is_leaf() const
 
 void Octree::add_shape(Shape const *shape)
 {
-	add_shape(shape, shape->get_bounds());
-}
+	math::aabb<3> const &bounds = shape->get_bounds();
 
-void Octree::add_shape(Shape const *shape, math::aabb<3> const &bounds)
-{
 	if (is_leaf())
 	{
 		shapes_.insert(shape);
@@ -97,8 +94,41 @@ void Octree::add_shape(Shape const *shape, math::aabb<3> const &bounds)
 			{
 				if ((1u << i) & mask)
 				{
-					subclusters_[i].add_shape(shape, bounds);
+					subclusters_[i].add_shape(shape);
 				}
+			}
+		}
+	}
+}
+
+void Octree::intersect(Shape const *shape, std::set<Shape const *> &result) const
+{
+	math::aabb<3> const &bounds = shape->get_bounds();
+
+	for (shapes_t::const_iterator it = shapes_.begin(); it != shapes_.end(); ++it)
+	{
+		// TODO 1:
+		//if ((*it)->get_bounds().intersects(bounds))
+		{
+			// maybe check here that result does not contain shape
+
+			if ((*it)->intersects(shape))
+			{
+				result.insert(*it);
+			}
+		}
+	}
+
+	if (!is_leaf())
+	{
+		unsigned mask = get_subclusters_mask_by_aabb(bounds);
+
+		for (size_t i = 0; i < SUBCLUSTERS_COUNT; i++)
+		{
+			// TODO 2:
+			// if ((1u << i) & mask)
+			{
+				subclusters_[i].intersect(shape, result);
 			}
 		}
 	}
@@ -133,7 +163,7 @@ void Octree::build_subclusters()
 			{
 				if ((1u << i) & mask)
 				{
-					subclusters_[i].add_shape(*it, bounds);
+					subclusters_[i].add_shape(*it);
 				}
 			}
 
