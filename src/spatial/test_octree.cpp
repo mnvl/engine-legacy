@@ -179,7 +179,7 @@ BOOST_AUTO_TEST_CASE (test_intersect_correctness_2)
 {
 	spatial::Octree octree(math::aabb<3>(math::vec<3>(-1, -1, -1), math::vec<3>(1, 1, 1)));
 
-	static size_t const N = 1000;
+	static size_t const N = 500;
 	static size_t const M = 100;
 
 	std::vector<spatial::SphereShape> shapes;

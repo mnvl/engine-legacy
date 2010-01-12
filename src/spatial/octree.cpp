@@ -107,8 +107,7 @@ void Octree::intersect(Shape const *shape, std::set<Shape const *> &result) cons
 
 	for (shapes_t::const_iterator it = shapes_.begin(); it != shapes_.end(); ++it)
 	{
-		// TODO 1:
-		//if ((*it)->get_bounds().intersects(bounds))
+		if ((*it)->get_bounds().intersects(bounds))
 		{
 			// maybe check here that result does not contain shape
 
@@ -125,8 +124,7 @@ void Octree::intersect(Shape const *shape, std::set<Shape const *> &result) cons
 
 		for (size_t i = 0; i < SUBCLUSTERS_COUNT; i++)
 		{
-			// TODO 2:
-			// if ((1u << i) & mask)
+			if ((1u << i) & mask)
 			{
 				subclusters_[i].intersect(shape, result);
 			}
