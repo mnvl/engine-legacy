@@ -369,7 +369,7 @@ MStatus MeshTranslator::extractGeometry(MFnMesh const &mesh) {
 		meta_debug_log() << "i = " << i <<", "<< boost::lexical_cast<std::string>(position_array[i]) << std::endl << std::flush;
 		#endif
 
-		if(i == 0) mesh_aabb.min = mesh_aabb.max = position_array[i];
+		if(i == 0) mesh_aabb.lo = mesh_aabb.hi = position_array[i];
 		else mesh_aabb.extend(position_array[i]);
 	}
 

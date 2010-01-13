@@ -53,8 +53,8 @@ public:
 
 	void construct(const aabb_t &a)
 	{
-		centre = (a.min + a.max) / 2;
-		radius = (a.max - centre).length();
+		centre = (a.lo + a.hi) / 2;
+		radius = (a.hi - centre).length();
 	}
 
 	void set(const vec_t &c, scalar_t r)
