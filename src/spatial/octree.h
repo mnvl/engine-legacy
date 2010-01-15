@@ -21,7 +21,11 @@ namespace spatial
 class Octree
 {
 public:
+	typedef std::set<ShapeWeakPtr> shapes_weak_t;
+	typedef std::set<ShapePtr> shapes_t;
+
 	Octree(math::aabb<3> const &bounds);
+	~Octree();
 
 	math::aabb<3> get_subcluster_bounds(unsigned index) const;
 	unsigned get_subcluster_by_point(math::vec<3> const &point) const;
@@ -31,10 +35,10 @@ public:
 
 	bool is_leaf() const;
 
-	void add_shape(Shape const *shape);
+	void add_shape(ShapePtr const &shape);
 
 	// does not clear result
-	void intersect(Shape const *shape, std::set<Shape const *> &result) const;
+	void intersect(ShapePtr const &shape, shapes_t &result);
 
 	void build_subclusters();
 
@@ -44,13 +48,12 @@ private:
 	static unsigned const ALL_SUBCLUSTERS_MASK = (1u << SUBCLUSTERS_COUNT) - 1;
 	static size_t const LEAF_SHAPES_THRESHOLD = 32;
 
-	typedef std::set<Shape const *> shapes_t;
 	typedef std::vector<Octree> subclusters_t;
 
 	math::aabb<3> bounds_;
 	math::vec<3> centre_;
 
-	shapes_t shapes_;
+	shapes_weak_t shapes_;
 	subclusters_t subclusters_;
 };
 

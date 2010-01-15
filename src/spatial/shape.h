@@ -9,12 +9,18 @@
 // prior written consent of Manvel Avetisian.
 //-----------------------------------------------------------------------------
 
+#include <boost/weak_ptr.hpp>
+#include <boost/shared_ptr.hpp>
 #include <math/aabb.h>
 
 namespace spatial
 {
 
+class Shape;
 class SphereShape;
+
+typedef boost::weak_ptr<Shape const> ShapeWeakPtr;
+typedef boost::shared_ptr<Shape const> ShapePtr;
 
 class Shape
 {

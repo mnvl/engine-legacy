@@ -125,32 +125,32 @@ BOOST_AUTO_TEST_CASE (test_intersect_correctness_1)
 {
 	spatial::Octree octree(math::aabb<3>(math::vec<3>(-1, -1, -1), math::vec<3>(1, 1, 1)));
 
-	std::vector<spatial::SphereShape> shapes;
+	std::vector<spatial::ShapePtr> shapes;
 	shapes.reserve(8);
 
-	shapes.push_back(spatial::SphereShape(math::vec<3>(-0.5f, -0.5f, -0.5f), 0.1f));
-	octree.add_shape(&shapes.back());
+	shapes.push_back(spatial::ShapePtr(new spatial::SphereShape(math::vec<3>(-0.5f, -0.5f, -0.5f), 0.1f)));
+	octree.add_shape(shapes.back());
 
-	shapes.push_back(spatial::SphereShape(math::vec<3>( 0.5f, -0.5f, -0.5f), 0.1f));
-	octree.add_shape(&shapes.back());
+	shapes.push_back(spatial::ShapePtr(new spatial::SphereShape(math::vec<3>( 0.5f, -0.5f, -0.5f), 0.1f)));
+	octree.add_shape(shapes.back());
 
-	shapes.push_back(spatial::SphereShape(math::vec<3>(-0.5f,  0.5f, -0.5f), 0.1f));
-	octree.add_shape(&shapes.back());
+	shapes.push_back(spatial::ShapePtr(new spatial::SphereShape(math::vec<3>(-0.5f,  0.5f, -0.5f), 0.1f)));
+	octree.add_shape(shapes.back());
 
-	shapes.push_back(spatial::SphereShape(math::vec<3>( 0.5f,  0.5f, -0.5f), 0.1f));
-	octree.add_shape(&shapes.back());
+	shapes.push_back(spatial::ShapePtr(new spatial::SphereShape(math::vec<3>( 0.5f,  0.5f, -0.5f), 0.1f)));
+	octree.add_shape(shapes.back());
 
-	shapes.push_back(spatial::SphereShape(math::vec<3>(-0.5f, -0.5f,  0.5f), 0.1f));
-	octree.add_shape(&shapes.back());
+	shapes.push_back(spatial::ShapePtr(new spatial::SphereShape(math::vec<3>(-0.5f, -0.5f,  0.5f), 0.1f)));
+	octree.add_shape(shapes.back());
 
-	shapes.push_back(spatial::SphereShape(math::vec<3>( 0.5f, -0.5f,  0.5f), 0.1f));
-	octree.add_shape(&shapes.back());
+	shapes.push_back(spatial::ShapePtr(new spatial::SphereShape(math::vec<3>( 0.5f, -0.5f,  0.5f), 0.1f)));
+	octree.add_shape(shapes.back());
 
-	shapes.push_back(spatial::SphereShape(math::vec<3>(-0.5f,  0.5f,  0.5f), 0.1f));
-	octree.add_shape(&shapes.back());
+	shapes.push_back(spatial::ShapePtr(new spatial::SphereShape(math::vec<3>(-0.5f,  0.5f,  0.5f), 0.1f)));
+	octree.add_shape(shapes.back());
 
-	shapes.push_back(spatial::SphereShape(math::vec<3>( 0.5f,  0.5f,  0.5f), 0.1f));
-	octree.add_shape(&shapes.back());
+	shapes.push_back(spatial::ShapePtr(new spatial::SphereShape(math::vec<3>( 0.5f,  0.5f,  0.5f), 0.1f)));
+	octree.add_shape(shapes.back());
 
 	octree.build_subclusters();
 
@@ -160,15 +160,15 @@ BOOST_AUTO_TEST_CASE (test_intersect_correctness_1)
 			math::scalar(rand() * 2) / RAND_MAX - 1);
 		math::scalar radius = math::scalar(rand()) / RAND_MAX;
 
-		spatial::SphereShape shape(centre, radius);
+		boost::shared_ptr<spatial::SphereShape> shape(new spatial::SphereShape(centre, radius));
 
-		std::set<spatial::Shape const *> result;
-		octree.intersect(&shape, result);
+		spatial::Octree::shapes_t result;
+		octree.intersect(shape, result);
 
 		for (size_t j = 0; j < shapes.size(); j++)
 		{
-			bool p1 = shapes[j].intersects(&shape);
-			bool p2 = (result.find(&shapes[j]) != result.end());
+			bool p1 = shapes[j]->intersects(shape.get());
+			bool p2 = (result.find(shapes[j]) != result.end());
 
 			BOOST_ASSERT (p1 == p2);
 		}
@@ -182,7 +182,7 @@ BOOST_AUTO_TEST_CASE (test_intersect_correctness_2)
 	static size_t const N = 500;
 	static size_t const M = 100;
 
-	std::vector<spatial::SphereShape> shapes;
+	std::vector<spatial::ShapePtr> shapes;
 	shapes.reserve(N);
 
 	for (size_t i = 0; i < N; i++)
@@ -191,8 +191,8 @@ BOOST_AUTO_TEST_CASE (test_intersect_correctness_2)
 			math::scalar(rand() * 2) / RAND_MAX - 1);
 		math::scalar radius = math::scalar(rand()) / RAND_MAX;
 
-		shapes.push_back(spatial::SphereShape(centre, radius));
-		octree.add_shape(&shapes.back());
+		shapes.push_back(spatial::ShapePtr(new spatial::SphereShape(centre, radius)));
+		octree.add_shape(shapes.back());
 	}
 
 	for (size_t i = 0; i < M; i++)
@@ -201,15 +201,15 @@ BOOST_AUTO_TEST_CASE (test_intersect_correctness_2)
 			math::scalar(rand() * 2) / RAND_MAX - 1);
 		math::scalar radius = math::scalar(rand()) / RAND_MAX;
 
-		spatial::SphereShape shape(centre, radius);
+		spatial::ShapePtr shape(new spatial::SphereShape(centre, radius));
 
-		std::set<spatial::Shape const *> result;
-		octree.intersect(&shape, result);
+		spatial::Octree::shapes_t result;
+		octree.intersect(shape, result);
 
 		for (size_t j = 0; j < N; j++)
 		{
-			bool p1 = shapes[j].intersects(&shape);
-			bool p2 = (result.find(&shapes[j]) != result.end());
+			bool p1 = shapes[j]->intersects(shape.get());
+			bool p2 = (result.find(shapes[j]) != result.end());
 
 			BOOST_ASSERT (p1 == p2);
 		}

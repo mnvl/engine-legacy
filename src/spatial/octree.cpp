@@ -20,6 +20,10 @@ Octree::Octree(math::aabb<3> const &bounds):
 {
 }
 
+Octree::~Octree()
+{
+}
+
 math::aabb<3> Octree::get_subcluster_bounds(unsigned index) const
 {
 	math::vec<3> origin = bounds_.min;
@@ -67,7 +71,7 @@ bool Octree::is_leaf() const
 	return subclusters_.empty();
 }
 
-void Octree::add_shape(Shape const *shape)
+void Octree::add_shape(ShapePtr const &shape)
 {
 	math::aabb<3> const &bounds = shape->get_bounds();
 
@@ -101,20 +105,32 @@ void Octree::add_shape(Shape const *shape)
 	}
 }
 
-void Octree::intersect(Shape const *shape, std::set<Shape const *> &result) const
+void Octree::intersect(ShapePtr const &shape, shapes_t &result)
 {
 	math::aabb<3> const &bounds = shape->get_bounds();
 
-	for (shapes_t::const_iterator it = shapes_.begin(); it != shapes_.end(); ++it)
-	{
-		if ((*it)->get_bounds().intersects(bounds))
-		{
-			// maybe check here that result does not contain shape
+	shapes_weak_t::const_iterator it = shapes_.begin();
 
-			if ((*it)->intersects(shape))
+	while (it != shapes_.end())
+	{
+		if (ShapePtr sh = it->lock())
+		{
+			if (sh->get_bounds().intersects(bounds))
 			{
-				result.insert(*it);
+				// maybe check here that result does not contain shape
+
+				if (sh->intersects(shape.get()))
+				{
+					result.insert(sh);
+				}
 			}
+
+			++it;
+		}
+		else
+		{
+			// garbage-collect weak pointers to deleted shapes
+			it = shapes_.erase(it);
 		}
 	}
 
@@ -143,28 +159,35 @@ void Octree::build_subclusters()
 	}
 
 	// move some shapes to subclusters
-	shapes_t::iterator it = shapes_.begin();
+	shapes_weak_t::iterator it = shapes_.begin();
 
 	while (it != shapes_.end())
 	{
-		math::aabb<3> bounds = (*it)->get_bounds();
-
-		unsigned mask = get_subclusters_mask_by_aabb(bounds);
-
-		if (mask == ALL_SUBCLUSTERS_MASK)
+		if (ShapePtr sh = it->lock())
 		{
-			it++;
+			math::aabb<3> bounds = sh->get_bounds();
+
+			unsigned mask = get_subclusters_mask_by_aabb(bounds);
+
+			if (mask == ALL_SUBCLUSTERS_MASK)
+			{
+				it++;
+			}
+			else
+			{
+				for (size_t i = 0; i < SUBCLUSTERS_COUNT; i++)
+				{
+					if ((1u << i) & mask)
+					{
+						subclusters_[i].add_shape(sh);
+					}
+				}
+
+				it = shapes_.erase(it);
+			}
 		}
 		else
 		{
-			for (size_t i = 0; i < SUBCLUSTERS_COUNT; i++)
-			{
-				if ((1u << i) & mask)
-				{
-					subclusters_[i].add_shape(*it);
-				}
-			}
-
 			it = shapes_.erase(it);
 		}
 	}
