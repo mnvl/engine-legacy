@@ -47,9 +47,9 @@ namespace math {
 		}
 
 		obb(aabb_t const &rhs) {
-			origin = rhs.min;
-			tangent.set(rhs.max.x - rhs.min.x, 0);
-			normal.set(0, rhs.max.y - rhs.min.y);
+			origin = rhs.lo;
+			tangent.set(rhs.hi.x - rhs.lo.x, 0);
+			normal.set(0, rhs.hi.y - rhs.lo.y);
 		}
 
 		void forward_vector(vec_t &v,const vec_t &v0) const {
@@ -155,10 +155,10 @@ namespace math {
 	
 		// сконструировать obb из aabb
 		obb_t &operator =(const aabb_t &a) {
-			origin = a.min;
-			tangent.set(a.max.x - a.min.x, 0, 0);
-			normal.set(0, a.max.y - a.min.y, 0);
-			binormal.set(0, 0, a.max.z - a.min.z);
+			origin = a.lo;
+			tangent.set(a.hi.x - a.lo.x, 0, 0);
+			normal.set(0, a.hi.y - a.lo.y, 0);
+			binormal.set(0, 0, a.hi.z - a.lo.z);
 			return *this;
 		}
 	
@@ -173,7 +173,7 @@ namespace math {
 	
 		// получить aabb
 		void get_aabb(aabb_t &loc) const {
-			loc.min = loc.max = origin;
+			loc.lo = loc.hi = origin;
 			loc.extend(origin + tangent);
 			loc.extend(origin + normal);
 			loc.extend(origin + tangent + normal);

@@ -64,7 +64,7 @@ public:
 	
     // the AABB of the triangle
     void get_aabb(const aabb_t &locus) const {
-        locus.min = locus.max = A;
+        locus.lo = locus.hi = A;
         locus.extend(B);
         locus.extend(C);
     }

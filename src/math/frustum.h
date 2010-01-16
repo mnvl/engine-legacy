@@ -73,7 +73,7 @@ public:
 	}
 
 	bool contains(const aabb_t &b) const {
-		return contains(b.min) || contains(b.max);
+		return contains(b.lo) || contains(b.hi);
 	}
 
 	bool intersects(const aabb_t &b) const {

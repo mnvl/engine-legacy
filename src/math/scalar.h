@@ -9,8 +9,8 @@
 // prior written consent of Manvel Avetisian.
 //-----------------------------------------------------------------------------
 
-#undef min
-#undef max
+#undef lo
+#undef hi
 
 #include <cmath>
 #include <algorithm>

@@ -11,8 +11,8 @@
 #include <boost/test/unit_test.hpp>
 #include <rpc/buffer.h>
 
-#if defined(min)
-#undef min
+#if defined(max)
+#undef max
 #endif
 
 BOOST_AUTO_TEST_SUITE(test_buffer)

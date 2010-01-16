@@ -38,47 +38,48 @@ public:
 	typedef aabb<ARITY,scalar_t> aabb_t;
 
 	// данные
-	vec_t min, max;
+	vec_t lo, hi;
 
 	// конструкторы
-	aabb() {
-	}
-
-	aabb(const vec_t &centre):
-		min(centre),
-		max(centre)
+	aabb()
 	{
 	}
 
-	aabb(const vec_t &mi,const vec_t &ma):
-		min(mi),
-		max(ma)
+	aabb(const vec_t &centre):
+		lo(centre),
+		hi(centre)
+	{
+	}
+
+	aabb(const vec_t &l,const vec_t &h):
+		lo(l),
+		hi(h)
 	{
 	}
 
 	aabb(const vec_t &centre, math::scalar radius):
-		min(centre.x - radius/2, centre.y - radius/2, centre.z - radius/2),
-		max(centre.x + radius/2, centre.y + radius/2, centre.z + radius/2)
-       	{
+		lo(centre.x - radius/2, centre.y - radius/2, centre.z - radius/2),
+		hi(centre.x + radius/2, centre.y + radius/2, centre.z + radius/2)
+	{
 	}
 
 	// операции
 	void null() {
 		for(size_t n=0; n<ARITY; n++) {
-			min.i[n] = limits_t::max();
-			max.i[n] = limits_t::min();
+			lo.i[n] = limits_t::max();
+			hi.i[n] = limits_t::min();
 		}
 	}
 
 	void forward_vector(vec_t &v,const vec_t &v0) const {
-		v.x = v0.x / (max.x - min.x);
-		v.y = v0.y / (max.y - min.y);
-		v.z = v0.z / (max.z - min.z);
+		v.x = v0.x / (hi.x - lo.x);
+		v.y = v0.y / (hi.y - lo.y);
+		v.z = v0.z / (hi.z - lo.z);
 	}
 
 	// получить координаты точки в локальной системе координат
 	void forward_point(vec_t &v,const vec_t &v0) const {
-		forward_vector(v, v0 - min);
+		forward_vector(v, v0 - lo);
 	}
 
 	// перенести прямую в локальную систему координат
@@ -88,36 +89,36 @@ public:
 	}
 
 	void normalize() {
-		minmax(min,max);
+		minmax(lo,hi);
 	}
 
 	vec_t diagonal() const {
-		return max - min;
+		return hi - lo;
 	}
 
 	vec_t centre() const {
-		return (min + max) / scalar_t(2);
+		return (lo + hi) / scalar_t(2);
 	}
 
 	void extend(const vec_t &v) {
 		for(size_t n=0; n<ARITY; n++) {
-			if(min.i[n] > v.i[n]) min.i[n] = v.i[n];
-			if(max.i[n] < v.i[n]) max.i[n] = v.i[n];
+			if(lo.i[n] > v.i[n]) lo.i[n] = v.i[n];
+			if(hi.i[n] < v.i[n]) hi.i[n] = v.i[n];
 		}
 	}
 
 	void extend(const aabb_t &b) {
-		extend(b.min);
-		extend(b.max);
+		extend(b.lo);
+		extend(b.hi);
 	}
 
 	// пересечения
 	bool contains(const vec_t &right) const {
-		return min <= right && right <= max;
+		return lo <= right && right <= hi;
 	}
 
 	bool contains(const aabb_t &right) const {
-		return contains(right.min) && contains(right.max);
+		return contains(right.lo) && contains(right.hi);
 	}
 
 	bool contains(const triangle_t &right) const {
@@ -125,7 +126,7 @@ public:
 	}
 
 	bool intersects(const aabb_t &right) const {
-		return right.max >= min && max >= right.min;
+		return right.hi >= lo && hi >= right.lo;
 	}
 
 	bool trace(const ray_t &r, scalar_t t_min = 0, scalar_t t_max = 1) const {
@@ -196,5 +197,5 @@ public:
 template<int N, class T>
 std::ostream &operator <<(std::ostream &lhs, math::aabb<N,T> &rhs)
 {
-	return lhs << rhs.min << " x " << rhs.max;
+	return lhs << rhs.lo << " x " << rhs.hi;
 }
