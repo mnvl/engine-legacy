@@ -19,8 +19,8 @@ namespace spatial
 class Shape;
 class SphereShape;
 
-typedef boost::weak_ptr<Shape const> ShapeWeakPtr;
-typedef boost::shared_ptr<Shape const> ShapePtr;
+typedef boost::weak_ptr<Shape> ShapeWeakPtr;
+typedef boost::shared_ptr<Shape> ShapePtr;
 
 class Shape
 {

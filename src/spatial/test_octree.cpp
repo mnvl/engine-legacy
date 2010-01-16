@@ -21,50 +21,50 @@ BOOST_AUTO_TEST_CASE (test_subcluster_bounds)
 
 	{
 		math::aabb<3> bounds = octree.get_subcluster_bounds(0);
-		BOOST_ASSERT ((bounds.min - math::vec<3>(-1, -1, -1)).length_sq() < math::EPSILON);
-		BOOST_ASSERT ((bounds.max - math::vec<3>(0, 0, 0)).length_sq() < math::EPSILON);
+		BOOST_ASSERT ((bounds.lo - math::vec<3>(-1, -1, -1)).length_sq() < math::EPSILON);
+		BOOST_ASSERT ((bounds.hi - math::vec<3>(0, 0, 0)).length_sq() < math::EPSILON);
 	}
 
 	{
 		math::aabb<3> bounds = octree.get_subcluster_bounds(1);
-		BOOST_ASSERT ((bounds.min - math::vec<3>(0, -1, -1)).length_sq() < math::EPSILON);
-		BOOST_ASSERT ((bounds.max - math::vec<3>(1, 0, 0)).length_sq() < math::EPSILON);
+		BOOST_ASSERT ((bounds.lo - math::vec<3>(0, -1, -1)).length_sq() < math::EPSILON);
+		BOOST_ASSERT ((bounds.hi - math::vec<3>(1, 0, 0)).length_sq() < math::EPSILON);
 	}
 
 	{
 		math::aabb<3> bounds = octree.get_subcluster_bounds(2);
-		BOOST_ASSERT ((bounds.min - math::vec<3>(-1, 0, -1)).length_sq() < math::EPSILON);
-		BOOST_ASSERT ((bounds.max - math::vec<3>(0, 1, 0)).length_sq() < math::EPSILON);
+		BOOST_ASSERT ((bounds.lo - math::vec<3>(-1, 0, -1)).length_sq() < math::EPSILON);
+		BOOST_ASSERT ((bounds.hi - math::vec<3>(0, 1, 0)).length_sq() < math::EPSILON);
 	}
 
 	{
 		math::aabb<3> bounds = octree.get_subcluster_bounds(3);
-		BOOST_ASSERT ((bounds.min - math::vec<3>(0, 0, -1)).length_sq() < math::EPSILON);
-		BOOST_ASSERT ((bounds.max - math::vec<3>(1, 1, 0)).length_sq() < math::EPSILON);
+		BOOST_ASSERT ((bounds.lo - math::vec<3>(0, 0, -1)).length_sq() < math::EPSILON);
+		BOOST_ASSERT ((bounds.hi - math::vec<3>(1, 1, 0)).length_sq() < math::EPSILON);
 	}
 
 	{
 		math::aabb<3> bounds = octree.get_subcluster_bounds(4);
-		BOOST_ASSERT ((bounds.min - math::vec<3>(-1, -1, 0)).length_sq() < math::EPSILON);
-		BOOST_ASSERT ((bounds.max - math::vec<3>(0, 0, 1)).length_sq() < math::EPSILON);
+		BOOST_ASSERT ((bounds.lo - math::vec<3>(-1, -1, 0)).length_sq() < math::EPSILON);
+		BOOST_ASSERT ((bounds.hi - math::vec<3>(0, 0, 1)).length_sq() < math::EPSILON);
 	}
 
 	{
 		math::aabb<3> bounds = octree.get_subcluster_bounds(5);
-		BOOST_ASSERT ((bounds.min - math::vec<3>(0, -1, 0)).length_sq() < math::EPSILON);
-		BOOST_ASSERT ((bounds.max - math::vec<3>(1, 0, 1)).length_sq() < math::EPSILON);
+		BOOST_ASSERT ((bounds.lo - math::vec<3>(0, -1, 0)).length_sq() < math::EPSILON);
+		BOOST_ASSERT ((bounds.hi - math::vec<3>(1, 0, 1)).length_sq() < math::EPSILON);
 	}
 
 	{
 		math::aabb<3> bounds = octree.get_subcluster_bounds(6);
-		BOOST_ASSERT ((bounds.min - math::vec<3>(-1, 0, 0)).length_sq() < math::EPSILON);
-		BOOST_ASSERT ((bounds.max - math::vec<3>(0, 1, 1)).length_sq() < math::EPSILON);
+		BOOST_ASSERT ((bounds.lo - math::vec<3>(-1, 0, 0)).length_sq() < math::EPSILON);
+		BOOST_ASSERT ((bounds.hi - math::vec<3>(0, 1, 1)).length_sq() < math::EPSILON);
 	}
 
 	{
 		math::aabb<3> bounds = octree.get_subcluster_bounds(7);
-		BOOST_ASSERT ((bounds.min - math::vec<3>(0, 0, 0)).length_sq() < math::EPSILON);
-		BOOST_ASSERT ((bounds.max - math::vec<3>(1, 1, 1)).length_sq() < math::EPSILON);
+		BOOST_ASSERT ((bounds.lo - math::vec<3>(0, 0, 0)).length_sq() < math::EPSILON);
+		BOOST_ASSERT ((bounds.hi - math::vec<3>(1, 1, 1)).length_sq() < math::EPSILON);
 	}
 }
 
@@ -207,6 +207,123 @@ BOOST_AUTO_TEST_CASE (test_intersect_correctness_2)
 		octree.intersect(shape, result);
 
 		for (size_t j = 0; j < N; j++)
+		{
+			bool p1 = shapes[j]->intersects(shape.get());
+			bool p2 = (result.find(shapes[j]) != result.end());
+
+			BOOST_ASSERT (p1 == p2);
+		}
+	}
+}
+
+BOOST_AUTO_TEST_CASE (test_remove_correctness)
+{
+	spatial::Octree octree(math::aabb<3>(math::vec<3>(-1, -1, -1), math::vec<3>(1, 1, 1)));
+
+	static size_t const N = 500;
+	static size_t const M = 100;
+
+	std::vector<spatial::ShapePtr> shapes;
+	shapes.reserve(N);
+
+	for (size_t i = 0; i < N; i++)
+	{
+		math::vec<3> centre(math::scalar(rand() * 2) / RAND_MAX - 1, math::scalar(rand() * 2) / RAND_MAX - 1,
+			math::scalar(rand() * 2) / RAND_MAX - 1);
+		math::scalar radius = math::scalar(rand()) / RAND_MAX;
+
+		shapes.push_back(spatial::ShapePtr(new spatial::SphereShape(centre, radius)));
+		octree.add_shape(shapes.back());
+	}
+
+	{
+		std::vector<spatial::ShapePtr> shapes_clone;
+		shapes_clone.swap(shapes);
+
+		shapes.reserve(N);
+
+		for (size_t i = 0; i < N; i++)
+		{
+			if (rand() & 1)
+			{
+				shapes.push_back(shapes_clone[i]);
+			}
+			else
+			{
+				octree.remove_shape(shapes_clone[i]);
+			}
+		}
+	}
+
+	for (size_t i = 0; i < M; i++)
+	{
+		math::vec<3> centre(math::scalar(rand() * 2) / RAND_MAX - 1, math::scalar(rand() * 2) / RAND_MAX - 1,
+			math::scalar(rand() * 2) / RAND_MAX - 1);
+		math::scalar radius = math::scalar(rand()) / RAND_MAX;
+
+		spatial::ShapePtr shape(new spatial::SphereShape(centre, radius));
+
+		spatial::Octree::shapes_t result;
+		octree.intersect(shape, result);
+
+		for (size_t j = 0; j < shapes.size(); j++)
+		{
+			bool p1 = shapes[j]->intersects(shape.get());
+			bool p2 = (result.find(shapes[j]) != result.end());
+
+			BOOST_ASSERT (p1 == p2);
+		}
+	}
+}
+
+BOOST_AUTO_TEST_CASE (test_move_correctness)
+{
+	spatial::Octree octree(math::aabb<3>(math::vec<3>(-1, -1, -1), math::vec<3>(1, 1, 1)));
+
+	static size_t const N = 500;
+	static size_t const M = 100;
+
+	std::vector<spatial::ShapePtr> shapes;
+	shapes.reserve(N);
+
+	for (size_t i = 0; i < N; i++)
+	{
+		math::vec<3> centre(math::scalar(rand() * 2) / RAND_MAX - 1, math::scalar(rand() * 2) / RAND_MAX - 1,
+			math::scalar(rand() * 2) / RAND_MAX - 1);
+		math::scalar radius = math::scalar(rand()) / RAND_MAX;
+
+		shapes.push_back(spatial::ShapePtr(new spatial::SphereShape(centre, radius)));
+		octree.add_shape(shapes.back());
+	}
+
+	for (size_t i = 0; i < N; i++)
+	{
+		if (rand() & 1)
+		{
+			spatial::SphereShape *shape = static_cast<spatial::SphereShape *>(shapes[i].get());
+
+			math::aabb<3> old_bounds = shape->get_bounds();
+
+			shape->centre += math::vec<3>(math::scalar(rand() * 2) / RAND_MAX - 1, math::scalar(rand() * 2) / RAND_MAX - 1,
+				math::scalar(rand() * 2) / RAND_MAX - 1);
+			shape->radius *= math::scalar(2 * rand()) / RAND_MAX;
+
+			octree.post_move_shape(shapes[i], old_bounds);
+		}
+	}
+
+	for (size_t i = 0; i < M; i++)
+	{
+		math::vec<3> centre(math::scalar(rand() * 2) / RAND_MAX - 1, math::scalar(rand() * 2) / RAND_MAX - 1,
+			math::scalar(rand() * 2) / RAND_MAX - 1);
+		math::scalar radius = math::scalar(rand()) / RAND_MAX;
+
+		spatial::ShapePtr shape(new spatial::SphereShape(centre, radius));
+
+		spatial::Octree::shapes_t result;
+		octree.intersect(shape, result);
+
+		for (size_t j = 0; j < shapes.size(); j++)
 		{
 			bool p1 = shapes[j]->intersects(shape.get());
 			bool p2 = (result.find(shapes[j]) != result.end());

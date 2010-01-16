@@ -22,24 +22,30 @@ class Octree
 {
 public:
 	static size_t const SUBCLUSTERS_COUNT = 8;
-
+	typedef math::aabb<3> aabb_t;
 	typedef std::set<ShapeWeakPtr> shapes_weak_t;
 	typedef std::set<ShapePtr> shapes_t;
 
-	Octree(math::aabb<3> const &bounds);
+	Octree(aabb_t const &bounds);
 	~Octree();
 
-	math::aabb<3> get_subcluster_bounds(unsigned index) const;
+	aabb_t get_subcluster_bounds(unsigned index) const;
 	unsigned get_subcluster_by_point(math::vec<3> const &point) const;
-	size_t get_subclusters_by_aabb(math::aabb<3> const &bounds, unsigned subclusters[SUBCLUSTERS_COUNT]) const;
-	unsigned get_subclusters_mask_by_aabb(math::aabb<3> const &bounds) const;
+	size_t get_subclusters_by_aabb(aabb_t const &bounds, unsigned subclusters[SUBCLUSTERS_COUNT]) const;
+	unsigned get_subclusters_mask_by_aabb(aabb_t const &bounds) const;
 
 	bool is_leaf() const;
 
-	void add_shape(ShapePtr const &shape);
+	void add_shape(ShapePtr const &shape, aabb_t const &bounds);
+	void remove_shape(ShapePtr const &shape, aabb_t const &bounds);
+	void move_shape(ShapePtr const &shape, aabb_t const &old_bounds, aabb_t const &new_bounds);
+	void intersect(ShapePtr const &shape, aabb_t const &bounds, shapes_t &result); // does not clear result
 
-	// does not clear result
-	void intersect(ShapePtr const &shape, shapes_t &result);
+	void add_shape(ShapePtr const &shape) { add_shape(shape, shape->get_bounds()); }
+	void remove_shape(ShapePtr const &shape) { remove_shape(shape, shape->get_bounds()); }
+	void pre_move_shape(ShapePtr const &shape, aabb_t const &new_bounds) { move_shape(shape, shape->get_bounds(), new_bounds); }
+	void post_move_shape(ShapePtr const &shape, aabb_t const &old_bounds) { move_shape(shape, old_bounds, shape->get_bounds()); }
+	void intersect(ShapePtr const &shape, shapes_t &result) { intersect(shape, shape->get_bounds(), result); }
 
 	void build_subclusters();
 
@@ -49,7 +55,7 @@ private:
 
 	typedef std::vector<Octree> subclusters_t;
 
-	math::aabb<3> bounds_;
+	aabb_t bounds_;
 	math::vec<3> centre_;
 
 	shapes_weak_t shapes_;
