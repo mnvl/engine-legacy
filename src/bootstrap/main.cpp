@@ -21,6 +21,7 @@
 #include <platform/keyboard.h>
 #include <platform/mouse.h>
 #include <math/bind.h>
+#include <spatial/bind.h>
 #include <util/logger.h>
 #include <util/lua_backtrace.h>
 
@@ -44,6 +45,7 @@ public:
 		platform::Window::bind(L_);
 
 		math::bind(L_);
+		spatial::bind(L_);
 
 		util::Logger::bind(L_);
 

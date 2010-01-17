@@ -9,19 +9,17 @@
 // prior written consent of Manvel Avetisian.
 //-----------------------------------------------------------------------------
 
-#include <math/scalar.h>
-#include <math/vec.h>
-#include <math/aabb.h>
-#include <math/ray.h>
-#include <math/line.h>
+#include "scalar.h"
+#include "vec.h"
+#include "aabb.h"
+#include "ray.h"
+#include "line.h"
 
-namespace math {
-	template<int N,class T=scalar>
-	class sphere;
-}
+namespace math
+{
 
-template<int N,class T>
-class math::sphere {
+template<int N,class T=scalar>
+class sphere {
 public:
 	typedef size_t size_t;
 	static const size_t ARITY = N;
@@ -124,3 +122,6 @@ public:
 	}
 };
 
+void bind_sphere(lua_State *L);
+
+}

@@ -10,9 +10,11 @@
 
 #include "interval.h"
 #include "vec.h"
+#include "aabb.h"
 #include "matrix.h"
 #include "ray.h"
 #include "plane.h"
+#include "sphere.h"
 #include "bind.h"
 
 namespace math
@@ -22,9 +24,11 @@ void bind(lua_State *L)
 {
 	bind_interval(L);
 	bind_vec(L);
+	bind_aabb(L);
 	bind_matrix(L);
 	bind_ray(L);
 	bind_plane(L);
+	bind_sphere(L);
 }
 
 }

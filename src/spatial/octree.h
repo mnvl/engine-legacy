@@ -11,6 +11,7 @@
 
 #include <set>
 #include <vector>
+#include <lua.h>
 #include <math/vec.h>
 #include <math/aabb.h>
 #include "shape.h"
@@ -48,6 +49,8 @@ public:
 	void intersect(ShapePtr const &shape, shapes_t &result) { intersect(shape, shape->get_bounds(), result); }
 
 	void build_subclusters();
+
+	static void bind(lua_State *L);
 
 private:
 	static unsigned const X_MASK = 1, Y_MASK = 2, Z_MASK = 4;

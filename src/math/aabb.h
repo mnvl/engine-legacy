@@ -10,7 +10,7 @@
 //-----------------------------------------------------------------------------
 
 #include <iosfwd>
-
+#include <lua.h>
 #include "scalar.h"
 #include "vec.h"
 #include "ray.h"
@@ -191,6 +191,8 @@ public:
 		return false;
 	}
 };
+
+void bind_aabb(lua_State *L);
 
 }
 

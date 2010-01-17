@@ -8,6 +8,7 @@
 // prior written consent of Manvel Avetisian.
 //-----------------------------------------------------------------------------
 
+#include <luabind/luabind.hpp>
 #include "shape.h"
 
 namespace spatial
@@ -15,6 +16,18 @@ namespace spatial
 
 Shape::~Shape()
 {
+}
+
+void Shape::bind(lua_State *L)
+{
+	using namespace luabind;
+
+	module(L, "spatial")
+	[
+		class_<Shape, boost::shared_ptr<Shape> >("Shape")
+		.def("get_bounds", &Shape::get_bounds)
+		.def("intersects", (bool (Shape::*)(Shape const *) const) &Shape::intersects)
+	];
 }
 
 }

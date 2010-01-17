@@ -8,6 +8,8 @@
 // prior written consent of Manvel Avetisian.
 //-----------------------------------------------------------------------------
 
+#include "shape.h"
+#include "octree.h"
 #include "bind.h"
 
 namespace spatial
@@ -15,6 +17,8 @@ namespace spatial
 
 void bind(lua_State *L)
 {
+	Shape::bind(L);
+	Octree::bind(L);
 }
 
 }

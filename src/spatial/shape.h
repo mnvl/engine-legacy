@@ -11,6 +11,7 @@
 
 #include <boost/weak_ptr.hpp>
 #include <boost/shared_ptr.hpp>
+#include <lua.h>
 #include <math/aabb.h>
 
 namespace spatial
@@ -30,6 +31,8 @@ public:
 
 	virtual bool intersects(Shape const *shape) const = 0;
 	virtual bool intersects(SphereShape const *shape) const = 0;
+
+	static void bind(lua_State *L);
 };
 
 }
