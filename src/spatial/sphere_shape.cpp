@@ -48,8 +48,9 @@ void SphereShape::bind(lua_State *L)
 
 	module(L, "spatial")
 	[
-		class_<SphereShape, Shape, ShapePtr>("SphereShape")
+		class_<SphereShape, Shape, math::sphere<3>, boost::shared_ptr<SphereShape> >("SphereShape")
 		.def(constructor<math::vec<3> const &, math::scalar>())
+		.scope [ def("upcast_to_shape", &SphereShape::upcast_to_shape) ]
 	];
 }
 

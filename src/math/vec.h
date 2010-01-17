@@ -194,6 +194,11 @@ public:
 		return x > rhs.x && y > rhs.y;
 	}
 
+	bool operator ==(vec_t const &rhs) const
+	{
+		return x == rhs.x && y == rhs.y;
+	}
+
 	scalar_t length_sq() const
 	{
 		return x * x + y * y;
@@ -396,6 +401,11 @@ public:
 		return x >= rhs.x && y >= rhs.y && z >= rhs.z;
 	}
 
+	bool operator ==(vec_t const &rhs) const
+	{
+		return x == rhs.x && y == rhs.y && z == rhs.z;
+	}
+
 	scalar_t length_sq() const
 	{
 		return x * x + y * y + z * z;
@@ -581,6 +591,11 @@ public:
 	bool operator >=(vec_t const &rhs) const
 	{
 		return x >= rhs.x && y >= rhs.y && z >= rhs.z && w >= rhs.w;
+	}
+
+	bool operator ==(vec_t const &rhs) const
+	{
+		return x == rhs.x && y == rhs.y && z == rhs.z && w == rhs.w;
 	}
 
 	scalar_t length_sq() const
