@@ -24,7 +24,7 @@ void Shape::bind(lua_State *L)
 
 	module(L, "spatial")
 	[
-		class_<Shape, boost::shared_ptr<Shape> >("Shape")
+		class_<Shape, ShapePtr>("Shape")
 		.def("get_bounds", &Shape::get_bounds)
 		.def("intersects", (bool (Shape::*)(Shape const *) const) &Shape::intersects)
 	];

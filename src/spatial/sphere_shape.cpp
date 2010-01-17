@@ -8,6 +8,7 @@
 // prior written consent of Manvel Avetisian.
 //-----------------------------------------------------------------------------
 
+#include <luabind/luabind.hpp>
 #include "sphere_shape.h"
 
 namespace spatial
@@ -39,6 +40,17 @@ bool SphereShape::intersects(Shape const *shape) const
 bool SphereShape::intersects(SphereShape const *shape) const
 {
 	return sphere::intersects(*shape);
+}
+
+void SphereShape::bind(lua_State *L)
+{
+	using namespace luabind;
+
+	module(L, "spatial")
+	[
+		class_<SphereShape, Shape, ShapePtr>("SphereShape")
+		.def(constructor<math::vec<3> const &, math::scalar>())
+	];
 }
 
 }
