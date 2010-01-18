@@ -149,7 +149,7 @@ BOOST_AUTO_TEST_CASE (test_intersect_correctness_1)
 	shapes.push_back(spatial::ShapePtr(new spatial::SphereShape(math::vec<3>(-0.5f,  0.5f,  0.5f), 0.1f)));
 	octree.add_shape(shapes.back());
 
-	shapes.push_back(spatial::ShapePtr(new spatial::SphereShape(math::vec<3>( 0.5f,  0.5f,  0.5f), 0.1f)));
+	shapes.push_back(spatial::ShapePtr(new spatial::SphereShape(math::vec<3>(0.5f,  0.5f,  0.5f), 0.1f)));
 	octree.add_shape(shapes.back());
 
 	octree.build_subclusters();
@@ -162,13 +162,13 @@ BOOST_AUTO_TEST_CASE (test_intersect_correctness_1)
 
 		boost::shared_ptr<spatial::SphereShape> shape(new spatial::SphereShape(centre, radius));
 
-		spatial::Octree::shapes_t result;
+		spatial::ResultSetPtr result(new spatial::ResultSet(true));
 		octree.intersect(shape, result);
 
 		for (size_t j = 0; j < shapes.size(); j++)
 		{
 			bool p1 = shapes[j]->intersects(shape.get());
-			bool p2 = (result.find(shapes[j]) != result.end());
+			bool p2 = result->have(shapes[j]);
 
 			BOOST_ASSERT (p1 == p2);
 		}
@@ -203,13 +203,13 @@ BOOST_AUTO_TEST_CASE (test_intersect_correctness_2)
 
 		spatial::ShapePtr shape(new spatial::SphereShape(centre, radius));
 
-		spatial::Octree::shapes_t result;
+		spatial::ResultSetPtr result(new spatial::ResultSet(true));
 		octree.intersect(shape, result);
 
 		for (size_t j = 0; j < N; j++)
 		{
 			bool p1 = shapes[j]->intersects(shape.get());
-			bool p2 = (result.find(shapes[j]) != result.end());
+			bool p2 = result->have(shapes[j]);
 
 			BOOST_ASSERT (p1 == p2);
 		}
@@ -263,13 +263,12 @@ BOOST_AUTO_TEST_CASE (test_remove_correctness)
 
 		spatial::ShapePtr shape(new spatial::SphereShape(centre, radius));
 
-		spatial::Octree::shapes_t result;
-		octree.intersect(shape, result);
+		spatial::ResultSetPtr result(new spatial::ResultSet(true));		octree.intersect(shape, result);
 
 		for (size_t j = 0; j < shapes.size(); j++)
 		{
 			bool p1 = shapes[j]->intersects(shape.get());
-			bool p2 = (result.find(shapes[j]) != result.end());
+			bool p2 = result->have(shapes[j]);
 
 			BOOST_ASSERT (p1 == p2);
 		}
@@ -320,13 +319,12 @@ BOOST_AUTO_TEST_CASE (test_move_correctness)
 
 		spatial::ShapePtr shape(new spatial::SphereShape(centre, radius));
 
-		spatial::Octree::shapes_t result;
-		octree.intersect(shape, result);
+		spatial::ResultSetPtr result(new spatial::ResultSet(true));		octree.intersect(shape, result);
 
 		for (size_t j = 0; j < shapes.size(); j++)
 		{
 			bool p1 = shapes[j]->intersects(shape.get());
-			bool p2 = (result.find(shapes[j]) != result.end());
+			bool p2 = result->have(shapes[j]);
 
 			BOOST_ASSERT (p1 == p2);
 		}

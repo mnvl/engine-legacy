@@ -239,9 +239,9 @@ void Octree::move_shape(ShapePtr const &shape, aabb_t const &old_bounds, aabb_t 
 	}
 }
 
-void Octree::intersect(ShapePtr const &shape, aabb_t const &bounds, shapes_t &result)
+void Octree::intersect(ShapePtr const &shape, aabb_t const &bounds, ResultSetPtr const &result)
 {
-	shapes_weak_t::const_iterator it = shapes_.begin();
+	shapes_t::const_iterator it = shapes_.begin();
 
 	while (it != shapes_.end())
 	{
@@ -253,7 +253,7 @@ void Octree::intersect(ShapePtr const &shape, aabb_t const &bounds, shapes_t &re
 
 				if (sh->intersects(shape.get()))
 				{
-					result.insert(sh);
+					result->insert(sh);
 				}
 			}
 
@@ -289,7 +289,7 @@ void Octree::build_subclusters()
 	}
 
 	// move some shapes to subclusters
-	shapes_weak_t::iterator it = shapes_.begin();
+	shapes_t::iterator it = shapes_.begin();
 
 	while (it != shapes_.end())
 	{

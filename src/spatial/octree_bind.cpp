@@ -26,7 +26,7 @@ void Octree::bind(lua_State *L)
 		.def("remove_shape", (void (Octree::*)(ShapePtr const &)) &Octree::remove_shape)
 		.def("pre_move_shape", &Octree::pre_move_shape)
 		.def("post_move_shape", &Octree::post_move_shape)
-		.def("intersect", (void (Octree::*)(ShapePtr const &, Octree::shapes_t &)) &Octree::intersect)
+		.def("intersect", (void (Octree::*)(ShapePtr const &, ResultSetPtr const &)) &Octree::intersect)
 	];
 }
 
