@@ -23,13 +23,16 @@
 #include <iostream>
 #include <cstring>
 
-#include "lauxlib.h"
-#include "lualib.h"
+extern "C"
+{
+    #include "lauxlib.h"
+    #include "lualib.h"
+}
 
 #include <luabind/open.hpp>
 #include "test.hpp"
 
-struct lua_State;
+extern "C" struct lua_State;
 
 void test_main(lua_State*);
 

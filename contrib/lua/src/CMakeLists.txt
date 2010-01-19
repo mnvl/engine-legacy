@@ -8,7 +8,6 @@ set(LUA_LIB_SRCS lauxlib.c lbaselib.c ldblib.c liolib.c
      lmathlib.c loslib.c ltablib.c lstrlib.c loadlib.c linit.c)
 
 file(GLOB LUA_SOURCES *.c)
-set_source_files_properties(${LUA_SOURCES} PROPERTIES LANGUAGE CXX)
 
 add_library(lua ${LUA_LIB_SRCS} ${LUA_CORE_SRCS})
 
@@ -18,5 +17,3 @@ set_target_properties(luai PROPERTIES OUTPUT_NAME lua)
 
 add_executable(luac luac.c print.c)
 target_link_libraries(luac lua)
-
-set_target_properties(luai luac PROPERTIES LINKER_LANGUAGE CXX)

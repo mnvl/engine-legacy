@@ -9,7 +9,7 @@
 // prior written consent of Manvel Avetisian.
 //-----------------------------------------------------------------------------
 
-#include <lua.h>
+#include <luabind/lua_include.hpp>
 #include <d3d9.h>
 #include <d3dx9.h>
 #include <boost/shared_ptr.hpp>

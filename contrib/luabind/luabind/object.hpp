@@ -38,9 +38,9 @@
 #include <luabind/detail/policy.hpp>
 #include <luabind/detail/stack_utils.hpp>
 #include <luabind/detail/convert_to_lua.hpp> // REFACTOR
+#include <luabind/typeid.hpp>
 
 #include <boost/iterator/iterator_facade.hpp> // iterator
-#include <boost/python/detail/is_xxx.hpp>
 
 #include <boost/preprocessor/iteration/iterate.hpp>
 #include <boost/utility/enable_if.hpp>
@@ -841,7 +841,7 @@ struct value_wrapper_traits<adl::call_proxy_tag>
     }
 
     template<class W, class A>
-    static void unwrap(lua_State* interpreter, adl::call_proxy<W,A> const& proxy)
+    static void unwrap(lua_State*, adl::call_proxy<W,A> const& proxy)
     {
         object result = const_cast<adl::call_proxy<W,A>&>(proxy);
         result.push(result.interpreter());
@@ -949,7 +949,7 @@ namespace detail
 
 #ifndef LUABIND_NO_ERROR_CHECKING
       if (!interpreter) 
-          return ErrorPolicy::handle_error(interpreter, LUABIND_TYPEID(void));
+          return ErrorPolicy::handle_error(interpreter, typeid(void));
 #endif
 
       value_wrapper_traits<ValueWrapper>::unwrap(interpreter, value_wrapper);
@@ -966,17 +966,22 @@ namespace detail
 #ifndef LUABIND_NO_ERROR_CHECKING
       if (cv.match(interpreter, LUABIND_DECORATE_TYPE(T), -1) < 0)
       {
-          return ErrorPolicy::handle_error(interpreter, LUABIND_TYPEID(T));
+          return ErrorPolicy::handle_error(interpreter, typeid(T));
       }
 #endif
 
       return cv.apply(interpreter, LUABIND_DECORATE_TYPE(T), -1);
   }
 
+# ifdef BOOST_MSVC
+#  pragma warning(push)
+#  pragma warning(disable:4702) // unreachable code
+# endif
+
   template<class T>
   struct throw_error_policy
   {
-      static T handle_error(lua_State* interpreter, LUABIND_TYPE_INFO type_info)
+      static T handle_error(lua_State* interpreter, type_id const& type_info)
       {
 #ifndef LUABIND_NO_EXCEPTIONS
           throw cast_failed(interpreter, type_info);
@@ -992,10 +997,14 @@ namespace detail
       }
   };
 
+# ifdef BOOST_MSVC
+#  pragma warning(pop)
+# endif
+
   template<class T>
   struct nothrow_error_policy
   {
-      static boost::optional<T> handle_error(lua_State*, LUABIND_TYPE_INFO)
+      static boost::optional<T> handle_error(lua_State*, type_id const&)
       {
           return boost::optional<T>();
       }
@@ -1162,7 +1171,31 @@ namespace adl
       );
   }
 
+  // Simple value_wrapper adaptor with the sole purpose of helping with
+  // overload resolution. Use this as a function parameter type instead
+  // of "object" or "argument" to restrict the parameter to Lua tables.
+  template <class Base = object>
+  struct table : Base
+  {
+      table(from_stack const& stack_reference)
+        : Base(stack_reference)
+      {}
+  };
+
 } // namespace adl
+
+using adl::table;
+
+template <class Base>
+struct value_wrapper_traits<adl::table<Base> >
+  : value_wrapper_traits<Base>
+{
+    static bool check(lua_State* L, int idx)
+    {
+        return value_wrapper_traits<Base>::check(L, idx) &&
+            lua_istable(L, idx);
+    }
+};
 
 inline object newtable(lua_State* interpreter)
 {

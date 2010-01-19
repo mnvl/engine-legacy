@@ -11,7 +11,7 @@
 
 #include <boost/weak_ptr.hpp>
 #include <boost/shared_ptr.hpp>
-#include <lua.h>
+#include <luabind/lua_include.hpp>
 #include <math/aabb.h>
 
 namespace spatial

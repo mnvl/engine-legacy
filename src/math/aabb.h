@@ -10,7 +10,7 @@
 //-----------------------------------------------------------------------------
 
 #include <iosfwd>
-#include <lua.h>
+#include <luabind/lua_include.hpp>
 #include "scalar.h"
 #include "vec.h"
 #include "ray.h"

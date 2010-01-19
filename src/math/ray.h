@@ -10,7 +10,7 @@
 //-----------------------------------------------------------------------------
 
 #include <limits>
-#include <lua.h>
+#include <luabind/lua_include.hpp>
 #include <math/scalar.h>
 #include <math/vec.h>
 

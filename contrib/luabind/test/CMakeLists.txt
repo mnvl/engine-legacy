@@ -31,6 +31,19 @@ SET (TESTS
   test_adopt_wrapper.cpp
   test_builtin_converters.cpp
   test_class_info.cpp
+  test_table.cpp
+  test_automatic_smart_ptr.cpp
+  test_shared_ptr.cpp
+  test_implicit_raw.cpp
+  test_collapse_converter.cpp
+  test_dynamic_type.cpp
+  test_virtual_inheritance.cpp
+  test_create_in_thread.cpp
+  test_extend_class_in_lua.cpp
+  test_smart_ptr_attributes.cpp
+  test_super_leak.cpp
+  test_set_instance_value.cpp
+  test_unsigned_int.cpp
 )
 
 FOREACH (TEST_SOURCE ${TESTS})

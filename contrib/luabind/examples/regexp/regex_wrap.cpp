@@ -1,8 +1,11 @@
 #include <boost/cregex.hpp> 
 
-#include "lua.h"
-#include "lauxlib.h"
-#include "lualib.h"
+extern "C"
+{
+	#include "lua.h"
+	#include "lauxlib.h"
+	#include "lualib.h"
+}
 
 #include <luabind/luabind.hpp>
 

@@ -13,7 +13,7 @@
 #include <vector>
 #include <boost/shared_ptr.hpp>
 #include <boost/weak_ptr.hpp>
-#include <lua.h>
+#include <luabind/lua_include.hpp>
 #include <math/matrix.h>
 
 namespace graphic {

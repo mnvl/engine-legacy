@@ -10,7 +10,6 @@
 
 #include <crtdbg.h>
 #include <windows.h>
-#include <lualib.h>
 #include <xercesc/util/PlatformUtils.hpp>
 #include <luabind/luabind.hpp>
 #include <luabind/detail/pcall.hpp>
@@ -25,7 +24,12 @@
 #include <util/logger.h>
 #include <util/lua_backtrace.h>
 
-LUALIB_API int luaopen_bit(lua_State *L);
+extern "C"
+{
+	#include <lualib.h>
+
+	LUALIB_API int luaopen_bit(lua_State *L);
+}
 
 class Main
 {

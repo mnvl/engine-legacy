@@ -4,7 +4,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="Docutils 0.5: http://docutils.sourceforge.net/" />
-<title>luabind 0.8.1</title>
+<title>luabind 0.9</title>
 <meta name="author" content="Daniel Wallin, Arvid Norberg" />
 <meta name="copyright" content="Copyright Daniel Wallin, Arvid Norberg 2003." />
 <style type="text/css">
@@ -306,7 +306,7 @@ h3 {
 </head>
 <body>
 <div class="document" id="luabind-version">
-<h1 class="title">luabind 0.8.1</h1>
+<h1 class="title">luabind 0.9</h1>
 <table class="docinfo" frame="void" rules="none">
 <col class="docinfo-name" />
 <col class="docinfo-content" />
@@ -336,9 +336,6 @@ OR OTHER DEALINGS IN THE SOFTWARE.</p>
 </tr>
 </tbody>
 </table>
-<p>Note: This library is currently in public beta phase. This documentation
-should be considered beta as well. Please report any grammatical
-corrections/spelling corrections.</p>
 <div class="contents topic" id="contents">
 <p class="topic-title first">Contents</p>
 <ul class="auto-toc simple">
@@ -470,8 +467,6 @@ There's also an IRC channel <tt class="docutils literal"><span class="pre">#luab
 <blockquote>
 <ul class="simple">
 <li>Visual Studio 7.1</li>
-<li>Visual Studio 7.0</li>
-<li>Visual Studio 6.0 (sp 5)</li>
 <li>Intel C++ 6.0 (Windows)</li>
 <li>GCC 2.95.3 (cygwin)</li>
 <li>GCC 3.0.4 (Debian/Linux)</li>
@@ -926,7 +921,7 @@ one overload of an overloaded member function, you have to disambiguate
 the member function pointer you pass to <tt class="docutils literal"><span class="pre">def</span></tt>. To do this, you can use an
 ordinary C-style cast, to cast it to the right overload. To do this, you have
 to know how to express member function types in C++, here's a short tutorial
-(for more info, refer to your favourite book on C++).</p>
+(for more info, refer to your favorite book on C++).</p>
 <p>The syntax for member function pointer follows:</p>
 <pre class="literal-block">
 <em>return-value</em> (<em>class-name</em>::*)(<em>arg1-type</em>, <em>arg2-type</em>, <em>...</em>)
@@ -1083,7 +1078,7 @@ hitch; it will not be called if the references are equal. This means that the
 <tt class="docutils literal"><span class="pre">==</span></tt> operator has to do pretty much what's it's expected to do.</p>
 <p>Lua does not support operators such as <tt class="docutils literal"><span class="pre">!=</span></tt>, <tt class="docutils literal"><span class="pre">&gt;</span></tt> or <tt class="docutils literal"><span class="pre">&gt;=</span></tt>. That's why you
 can only register the operators listed above. When you invoke one of the
-mentioned operators, lua will define it in terms of one of the avaliable
+mentioned operators, lua will define it in terms of one of the available
 operators.</p>
 <p>In the above example the other operand type is instantiated by writing
 <tt class="docutils literal"><span class="pre">int()</span></tt>. If the operand type is a complex type that cannot easily be
@@ -1146,7 +1141,7 @@ class_&lt;foo&gt;(&quot;foo&quot;)
 </pre>
 <p>In this example, <tt class="docutils literal"><span class="pre">f</span></tt> will behave like a static member function of the class
 <tt class="docutils literal"><span class="pre">foo</span></tt>, and the class <tt class="docutils literal"><span class="pre">nested</span></tt> will behave like a nested class of <tt class="docutils literal"><span class="pre">foo</span></tt>.</p>
-<p>It's also possible to add namespace's to classes using the same syntax.</p>
+<p>It's also possible to add namespaces to classes using the same syntax.</p>
 </div>
 <div class="section" id="derived-classes">
 <h2>8.6&nbsp;&nbsp;&nbsp;Derived classes</h2>
@@ -1182,140 +1177,78 @@ be able to implicitly cast pointers between the types.</p>
 </div>
 <div class="section" id="smart-pointers">
 <h2>8.7&nbsp;&nbsp;&nbsp;Smart pointers</h2>
-<p>When you register a class you can tell luabind that all instances of that class
-should be held by some kind of smart pointer (boost::shared_ptr for instance).
-You do this by giving the holder type as an extra template parameter to
-the <tt class="docutils literal"><span class="pre">class_</span></tt> you are constructing, like this:</p>
+<p>When registering a class you can tell luabind to hold all instances
+explicitly created in Lua in a specific smart pointer type, rather than
+the default raw pointer. This is done by passing an additional template
+parameter to <tt class="docutils literal"><span class="pre">class_</span></tt>:</p>
 <pre class="literal-block">
-module(L)
-[
-    class_&lt;A, boost::shared_ptr&lt;A&gt; &gt;(&quot;A&quot;)
-];
+class_&lt;X, <strong>P</strong>&gt;(…)
 </pre>
-<p>You also have to supply two functions for your smart pointer. One that returns
-the type of const version of the smart pointer type (boost::shared_ptr&lt;const A&gt;
-in this case). And one function that extracts the raw pointer from the smart
-pointer. The first function is needed because luabind has to allow the
-non-const -&gt; conversion when passing values from Lua to C++. The second
-function is needed when Lua calls member functions on held types, the this
-pointer must be a raw pointer, it is also needed to allow the smart_pointer -&gt;
-raw_pointer conversion from Lua to C++. They look like this:</p>
+<p>Where the requirements of <tt class="docutils literal"><span class="pre">P</span></tt> are:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="38%" />
+<col width="62%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Expression</th>
+<th class="head">Returns</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td><tt class="docutils literal"><span class="pre">P(raw)</span></tt></td>
+<td>&nbsp;</td>
+</tr>
+<tr><td><tt class="docutils literal"><span class="pre">get_pointer(p)</span></tt></td>
+<td>Convertible to <tt class="docutils literal"><span class="pre">X*</span></tt></td>
+</tr>
+</tbody>
+</table>
+<p>where:</p>
+<ul class="simple">
+<li><tt class="docutils literal"><span class="pre">raw</span></tt> is of type <tt class="docutils literal"><span class="pre">X*</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">p</span></tt> is an instance of <tt class="docutils literal"><span class="pre">P</span></tt></li>
+</ul>
+<p><tt class="docutils literal"><span class="pre">get_pointer()</span></tt> overloads are provided for the smart pointers in
+Boost, and <tt class="docutils literal"><span class="pre">std::auto_ptr&lt;&gt;</span></tt>. Should you need to provide your own
+overload, note that it is called unqualified and is expected to be found
+by <em>argument dependent lookup</em>. Thus it should be defined in the same
+namespace as the pointer type it operates on.</p>
+<p>For example:</p>
 <pre class="literal-block">
-namespace luabind {
-
-    template&lt;class T&gt;
-    T* get_pointer(boost::shared_ptr&lt;T&gt;&amp; p)
-    {
-        return p.get();
-    }
-
-    template&lt;class A&gt;
-    boost::shared_ptr&lt;const A&gt;*
-    get_const_holder(boost::shared_ptr&lt;A&gt;*)
-    {
-        return 0;
-    }
+class_&lt;X, <strong>boost::scoped_ptr&lt;X&gt;</strong> &gt;(&quot;X&quot;)
+  .def(constructor&lt;&gt;())
+</pre>
+<p>Will cause luabind to hold any instance created on the Lua side in a
+<tt class="docutils literal"><span class="pre">boost::scoped_ptr&lt;X&gt;</span></tt>. Note that this doesn't mean <strong>all</strong> instances
+will be held by a <tt class="docutils literal"><span class="pre">boost::scoped_ptr&lt;X&gt;</span></tt>. If, for example, you
+register a function:</p>
+<pre class="literal-block">
+std::auto_ptr&lt;X&gt; make_X();
+</pre>
+<p>the instance returned by that will be held in <tt class="docutils literal"><span class="pre">std::auto_ptr&lt;X&gt;</span></tt>. This
+is handled automatically for all smart pointers that implement a
+<tt class="docutils literal"><span class="pre">get_pointer()</span></tt> overload.</p>
+<div class="important">
+<p class="first admonition-title">Important</p>
+<p class="last"><tt class="docutils literal"><span class="pre">get_const_holder()</span></tt> has been removed. Automatic conversions
+between <tt class="docutils literal"><span class="pre">smart_ptr&lt;X&gt;</span></tt> and <tt class="docutils literal"><span class="pre">smart_ptr&lt;X</span> <span class="pre">const&gt;</span></tt> no longer work.</p>
+</div>
+<div class="important">
+<p class="first admonition-title">Important</p>
+<p><tt class="docutils literal"><span class="pre">__ok</span></tt>  has been removed. Similar functionality can be implemented
+for specific pointer types by doing something along the lines of:</p>
+<pre class="last literal-block">
+bool is_non_null(std::auto_ptr&lt;X&gt; const&amp; p)
+{
+    return p.get();
 }
-</pre>
-<p>The second function will only be used to get a compile time mapping
-of <tt class="docutils literal"><span class="pre">boost::shared_ptr&lt;A&gt;</span></tt> to its const version,
-<tt class="docutils literal"><span class="pre">boost::shared_ptr&lt;const</span> <span class="pre">A&gt;</span></tt>. It will never be called, so the
-return value doesn't matter (only the return type).</p>
-<p>The conversion that works are (given that B is a base class of A):</p>
-<div class="topic">
-<p class="topic-title first">From Lua to C++</p>
-<table border="1" class="docutils">
-<colgroup>
-<col width="51%" />
-<col width="49%" />
-</colgroup>
-<thead valign="bottom">
-<tr><th class="head">Source</th>
-<th class="head">Target</th>
-</tr>
-</thead>
-<tbody valign="top">
-<tr><td><tt class="docutils literal"><span class="pre">holder_type&lt;A&gt;</span></tt></td>
-<td><tt class="docutils literal"><span class="pre">A*</span></tt></td>
-</tr>
-<tr><td><tt class="docutils literal"><span class="pre">holder_type&lt;A&gt;</span></tt></td>
-<td><tt class="docutils literal"><span class="pre">B*</span></tt></td>
-</tr>
-<tr><td><tt class="docutils literal"><span class="pre">holder_type&lt;A&gt;</span></tt></td>
-<td><tt class="docutils literal"><span class="pre">A</span> <span class="pre">const*</span></tt></td>
-</tr>
-<tr><td><tt class="docutils literal"><span class="pre">holder_type&lt;A&gt;</span></tt></td>
-<td><tt class="docutils literal"><span class="pre">B</span> <span class="pre">const*</span></tt></td>
-</tr>
-<tr><td><tt class="docutils literal"><span class="pre">holder_type&lt;A&gt;</span></tt></td>
-<td><tt class="docutils literal"><span class="pre">holder_type&lt;A&gt;</span></tt></td>
-</tr>
-<tr><td><tt class="docutils literal"><span class="pre">holder_type&lt;A&gt;</span></tt></td>
-<td><tt class="docutils literal"><span class="pre">holder_type&lt;A</span> <span class="pre">const&gt;</span></tt></td>
-</tr>
-<tr><td><tt class="docutils literal"><span class="pre">holder_type&lt;A</span> <span class="pre">const&gt;</span></tt></td>
-<td><tt class="docutils literal"><span class="pre">A</span> <span class="pre">const*</span></tt></td>
-</tr>
-<tr><td><tt class="docutils literal"><span class="pre">holder_type&lt;A</span> <span class="pre">const&gt;</span></tt></td>
-<td><tt class="docutils literal"><span class="pre">B</span> <span class="pre">const*</span></tt></td>
-</tr>
-<tr><td><tt class="docutils literal"><span class="pre">holder_type&lt;A</span> <span class="pre">const&gt;</span></tt></td>
-<td><tt class="docutils literal"><span class="pre">holder_type&lt;A</span> <span class="pre">const&gt;</span></tt></td>
-</tr>
-</tbody>
-</table>
-</div>
-<div class="topic">
-<p class="topic-title first">From C++ to Lua</p>
-<table border="1" class="docutils">
-<colgroup>
-<col width="56%" />
-<col width="44%" />
-</colgroup>
-<thead valign="bottom">
-<tr><th class="head">Source</th>
-<th class="head">Target</th>
-</tr>
-</thead>
-<tbody valign="top">
-<tr><td><tt class="docutils literal"><span class="pre">holder_type&lt;A&gt;</span></tt></td>
-<td><tt class="docutils literal"><span class="pre">holder_type&lt;A&gt;</span></tt></td>
-</tr>
-<tr><td><tt class="docutils literal"><span class="pre">holder_type&lt;A</span> <span class="pre">const&gt;</span></tt></td>
-<td><tt class="docutils literal"><span class="pre">holder_type&lt;A</span> <span class="pre">const&gt;</span></tt></td>
-</tr>
-<tr><td><tt class="docutils literal"><span class="pre">holder_type&lt;A&gt;</span> <span class="pre">const&amp;</span></tt></td>
-<td><tt class="docutils literal"><span class="pre">holder_type&lt;A&gt;</span></tt></td>
-</tr>
-<tr><td><tt class="docutils literal"><span class="pre">holder_type&lt;A</span> <span class="pre">const&gt;</span> <span class="pre">const&amp;</span></tt></td>
-<td><tt class="docutils literal"><span class="pre">holder_type&lt;A</span> <span class="pre">const&gt;</span></tt></td>
-</tr>
-</tbody>
-</table>
-</div>
-<p>When using a holder type, it can be useful to know if the pointer is valid
-(i.e. not null). For example when using std::auto_ptr, the holder will be
-invalidated when passed as a parameter to a function. For this purpose there
-is a member of all object instances in luabind: <tt class="docutils literal"><span class="pre">__ok</span></tt>.</p>
-<pre class="literal-block">
-struct X {};
-void f(std::auto_ptr&lt;X&gt;);
 
-module(L)
-[
-    class_&lt;X, std::auto_ptr&lt;X&gt; &gt;(&quot;X&quot;)
-        .def(constructor&lt;&gt;()),
+…
 
-    def(&quot;f&quot;, &amp;f)
-];
+def(&quot;is_non_null&quot;, &amp;is_non_null)
 </pre>
-<pre class="literal-block">
-Lua 5.0  Copyright (C) 1994-2003 Tecgraf, PUC-Rio
-&gt; a = X()
-&gt; f(a)
-&gt; print a.__ok
-false
-</pre>
+</div>
 <p>When registering a hierarchy of classes, where all instances are to be held
 by a smart pointer, all the classes should have the baseclass' holder type.
 Like this:</p>
@@ -2632,6 +2565,11 @@ module(L)
 </div>
 <div class="section" id="raw">
 <h2><a class="toc-backref" href="#id114">14.9&nbsp;&nbsp;&nbsp;raw</a></h2>
+<div class="note">
+<p class="first admonition-title">Note</p>
+<p class="last"><tt class="docutils literal"><span class="pre">raw()</span></tt> has been deprecated. <tt class="docutils literal"><span class="pre">lua_State*</span></tt> parameters are
+automatically handled by luabind.</p>
+</div>
 <div class="section" id="id37">
 <h3>14.9.1&nbsp;&nbsp;&nbsp;Motivation</h3>
 <p>This converter policy will pass through the <tt class="docutils literal"><span class="pre">lua_State*</span></tt> unmodified.
@@ -3230,7 +3168,7 @@ or there's no setter-function registered on that property name. See the
 the attribute '<em>class-name.attribute-name</em>' is of type: (<em>class-name</em>) and does not match (<em>class_name</em>)
 </pre>
 <p>This error is generated if you try to assign an attribute with a value
-of a type that cannot be converted to the attribute's type.</p>
+of a type that cannot be converted to the attributes type.</p>
 </li>
 <li><pre class="first literal-block">
 <em>class-name()</em> threw an exception, <em>class-name:function-name()</em> threw an exception
@@ -3322,52 +3260,12 @@ they will be replaced with calls to the callback functions set with
 the import-keyword on your compiler and platform. On Windows in Visual Studio
 this should be <tt class="docutils literal"><span class="pre">__declspec(dllimport)</span></tt> if you want to link against Lua
 as a dll.</dd>
-<dt>LUABIND_EXPORT, LUABIND_IMPORT</dt>
-<dd>If you want to link against luabind as a dll (in Visual Studio), you can
-define <tt class="docutils literal"><span class="pre">LUABIND_EXPORT</span></tt> to <tt class="docutils literal"><span class="pre">__declspec(dllexport)</span></tt> and
-<tt class="docutils literal"><span class="pre">LUABIND_IMPORT</span></tt> to <tt class="docutils literal"><span class="pre">__declspec(dllimport)</span></tt> or
-<tt class="docutils literal"><span class="pre">__attribute__</span> <span class="pre">((visibility(&quot;default&quot;)))</span></tt> on GCC 4.
-Note that you have to link against Lua as a dll aswell, to make it work.</dd>
+<dt>LUABIND_DYNAMIC_LINK</dt>
+<dd>Must be defined if you intend to link against the luabind shared
+library.</dd>
 <dt>LUABIND_NO_RTTI</dt>
 <dd>You can define this if you don't want luabind to use <tt class="docutils literal"><span class="pre">dynamic_cast&lt;&gt;</span></tt>.
 It will disable <a class="reference internal" href="#object-identity">Object identity</a>.</dd>
-<dt>LUABIND_TYPE_INFO, LUABIND_TYPE_INFO_EQUAL(i1,i2), LUABIND_TYPEID(t), LUABIND_INVALID_TYPE_INFO</dt>
-<dd><p class="first">If you don't want to use the RTTI supplied by C++ you can supply your own
-type-info structure with the <tt class="docutils literal"><span class="pre">LUABIND_TYPE_INFO</span></tt> define. Your type-info
-structure must be copyable and must be able to compare itself against
-other type-info structures. You supply the compare function through the
-<tt class="docutils literal"><span class="pre">LUABIND_TYPE_INFO_EQUAL()</span></tt> define. It should compare the two type-info
-structures it is given and return true if they represent the same type and
-false otherwise. You also have to supply a function to generate your
-type-info structure. You do this through the <tt class="docutils literal"><span class="pre">LUABIND_TYPEID()</span></tt> define.
-It should return your type-info structure and it takes a type as its
-parameter. That is, a compile time parameter.
-<tt class="docutils literal"><span class="pre">LUABIND_INVALID_TYPE_INFO</span></tt> macro should be defined to an invalid type.
-No other type should be able to produce this type info. To use it you
-probably have to make a traits class with specializations for all classes
-that you have type-info for. Like this:</p>
-<pre class="literal-block">
-class A;
-class B;
-class C;
-
-template&lt;class T&gt; struct typeinfo_trait;
-
-template&lt;&gt; struct typeinfo_trait&lt;A&gt; { enum { type_id = 0 }; };
-template&lt;&gt; struct typeinfo_trait&lt;B&gt; { enum { type_id = 1 }; };
-template&lt;&gt; struct typeinfo_trait&lt;C&gt; { enum { type_id = 2 }; };
-</pre>
-<p>If you have set up your own RTTI system like this (by using integers to
-identify types) you can have luabind use it with the following defines:</p>
-<pre class="literal-block">
-#define LUABIND_TYPE_INFO const std::type_info*
-#define LUABIND_TYPEID(t) &amp;typeid(t)
-#define LUABIND_TYPE_INFO_EQUAL(i1, i2) *i1 == *i2
-#define LUABIND_INVALID_TYPE_INFO &amp;typeid(detail::null_type)
-</pre>
-<p class="last">Currently the type given through <tt class="docutils literal"><span class="pre">LUABIND_TYPE_INFO</span></tt> must be less-than
-comparable!</p>
-</dd>
 <dt>NDEBUG</dt>
 <dd>This define will disable all asserts and should be defined in a release
 build.</dd>
@@ -3431,7 +3329,7 @@ internal structure overflow. You should try to split that compilation
 unit up in smaller ones. See <a class="reference internal" href="#splitting-up-the-registration">Splitting up the registration</a> and
 <a class="reference internal" href="#splitting-class-registrations">Splitting class registrations</a>.</dd>
 <dt>What's wrong with precompiled headers in VC?</dt>
-<dd>Visual Studio doesn't like anonymous namespace's in its precompiled
+<dd>Visual Studio doesn't like anonymous namespaces in its precompiled
 headers. If you encounter this problem you can disable precompiled
 headers for the compilation unit (cpp-file) that uses luabind.</dd>
 <dt>error C1076: compiler limit - internal heap limit reached in VC</dt>

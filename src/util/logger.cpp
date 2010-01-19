@@ -8,7 +8,11 @@
 // prior written consent of Manvel Avetisian.
 //-----------------------------------------------------------------------------
 
-#include <lauxlib.h>
+extern "C"
+{
+	#include <lauxlib.h>
+}
+
 #include <windows.h>
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include "logger.h"

@@ -12,7 +12,7 @@
 #include <dinput.h>
 #include <boost/intrusive_ptr.hpp>
 #include <boost/shared_ptr.hpp>
-#include <lua.h>
+#include <luabind/lua_include.hpp>
 #include <util/boost_com_intrusive_ptr.h>
 #include <platform/window.h>
 

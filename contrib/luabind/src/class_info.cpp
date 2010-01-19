@@ -26,6 +26,7 @@
 
 #include <luabind/luabind.hpp>
 #include <luabind/class_info.hpp>
+#include <luabind/detail/class_registry.hpp>
 
 namespace luabind
 {
@@ -34,8 +35,19 @@ namespace luabind
 		lua_State* L = o.interpreter();
 	
 		o.push(L);
-        detail::object_rep* obj = detail::is_class_object(L, -1);
-		lua_pop(L, 1);
+        detail::object_rep* obj = detail::get_instance(L, -1);
+
+        if (!obj)
+        {
+            class_info result;
+            result.name = lua_typename(L, lua_type(L, -1));
+            lua_pop(L, 1);
+            result.methods = newtable(L);
+            result.attributes = newtable(L);
+            return result;
+        }
+
+        lua_pop(L, 1);
 
         obj->crep()->get_table(L);
         object table(from_stack(L, -1));
@@ -73,6 +85,24 @@ namespace luabind
         return result;
 	}
 
+    LUABIND_API object get_class_names(lua_State* L)
+    {
+        detail::class_registry* reg = detail::class_registry::get_registry(L);
+
+        std::map<type_id, detail::class_rep*> const& classes = reg->get_classes();
+
+        object result = newtable(L);
+        std::size_t index = 1;
+
+        for (std::map<type_id, detail::class_rep*>::const_iterator iter = classes.begin();
+            iter != classes.end(); ++iter)
+        {
+            result[index++] = iter->second->name();
+        }
+
+        return result;
+    }
+
 	LUABIND_API void bind_class_info(lua_State* L)
 	{
 		module(L)
@@ -82,7 +112,8 @@ namespace luabind
 				.def_readonly("methods", &class_info::methods)
 				.def_readonly("attributes", &class_info::attributes),
 		
-			def("class_info", &get_class_info)
+            def("class_info", &get_class_info),
+            def("class_names", &get_class_names)
 		];
 	}
 }

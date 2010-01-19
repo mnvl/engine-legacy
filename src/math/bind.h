@@ -9,7 +9,7 @@
 // prior written consent of Manvel Avetisian.
 //-----------------------------------------------------------------------------
 
-#include <lua.h>
+#include <luabind/lua_include.hpp>
 
 namespace math
 {

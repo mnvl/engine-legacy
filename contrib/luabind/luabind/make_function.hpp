@@ -12,55 +12,83 @@
 # include <luabind/detail/deduce_signature.hpp>
 # include <luabind/detail/format_signature.hpp>
 
-# include <boost/function/function1.hpp>
-
 namespace luabind {
 
 namespace detail
 {
+# ifndef LUABIND_NO_EXCEPTIONS
+  LUABIND_API void handle_exception_aux(lua_State* L);
+# endif
+
+// MSVC complains about member being sensitive to alignment (C4121)
+// when F is a pointer to member of a class with virtual bases.
+# ifdef BOOST_MSVC
+#  pragma pack(push)
+#  pragma pack(16)
+# endif
 
   template <class F, class Signature, class Policies>
-  struct function_invoke
+  struct function_object_impl : function_object
   {
-      function_invoke(F f)
-        : f(f)
+      function_object_impl(F f, Policies const& policies)
+        : function_object(&entry_point)
+        , f(f)
+        , policies(policies)
       {}
 
-      int operator()(lua_State* L) const
+      int call(lua_State* L, invoke_context& ctx) const
       {
-          return invoke(L, f, Signature(), Policies());
+          return invoke(L, *this, ctx, f, Signature(), policies);
+      }
+
+      void format_signature(lua_State* L, char const* function) const
+      {
+          detail::format_signature(L, function, Signature());
+      }
+
+      static int entry_point(lua_State* L)
+      {
+          function_object_impl const* impl =
+              *(function_object_impl const**)lua_touserdata(L, lua_upvalueindex(1));
+
+          invoke_context ctx;
+
+          int results = 0;
+
+# ifndef LUABIND_NO_EXCEPTIONS
+          try
+          {
+              results = invoke(
+                  L, *impl, ctx, impl->f, Signature(), impl->policies);
+          }
+          catch (...)
+          {
+              handle_exception_aux(L);
+              lua_error(L);
+          }
+# else
+          results = invoke(L, *impl, ctx, impl->f, Signature(), impl->policies);
+# endif
+
+          if (!ctx)
+          {
+              ctx.format_error(L, impl);
+              lua_error(L);
+          }
+
+          return results;
       }
 
       F f;
+      Policies policies;
   };
 
-  template <class Signature, class Policies>
-  struct function_score
-  {
-      int operator()(lua_State* L) const
-      {
-          return compute_score(L, Signature(), Policies());
-      }
-  };
-
-  template <class Signature>
-  struct function_signature
-  {
-      int operator()(lua_State* L, char const* function) const
-      {
-          format_signature(L, function, Signature());
-          return 0;
-      }
-  };
-
-  typedef boost::function1<int, lua_State*> function_callback;
-  typedef boost::function2<int, lua_State*, char const*> signature_callback;
+# ifdef BOOST_MSVC
+#  pragma pack(pop)
+# endif
 
   LUABIND_API object make_function_aux(
-      lua_State*, int
-    , function_callback const& call
-    , function_callback const& score
-    , signature_callback const& signature
+      lua_State* L, function_object* impl
   );
 
   LUABIND_API void add_overload(object const&, char const*, object const&);
@@ -72,10 +100,9 @@ object make_function(lua_State* L, F f, Signature, Policies)
 {
     return detail::make_function_aux(
         L
-      , detail::compute_arity(Signature(), Policies())
-      , detail::function_invoke<F, Signature, Policies>(f)
-      , detail::function_score<Signature, Policies>()
-      , detail::function_signature<Signature>()
+      , new detail::function_object_impl<F, Signature, Policies>(
+            f, Policies()
+        )
     );
 }
 

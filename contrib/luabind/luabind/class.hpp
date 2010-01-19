@@ -75,16 +75,12 @@
 #include <vector>
 #include <cassert>
 
-#include <boost/static_assert.hpp>
-#include <boost/type_traits.hpp>
 #include <boost/bind.hpp>
-#include <boost/function.hpp>
 #include <boost/preprocessor/repetition/enum_params.hpp>
 #include <boost/preprocessor/repetition/enum_params_with_a_default.hpp>
 #include <boost/preprocessor/repetition/repeat.hpp>
 #include <boost/type_traits/is_same.hpp>
 #include <boost/type_traits/is_member_object_pointer.hpp>
-#include <boost/mpl/list.hpp>
 #include <boost/mpl/apply.hpp>
 #include <boost/mpl/lambda.hpp>
 #include <boost/mpl/logical.hpp>
@@ -94,7 +90,6 @@
 
 #include <luabind/config.hpp>
 #include <luabind/scope.hpp>
-#include <luabind/raw_policy.hpp>
 #include <luabind/back_reference.hpp>
 #include <luabind/function.hpp>
 #include <luabind/dependency_policy.hpp>
@@ -107,16 +102,16 @@
 #include <luabind/detail/typetraits.hpp>
 #include <luabind/detail/class_rep.hpp>
 #include <luabind/detail/call.hpp>
-#include <luabind/detail/construct_rep.hpp>
 #include <luabind/detail/object_rep.hpp>
 #include <luabind/detail/calc_arity.hpp>
 #include <luabind/detail/call_member.hpp>
 #include <luabind/detail/enum_maker.hpp>
 #include <luabind/detail/get_signature.hpp>
-#include <luabind/detail/implicit_cast.hpp>
 #include <luabind/detail/operator_id.hpp>
 #include <luabind/detail/pointee_typeid.hpp>
 #include <luabind/detail/link_compatibility.hpp>
+#include <luabind/detail/inheritance.hpp>
+#include <luabind/typeid.hpp>
 
 // to remove the 'this' used in initialization list-warning
 #ifdef _MSC_VER
@@ -159,122 +154,72 @@ namespace luabind
 		return 0;
 	}
 
+    template <
+        BOOST_PP_ENUM_PARAMS_WITH_A_DEFAULT(
+            LUABIND_MAX_BASES, class A, detail::null_type)
+    >
+    struct bases
+    {};
+
+    typedef bases<detail::null_type> no_bases;
+
 	namespace detail
 	{
-		template<BOOST_PP_ENUM_PARAMS(LUABIND_MAX_BASES, class A)>
-		double is_bases_helper(const bases<BOOST_PP_ENUM_PARAMS(LUABIND_MAX_BASES, A)>&);
+        template <class T>
+        struct is_bases
+          : mpl::false_
+        {};
 
-#ifndef BOOST_MSVC
-		template<class T>
-		char is_bases_helper(const T&);
-#else
-		char is_bases_helper(...);
-#endif
+        template <BOOST_PP_ENUM_PARAMS(LUABIND_MAX_BASES, class A)>
+        struct is_bases<bases<BOOST_PP_ENUM_PARAMS(LUABIND_MAX_BASES, A)> >
+          : mpl::true_
+        {};
 
-		template<class T>
-		struct is_bases
-		{
-			static const T& t;
+        template <class T, class P>
+        struct is_unspecified
+          : mpl::apply1<P, T>
+        {};
 
-			BOOST_STATIC_CONSTANT(bool, value = sizeof(is_bases_helper(t)) == sizeof(double));
-			typedef boost::mpl::bool_<value> type;
-			BOOST_MPL_AUX_LAMBDA_SUPPORT(1,is_bases,(T))
-		};
+        template <class P>
+        struct is_unspecified<unspecified, P>
+          : mpl::true_
+        {};
 
-		double is_not_unspecified_helper(const unspecified*);
-		char is_not_unspecified_helper(...);
-
-		template<class T>
-		struct is_not_unspecified
-		{
-			BOOST_STATIC_CONSTANT(bool, value = sizeof(is_not_unspecified_helper(static_cast<T*>(0))) == sizeof(char));
-			typedef boost::mpl::bool_<value> type;
-			BOOST_MPL_AUX_LAMBDA_SUPPORT(1,is_not_unspecified,(T))
-		};
+        template <class P>
+        struct is_unspecified_mfn
+        {
+            template <class T>
+            struct apply
+              : is_unspecified<T, P>
+            {};
+        };
 
 		template<class Predicate>
 		struct get_predicate
 		{
-			typedef typename boost::mpl::and_<
-			  	is_not_unspecified<boost::mpl::_1>
-			  , Predicate
-			> type;
+            typedef mpl::protect<is_unspecified_mfn<Predicate> > type;
 		};
+
+        template <class Result, class Default>
+        struct result_or_default
+        {
+            typedef Result type;
+        };
+
+        template <class Default>
+        struct result_or_default<unspecified, Default>
+        {
+            typedef Default type;
+        };
 
 		template<class Parameters, class Predicate, class DefaultValue>
 		struct extract_parameter
 		{
 			typedef typename get_predicate<Predicate>::type pred;
 			typedef typename boost::mpl::find_if<Parameters, pred>::type iterator;
-			typedef typename boost::mpl::eval_if<
-				boost::is_same<
-					iterator
-				  , typename boost::mpl::end<Parameters>::type
-				>
-			  , boost::mpl::identity<DefaultValue>
-			  , boost::mpl::deref<iterator>
-			>::type type;
-		};
-
-		template<class Fn, class Class, class Policies>
-		struct mem_fn_callback
-		{
-			typedef int result_type;
-
-			int operator()(lua_State* L) const
-			{
-				return invoke(L, fn, deduce_signature(fn, (Class*)0), Policies());
-			}
-
-			mem_fn_callback(Fn fn_)
-				: fn(fn_)
-			{
-			}
-
-			Fn fn;
-		};
-
-		template<class Fn, class Class, class Policies>
-		struct mem_fn_matcher
-		{
-			typedef int result_type;
-
-			int operator()(lua_State* L) const
-			{
-				return compute_score(L, deduce_signature(fn, (Class*)0), Policies());
-			}
-
-			mem_fn_matcher(Fn fn_)
-				: fn(fn_)
-			{
-			}
-
-			Fn fn;
-		};
-
-		struct pure_virtual_tag
-		{
-			static void precall(lua_State*, index_map const&) {}
-			static void postcall(lua_State*, index_map const&) {}
-		};
-
-		template<class Policies>
-		struct has_pure_virtual
-		{
-			typedef typename boost::mpl::eval_if<
-				boost::is_same<pure_virtual_tag, typename Policies::head>
-			  , boost::mpl::true_
-			  , has_pure_virtual<typename Policies::tail>
-			>::type type;
-
-			BOOST_STATIC_CONSTANT(bool, value = type::value);
-		};
-
-		template<>
-		struct has_pure_virtual<null_type>
-		{
-			BOOST_STATIC_CONSTANT(bool, value = false);
-			typedef boost::mpl::bool_<value> type;
+            typedef typename result_or_default<
+                typename iterator::type, DefaultValue
+            >::type type;
 		};
 
 		// prints the types of the values on the stack, in the
@@ -287,401 +232,6 @@ namespace luabind
 			static int stage1(lua_State* L);
 			static int stage2(lua_State* L);
 		};
-
-		// if the class is held by a smart pointer, we need to be able to
-		// implicitly dereference the pointer when needed.
-
-		template<class UnderlyingT, class HeldT>
-		struct extract_underlying_type
-		{
-			static void* extract(void* ptr)
-			{
-				HeldT& held_obj = *reinterpret_cast<HeldT*>(ptr);
-				UnderlyingT* underlying_ptr = static_cast<UnderlyingT*>(get_pointer(held_obj));
-				return underlying_ptr;
-			}
-		};
-
-		template<class UnderlyingT, class HeldT>
-		struct extract_underlying_const_type
-		{
-			static const void* extract(void* ptr)
-			{
-				HeldT& held_obj = *reinterpret_cast<HeldT*>(ptr);
-				const UnderlyingT* underlying_ptr = static_cast<const UnderlyingT*>(get_pointer(held_obj));
-				return underlying_ptr;
-			}
-		};
-
-		template<class HeldType>
-		struct internal_holder_extractor
-		{
-			typedef void*(*extractor_fun)(void*);
-
-			template<class T>
-			static extractor_fun apply(detail::type_<T>)
-			{
-				return &detail::extract_underlying_type<T, HeldType>::extract;
-			}
-		};
-
-		template<>
-		struct internal_holder_extractor<detail::null_type>
-		{
-			typedef void*(*extractor_fun)(void*);
-
-			template<class T>
-			static extractor_fun apply(detail::type_<T>)
-			{
-				return 0;
-			}
-		};
-
-
-		template<class HeldType, class ConstHolderType>
-		struct convert_holder
-		{
-			static void apply(void* holder, void* target)
-			{
-				new(target) ConstHolderType(*reinterpret_cast<HeldType*>(holder));
-			};
-		};
-
-
-		template<class HeldType>
-		struct const_converter
-		{
-			typedef void(*converter_fun)(void*, void*);
-
-			template<class ConstHolderType>
-			static converter_fun apply(ConstHolderType*)
-			{
-				return &detail::convert_holder<HeldType, ConstHolderType>::apply;
-			}
-		};
-
-		template<>
-		struct const_converter<detail::null_type>
-		{
-			typedef void(*converter_fun)(void*, void*);
-
-			template<class T>
-			static converter_fun apply(T*)
-			{
-				return 0;
-			}
-		};
-
-
-
-
-		template<class HeldType>
-		struct internal_const_holder_extractor
-		{
-			typedef const void*(*extractor_fun)(void*);
-
-			template<class T>
-			static extractor_fun apply(detail::type_<T>)
-			{
-				return get_extractor(detail::type_<T>(), get_const_holder(static_cast<HeldType*>(0)));
-			}
-		private:
-			template<class T, class ConstHolderType>
-			static extractor_fun get_extractor(detail::type_<T>, ConstHolderType*)
-			{
-				return &detail::extract_underlying_const_type<T, ConstHolderType>::extract;
-			}
-		};
-
-		template<>
-		struct internal_const_holder_extractor<detail::null_type>
-		{
-			typedef const void*(*extractor_fun)(void*);
-
-			template<class T>
-			static extractor_fun apply(detail::type_<T>)
-			{
-				return 0;
-			}
-		};
-
-
-
-		// this is simply a selector that returns the type_info
-		// of the held type, or invalid_type_info if we don't have
-		// a held_type
-		template<class HeldType>
-		struct internal_holder_type
-		{
-			static LUABIND_TYPE_INFO apply()
-			{
-				return LUABIND_TYPEID(HeldType);
-			}
-		};
-
-		template<>
-		struct internal_holder_type<detail::null_type>
-		{
-			static LUABIND_TYPE_INFO apply()
-			{
-				return LUABIND_INVALID_TYPE_INFO;
-			}
-		};
-
-
-		// this is the actual held_type constructor
-		template<class HeldType, class T>
-		struct internal_construct_holder
-		{
-			static void apply(void* target, void* raw_pointer)
-			{
-				new(target) HeldType(static_cast<T*>(raw_pointer));
-			}
-		};
-
-		// this is the actual held_type default constructor
-		template<class HeldType, class T>
-		struct internal_default_construct_holder
-		{
-			static void apply(void* target)
-			{
-				new(target) HeldType();
-			}
-		};
-
-		// the following two functions are the ones that returns
-		// a pointer to a held_type_constructor, or 0 if there
-		// is no held_type
-		template<class HeldType>
-		struct holder_constructor
-		{
-			typedef void(*constructor)(void*,void*);
-			template<class T>
-			static constructor apply(detail::type_<T>)
-			{
-				return &internal_construct_holder<HeldType, T>::apply;
-			}
-		};
-
-		template<>
-		struct holder_constructor<detail::null_type>
-		{
-			typedef void(*constructor)(void*,void*);
-			template<class T>
-			static constructor apply(detail::type_<T>)
-			{
-				return 0;
-			}
-		};
-
-		// the following two functions are the ones that returns
-		// a pointer to a const_held_type_constructor, or 0 if there
-		// is no held_type
-		template<class HolderType>
-		struct const_holder_constructor
-		{
-			typedef void(*constructor)(void*,void*);
-			template<class T>
-			static constructor apply(detail::type_<T>)
-			{
-				return get_const_holder_constructor(detail::type_<T>(), get_const_holder(static_cast<HolderType*>(0)));
-			}
-
-		private:
-
-			template<class T, class ConstHolderType>
-			static constructor get_const_holder_constructor(detail::type_<T>, ConstHolderType*)
-			{
-				return &internal_construct_holder<ConstHolderType, T>::apply;
-			}
-		};
-
-		template<>
-		struct const_holder_constructor<detail::null_type>
-		{
-			typedef void(*constructor)(void*,void*);
-			template<class T>
-			static constructor apply(detail::type_<T>)
-			{
-				return 0;
-			}
-		};
-
-
-		// the following two functions are the ones that returns
-		// a pointer to a held_type_constructor, or 0 if there
-		// is no held_type. The holder_type is default constructed
-		template<class HeldType>
-		struct holder_default_constructor
-		{
-			typedef void(*constructor)(void*);
-			template<class T>
-			static constructor apply(detail::type_<T>)
-			{
-				return &internal_default_construct_holder<HeldType, T>::apply;
-			}
-		};
-
-		template<>
-		struct holder_default_constructor<detail::null_type>
-		{
-			typedef void(*constructor)(void*);
-			template<class T>
-			static constructor apply(detail::type_<T>)
-			{
-				return 0;
-			}
-		};
-
-
-		// the following two functions are the ones that returns
-		// a pointer to a const_held_type_constructor, or 0 if there
-		// is no held_type. The constructed held_type is default
-		// constructed
-		template<class HolderType>
-		struct const_holder_default_constructor
-		{
-			typedef void(*constructor)(void*);
-			template<class T>
-			static constructor apply(detail::type_<T>)
-			{
-				return get_const_holder_default_constructor(detail::type_<T>(), get_const_holder(static_cast<HolderType*>(0)));
-			}
-
-		private:
-
-			template<class T, class ConstHolderType>
-			static constructor get_const_holder_default_constructor(detail::type_<T>, ConstHolderType*)
-			{
-				return &internal_default_construct_holder<ConstHolderType, T>::apply;
-			}
-		};
-
-		template<>
-		struct const_holder_default_constructor<detail::null_type>
-		{
-			typedef void(*constructor)(void*);
-			template<class T>
-			static constructor apply(detail::type_<T>)
-			{
-				return 0;
-			}
-		};
-
-
-
-
-		// this is a selector that returns the size of the held_type
-		// or 0 if we don't have a held_type
-		template <class HolderType>
-		struct internal_holder_size
-		{
-			static int apply() { return get_internal_holder_size(get_const_holder(static_cast<HolderType*>(0))); }
-		private:
-			template<class ConstHolderType>
-			static int get_internal_holder_size(ConstHolderType*)
-			{
-				return max_c<sizeof(HolderType), sizeof(ConstHolderType)>::value;
-			}
-		};
-
-		template <>
-		struct internal_holder_size<detail::null_type>
-		{
-			static int apply() {	return 0; }
-		};
-
-
-		// if we have a held type, return the destructor to it
-		// note the difference. The held_type should only be destructed (not deleted)
-		// since it's constructed in the lua userdata
-		template<class HeldType>
-		struct internal_holder_destructor
-		{
-			typedef void(*destructor_t)(void*);
-			template<class T>
-			static destructor_t apply(detail::type_<T>)
-			{
-				return &detail::destruct_only_s<HeldType>::apply;
-			}
-		};
-
-		// if we don't have a held type, return the destructor of the raw type
-		template<>
-		struct internal_holder_destructor<detail::null_type>
-		{
-			typedef void(*destructor_t)(void*);
-			template<class T>
-			static destructor_t apply(detail::type_<T>)
-			{
-				return &detail::delete_s<T>::apply;
-			}
-		};
-
-		
-		// if we have a held type, return the destructor to it's const version
-		template<class HolderType>
-		struct internal_const_holder_destructor
-		{
-			typedef void(*destructor_t)(void*);
-			template<class T>
-			static destructor_t apply(detail::type_<T>)
-			{
-				return const_holder_type_destructor(get_const_holder(static_cast<HolderType*>(0)));
-			}
-
-		private:
-
-			template<class ConstHolderType>
-			static destructor_t const_holder_type_destructor(ConstHolderType*)
-			{
-				return &detail::destruct_only_s<ConstHolderType>::apply;
-			}
-
-		};
-
-		// if we don't have a held type, return the destructor of the raw type
-		template<>
-		struct internal_const_holder_destructor<detail::null_type>
-		{
-			typedef void(*destructor_t)(void*);
-			template<class T>
-			static destructor_t apply(detail::type_<T>)
-			{
-				return 0;
-			}
-		};
-
-
-
-
-		template<class HolderType>
-		struct get_holder_alignment
-		{
-			static int apply()
-			{
-				return internal_alignment(get_const_holder(static_cast<HolderType*>(0)));
-			}
-
-		private:
-
-			template<class ConstHolderType>
-			static int internal_alignment(ConstHolderType*)
-			{
-				return detail::max_c<boost::alignment_of<HolderType>::value
-					, boost::alignment_of<ConstHolderType>::value>::value;
-			}
-		};
-
-		template<>
-		struct get_holder_alignment<detail::null_type>
-		{
-			static int apply()
-			{
-				return 1;
-			}
-		};
-
 
 	} // detail
 
@@ -716,61 +266,15 @@ namespace luabind
 
 			struct base_desc
 			{
-				LUABIND_TYPE_INFO type;
+				type_id type;
 				int ptr_offset;
 			};
 
 			void init(
-				LUABIND_TYPE_INFO type
-				, LUABIND_TYPE_INFO holder_type
-				, LUABIND_TYPE_INFO const_holder_type
-				, void*(*extractor)(void*)
-				, const void*(*const_extractor)(void*)
-				, void(*const_converter)(void*,void*)
-				, void(*holder_constructor)(void*,void*)
-				, void(*const_holder_constructor)(void*,void*)
-				, void(*holder_default_constructor)(void*)
-				, void(*const_holder_default_constructor)(void*)
-				, void(*adopt_fun)(void*)
-				, void(*destructor)(void*)
-				, void(*const_holder_destructor)(void*)
-				, int holder_size
-				, int holder_alignment);
+                type_id const& type, class_id id
+              , type_id const& wrapped_type, class_id wrapper_id);
 
-			void add_getter(
-				const char* name
-				, const boost::function2<int, lua_State*, int>& g);
-
-#ifdef LUABIND_NO_ERROR_CHECKING
-			void add_setter(
-				const char* name
-				, const boost::function2<int, lua_State*, int>& s);
-#else
-			void add_setter(
-				const char* name
-				, const boost::function2<int, lua_State*, int>& s
-				, int (*match)(lua_State*, int)
-				, void (*get_sig_ptr)(lua_State*, std::string&));
-#endif
-
-			void add_base(const base_desc& b);
-			void add_constructor(const detail::construct_rep::overload_t& o);	
-
-#ifndef LUABIND_NO_ERROR_CHECKING
-			void add_operator(
-				int op_id
-				,  int(*func)(lua_State*)
-				, int(*matcher)(lua_State*)
-				, void(*sig)(lua_State*
-				, std::string&)
-				, int arity);
-#else
-			void add_operator(
-				int op_id
-				,  int(*func)(lua_State*)
-				, int(*matcher)(lua_State*)
-				, int arity);
-#endif
+            void add_base(type_id const& base, cast_function cast);
 
 			void add_member(registration* member);
 			void add_default_member(registration* member);
@@ -780,26 +284,18 @@ namespace luabind
 			void add_static_constant(const char* name, int val);
 			void add_inner_scope(scope& s);
 
+            void add_cast(class_id src, class_id target, cast_function cast);
+
 		private:
 			class_registration* m_registration;
 		};
-	
-        template<class T, class W>
-        struct adopt_function
-		{
-		    static void execute(void* p)
-            {
-                if (W* wrapper = dynamic_cast<W*>(static_cast<T*>(p)))
-                {
-                    wrapped_self_t& self = wrap_access::ref(*wrapper);
 
-                    LUABIND_CHECK_STACK(self.state());
-
-                    self.get(self.state());
-                    self.m_strong_ref.set(self.state());
-                }
-            }
-        };
+// MSVC complains about member being sensitive to alignment (C4121)
+// when F is a pointer to member of a class with virtual bases.
+# ifdef BOOST_MSVC
+#  pragma pack(push)
+#  pragma pack(16)
+# endif
 
 		template <class Class, class F, class Policies>
 		struct memfun_registration : registration
@@ -827,7 +323,23 @@ namespace luabind
 			Policies policies;
 		};
 
-        template <class Class, class Signature, class Policies>
+# ifdef BOOST_MSVC
+#  pragma pack(pop)
+# endif
+
+        template <class P, class T>
+        struct default_pointer
+        {
+            typedef P type;
+        };
+
+        template <class T>
+        struct default_pointer<null_type, T>
+        {
+            typedef std::auto_ptr<T> type;
+        };
+
+        template <class Class, class Pointer, class Signature, class Policies>
         struct constructor_registration : registration
         {
             constructor_registration(Policies const& policies)
@@ -836,8 +348,13 @@ namespace luabind
 
             void register_(lua_State* L) const
             {
+                typedef typename default_pointer<Pointer, Class>::type pointer;
+
                 object fn = make_function(
-                    L, construct<Class, Signature>(), Signature(), policies);
+                    L
+                  , construct<Class, pointer, Signature>(), Signature()
+                  , policies
+                );
 
                 add_overload(
                     object(from_stack(L, -1))
@@ -951,7 +468,7 @@ namespace luabind
             }
 
             void register_aux(
-                lua_State* L, object const& context
+                lua_State*, object const& context
               , object const& get_, null_type) const
             {
                 context[name] = property(get_);
@@ -979,26 +496,40 @@ namespace luabind
 
 	public:
 
+        typedef boost::mpl::vector4<X1, X2, X3, detail::unspecified> parameters_type;
+
 		// WrappedType MUST inherit from T
 		typedef typename detail::extract_parameter<
-		    boost::mpl::vector3<X1,X2,X3>
+		    parameters_type
 		  , boost::is_base_and_derived<T, boost::mpl::_>
 		  , detail::null_type
 		>::type WrappedType;
 
 		typedef typename detail::extract_parameter<
-		    boost::mpl::list3<X1,X2,X3>
+		    parameters_type
 		  , boost::mpl::not_<
 		        boost::mpl::or_<
-				    boost::mpl::or_<
-					    detail::is_bases<boost::mpl::_>
-					  , boost::is_base_and_derived<boost::mpl::_, T>
-					>
-				  , boost::is_base_and_derived<T, boost::mpl::_>
+                    detail::is_bases<boost::mpl::_>
+                  , boost::is_base_and_derived<boost::mpl::_, T>
+                  , boost::is_base_and_derived<T, boost::mpl::_>
 				>
 			>
 		  , detail::null_type
 		>::type HeldType;
+
+        template <class Src, class Target>
+        void add_downcast(Src*, Target*, boost::mpl::true_)
+        {
+            add_cast(
+                detail::registered_class<Src>::id
+              , detail::registered_class<Target>::id
+              , detail::dynamic_cast_<Src, Target>::execute
+            );
+        }
+
+        template <class Src, class Target>
+        void add_downcast(Src*, Target*, boost::mpl::false_)
+        {}
 
 		// this function generates conversion information
 		// in the given class_rep structure. It will be able
@@ -1006,28 +537,23 @@ namespace luabind
 		template<class To>
 		void gen_base_info(detail::type_<To>)
 		{
-			// fist, make sure the given base class is registered.
-			// if it's not registered we can't push it's lua table onto
-			// the stack because it doesn't have a table
+            add_base(typeid(To), detail::static_cast_<T, To>::execute);
+            add_cast(
+                detail::registered_class<T>::id
+              , detail::registered_class<To>::id
+              , detail::static_cast_<T, To>::execute
+            );
 
-			// try to cast this type to the base type and remember
-			// the pointer offset. For multiple inheritance the pointer
-			// may change when casting. Since we need to be able to
-			// cast we need this pointer offset.
-			// store the information in this class' base class-vector
-			base_desc base;
-			base.type = LUABIND_TYPEID(To);
-			base.ptr_offset = detail::ptr_offset(detail::type_<T>(), detail::type_<To>());
-			add_base(base);
+            add_downcast((To*)0, (T*)0, boost::is_polymorphic<To>());
 		}
 
 		void gen_base_info(detail::type_<detail::null_type>)
 		{}
 
-#define LUABIND_GEN_BASE_INFO(z, n, text) gen_base_info(detail::type_<B##n>());
+#define LUABIND_GEN_BASE_INFO(z, n, text) gen_base_info(detail::type_<BaseClass##n>());
 
-		template<BOOST_PP_ENUM_PARAMS(LUABIND_MAX_BASES, class B)>
-		void generate_baseclass_list(detail::type_<bases<BOOST_PP_ENUM_PARAMS(LUABIND_MAX_BASES, B)> >)
+		template<BOOST_PP_ENUM_PARAMS(LUABIND_MAX_BASES, class BaseClass)>
+		void generate_baseclass_list(detail::type_<bases<BOOST_PP_ENUM_PARAMS(LUABIND_MAX_BASES, BaseClass)> >)
 		{
 			BOOST_PP_REPEAT(LUABIND_MAX_BASES, LUABIND_GEN_BASE_INFO, _)
 		}
@@ -1199,7 +725,7 @@ namespace luabind
 			return this->def(
 				Derived::name()
 			  , &Derived::template apply<T, Policies>::execute
-			  , raw(_1) + policies
+			  , policies
 			);
 		}
 
@@ -1209,101 +735,9 @@ namespace luabind
 			return this->def(
 				Derived::name()
 			  , &Derived::template apply<T, detail::null_type>::execute
-			  , raw(_1)
 			);
 		}
 
-/*
-		template<class op_id, class Left, class Right, class Policies>
-		class_& def(detail::operator_<op_id, Left, Right>, const Policies& policies)
-		{
-			typedef typename detail::operator_unwrapper<Policies, op_id, T, Left, Right> op_type;
-#ifndef LUABIND_NO_ERROR_CHECKING
-			add_operator(op_type::get_id()
-									, &op_type::execute
-									, &op_type::match
-									, &detail::get_signature<constructor<typename op_type::left_t, typename op_type::right_t> >::apply
-									, detail::is_unary(op_type::get_id()) ? 1 : 2);
-#else
-			add_operator(op_type::get_id()
-									, &op_type::execute
-									, &op_type::match
-									, detail::is_unary(op_type::get_id()) ? 1 : 2);
-#endif
-			return *this;
-		}
-
-		template<class op_id, class Left, class Right>
-		class_& def(detail::operator_<op_id, Left, Right>)
-		{
-			typedef typename detail::operator_unwrapper<detail::null_type, op_id, T, Left, Right> op_type;
-
-#ifndef LUABIND_NO_ERROR_CHECKING
-			add_operator(op_type::get_id()
-									, &op_type::execute
-									, &op_type::match
-									, &detail::get_signature<constructor<LUABIND_MSVC_TYPENAME op_type::left_t, LUABIND_MSVC_TYPENAME op_type::right_t> >::apply
-									, detail::is_unary(op_type::get_id()) ? 1 : 2);
-#else
-			add_operator(op_type::get_id()
-									, &op_type::execute
-									, &op_type::match
-									, detail::is_unary(op_type::get_id()) ? 1 : 2);
-#endif
-			return *this;
-		}
-
-		template<class Signature, bool Constant>
-		class_& def(detail::application_operator<Signature, Constant>*)
-		{
-			typedef detail::application_operator<Signature, Constant, detail::null_type> op_t;
-
-			int arity = detail::calc_arity<Signature::arity>::apply(
-				Signature(), static_cast<detail::null_type*>(0));
-
-#ifndef LUABIND_NO_ERROR_CHECKING
-			add_operator(
-				detail::op_call
-				, &op_t::template apply<T>::execute
-				, &op_t::match
-				, &detail::get_signature<Signature>::apply
-				, arity + 1);
-#else
-			add_operator(
-				detail::op_call
-				, &op_t::template apply<T>::execute
-				, &op_t::match
-				, arity + 1);
-#endif
-
-			return *this;
-		}
-
-		template<class Signature, bool Constant, class Policies>
-		class_& def(detail::application_operator<Signature, Constant>*, const Policies& policies)
-		{
-			typedef detail::application_operator<Signature, Constant, Policies> op_t;
-
-			int arity = detail::calc_arity<Signature::arity>::apply(Signature(), static_cast<Policies*>(0));
-
-#ifndef LUABIND_NO_ERROR_CHECKING
-			add_operator(
-				detail::op_call
-				, &op_t::template apply<T>::execute
-				, &op_t::match
-				, &detail::get_signature<Signature>::apply
-				, arity + 1);
-#else
-			add_operator(
-				detail::op_call
-				, &op_t::template apply<T>::execute
-				, &op_t::match
-				, arity + 1);
-#endif
-
-			return *this;
-		}
-*/
 		detail::enum_maker<self_t> enum_(const char*)
 		{
 			return detail::enum_maker<self_t>(*this);
@@ -1314,10 +748,25 @@ namespace luabind
 	private:
 		void operator=(class_ const&);
 
+        void add_wrapper_cast(detail::null_type*)
+        {}
+
+        template <class U>
+        void add_wrapper_cast(U*)
+        {
+            add_cast(
+                detail::registered_class<U>::id
+              , detail::registered_class<T>::id
+              , detail::static_cast_<U,T>::execute
+            );
+
+            add_downcast((T*)0, (U*)0, boost::is_polymorphic<T>());
+        }
+
 		void init()
 		{
 			typedef typename detail::extract_parameter<
-					boost::mpl::list3<X1,X2,X3>
+					parameters_type
 				,	boost::mpl::or_<
 							detail::is_bases<boost::mpl::_>
 						,	boost::is_base_and_derived<boost::mpl::_, T>
@@ -1331,23 +780,14 @@ namespace luabind
 					,	bases<bases_t>
 				>::type Base;
 	
-			class_base::init(LUABIND_TYPEID(T)
-				, detail::internal_holder_type<HeldType>::apply()
-				, detail::pointee_typeid(
-					get_const_holder(static_cast<HeldType*>(0)))
-				, detail::internal_holder_extractor<HeldType>::apply(detail::type_<T>())
-				, detail::internal_const_holder_extractor<HeldType>::apply(detail::type_<T>())
-				, detail::const_converter<HeldType>::apply(
-					get_const_holder((HeldType*)0))
-				, detail::holder_constructor<HeldType>::apply(detail::type_<T>())
-				, detail::const_holder_constructor<HeldType>::apply(detail::type_<T>())
-				, detail::holder_default_constructor<HeldType>::apply(detail::type_<T>())
-				, detail::const_holder_default_constructor<HeldType>::apply(detail::type_<T>())
-				, get_adopt_fun((WrappedType*)0) // adopt fun
-				, detail::internal_holder_destructor<HeldType>::apply(detail::type_<T>())
-				, detail::internal_const_holder_destructor<HeldType>::apply(detail::type_<T>())
-				, detail::internal_holder_size<HeldType>::apply()
-				, detail::get_holder_alignment<HeldType>::apply());
+            class_base::init(
+                typeid(T)
+              , detail::registered_class<T>::id
+              , typeid(WrappedType)
+              , detail::registered_class<WrappedType>::id
+            );
+
+            add_wrapper_cast((WrappedType*)0);
 
 			generate_baseclass_list(detail::type_<Base>());
 		}
@@ -1418,41 +858,18 @@ namespace luabind
 
             this->add_member(
                 new detail::constructor_registration<
-                    construct_type, signature, Policies>(
+                    construct_type, HeldType, signature, Policies>(
                         Policies()));
 
             this->add_default_member(
                 new detail::constructor_registration<
-                    construct_type, signature, Policies>(
+                    construct_type, HeldType, signature, Policies>(
                         Policies()));
 
             return *this;
         }
-
-		typedef void(*adopt_fun_t)(void*);
-
-		template<class W>
-		adopt_fun_t get_adopt_fun(W*)
-		{
-            return &detail::adopt_function<T, W>::execute;
-		}
-
-		adopt_fun_t get_adopt_fun(detail::null_type*)
-		{
-			return 0;
-		}
 	};
 
-	detail::policy_cons<
-		detail::pure_virtual_tag, detail::null_type> const pure_virtual = {};
-
-    namespace detail
-    {
-      inline void ignore_unused_pure_virtual()
-      {
-          (void)pure_virtual;
-      }
-    }
 }
 
 #ifdef _MSC_VER

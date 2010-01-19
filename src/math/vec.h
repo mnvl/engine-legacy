@@ -13,7 +13,7 @@
 #include <iosfwd>
 #include <string>
 #include <algorithm>
-#include <lua.h>
+#include <luabind/lua_include.hpp>
 #include "scalar.h"
 
 namespace math

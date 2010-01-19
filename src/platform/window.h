@@ -11,7 +11,7 @@
 
 #include <windows.h>
 #include <boost/signals2/signal.hpp>
-#include <lua.h>
+#include <luabind/lua_include.hpp>
 #include <math/vec.h>
 
 namespace platform

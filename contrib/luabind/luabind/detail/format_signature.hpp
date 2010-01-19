@@ -7,6 +7,7 @@
 
 # include <luabind/config.hpp>
 # include <luabind/lua_include.hpp>
+# include <luabind/typeid.hpp>
 
 # include <boost/mpl/begin_end.hpp>
 # include <boost/mpl/next.hpp>
@@ -16,19 +17,21 @@ namespace luabind {
 
 class object;
 class argument;
+template <class Base>
+struct table;
 
 } // namespace luabind
 
 namespace luabind { namespace detail {
 
-LUABIND_API std::string get_class_name(lua_State* L, LUABIND_TYPE_INFO i);
+LUABIND_API std::string get_class_name(lua_State* L, type_id const& i);
 
 template <class T>
 struct type_to_string
 {
     static void get(lua_State* L)
     {
-        lua_pushstring(L, get_class_name(L, LUABIND_TYPEID(T)).c_str());
+        lua_pushstring(L, get_class_name(L, typeid(T)).c_str());
     }
 };
 
@@ -94,6 +97,15 @@ LUABIND_TYPE_TO_STRING(luabind::argument)
 
 # undef LUABIND_INTEGRAL_TYPE_TO_STRING
 # undef LUABIND_TYPE_TO_STRING
+
+template <class Base>
+struct type_to_string<table<Base> >
+{
+    static void get(lua_State* L)
+    {
+        lua_pushstring(L, "table");
+    }
+};
 
 template <class End>
 void format_signature_aux(lua_State*, bool, End, End)

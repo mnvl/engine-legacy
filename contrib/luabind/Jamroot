@@ -6,7 +6,7 @@ import package ;
 import path ;
 import virtual-target ;
 
-VERSION = 0.8.1 ;
+VERSION = 0.9.0 ;
 BOOST_ROOT = [ os.environ BOOST_ROOT ] ;
 
 rule debug-message ( txt * )
@@ -141,15 +141,12 @@ SOURCES =
     create_class.cpp
     error.cpp
     exception_handler.cpp
-    find_best_match.cpp
     function.cpp
-    implicit_cast.cpp
+    inheritance.cpp
     link_compatibility.cpp
     object_rep.cpp
     open.cpp
-    overload_rep.cpp
     pcall.cpp
-    ref.cpp
     scope.cpp
     stack_content_by_name.cpp
     weak_ref.cpp

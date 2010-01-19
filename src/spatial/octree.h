@@ -11,7 +11,7 @@
 
 #include <set>
 #include <vector>
-#include <lua.h>
+#include <luabind/lua_include.hpp>
 #include <math/vec.h>
 #include <math/aabb.h>
 #include "shape.h"
@@ -44,7 +44,7 @@ public:
 
 	void add_shape(ShapePtr const &shape)
 		{ add_shape(shape, shape->get_bounds(), ResultSetPtr()); }
-	void add_shape(ShapePtr const &shape, ResultSetPtr const &result_set = ResultSetPtr())
+	void add_shape(ShapePtr const &shape, ResultSetPtr const &result_set)
 		{ add_shape(shape, shape->get_bounds(), result_set); }
 	void remove_shape(ShapePtr const &shape)
 		{ remove_shape(shape, shape->get_bounds()); }

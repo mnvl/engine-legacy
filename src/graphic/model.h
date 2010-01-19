@@ -11,7 +11,7 @@
 
 #include <vector>
 #include <boost/shared_ptr.hpp>
-#include <lua.h>
+#include <luabind/lua_include.hpp>
 #include "joint.h"
 #include "animation.h"
 #include "mesh.h"

@@ -15,7 +15,7 @@
 #include <stdexcept>
 #include <boost/scoped_ptr.hpp>
 #include <xercesc/dom/DOM.hpp>
-#include <lua.h>
+#include <luabind/lua_include.hpp>
 #include <math/vec.h>
 #include <graphic/model.h>
 

@@ -11,7 +11,7 @@
 
 #include <set>
 #include <boost/shared_ptr.hpp>
-#include <lua.h>
+#include <luabind/lua_include.hpp>
 #include "shape.h"
 
 namespace spatial
