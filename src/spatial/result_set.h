@@ -11,6 +11,7 @@
 
 #include <set>
 #include <boost/shared_ptr.hpp>
+#include <lua.h>
 #include "shape.h"
 
 namespace spatial
@@ -36,6 +37,8 @@ public:
 	{
 		return shapes_;
 	}
+
+	static void bind(lua_State *L);
 
 private:
 	shapes_t shapes_;
