@@ -22,6 +22,7 @@ void Octree::bind(lua_State *L)
 	[
 		class_<Octree, boost::shared_ptr<Octree> >("Octree")
 		.def(constructor<Octree::aabb_t>())
+		.def("add_shape", (void (Octree::*)(ShapePtr const &)) &Octree::add_shape)
 		.def("add_shape", (void (Octree::*)(ShapePtr const &, ResultSetPtr const &)) &Octree::add_shape)
 		.def("remove_shape", (void (Octree::*)(ShapePtr const &)) &Octree::remove_shape)
 		.def("pre_move_shape", &Octree::pre_move_shape)

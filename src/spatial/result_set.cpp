@@ -23,7 +23,7 @@ void ResultSet::bind(lua_State *L)
 	[
 		class_<ResultSet, ResultSetPtr>("ResultSet")
 		.def(constructor<>())
-		.def_readonly("shapes", &ResultSet::shapes_, return_stl_iterator)
+		.def("get_shapes", &ResultSet::get_shapes, return_stl_iterator)
 	];
 }
 

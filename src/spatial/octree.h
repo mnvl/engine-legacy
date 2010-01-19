@@ -42,6 +42,8 @@ public:
 	void intersect_shallow(ShapePtr const &shape, aabb_t const &bounds, ResultSetPtr const &result);
 	void intersect(ShapePtr const &shape, aabb_t const &bounds, ResultSetPtr const &result); // does not clear result
 
+	void add_shape(ShapePtr const &shape)
+		{ add_shape(shape, shape->get_bounds(), ResultSetPtr()); }
 	void add_shape(ShapePtr const &shape, ResultSetPtr const &result_set = ResultSetPtr())
 		{ add_shape(shape, shape->get_bounds(), result_set); }
 	void remove_shape(ShapePtr const &shape)
