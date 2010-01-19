@@ -36,16 +36,22 @@ public:
 
 	bool is_leaf() const;
 
-	void add_shape(ShapePtr const &shape, aabb_t const &bounds);
+	void add_shape(ShapePtr const &shape, aabb_t const &bounds, ResultSetPtr const &result_set = ResultSetPtr());
 	void remove_shape(ShapePtr const &shape, aabb_t const &bounds);
-	void move_shape(ShapePtr const &shape, aabb_t const &old_bounds, aabb_t const &new_bounds);
+	void move_shape(ShapePtr const &shape, aabb_t const &old_bounds, aabb_t const &new_bounds, ResultSetPtr const &result_set = ResultSetPtr());
+	void intersect_shallow(ShapePtr const &shape, aabb_t const &bounds, ResultSetPtr const &result);
 	void intersect(ShapePtr const &shape, aabb_t const &bounds, ResultSetPtr const &result); // does not clear result
 
-	void add_shape(ShapePtr const &shape) { add_shape(shape, shape->get_bounds()); }
-	void remove_shape(ShapePtr const &shape) { remove_shape(shape, shape->get_bounds()); }
-	void pre_move_shape(ShapePtr const &shape, aabb_t const &new_bounds) { move_shape(shape, shape->get_bounds(), new_bounds); }
-	void post_move_shape(ShapePtr const &shape, aabb_t const &old_bounds) { move_shape(shape, old_bounds, shape->get_bounds()); }
-	void intersect(ShapePtr const &shape, ResultSetPtr const &result) { intersect(shape, shape->get_bounds(), result); }
+	void add_shape(ShapePtr const &shape, ResultSetPtr const &result_set = ResultSetPtr())
+		{ add_shape(shape, shape->get_bounds(), result_set); }
+	void remove_shape(ShapePtr const &shape)
+		{ remove_shape(shape, shape->get_bounds()); }
+	void pre_move_shape(ShapePtr const &shape, aabb_t const &new_bounds, ResultSetPtr const &result_set = ResultSetPtr())
+		{ move_shape(shape, shape->get_bounds(), new_bounds, result_set); }
+	void post_move_shape(ShapePtr const &shape, aabb_t const &old_bounds, ResultSetPtr const &result_set = ResultSetPtr())
+		{ move_shape(shape, old_bounds, shape->get_bounds(), result_set); }
+	void intersect(ShapePtr const &shape, ResultSetPtr const &result)
+		{ intersect(shape, shape->get_bounds(), result); }
 
 	void build_subclusters();
 

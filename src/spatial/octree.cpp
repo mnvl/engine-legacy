@@ -107,16 +107,18 @@ bool Octree::is_leaf() const
 	return subclusters_.empty();
 }
 
-void Octree::add_shape(ShapePtr const &shape, aabb_t const &bounds)
+void Octree::add_shape(ShapePtr const &shape, aabb_t const &bounds, ResultSetPtr const &result_set)
 {
 	if (is_leaf())
 	{
-		shapes_.insert(shape);
-
 		if (shapes_.size() > LEAF_SHAPES_THRESHOLD)
 		{
 			build_subclusters();
 		}
+
+		if (result_set) intersect(shape, bounds, result_set);
+
+		shapes_.insert(shape);
 	}
 	else
 	{
@@ -125,13 +127,18 @@ void Octree::add_shape(ShapePtr const &shape, aabb_t const &bounds)
 
 		if (nsubclusters == SUBCLUSTERS_COUNT)
 		{
+			if (result_set) intersect(shape, bounds, result_set);
+
 			shapes_.insert(shape);
 		}
 		else
 		{
+			if (result_set) intersect_shallow(shape, bounds, result_set);
+
 			for (size_t i = 0; i < nsubclusters; i++)
 			{
-				subclusters_[subclusters[i]].add_shape(shape, bounds);
+				Octree *subcluster = &subclusters_[subclusters[i]];
+				subcluster->add_shape(shape, bounds, result_set);
 			}
 		}
 	}
@@ -162,84 +169,87 @@ void Octree::remove_shape(ShapePtr const &shape, aabb_t const &bounds)
 	}
 }
 
-void Octree::move_shape(ShapePtr const &shape, aabb_t const &old_bounds, aabb_t const &new_bounds)
+void Octree::move_shape(ShapePtr const &shape, aabb_t const &old_bounds, aabb_t const &new_bounds, ResultSetPtr const &result_set)
 {
 	if (is_leaf())
 	{
+		if (result_set) intersect_shallow(shape, new_bounds, result_set);
 		return;
 	}
-	else
+
+	unsigned subclusters_old[SUBCLUSTERS_COUNT];
+	size_t nsubclusters_old = get_subclusters_by_aabb(old_bounds, subclusters_old);
+
+	unsigned subclusters_new[SUBCLUSTERS_COUNT];
+	size_t nsubclusters_new = get_subclusters_by_aabb(new_bounds, subclusters_new);
+
+	if (nsubclusters_old == SUBCLUSTERS_COUNT)
 	{
-		unsigned subclusters_old[SUBCLUSTERS_COUNT];
-		size_t nsubclusters_old = get_subclusters_by_aabb(old_bounds, subclusters_old);
-
-		unsigned subclusters_new[SUBCLUSTERS_COUNT];
-		size_t nsubclusters_new = get_subclusters_by_aabb(new_bounds, subclusters_new);
-
-		if (nsubclusters_old == SUBCLUSTERS_COUNT)
+		if (nsubclusters_new == SUBCLUSTERS_COUNT)
 		{
-			if (nsubclusters_new == SUBCLUSTERS_COUNT)
-			{
-				return;
-			}
-			else
-			{
-				shapes_.erase(shape);
-				add_shape(shape, new_bounds);
-				return;
-			}
+			if (result_set) intersect(shape, new_bounds, result_set);
+			return;
 		}
 		else
 		{
-			if (nsubclusters_new == SUBCLUSTERS_COUNT)
-			{
-				remove_shape(shape, old_bounds);
-				shapes_.insert(shape);
-				return;
-			}
+			shapes_.erase(shape);
+			add_shape(shape, new_bounds, result_set);
+			return;
 		}
-
-		size_t i = 0, j = 0;
-
-		while (i < nsubclusters_old && j < nsubclusters_new)
+	}
+	else
+	{
+		if (nsubclusters_new == SUBCLUSTERS_COUNT)
 		{
-			if (subclusters_old[i] < subclusters_new[j])
-			{
-				// shape moved out of subclusters_old[i]
-				subclusters_[subclusters_old[i]].remove_shape(shape, old_bounds);
-				++i;
-			}
-			else if (subclusters_old[i] > subclusters_new[j])
-			{
-				// shape moved into subclusters_new[j]
-				subclusters_[subclusters_new[j]].add_shape(shape, new_bounds);
-				++j;
-			}
-			else
-			{
-				subclusters_[subclusters_old[i]].move_shape(shape, old_bounds, new_bounds);
-				++i;
-				++j;
-			}
+			remove_shape(shape, old_bounds);
+			if (result_set) intersect(shape, new_bounds, result_set);
+			shapes_.insert(shape);
+			return;
 		}
+	}
 
-		while (i < nsubclusters_old)
+	if (result_set) intersect_shallow(shape, new_bounds, result_set);
+
+	size_t i = 0, j = 0;
+
+	while (i < nsubclusters_old && j < nsubclusters_new)
+	{
+		if (subclusters_old[i] < subclusters_new[j])
 		{
 			// shape moved out of subclusters_old[i]
 			subclusters_[subclusters_old[i]].remove_shape(shape, old_bounds);
 			++i;
 		}
-
-		while (j < nsubclusters_new)
+		else if (subclusters_old[i] > subclusters_new[j])
 		{
 			// shape moved into subclusters_new[j]
-			subclusters_[subclusters_new[j]].add_shape(shape, new_bounds);
+			subclusters_[subclusters_new[j]].add_shape(shape, new_bounds, result_set);
+			++j;
+		}
+		else
+		{
+			subclusters_[subclusters_old[i]].move_shape(shape, old_bounds, new_bounds, result_set);
+			++i;
 			++j;
 		}
 	}
+
+	while (i < nsubclusters_old)
+	{
+		// shape moved out of subclusters_old[i]
+		subclusters_[subclusters_old[i]].remove_shape(shape, old_bounds);
+		++i;
+	}
+
+	while (j < nsubclusters_new)
+	{
+		// shape moved into subclusters_new[j]
+		subclusters_[subclusters_new[j]].add_shape(shape, new_bounds, result_set);
+		++j;
+	}
 }
 
-void Octree::intersect(ShapePtr const &shape, aabb_t const &bounds, ResultSetPtr const &result)
+void Octree::intersect_shallow(ShapePtr const &shape, aabb_t const &bounds, ResultSetPtr const &result)
 {
 	shapes_t::const_iterator it = shapes_.begin();
 
@@ -265,6 +275,11 @@ void Octree::intersect(ShapePtr const &shape, aabb_t const &bounds, ResultSetPtr
 			it = shapes_.erase(it);
 		}
 	}
+}
+
+void Octree::intersect(ShapePtr const &shape, aabb_t const &bounds, ResultSetPtr const &result)
+{
+	if (result) intersect_shallow(shape, bounds, result);
 
 	if (!is_leaf())
 	{

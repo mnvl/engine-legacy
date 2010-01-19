@@ -22,17 +22,9 @@ class ResultSet {
 public:
 	typedef std::set<ShapePtr> shapes_t;
 
-	ResultSet(bool enabled = false):
-		enabled_(enabled)
-	{
-	}
-
 	void insert(ShapePtr const &shape)
 	{
-		if (enabled_)
-		{
-			shapes_.insert(shape);
-		}
+		shapes_.insert(shape);
 	}
 
 	bool have(ShapePtr const &shape)
@@ -46,7 +38,6 @@ public:
 	}
 
 private:
-	bool enabled_;
 	shapes_t shapes_;
 };
 
