@@ -14,6 +14,14 @@
 namespace spatial
 {
 
+namespace
+{
+	ShapePtr upcast_to_shape(boost::shared_ptr<SphereShape> const &shape_ptr)
+	{
+		return boost::static_pointer_cast<Shape>(shape_ptr);
+	}
+}
+
 SphereShape::SphereShape()
 {
 }
@@ -50,7 +58,9 @@ void SphereShape::bind(lua_State *L)
 	[
 		class_<SphereShape, Shape, math::sphere<3>, boost::shared_ptr<SphereShape> >("SphereShape")
 		.def(constructor<math::vec<3> const &, math::scalar>())
-		.scope [ def("upcast_to_shape", &SphereShape::upcast_to_shape) ]
+		.def("set_centre", &SphereShape::set_centre)
+		.def("set_radius", &SphereShape::set_radius)
+		.scope [ def("upcast_to_shape", &upcast_to_shape) ]
 	];
 }
 

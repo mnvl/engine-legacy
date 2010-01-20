@@ -27,9 +27,14 @@ public:
 	virtual bool intersects(Shape const *shape) const;
 	virtual bool intersects(SphereShape const *shape) const;
 
-	static ShapePtr upcast_to_shape(boost::shared_ptr<SphereShape> const &sphere)
+	void set_centre(math::vec<3> const &c)
 	{
-		return boost::static_pointer_cast<Shape>(sphere);
+		centre = c;
+	}
+
+	void set_radius(math::scalar r)
+	{
+		radius = r;
 	}
 
 	static void bind(lua_State *L);
