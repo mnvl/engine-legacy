@@ -61,7 +61,9 @@ public:
 	scalar_t distance(ray_t const &ray)
 	{
 		vec_t aa = a ^ ray.a;
-		return abs(((r0 - ray.r0) & aa) / aa.length());
+		scalar_t aa_len = aa.length();
+		if (aa_len < EPSILON) return -1;
+		return abs(((r0 - ray.r0) & aa) / aa_len);
 	}
 };
 

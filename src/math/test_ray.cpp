@@ -28,4 +28,12 @@ BOOST_AUTO_TEST_CASE (ray_ray_distance)
 	BOOST_ASSERT(math::abs(r1.distance(r2) - 1) < math::EPSILON);
 }
 
+BOOST_AUTO_TEST_CASE (ray_ray_distance_2)
+{
+	math::ray<3> r1(math::vec<3>(0, 0, 0), math::vec<3>(1, 0, 0));
+	math::ray<3> r2(math::vec<3>(100, 1, 0), math::vec<3>(1, 0, 0));
+
+	BOOST_ASSERT(r1.distance(r2) == -1);
+}
+
 BOOST_AUTO_TEST_SUITE_END()
