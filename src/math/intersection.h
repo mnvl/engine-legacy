@@ -12,18 +12,22 @@
 #include "scalar.h"
 #include "vec.h"
 #include "sphere.h"
+#include "ray.h"
 #include "line.h"
 #include "aabb.h"
 #include "obb.h"
 
-namespace math {
+namespace math
+{
 	template<int N, class S>
-	bool intersect(ray<N, S> const &r, vec<N, S> &pt) {
+	bool intersect(ray<N, S> const &r, vec<N, S> &pt)
+	{
 		return (pt - r.r0).is_collinear(r.a);
 	}
 
 	template<int N, class S>
-	bool intersect(line<N, S> const &l, vec<N, S> &pt) {
+	bool intersect(line<N, S> const &l, vec<N, S> &pt)
+	{
 		vec<N, S> v1 = (pt - l.A);
 		vec<N, S> v2 = (l.B - l.A);
 		return v1.is_collinear(v2) && v1.length_sq() < v2.length_sq() && (v1 & v2) > 0;
@@ -31,7 +35,16 @@ namespace math {
 
 	// Graphic Gems, 1990, ed. Andrew S. Glassner, V.3, p. 304
 	template<class S>
-	bool intersect(ray<3, S> const &r1, ray<3, S> const &r2, S &s) {
+	bool intersects(ray<3, S> const &r1, ray<3, S> const &r2)
+	{
+		vec<3, S> v1_x_v2 = r1.a ^ r2.a;
+		S v1_x_v2_len = v1_x_v2.length_sq();
+		return v1_x_v2_len > EPSILON;
+	}
+
+	template<class S>
+	bool intersect(ray<3, S> const &r1, ray<3, S> const &r2, S &s)
+	{
 		vec<3, S> v1_x_v2 = r1.a ^ r2.a;
 		S v1_x_v2_len = v1_x_v2.length_sq();
 		if(v1_x_v2_len < EPSILON) return false;
@@ -40,8 +53,44 @@ namespace math {
 	}
 
 	template<class S>
-	bool intersect(ray<2, S> const &r1, ray<2, S> const &r2, S &s) {
+	bool intersect(ray<2, S> const &r1, ray<2, S> const &r2, S &s)
+	{
 		return intersect(ray<3,S>(r1.r0, r1.a), ray<3,S>(r2.r0, r2.a), s);
+	}
+
+	template<int N, class S>
+	bool intersects(line<N, S> const &l1, line<N, S> const &l2)
+	{
+		S s;
+		return intersect(l1.get_ray(), l2.get_ray(), s) && s > 0 && s < 1;
+	}
+
+	template<int N, class S>
+	bool intersects(sphere<N, S> const &s, sphere<N, S> const &t)
+	{
+		return (s.centre - t.centre).length_sq() <= square(s.radius + t.radius);
+	}
+
+	// проверить на пересечение с лучом
+	template<int N, class S>
+	bool intersects(sphere<N, S> const &s, ray<N, S> const &r)
+	{
+		// |x-r0|=R
+		// x=x0+a*t
+		// |x0+a*t-r0|=R
+		// (a*t+x0-r0,a*t+x0-r0)=R^2
+		// (a*t,a*t+x0-r0)+(x0-r0,a*t+x0-r0)=R^2
+		// (a,a)*t^2+(a,x0-r0)*t+(a,x0-r0)*t+(x0-r0,x0-r0)=R^2
+		// (a,a)*t^2+(a,x0-r0)*2*t+(x0-r0,x0-r0)-R^2=0
+		// A=(a,a)
+		// B=(a,x0-r0)*2
+		// C=(x0-r0,x0-r0)-R
+
+		S A = r.a.length_sq();
+		S B = 2 * (r.a & (r.r0 - s.centre));
+		S C = (r.r0 - s.centre).length_sq() - s.radius * s.radius;
+
+		return B * B - 4 * A * C >= 0;
 	}
 
 	template<int N, class S>
@@ -81,13 +130,51 @@ namespace math {
 	}
 
 	template<int N, class S>
+	bool intersects(line<N, S> const &l, sphere<N, S> const &s)
+	{
+		vec<N, S> p1, p2;
+
+		S ll = l.length_sq();
+
+		switch(intersect(l.get_ray(), s, p1, p2)) {
+			case 0: return false;
+			case 1: return (p1 - l.A).length_sq() < ll;
+			default: return (p1 - l.A).length_sq() < ll || (p2 - l.A).length_sq() < ll;
+		}
+	}
+
+	template<int N, class S>
 	int intersect(line<N, S> const &l, sphere<N, S> const &s, vec<N, S> &p1, vec<N, S> &p2) {
 		switch(intersect(l.get_ray(), s, p1, p2)) {
 			case 0: return 0;
 			case 1: return int(intersect(l, p1));
-			case 2: return int(intersect(l, p1)) + int(intersect(l, p2));
-			default: return -1;
+			default: return int(intersect(l, p1)) + int(intersect(l, p2));
 		}
+	}
+
+	// найти точки пересечени€ с лучом (пр€мой) 
+	// r -- луч
+	// v1, v2 -- точки пересечени€
+	template<int N, class S>
+	bool intersect(sphere<N,S> const &s, ray<N,S> const &r, vec<N,S> &v1, vec<N,S> &v2)
+	{
+		vec<N,S> delta = r.r0 - s.centre;
+		S A = r.a.length_sq();
+		S B = 2 * (r.a & delta);
+		S C = delta.length_sq() - s.radius * s.radius;
+
+		S discriminant = B * B - 4 * A * C;
+		if(discriminant < 0) return false;
+
+		if(abs(discriminant) < EPSILON) {
+			v1 = v2 = r.r0 + r.a * (-B / (2 * A));
+		} else {
+			S discriminant_sqrt = sqrt(discriminant);
+			v1 = r.r0 + r.a * ((-B + discriminant_sqrt) / (2 * A));
+			v2 = r.r0 + r.a * ((-B - discriminant_sqrt) / (2 * A));
+		}
+
+		return true;
 	}
 }
 

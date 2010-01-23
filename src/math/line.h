@@ -9,9 +9,10 @@
 // prior written consent of Manvel Avetisian.
 //-----------------------------------------------------------------------------
 
-#include <math/scalar.h>
-#include <math/vec.h>
-#include <math/ray.h>
+#include "scalar.h"
+#include "vec.h"
+#include "ray.h"
+#include "aabb.h"
 
 namespace math {
 
@@ -24,6 +25,7 @@ public:
     typedef vec<ARITY, scalar_t> vec_t;
     typedef ray<ARITY, scalar_t> ray_t;
     typedef line<ARITY, scalar_t> line_t;
+	typedef aabb<ARITY, scalar_t> aabb_t;
 
     vec_t A, B;
 
@@ -46,6 +48,12 @@ public:
     ray_t get_ray() const {
         return ray_t(A, direction());
     }
+
+	aabb_t get_aabb() const {
+		aabb_t bounds(A, B);
+		minmax(bounds.lo, bounds.hi);
+		return bounds;
+	}
 
     scalar_t length_sq() const {
         return direction().length_sq();

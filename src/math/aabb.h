@@ -14,7 +14,6 @@
 #include "scalar.h"
 #include "vec.h"
 #include "ray.h"
-#include "line.h"
 
 namespace math
 {
@@ -32,9 +31,7 @@ public:
 	typedef vec<ARITY,scalar_t> vec_t;
 	static const size_t vertices_count = 1 << ARITY;
 	static const size_t edges_count = vertices_count + (1 << (ARITY-1));
-	typedef line<ARITY,scalar_t> line_t;
 	typedef ray<ARITY,scalar_t> ray_t;
-	typedef triangle<ARITY, scalar_t> triangle_t;
 	typedef aabb<ARITY,scalar_t> aabb_t;
 
 	// данные
@@ -45,19 +42,19 @@ public:
 	{
 	}
 
-	aabb(const vec_t &centre):
+	aabb(vec_t const &centre):
 		lo(centre),
 		hi(centre)
 	{
 	}
 
-	aabb(const vec_t &l,const vec_t &h):
+	aabb(vec_t const &l,vec_t const &h):
 		lo(l),
 		hi(h)
 	{
 	}
 
-	aabb(const vec_t &centre, math::scalar radius):
+	aabb(vec_t const &centre, math::scalar radius):
 		lo(centre.x - radius/2, centre.y - radius/2, centre.z - radius/2),
 		hi(centre.x + radius/2, centre.y + radius/2, centre.z + radius/2)
 	{
@@ -71,14 +68,14 @@ public:
 		}
 	}
 
-	void forward_vector(vec_t &v,const vec_t &v0) const {
+	void forward_vector(vec_t &v,vec_t const &v0) const {
 		v.x = v0.x / (hi.x - lo.x);
 		v.y = v0.y / (hi.y - lo.y);
 		v.z = v0.z / (hi.z - lo.z);
 	}
 
 	// получить координаты точки в локальной системе координат
-	void forward_point(vec_t &v,const vec_t &v0) const {
+	void forward_point(vec_t &v,vec_t const &v0) const {
 		forward_vector(v, v0 - lo);
 	}
 
@@ -100,7 +97,7 @@ public:
 		return (lo + hi) / scalar_t(2);
 	}
 
-	void extend(const vec_t &v) {
+	void extend(vec_t const &v) {
 		for(size_t n=0; n<ARITY; n++) {
 			if(lo.i[n] > v.i[n]) lo.i[n] = v.i[n];
 			if(hi.i[n] < v.i[n]) hi.i[n] = v.i[n];
@@ -113,16 +110,12 @@ public:
 	}
 
 	// пересечения
-	bool contains(const vec_t &right) const {
+	bool contains(vec_t const &right) const {
 		return lo <= right && right <= hi;
 	}
 
 	bool contains(const aabb_t &right) const {
 		return contains(right.lo) && contains(right.hi);
-	}
-
-	bool contains(const triangle_t &right) const {
-		return contains(right.A) && contains(right.B) && contains(right.C);
 	}
 
 	bool intersects(const aabb_t &right) const {
