@@ -14,66 +14,71 @@
 #include "sphere.h"
 #include "ray.h"
 #include "line.h"
+#include "matrix.h"
 #include "aabb.h"
 #include "obb.h"
 
 namespace math
 {
-	template<int N, class S>
-	bool intersect(ray<N, S> const &r, vec<N, S> &pt)
+	template<int N, class T>
+	bool intersect(ray<N, T> const &r, vec<N, T> &pt)
 	{
 		return (pt - r.r0).is_collinear(r.a);
 	}
 
-	template<int N, class S>
-	bool intersect(line<N, S> const &l, vec<N, S> &pt)
+	template<int N, class T>
+	bool intersect(line<N, T> const &l, vec<N, T> &pt)
 	{
-		vec<N, S> v1 = (pt - l.A);
-		vec<N, S> v2 = (l.B - l.A);
+		vec<N, T> v1 = (pt - l.A);
+		vec<N, T> v2 = (l.B - l.A);
 		return v1.is_collinear(v2) && v1.length_sq() < v2.length_sq() && (v1 & v2) > 0;
 	}
 
-	// Graphic Gems, 1990, ed. Andrew S. Glassner, V.3, p. 304
-	template<class S>
-	bool intersects(ray<3, S> const &r1, ray<3, S> const &r2)
+	// Graphic Gems, 1990, ed. Andrew T. Glassner, V.3, p. 304
+	template<class T>
+	bool intersects(ray<3, T> const &r1, ray<3, T> const &r2)
 	{
-		vec<3, S> v1_x_v2 = r1.a ^ r2.a;
-		S v1_x_v2_len = v1_x_v2.length_sq();
+		vec<3, T> v1_x_v2 = r1.a ^ r2.a;
+		T v1_x_v2_len = v1_x_v2.length_sq();
 		return v1_x_v2_len > EPSILON;
 	}
 
-	template<class S>
-	bool intersect(ray<3, S> const &r1, ray<3, S> const &r2, S &s)
+	template<class T>
+	bool intersect(ray<3, T> const &ray1, ray<3, T> const &ray2, T &t)
 	{
-		vec<3, S> v1_x_v2 = r1.a ^ r2.a;
-		S v1_x_v2_len = v1_x_v2.length_sq();
-		if(v1_x_v2_len < EPSILON) return false;
-		s = (((r2.r0 - r1.r0) ^ r2.a) & v1_x_v2) / v1_x_v2_len;
-		return true;
+		vec<3,T> a1_x_a2 = ray1.a ^ ray2.a;
+		T a1_x_a2_len_sq = a1_x_a2.length_sq();
+
+		if (a1_x_a2_len_sq < EPSILON) return false;
+
+		matrix<3,3> m;
+		m.assign(ray2.r0 - ray1.r0, ray2.a, a1_x_a2);
+		t = m.determinant() / a1_x_a2_len_sq;
+		return true; 
 	}
 
-	template<class S>
-	bool intersect(ray<2, S> const &r1, ray<2, S> const &r2, S &s)
+	template<class T>
+	bool intersect(ray<2, T> const &r1, ray<2, T> const &r2, T &s)
 	{
-		return intersect(ray<3,S>(r1.r0, r1.a), ray<3,S>(r2.r0, r2.a), s);
+		return intersect(ray<3,T>(r1.r0, r1.a), ray<3,T>(r2.r0, r2.a), s);
 	}
 
-	template<int N, class S>
-	bool intersects(line<N, S> const &l1, line<N, S> const &l2)
+	template<int N, class T>
+	bool intersects(line<N, T> const &l1, line<N, T> const &l2)
 	{
-		S s;
+		T s;
 		return intersect(l1.get_ray(), l2.get_ray(), s) && s > 0 && s < 1;
 	}
 
-	template<int N, class S>
-	bool intersects(sphere<N, S> const &s, sphere<N, S> const &t)
+	template<int N, class T>
+	bool intersects(sphere<N, T> const &s, sphere<N, T> const &t)
 	{
 		return (s.centre - t.centre).length_sq() <= square(s.radius + t.radius);
 	}
 
 	// проверить на пересечение с лучом
-	template<int N, class S>
-	bool intersects(sphere<N, S> const &s, ray<N, S> const &r)
+	template<int N, class T>
+	bool intersects(sphere<N, T> const &s, ray<N, T> const &r)
 	{
 		// |x-r0|=R
 		// x=x0+a*t
@@ -86,55 +91,55 @@ namespace math
 		// B=(a,x0-r0)*2
 		// C=(x0-r0,x0-r0)-R
 
-		S A = r.a.length_sq();
-		S B = 2 * (r.a & (r.r0 - s.centre));
-		S C = (r.r0 - s.centre).length_sq() - s.radius * s.radius;
+		T A = r.a.length_sq();
+		T B = 2 * (r.a & (r.r0 - s.centre));
+		T C = (r.r0 - s.centre).length_sq() - s.radius * s.radius;
 
 		return B * B - 4 * A * C >= 0;
 	}
 
-	template<int N, class S>
-	int intersect(ray<N, S> const &r, sphere<N, S> const &s, vec<N, S> &p1, vec<N, S> &p2) {
+	template<int N, class T>
+	int intersect(ray<N, T> const &r, sphere<N, T> const &s, vec<N, T> &p1, vec<N, T> &p2) {
 		// p = r.direction * t + r.origin
 		// |p - s.centre| ^ 2 = s.radius ^ 2
 		// |r.direction * t + r.origin - s.centre| ^ 2 = s.radius ^ 2
 		// delta = r.origin - s.centre
 		// r.direction.length_sq() * t + 2 * (r.direction & delta) * t + delta.length_sq() - s.radius ^ 2 = 0
 
-		vec<N, S> delta = r.r0 - s.centre;
-		S A = r.a.length_sq();
-		S B = S(2) * (r.a & delta);
-		S C = delta.length_sq() - square(s.radius);
+		vec<N, T> delta = r.r0 - s.centre;
+		T A = r.a.length_sq();
+		T B = T(2) * (r.a & delta);
+		T C = delta.length_sq() - square(s.radius);
 
-		S discriminant = square(B) - 4 * A * C;
+		T discriminant = square(B) - 4 * A * C;
 
 		if (discriminant < 0) {
 			return false;
 		}
 
 		if (discriminant < EPSILON) {
-			S t = -B / (2 * A);
+			T t = -B / (2 * A);
 			p1 = p2 = r.a * t + r.r0;
 			return 1;
 		}
 
-		S discriminant_sqrt = sqrt(discriminant);
+		T discriminant_sqrt = sqrt(discriminant);
 
-		S t1 = (-B + discriminant_sqrt) / (2 * A);
+		T t1 = (-B + discriminant_sqrt) / (2 * A);
 		p1 = r.a * t1 + r.r0;
 
-		S t2 = (-B - discriminant_sqrt) / (2 * A);
+		T t2 = (-B - discriminant_sqrt) / (2 * A);
 		p2 = r.a * t1 + r.r0;
 
 		return 2;
 	}
 
-	template<int N, class S>
-	bool intersects(line<N, S> const &l, sphere<N, S> const &s)
+	template<int N, class T>
+	bool intersects(line<N, T> const &l, sphere<N, T> const &s)
 	{
-		vec<N, S> p1, p2;
+		vec<N, T> p1, p2;
 
-		S ll = l.length_sq();
+		T ll = l.length_sq();
 
 		switch(intersect(l.get_ray(), s, p1, p2)) {
 			case 0: return false;
@@ -143,38 +148,13 @@ namespace math
 		}
 	}
 
-	template<int N, class S>
-	int intersect(line<N, S> const &l, sphere<N, S> const &s, vec<N, S> &p1, vec<N, S> &p2) {
+	template<int N, class T>
+	int intersect(line<N, T> const &l, sphere<N, T> const &s, vec<N, T> &p1, vec<N, T> &p2) {
 		switch(intersect(l.get_ray(), s, p1, p2)) {
 			case 0: return 0;
 			case 1: return int(intersect(l, p1));
 			default: return int(intersect(l, p1)) + int(intersect(l, p2));
 		}
-	}
-
-	// найти точки пересечени€ с лучом (пр€мой) 
-	// r -- луч
-	// v1, v2 -- точки пересечени€
-	template<int N, class S>
-	bool intersect(sphere<N,S> const &s, ray<N,S> const &r, vec<N,S> &v1, vec<N,S> &v2)
-	{
-		vec<N,S> delta = r.r0 - s.centre;
-		S A = r.a.length_sq();
-		S B = 2 * (r.a & delta);
-		S C = delta.length_sq() - s.radius * s.radius;
-
-		S discriminant = B * B - 4 * A * C;
-		if(discriminant < 0) return false;
-
-		if(abs(discriminant) < EPSILON) {
-			v1 = v2 = r.r0 + r.a * (-B / (2 * A));
-		} else {
-			S discriminant_sqrt = sqrt(discriminant);
-			v1 = r.r0 + r.a * ((-B + discriminant_sqrt) / (2 * A));
-			v2 = r.r0 + r.a * ((-B - discriminant_sqrt) / (2 * A));
-		}
-
-		return true;
 	}
 }
 

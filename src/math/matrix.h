@@ -57,6 +57,7 @@ public:
 	scalar_t ij[WIDTH][HEIGHT];
 
 	// конструкторы
+	void assign(vec_t const &l1, vec_t const &l2, vec_t const &l3);
 	void identity();
 	void translation(scalar_t x,scalar_t y);
 	void translation(const point_t &p);
