@@ -48,9 +48,13 @@ public:
 		{ add_shape(shape, shape->get_bounds(), result_set); }
 	void remove_shape(ShapePtr const &shape)
 		{ remove_shape(shape, shape->get_bounds()); }
-	void pre_move_shape(ShapePtr const &shape, aabb_t const &new_bounds, ResultSetPtr const &result_set = ResultSetPtr())
+	void pre_move_shape(ShapePtr const &shape, aabb_t const &new_bounds)
+		{ move_shape(shape, shape->get_bounds(), new_bounds); }
+	void pre_move_shape(ShapePtr const &shape, aabb_t const &new_bounds, ResultSetPtr const &result_set)
 		{ move_shape(shape, shape->get_bounds(), new_bounds, result_set); }
-	void post_move_shape(ShapePtr const &shape, aabb_t const &old_bounds, ResultSetPtr const &result_set = ResultSetPtr())
+	void post_move_shape(ShapePtr const &shape, aabb_t const &old_bounds)
+		{ move_shape(shape, old_bounds, shape->get_bounds()); }
+	void post_move_shape(ShapePtr const &shape, aabb_t const &old_bounds, ResultSetPtr const &result_set)
 		{ move_shape(shape, old_bounds, shape->get_bounds(), result_set); }
 	void intersect(ShapePtr const &shape, ResultSetPtr const &result)
 		{ intersect(shape, shape->get_bounds(), result); }
