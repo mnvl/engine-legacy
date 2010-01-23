@@ -45,6 +45,24 @@ public:
 	{
         return r0 + a * t;
     }
+
+	scalar_t distance_sq(vec_t const &point)
+	{
+		scalar_t t = ((point - r0) & a) / a.length_sq();
+		vec_t projection = apply(t);
+		return (projection - point).length_sq();
+	}
+
+	scalar_t distance(vec_t const &point)
+	{
+		return sqrt(distance_sq(point));
+	}
+
+	scalar_t distance(ray_t const &ray)
+	{
+		vec_t aa = a ^ ray.a;
+		return abs(((r0 - ray.r0) & aa) / aa.length());
+	}
 };
 
 void bind_ray(lua_State *L);

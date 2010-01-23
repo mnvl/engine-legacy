@@ -10,7 +10,7 @@
 
 #include <luabind/luabind.hpp>
 #include <math/intersection.h>
-#include "ray_shape.h"
+#include "line_shape.h"
 #include "sphere_shape.h"
 
 namespace spatial
