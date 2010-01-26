@@ -143,7 +143,7 @@ intersects(line<N, T> const &l1, line<N, T> const &l2)
 	return intersect(l1.get_ray(), l2.get_ray(), s) && s > 0 && s < 1;
 }
 
-template<int N, class T> bool inline
+template<class T> bool inline
 intersects(sphere<3,T> const &s, capsule<T> const &c)
 {
 	return c.distance(s.centre) <= s.radius;

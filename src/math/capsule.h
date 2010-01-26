@@ -39,12 +39,12 @@ public:
 	{
     }
 
-	bool contains(vec_t const &point)
+	bool contains(vec_t const &point) const
 	{
 		return axe.distance(point) <= radius;
 	}
 
-	scalar_t distance(vec_t const &point)
+	scalar_t distance(vec_t const &point) const
 	{
 		scalar_t d = axe.distance(point);
 		if (d <= radius) return 0;
