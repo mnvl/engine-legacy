@@ -9,12 +9,14 @@
 // prior written consent of Manvel Avetisian.
 //-----------------------------------------------------------------------------
 
+#include <luabind/lua_include.hpp>
 #include "scalar.h"
 #include "vec.h"
 #include "ray.h"
 #include "aabb.h"
 
-namespace math {
+namespace math
+{
 
 template<int N,class T=scalar>
 class line {
@@ -82,6 +84,8 @@ public:
 		return sqrt(distance_sq(point));
 	}
 };
+
+void bind_line(lua_State *L);
 
 }
 

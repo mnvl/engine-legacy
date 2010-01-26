@@ -20,6 +20,7 @@ namespace spatial
 class Shape;
 class SphereShape;
 class LineShape;
+class CapsuleShape;
 
 typedef boost::weak_ptr<Shape> ShapeWeakPtr;
 typedef boost::shared_ptr<Shape> ShapePtr;
@@ -33,6 +34,7 @@ public:
 	virtual bool intersects(Shape const *shape) const = 0;
 	virtual bool intersects(SphereShape const *shape) const = 0;
 	virtual bool intersects(LineShape const *shape) const = 0;
+	virtual bool intersects(CapsuleShape const *shape) const = 0;
 
 	static void bind(lua_State *L);
 };

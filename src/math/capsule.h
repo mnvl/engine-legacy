@@ -9,6 +9,7 @@
 // prior written consent of Manvel Avetisian.
 //-----------------------------------------------------------------------------
 
+#include <luabind/luabind.hpp>
 #include "line.h"
 
 namespace math
@@ -17,11 +18,11 @@ namespace math
 template<int N, class T> class aabb;
 template<int N, class T> class obb;
 
-template<class T = scalar>
+template<int N, class T = scalar>
 class capsule {
 public:
     typedef size_t size_t;
-    static const size_t ARITY = 3;
+    static const size_t ARITY = N;
     typedef T scalar_t;
 	typedef vec<ARITY, scalar_t> vec_t;
 	typedef line<ARITY, scalar_t> line_t;
@@ -51,8 +52,10 @@ public:
 		return d - radius;
 	}
 
-	void get_aabb(aabb<ARITY, scalar_t> &bounds);
+	void get_aabb(aabb<ARITY, scalar_t> &bounds) const;
 };
+
+void bind_capsule(lua_State *L);
 
 }
 

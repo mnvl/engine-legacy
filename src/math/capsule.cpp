@@ -15,10 +15,10 @@
 namespace math
 {
 
-template capsule<>;
+template capsule<3>;
 
-template<class T> void
-capsule<T>::get_aabb(aabb<ARITY, scalar_t> &bounds)
+template<int N, class T> void
+capsule<N, T>::get_aabb(aabb<ARITY, scalar_t> &bounds) const
 {
 	vec_t diagonal(radius, radius, radius);
 
@@ -30,6 +30,18 @@ capsule<T>::get_aabb(aabb<ARITY, scalar_t> &bounds)
 
 	bounds.extend(axe.B - diagonal);
 	bounds.extend(axe.B + diagonal);
+}
+
+void bind_capsule(lua_State *L)
+{
+	using namespace luabind;
+
+	module(L, "math")
+	[
+		class_<capsule<3> >("capsule3")
+		.def_readwrite("axe", &capsule<3>::axe)
+		.def_readwrite("radius", &capsule<3>::radius)
+	];
 }
 
 }

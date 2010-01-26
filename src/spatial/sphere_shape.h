@@ -27,6 +27,7 @@ public:
 	virtual bool intersects(Shape const *shape) const;
 	virtual bool intersects(SphereShape const *shape) const;
 	virtual bool intersects(LineShape const *shape) const;
+	virtual bool intersects(CapsuleShape const *shape) const;
 
 	void set_centre(math::vec<3> const &c)
 	{

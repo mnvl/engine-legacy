@@ -13,8 +13,10 @@
 #include "aabb.h"
 #include "matrix.h"
 #include "ray.h"
+#include "line.h"
 #include "plane.h"
 #include "sphere.h"
+#include "capsule.h"
 #include "bind.h"
 
 namespace math
@@ -27,8 +29,10 @@ void bind(lua_State *L)
 	bind_aabb(L);
 	bind_matrix(L);
 	bind_ray(L);
+	bind_line(L);
 	bind_plane(L);
 	bind_sphere(L);
+	bind_capsule(L);
 }
 
 }

@@ -90,7 +90,7 @@ BOOST_AUTO_TEST_CASE (test_sphere_line_intersection)
 BOOST_AUTO_TEST_CASE (test_sphere_capsule_intersection_1)
 {
 	math::sphere<3> s(math::vec<3>(0, 0, 0), 0.5f);
-	math::capsule<> c(math::vec<3>(0.7f, -1, 0), math::vec<3>(0.7f, 1, 0), 0.5f);
+	math::capsule<3> c(math::vec<3>(0.7f, -1, 0), math::vec<3>(0.7f, 1, 0), 0.5f);
 
 	BOOST_ASSERT (math::intersects(s, c) == true);
 }
@@ -98,7 +98,7 @@ BOOST_AUTO_TEST_CASE (test_sphere_capsule_intersection_1)
 BOOST_AUTO_TEST_CASE (test_sphere_capsule_intersection_2)
 {
 	math::sphere<3> s(math::vec<3>(0, 0, 0), 0.5f);
-	math::capsule<> c(math::vec<3>(1.7f, -1, 0), math::vec<3>(1.7f, 1, 0), 0.5f);
+	math::capsule<3> c(math::vec<3>(1.7f, -1, 0), math::vec<3>(1.7f, 1, 0), 0.5f);
 
 	BOOST_ASSERT (math::intersects(s, c) == false);
 }

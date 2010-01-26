@@ -24,7 +24,7 @@ BOOST_AUTO_TEST_CASE (bounds_1)
 
 	for (int i = 0; i < 100; i++)
 	{
-		math::capsule<> c(math::vec<3>(random(), random(), random()), math::vec<3>(random(), random(), random()),
+		math::capsule<3> c(math::vec<3>(random(), random(), random()), math::vec<3>(random(), random(), random()),
 			math::abs(random()) + 0.001f);
 
 		math::aabb<3> b;

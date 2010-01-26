@@ -49,12 +49,19 @@ bool LineShape::intersects(Shape const *shape) const
 
 bool LineShape::intersects(SphereShape const *shape) const
 {
-	return math::intersects(*this, *shape);
+	return math::intersects(*shape, *this);
 }
 
 bool LineShape::intersects(LineShape const *shape) const
 {
 	return math::intersects(*this, *shape);
+}
+
+bool LineShape::intersects(CapsuleShape const *shape) const
+{
+	// NOT IMPLEMENTED
+	assert(0);
+	return false;
 }
 
 void LineShape::bind(lua_State *L)

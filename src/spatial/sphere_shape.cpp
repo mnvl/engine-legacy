@@ -11,6 +11,7 @@
 #include <luabind/luabind.hpp>
 #include <math/intersection.h>
 #include "line_shape.h"
+#include "capsule_shape.h"
 #include "sphere_shape.h"
 
 namespace spatial
@@ -54,7 +55,12 @@ bool SphereShape::intersects(SphereShape const *shape) const
 
 bool SphereShape::intersects(LineShape const *shape) const
 {
-	return math::intersects((math::line<3> const &) *shape, (math::sphere<3> const &) *this);
+	return math::intersects((math::sphere<3> const &) *this, (math::line<3> const &) *shape);
+}
+
+bool SphereShape::intersects(CapsuleShape const *shape) const
+{
+	return math::intersects(*this, *shape);
 }
 
 void SphereShape::bind(lua_State *L)
