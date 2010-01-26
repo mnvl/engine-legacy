@@ -46,6 +46,11 @@ public:
         return r0 + a * t;
     }
 
+	bool contains(vec_t const &point)
+	{
+		return (point - r0).is_collinear(a);
+	}
+
 	scalar_t distance_sq(vec_t const &point)
 	{
 		scalar_t t = ((point - r0) & a) / a.length_sq();

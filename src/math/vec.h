@@ -226,7 +226,7 @@ public:
 		y = -y;
 	}
 
-	bool is_collinear(const vec_t &v) const
+	bool is_collinear(vec_t const &v) const
 	{
 		return abs(x*v.y - y*v.x) < EPSILON;
 	}
@@ -430,6 +430,12 @@ public:
 	}
 
 	void to_axis_angle(vec_t &axis, scalar_t &angle) const;
+
+	bool is_collinear(vec_t const &v) const
+	{
+		scalar_t k = length() / v.length();
+		return v * k == *this;
+	}
 
 	std::string to_string() const
 	{

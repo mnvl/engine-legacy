@@ -58,6 +58,29 @@ public:
     scalar_t length_sq() const {
         return direction().length_sq();
     }
+
+	bool contains(vec_t const &point) const
+	{
+		vec_t u(point - A), v(direction());
+		return u.is_collinear(v) && u.length_sq() < v.length_sq() && (u & v) > 0;
+	}
+
+	scalar_t distance_sq(vec_t const &point) const
+	{
+		vec_t dir(direction());
+		scalar_t t = ((point - A) & dir) / dir.length_sq();
+
+		if (t < 0) return (point - A).length();
+		if (t > 1) return (point - B).length();
+
+		vec_t projection = A + dir * t;
+		return (projection - point).length_sq();
+	}
+
+	scalar_t distance(vec_t const &point) const
+	{
+		return sqrt(distance_sq(point));
+	}
 };
 
 }

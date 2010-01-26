@@ -18,7 +18,7 @@ template<int N, class T> class aabb;
 template<int N, class T> class obb;
 
 template<class T = scalar>
-class cylinder {
+class capsule {
 public:
     typedef size_t size_t;
     static const size_t ARITY = 3;
@@ -29,15 +29,29 @@ public:
 	line_t axe;
 	scalar_t radius;
 
-    cylinder()
+    capsule()
 	{
     }
 
-    cylinder(vec_t const &a, vec_t const &b, scalar_t r):
+    capsule(vec_t const &a, vec_t const &b, scalar_t r):
 		axe(a, b),
 		radius(r)
 	{
     }
+
+	bool contains(vec_t const &point)
+	{
+		return axe.distance(point) <= radius;
+	}
+
+	scalar_t distance(vec_t const &point)
+	{
+		scalar_t d = axe.distance(point);
+		if (d <= radius) return 0;
+		return d - radius;
+	}
+
+	void get_aabb(aabb<ARITY, scalar_t> &bounds);
 };
 
 }

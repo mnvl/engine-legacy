@@ -175,8 +175,8 @@ public:
 		b.lo = b.hi = origin;
 		b.extend(origin + tangent);
 		b.extend(origin + normal);
-		b.extend(origin + tangent + normal);
 		b.extend(origin + binormal);
+		b.extend(origin + tangent + normal);
 		b.extend(origin + tangent + binormal);
 		b.extend(origin + normal + binormal);
 		b.extend(origin + tangent + normal + binormal);

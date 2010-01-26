@@ -10,11 +10,26 @@
 
 #include "aabb.h"
 #include "obb.h"
-#include "cylinder.h"
+#include "capsule.h"
 
 namespace math
 {
 
-template cylinder<>;
+template capsule<>;
+
+template<class T> void
+capsule<T>::get_aabb(aabb<ARITY, scalar_t> &bounds)
+{
+	vec_t diagonal(radius, radius, radius);
+
+	bounds.lo = bounds.hi = axe.A;
+	bounds.extend(axe.B);
+
+	bounds.extend(axe.A - diagonal);
+	bounds.extend(axe.A + diagonal);
+
+	bounds.extend(axe.B - diagonal);
+	bounds.extend(axe.B + diagonal);
+}
 
 }
