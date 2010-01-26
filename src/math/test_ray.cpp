@@ -9,7 +9,7 @@
 //-----------------------------------------------------------------------------
 
 #include <boost/test/unit_test.hpp>
-#include <math/ray.h>
+#include "ray.h"
 
 BOOST_AUTO_TEST_SUITE (ray)
 

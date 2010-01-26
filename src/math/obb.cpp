@@ -10,10 +10,13 @@
 
 #include <math/obb.h>
 
-template class math::obb<3>;
+namespace math
+{
+
+template class obb<3>;
 
 template<class T> bool
-math::obb<3,T>::trace(const ray_t &r,scalar_t t_min, scalar_t t_max) const {
+obb<3,T>::trace(const ray_t &r,scalar_t t_min, scalar_t t_max) const {
 	// перенести луч в локальную систему координат
 	ray_t r1;
 	forward_ray(r1, r);
@@ -75,7 +78,7 @@ math::obb<3,T>::trace(const ray_t &r,scalar_t t_min, scalar_t t_max) const {
 	return false;
 }
 
-template<class T> bool math::obb<3,T>::contains(const obb_t &r) const {
+template<class T> bool obb<3,T>::contains(const obb_t &r) const {
 	// получить координаты r в локальной системе координат
 	vec_t r_origin, r_tangent, r_normal, r_binormal;
 	forward_point(r_origin,r.origin);
@@ -101,8 +104,10 @@ template<class T> bool math::obb<3,T>::contains(const obb_t &r) const {
 		&& (v1.y<=1 && v1.y<=1 && v2.y<=1 && v3.y<=1 && v4.y<=1 && v5.y<=1 && v6.y<=1 && v7.y<=1)
 		&& (v1.z<=1 && v1.z<=1 && v2.z<=1 && v3.z<=1 && v4.z<=1 && v5.z<=1 && v6.z<=1 && v7.z<=1);
 }
-	
-template<class T> bool math::obb<3,T>::not_intersects(const triangle_t &r) const {
+
+template<class T> bool
+obb<3,T>::not_intersects(const triangle_t &r) const
+{
 	// получить координаты вершин треугольника в локальной системе координат
 	vec_t A, B, C;
 	forward_point(A, r.A);
@@ -133,7 +138,7 @@ template<class T> bool math::obb<3,T>::not_intersects(const triangle_t &r) const
 	    || (k1<0 && k2<0 && k3<0 && k4<0 && k5<0 && k6<0 && k7<0 && k8<0);
 }
 	
-template<class T> bool math::obb<3,T>::not_intersects(const obb_t &r) const {
+template<class T> bool obb<3,T>::not_intersects(const obb_t &r) const {
 	// получить координаты r в локальной системе координат
 	vec_t r_origin, r_tangent, r_normal, r_binormal;
 	forward_point(r_origin,r.origin);
@@ -163,7 +168,7 @@ template<class T> bool math::obb<3,T>::not_intersects(const obb_t &r) const {
 }
 
 template<class T> bool
-math::obb<3,T>::not_collides(const triangle_t &tri, const vec_t &vel, scalar_t t_min,
+obb<3,T>::not_collides(const triangle_t &tri, const vec_t &vel, scalar_t t_min,
 	scalar_t t_max) const
 {
 	vec_t tri_A, tri_B, tri_C, tri_vel;
@@ -212,7 +217,7 @@ math::obb<3,T>::not_collides(const triangle_t &tri, const vec_t &vel, scalar_t t
 }
 
 template<class T> bool
-math::obb<3,T>::not_collides(const obb_t &box, const vec_t &vel, scalar_t t_min,
+obb<3,T>::not_collides(const obb_t &box, const vec_t &vel, scalar_t t_min,
 	scalar_t t_max) const
 {
 	// получить координаты box в локальной системе координат
@@ -262,3 +267,4 @@ math::obb<3,T>::not_collides(const obb_t &box, const vec_t &vel, scalar_t t_min,
 	    &&  v1_1.z>1 && v1_1.z>1 && v2_1.z>1 && v3_1.z>1 && v4_1.z>1 && v5_1.z>1 && v6_1.z>1 && v7_1.z>1);
 }
 
+}
