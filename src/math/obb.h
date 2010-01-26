@@ -117,12 +117,11 @@ public:
 		}
 	}
 
-	aabb_t get_aabb() const {
-		aabb_t a(origin);
-		a.extend(origin + tangent);
-		a.extend(origin + normal);
-		a.extend(origin + tangent + normal);
-		return a;
+	void get_aabb(aabb_t &b) const {
+		b.lo = b.hi = origin;
+		b.extend(origin + tangent);
+		b.extend(origin + normal);
+		b.extend(origin + tangent + normal);
 	}
 };
 
@@ -172,15 +171,15 @@ public:
 	}
 
 	// получить aabb
-	void get_aabb(aabb_t &loc) const {
-		loc.lo = loc.hi = origin;
-		loc.extend(origin + tangent);
-		loc.extend(origin + normal);
-		loc.extend(origin + tangent + normal);
-		loc.extend(origin + binormal);
-		loc.extend(origin + tangent + binormal);
-		loc.extend(origin + normal + binormal);
-		loc.extend(origin + tangent + normal + binormal);
+	void get_aabb(aabb_t &b) const {
+		b.lo = b.hi = origin;
+		b.extend(origin + tangent);
+		b.extend(origin + normal);
+		b.extend(origin + tangent + normal);
+		b.extend(origin + binormal);
+		b.extend(origin + tangent + binormal);
+		b.extend(origin + normal + binormal);
+		b.extend(origin + tangent + normal + binormal);
 	}
 	
 	// трансформировать obb матрицей tf

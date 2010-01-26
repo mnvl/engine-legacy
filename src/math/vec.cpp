@@ -48,19 +48,22 @@ vec<3,T>::to_axis_angle(vec_t &axis, scalar_t &angle) const {
 template<class T> vec<3,T>
 vec<3,T>::perpendicular_xy() const
 {
-	return abs(z) < EPSILON ? null : vec(y, -x, 0);
+	if (abs(x) + abs(y) < EPSILON) return K;
+	return vec(y, -x, 0);
 }
 
 template<class T> vec<3,T>
 vec<3,T>::perpendicular_yz() const
 {
-	return abs(x) < EPSILON ? null : vec(0, z, -y);
+	if (abs(y) + abs(z) < EPSILON) return I;
+	return vec(0, z, -y);
 }
 
 template<class T> vec<3,T>
 vec<3,T>::perpendicular_xz() const
 {
-	return abs(y) < EPSILON ? null : vec(z, 0, -x);
+	if (abs(x) + abs(z) < EPSILON) return J;
+	return vec(z, 0, -x);
 }
 
 }

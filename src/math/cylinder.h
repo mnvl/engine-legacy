@@ -14,12 +14,16 @@
 namespace math
 {
 
-template<int N,class T = scalar>
+template<int N, class T> class aabb;
+template<int N, class T> class obb;
+
+template<class T = scalar>
 class cylinder {
 public:
     typedef size_t size_t;
-    static const size_t ARITY = N;
+    static const size_t ARITY = 3;
     typedef T scalar_t;
+	typedef vec<ARITY, scalar_t> vec_t;
 	typedef line<ARITY, scalar_t> line_t;
 
 	line_t axe;
