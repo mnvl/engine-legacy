@@ -25,7 +25,8 @@ public:
 	line_t axe;
 	scalar_t radius;
 
-    cylinder() {
+    cylinder()
+	{
     }
 
     cylinder(vec_t const &a, vec_t const &b, scalar_t r):
