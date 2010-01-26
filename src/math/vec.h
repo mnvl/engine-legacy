@@ -437,6 +437,13 @@ public:
 		sprintf(buf, "%f %f %f", x, y, z);
 		return buf;
 	}
+
+	// perpendicular in plane xOy and null if vector itself is in xOy
+	vec perpendicular_xy() const;
+	vec perpendicular_yz() const;
+	vec perpendicular_xz() const;
+
+	static vec_t const I, J, K, null;
 };
 #pragma pack(pop)
 
