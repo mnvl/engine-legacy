@@ -11,7 +11,7 @@
 #include <boost/test/unit_test.hpp>
 #include <math/intersection.h>
 
-BOOST_AUTO_TEST_SUITE (test_intersection)
+BOOST_AUTO_TEST_SUITE (intersection)
 
 BOOST_AUTO_TEST_CASE (ray_ray_intersection_1)
 {
@@ -103,4 +103,4 @@ BOOST_AUTO_TEST_CASE (test_sphere_capsule_intersection_2)
 	BOOST_ASSERT (math::intersects(s, c) == false);
 }
 
-BOOST_AUTO_TEST_SUITE_END ()
+BOOST_AUTO_TEST_SUITE_END()
