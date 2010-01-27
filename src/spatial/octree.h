@@ -65,7 +65,7 @@ public:
 
 private:
 	static unsigned const X_MASK = 1, Y_MASK = 2, Z_MASK = 4;
-	static size_t const LEAF_SHAPES_THRESHOLD = 32;
+	static size_t const LEAF_SHAPES_THRESHOLD = 4;
 
 	typedef std::vector<Octree> subclusters_t;
 	typedef std::set<ShapeWeakPtr> shapes_t;
