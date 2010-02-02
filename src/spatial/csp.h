@@ -26,10 +26,10 @@ public:
 	CSP(math::aabb<3> const &bounds, math::scalar cell_side);
 	~CSP();
 
-	void add_shape(ShapePtr const &shape, aabb_t const &bounds, ResultSetPtr const &result_set = ResultSetPtr());
-	void remove_shape(ShapePtr const &shape, aabb_t const &bounds);
-	void move_shape(ShapePtr const &shape, aabb_t const &old_bounds, aabb_t const &new_bounds, ResultSetPtr const &result_set = ResultSetPtr());
-	void intersect(ShapePtr const &shape, aabb_t const &bounds, ResultSetPtr const &result); // does not clear result
+	void add_shape(ShapePtr const &shape, math::aabb<3> const &bounds, ResultSetPtr const &result_set = ResultSetPtr());
+	void remove_shape(ShapePtr const &shape, math::aabb<3> const &bounds);
+	void move_shape(ShapePtr const &shape, math::aabb<3> const &old_bounds, math::aabb<3> const &new_bounds, ResultSetPtr const &result_set = ResultSetPtr());
+	void intersect(ShapePtr const &shape, math::aabb<3> const &bounds, ResultSetPtr const &result); // does not clear result
 
 	void add_shape(ShapePtr const &shape)
 		{ add_shape(shape, shape->get_bounds(), ResultSetPtr()); }
@@ -37,13 +37,13 @@ public:
 		{ add_shape(shape, shape->get_bounds(), result_set); }
 	void remove_shape(ShapePtr const &shape)
 		{ remove_shape(shape, shape->get_bounds()); }
-	void pre_move_shape(ShapePtr const &shape, aabb_t const &new_bounds)
+	void pre_move_shape(ShapePtr const &shape, math::aabb<3> const &new_bounds)
 		{ move_shape(shape, shape->get_bounds(), new_bounds); }
-	void pre_move_shape(ShapePtr const &shape, aabb_t const &new_bounds, ResultSetPtr const &result_set)
+	void pre_move_shape(ShapePtr const &shape, math::aabb<3> const &new_bounds, ResultSetPtr const &result_set)
 		{ move_shape(shape, shape->get_bounds(), new_bounds, result_set); }
-	void post_move_shape(ShapePtr const &shape, aabb_t const &old_bounds)
+	void post_move_shape(ShapePtr const &shape, math::aabb<3> const &old_bounds)
 		{ move_shape(shape, old_bounds, shape->get_bounds()); }
-	void post_move_shape(ShapePtr const &shape, aabb_t const &old_bounds, ResultSetPtr const &result_set)
+	void post_move_shape(ShapePtr const &shape, math::aabb<3> const &old_bounds, ResultSetPtr const &result_set)
 		{ move_shape(shape, old_bounds, shape->get_bounds(), result_set); }
 	void intersect(ShapePtr const &shape, ResultSetPtr const &result)
 		{ intersect(shape, shape->get_bounds(), result); }
