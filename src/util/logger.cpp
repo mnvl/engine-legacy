@@ -13,7 +13,10 @@ extern "C"
 	#include <lauxlib.h>
 }
 
+#if defined(WIN32)
 #include <windows.h>
+#endif
+
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include "logger.h"
 
@@ -27,6 +30,7 @@ Logger::Output::~Output()
 namespace
 {
 
+#if defined(WIN32)
 class DebugStringOutput: public Logger::Output
 {
 public:
@@ -35,6 +39,7 @@ public:
 		OutputDebugString(message);
 	}
 };
+#endif
 
 class StdoutOutput: public Logger::Output
 {
@@ -101,7 +106,9 @@ Logger::Message::~Message()
 Logger::Logger():
 	source_position_enabled_(false)
 {
+#if defined(WIN32)
 	add_debug_string_output();
+#endif
 	add_stderr_output();
 }
 
@@ -123,10 +130,12 @@ void Logger::print_line(char const *str)
 	}
 }
 
+#if defined(WIN32)
 void Logger::add_debug_string_output()
 {
 	outputs_.push_back(OutputPtr(new DebugStringOutput()));
 }
+#endif
 
 void Logger::add_stdout_output()
 {

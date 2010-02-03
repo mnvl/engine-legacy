@@ -64,7 +64,9 @@ public:
 
 	void print_line(char const *str);
 
+#if defined(WIN32)
 	void add_debug_string_output();
+#endif
 	void add_stdout_output();
 	void add_stderr_output();
 
