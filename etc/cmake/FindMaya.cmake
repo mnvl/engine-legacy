@@ -10,10 +10,11 @@ ELSE()
 
   SET(MAYA_DIR_SEARCH
     ${MAYA_DIR_SEARCH}
-    "$ENV{PROGRAMFILES}/Maya*/"
-    "$ENV{PROGRAMFILES}/Autodesk/Maya*/"
-    "d:/Program Files/Maya*/"
-    "d:/Program Files/Autodesk/Maya*/")
+    "$ENV{ProgramFiles}/Maya*/"
+    "$ENV{ProgramFiles}/Autodesk/Maya*/"
+    "$ENV{ProgramFiles(x86)}/Maya*/"
+    "$ENV{ProgramFiles(x86)}/Autodesk/Maya*/"
+  )
 
   FILE(GLOB MAYA_DIR ${MAYA_DIR_SEARCH})
 
