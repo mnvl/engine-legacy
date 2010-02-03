@@ -23,7 +23,7 @@ template<int N,class T> class triangle;
 template<int N,class T = scalar>
 class aabb {
 public:
-	// типы и константы
+	// С‚РёРїС‹ Рё РєРѕРЅСЃС‚Р°РЅС‚С‹
 	typedef T scalar_t;
 	typedef std::numeric_limits<scalar_t> limits_t;
 	static const size_t ARITY = N;
@@ -33,10 +33,10 @@ public:
 	typedef ray<ARITY,scalar_t> ray_t;
 	typedef aabb<ARITY,scalar_t> aabb_t;
 
-	// данные
+	// РґР°РЅРЅС‹Рµ
 	vec_t lo, hi;
 
-	// конструкторы
+	// РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂС‹
 	aabb()
 	{
 	}
@@ -59,7 +59,7 @@ public:
 	{
 	}
 
-	// операции
+	// РѕРїРµСЂР°С†РёРё
 	void null() {
 		for(size_t n=0; n<ARITY; n++) {
 			lo.i[n] = limits_t::max();
@@ -73,12 +73,12 @@ public:
 		v.z = v0.z / (hi.z - lo.z);
 	}
 
-	// получить координаты точки в локальной системе координат
+	// РїРѕР»СѓС‡РёС‚СЊ РєРѕРѕСЂРґРёРЅР°С‚С‹ С‚РѕС‡РєРё РІ Р»РѕРєР°Р»СЊРЅРѕР№ СЃРёСЃС‚РµРјРµ РєРѕРѕСЂРґРёРЅР°С‚
 	void forward_point(vec_t &v,vec_t const &v0) const {
 		forward_vector(v, v0 - lo);
 	}
 
-	// перенести прямую в локальную систему координат
+	// РїРµСЂРµРЅРµСЃС‚Рё РїСЂСЏРјСѓСЋ РІ Р»РѕРєР°Р»СЊРЅСѓСЋ СЃРёСЃС‚РµРјСѓ РєРѕРѕСЂРґРёРЅР°С‚
 	void forward_ray(ray_t &r,const ray_t &r0) const {
 		forward_point(r.r0,r0.r0);
 		forward_vector(r.a,r0.a);
@@ -108,7 +108,7 @@ public:
 		extend(b.hi);
 	}
 
-	// пересечения
+	// РїРµСЂРµСЃРµС‡РµРЅРёСЏ
 	bool contains(vec_t const &right) const {
 		return lo <= right && right <= hi;
 	}
@@ -122,11 +122,11 @@ public:
 	}
 
 	bool trace(const ray_t &r, scalar_t t_min = 0, scalar_t t_max = 1) const {
-		// перенести луч в локальную систему координат
+		// РїРµСЂРµРЅРµСЃС‚Рё Р»СѓС‡ РІ Р»РѕРєР°Р»СЊРЅСѓСЋ СЃРёСЃС‚РµРјСѓ РєРѕРѕСЂРґРёРЅР°С‚
 		ray_t r1;
 		forward_ray(r1, r);
 
-		// пересечение прямой r1 с плоскостьями x=0 и x=1
+		// РїРµСЂРµСЃРµС‡РµРЅРёРµ РїСЂСЏРјРѕР№ r1 СЃ РїР»РѕСЃРєРѕСЃС‚СЊСЏРјРё x=0 Рё x=1
 		if(abs(r1.a.x) > EPSILON) {
 			scalar_t dx = 1 / r1.a.x;
 
@@ -144,7 +144,7 @@ public:
 			}
 		}
 
-		// пересечение прямой r1 с плоскостьями y=0 и y=1
+		// РїРµСЂРµСЃРµС‡РµРЅРёРµ РїСЂСЏРјРѕР№ r1 СЃ РїР»РѕСЃРєРѕСЃС‚СЊСЏРјРё y=0 Рё y=1
 		if(abs(r1.a.y) > EPSILON) {
 			scalar_t dy = 1 / r1.a.y;
 
@@ -162,7 +162,7 @@ public:
 			}
 		}
 
-		// пересечение прямой r1 с плоскостьями z=0 и z=1
+		// РїРµСЂРµСЃРµС‡РµРЅРёРµ РїСЂСЏРјРѕР№ r1 СЃ РїР»РѕСЃРєРѕСЃС‚СЊСЏРјРё z=0 Рё z=1
 		if(abs(r1.a.z) > EPSILON) {
 			scalar_t dz = 1 / r1.a.z;
 

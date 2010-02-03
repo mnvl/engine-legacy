@@ -17,11 +17,11 @@ template class obb<3>;
 
 template<class T> bool
 obb<3,T>::trace(const ray_t &r,scalar_t t_min, scalar_t t_max) const {
-	// перенести луч в локальную систему координат
+	// РїРµСЂРµРЅРµСЃС‚Рё Р»СѓС‡ РІ Р»РѕРєР°Р»СЊРЅСѓСЋ СЃРёСЃС‚РµРјСѓ РєРѕРѕСЂРґРёРЅР°С‚
 	ray_t r1;
 	forward_ray(r1, r);
 	
-	// пересечение прямой r1 с плоскостьями x=0 и x=1
+	// РїРµСЂРµСЃРµС‡РµРЅРёРµ РїСЂСЏРјРѕР№ r1 СЃ РїР»РѕСЃРєРѕСЃС‚СЊСЏРјРё x=0 Рё x=1
 	if(abs(r1.a.x) > EPSILON) {
 		scalar_t dx = 1 / r1.a.x;
 	
@@ -39,7 +39,7 @@ obb<3,T>::trace(const ray_t &r,scalar_t t_min, scalar_t t_max) const {
 		}
 	}
 	
-	// пересечение прямой r1 с плоскостьями y=0 и y=1
+	// РїРµСЂРµСЃРµС‡РµРЅРёРµ РїСЂСЏРјРѕР№ r1 СЃ РїР»РѕСЃРєРѕСЃС‚СЊСЏРјРё y=0 Рё y=1
 	if(abs(r1.a.y) > EPSILON) {
 		scalar_t dy = 1 / r1.a.y;
 	
@@ -57,7 +57,7 @@ obb<3,T>::trace(const ray_t &r,scalar_t t_min, scalar_t t_max) const {
 		}
 	}
 	
-	// пересечение прямой r1 с плоскостьями z=0 и z=1
+	// РїРµСЂРµСЃРµС‡РµРЅРёРµ РїСЂСЏРјРѕР№ r1 СЃ РїР»РѕСЃРєРѕСЃС‚СЊСЏРјРё z=0 Рё z=1
 	if(abs(r1.a.z) > EPSILON) {
 		scalar_t dz = 1 / r1.a.z;
 	
@@ -79,14 +79,14 @@ obb<3,T>::trace(const ray_t &r,scalar_t t_min, scalar_t t_max) const {
 }
 
 template<class T> bool obb<3,T>::contains(const obb_t &r) const {
-	// получить координаты r в локальной системе координат
+	// РїРѕР»СѓС‡РёС‚СЊ РєРѕРѕСЂРґРёРЅР°С‚С‹ r РІ Р»РѕРєР°Р»СЊРЅРѕР№ СЃРёСЃС‚РµРјРµ РєРѕРѕСЂРґРёРЅР°С‚
 	vec_t r_origin, r_tangent, r_normal, r_binormal;
 	forward_point(r_origin,r.origin);
 	forward_vector(r_tangent,r.tangent);
 	forward_vector(r_normal,r.normal);
 	forward_vector(r_binormal,r.binormal);
 	
-	// получить координаты вершин obb
+	// РїРѕР»СѓС‡РёС‚СЊ РєРѕРѕСЂРґРёРЅР°С‚С‹ РІРµСЂС€РёРЅ obb
 	vec_t v0 = r_origin;
 	vec_t v1 = v0 + r_tangent;
 	vec_t v2 = v1 + r_normal;
@@ -96,7 +96,7 @@ template<class T> bool obb<3,T>::contains(const obb_t &r) const {
 	vec_t v6 = v2 + r_binormal;
 	vec_t v7 = v3 + r_binormal;
 	
-	// один obb содержить второй если он содержит все вершины второго
+	// РѕРґРёРЅ obb СЃРѕРґРµСЂР¶РёС‚СЊ РІС‚РѕСЂРѕР№ РµСЃР»Рё РѕРЅ СЃРѕРґРµСЂР¶РёС‚ РІСЃРµ РІРµСЂС€РёРЅС‹ РІС‚РѕСЂРѕРіРѕ
 	return (v0.x>=0 && v1.x>=0 && v2.x>=0 && v3.x>=0 && v4.x>=0 && v5.x>=0 && v6.x>=0 && v7.x>=0)
 		&& (v0.y>=0 && v1.y>=0 && v2.y>=0 && v3.y>=0 && v4.y>=0 && v5.y>=0 && v6.y>=0 && v7.y>=0)
 		&& (v0.z>=0 && v1.z>=0 && v2.z>=0 && v3.z>=0 && v4.z>=0 && v5.z>=0 && v6.z>=0 && v7.z>=0)
@@ -108,21 +108,21 @@ template<class T> bool obb<3,T>::contains(const obb_t &r) const {
 template<class T> bool
 obb<3,T>::not_intersects(const triangle_t &r) const
 {
-	// получить координаты вершин треугольника в локальной системе координат
+	// РїРѕР»СѓС‡РёС‚СЊ РєРѕРѕСЂРґРёРЅР°С‚С‹ РІРµСЂС€РёРЅ С‚СЂРµСѓРіРѕР»СЊРЅРёРєР° РІ Р»РѕРєР°Р»СЊРЅРѕР№ СЃРёСЃС‚РµРјРµ РєРѕРѕСЂРґРёРЅР°С‚
 	vec_t A, B, C;
 	forward_point(A, r.A);
 	forward_point(B, r.B);
 	forward_point(C, r.C);
 	
-	// см. функцию not_intersects()
+	// СЃРј. С„СѓРЅРєС†РёСЋ not_intersects()
 	if((A.x<0 && B.x<0 && C.x<0) || (A.y<0 && B.y<0 && C.y<0) || (A.z<0 && B.z<0 && C.z<0)
 	|| (A.x>1 && B.x>1 && C.x>1) || (A.y>1 && B.y>1 && C.y>1) || (C.z>1 && B.z>1 && C.z>1))
 	{
 		return true;
 	}
 	
-	// если ни одна из сторон obb не является разделяющей плоскостью, то проверить: находится ли obb
-	// целиком в одном из полупространств, задаваемых треугольником
+	// РµСЃР»Рё РЅРё РѕРґРЅР° РёР· СЃС‚РѕСЂРѕРЅ obb РЅРµ СЏРІР»СЏРµС‚СЃСЏ СЂР°Р·РґРµР»СЏСЋС‰РµР№ РїР»РѕСЃРєРѕСЃС‚СЊСЋ, С‚Рѕ РїСЂРѕРІРµСЂРёС‚СЊ: РЅР°С…РѕРґРёС‚СЃСЏ Р»Рё obb
+	// С†РµР»РёРєРѕРј РІ РѕРґРЅРѕРј РёР· РїРѕР»СѓРїСЂРѕСЃС‚СЂР°РЅСЃС‚РІ, Р·Р°РґР°РІР°РµРјС‹С… С‚СЂРµСѓРіРѕР»СЊРЅРёРєРѕРј
 	vec_t N = (B - A) ^ (C - B);
 
 	scalar_t k1 = (vec_t(0,0,0) - A) & N;
@@ -139,14 +139,14 @@ obb<3,T>::not_intersects(const triangle_t &r) const
 }
 	
 template<class T> bool obb<3,T>::not_intersects(const obb_t &r) const {
-	// получить координаты r в локальной системе координат
+	// РїРѕР»СѓС‡РёС‚СЊ РєРѕРѕСЂРґРёРЅР°С‚С‹ r РІ Р»РѕРєР°Р»СЊРЅРѕР№ СЃРёСЃС‚РµРјРµ РєРѕРѕСЂРґРёРЅР°С‚
 	vec_t r_origin, r_tangent, r_normal, r_binormal;
 	forward_point(r_origin,r.origin);
 	forward_vector(r_tangent,r.tangent);
 	forward_vector(r_normal,r.normal);
 	forward_vector(r_binormal,r.binormal);
 	
-	// получить координаты вершин obb
+	// РїРѕР»СѓС‡РёС‚СЊ РєРѕРѕСЂРґРёРЅР°С‚С‹ РІРµСЂС€РёРЅ obb
 	vec_t v0 = r_origin;
 	vec_t v1 = v0 + r_tangent;
 	vec_t v2 = v1 + r_normal;
@@ -156,9 +156,9 @@ template<class T> bool obb<3,T>::not_intersects(const obb_t &r) const {
 	vec_t v6 = v2 + r_binormal;
 	vec_t v7 = v3 + r_binormal;
 
-	// два obb не пересекаются если существует плоскость, которая делит прастранство на
-	// два полупространства, одно из которых содержит первый obb, а второе -- второй
-	// (достаточное условие)
+	// РґРІР° obb РЅРµ РїРµСЂРµСЃРµРєР°СЋС‚СЃСЏ РµСЃР»Рё СЃСѓС‰РµСЃС‚РІСѓРµС‚ РїР»РѕСЃРєРѕСЃС‚СЊ, РєРѕС‚РѕСЂР°СЏ РґРµР»РёС‚ РїСЂР°СЃС‚СЂР°РЅСЃС‚РІРѕ РЅР°
+	// РґРІР° РїРѕР»СѓРїСЂРѕСЃС‚СЂР°РЅСЃС‚РІР°, РѕРґРЅРѕ РёР· РєРѕС‚РѕСЂС‹С… СЃРѕРґРµСЂР¶РёС‚ РїРµСЂРІС‹Р№ obb, Р° РІС‚РѕСЂРѕРµ -- РІС‚РѕСЂРѕР№
+	// (РґРѕСЃС‚Р°С‚РѕС‡РЅРѕРµ СѓСЃР»РѕРІРёРµ)
 	return (v0.x<0 && v1.x<0 && v2.x<0 && v3.x<0 && v4.x<0 && v5.x<0 && v6.x<0 && v7.x<0)
 		|| (v0.y<0 && v1.y<0 && v2.y<0 && v3.y<0 && v4.y<0 && v5.y<0 && v6.y<0 && v7.y<0)
 		|| (v0.z<0 && v1.z<0 && v2.z<0 && v3.z<0 && v4.z<0 && v5.z<0 && v6.z<0 && v7.z<0)
@@ -220,7 +220,7 @@ template<class T> bool
 obb<3,T>::not_collides(const obb_t &box, const vec_t &vel, scalar_t t_min,
 	scalar_t t_max) const
 {
-	// получить координаты box в локальной системе координат
+	// РїРѕР»СѓС‡РёС‚СЊ РєРѕРѕСЂРґРёРЅР°С‚С‹ box РІ Р»РѕРєР°Р»СЊРЅРѕР№ СЃРёСЃС‚РµРјРµ РєРѕРѕСЂРґРёРЅР°С‚
 	vec_t box_origin, box_tangent, box_normal, box_binormal, box_vel;
 	forward_point(box_origin,box.origin);
 	forward_vector(box_tangent,box.tangent);
@@ -228,11 +228,11 @@ obb<3,T>::not_collides(const obb_t &box, const vec_t &vel, scalar_t t_min,
 	forward_vector(box_binormal,box.binormal);
 	forward_vector(box_vel, vel);
 
-	// вычислить длину интервала
+	// РІС‹С‡РёСЃР»РёС‚СЊ РґР»РёРЅСѓ РёРЅС‚РµСЂРІР°Р»Р°
 	scalar_t t_len = t_max - t_min;
 	vec_t delta = box_vel * t_len;
 
-	// получить координаты вершин obb
+	// РїРѕР»СѓС‡РёС‚СЊ РєРѕРѕСЂРґРёРЅР°С‚С‹ РІРµСЂС€РёРЅ obb
 	vec_t v0_0 = box_origin - box_vel * t_min;
 	vec_t v1_0 = v0_0 + box_tangent;
 	vec_t v2_0 = v1_0 + box_normal;
@@ -250,9 +250,9 @@ obb<3,T>::not_collides(const obb_t &box, const vec_t &vel, scalar_t t_min,
 	vec_t v6_1 = v6_0 + delta;
 	vec_t v7_1 = v7_0 + delta;
 
-	// два obb не пересекаются если существует плоскость, которая делит прастранство на
-	// два полупространства, одно из которых содержит первый obb, а второе -- второй
-	// (достаточное условие)
+	// РґРІР° obb РЅРµ РїРµСЂРµСЃРµРєР°СЋС‚СЃСЏ РµСЃР»Рё СЃСѓС‰РµСЃС‚РІСѓРµС‚ РїР»РѕСЃРєРѕСЃС‚СЊ, РєРѕС‚РѕСЂР°СЏ РґРµР»РёС‚ РїСЂР°СЃС‚СЂР°РЅСЃС‚РІРѕ РЅР°
+	// РґРІР° РїРѕР»СѓРїСЂРѕСЃС‚СЂР°РЅСЃС‚РІР°, РѕРґРЅРѕ РёР· РєРѕС‚РѕСЂС‹С… СЃРѕРґРµСЂР¶РёС‚ РїРµСЂРІС‹Р№ obb, Р° РІС‚РѕСЂРѕРµ -- РІС‚РѕСЂРѕР№
+	// (РґРѕСЃС‚Р°С‚РѕС‡РЅРѕРµ СѓСЃР»РѕРІРёРµ)
 	return (v0_0.x<0 && v1_0.x<0 && v2_0.x<0 && v3_0.x<0 && v4_0.x<0 && v5_0.x<0 && v6_0.x<0 && v7_0.x<0
 	    &&  v0_1.x<0 && v1_1.x<0 && v2_1.x<0 && v3_1.x<0 && v4_1.x<0 && v5_1.x<0 && v6_1.x<0 && v7_1.x<0)
 	    || (v0_0.y<0 && v1_0.y<0 && v2_0.y<0 && v3_0.y<0 && v4_0.y<0 && v5_0.y<0 && v6_0.y<0 && v7_0.y<0

@@ -50,19 +50,19 @@ void *MeshTranslator::creator() {
 }
 
 MStatus MeshTranslator::writer(const MFileObject &file,const MString &optionsString,FileAccessMode mode) {
-	// вывести шапку
+	// РІС‹РІРµСЃС‚Рё С€Р°РїРєСѓ
 	LOG_DEBUG("--------------------------------------------------------------------------------");
 	LOG_DEBUG("starting export, file_name = " << file.fullName().asChar());
 
-	// открыть файл
+	// РѕС‚РєСЂС‹С‚СЊ С„Р°Р№Р»
 	file_stream.open(file.fullName().asChar(),std::ios_base::out | std::ios_base::binary);
 
-	// записать название сцены
+	// Р·Р°РїРёСЃР°С‚СЊ РЅР°Р·РІР°РЅРёРµ СЃС†РµРЅС‹
 	scene_name = file.name().asChar();
 	boost::to_lower(scene_name);
 	boost::replace_last(scene_name, ".scene", "");
 
-	// получить режим экспорта и вызвать соответствующую функцию
+	// РїРѕР»СѓС‡РёС‚СЊ СЂРµР¶РёРј СЌРєСЃРїРѕСЂС‚Р° Рё РІС‹Р·РІР°С‚СЊ СЃРѕРѕС‚РІРµС‚СЃС‚РІСѓСЋС‰СѓСЋ С„СѓРЅРєС†РёСЋ
 	if (MPxFileTranslator::kExportAccessMode == mode) {
 		if (MStatus::kFailure == exportAll()) {
 			return MStatus::kFailure;
@@ -513,7 +513,7 @@ MStatus MeshTranslator::extractMaterials(MFnMesh const &mesh) {
         LOG_DEBUG("polygon_material_size = " << polygon_material.size()
 			<< ", face_array_size = " << face_array.size());
 
-        // обновить массив индексов в соответствии с polygon_material
+        // РѕР±РЅРѕРІРёС‚СЊ РјР°СЃСЃРёРІ РёРЅРґРµРєСЃРѕРІ РІ СЃРѕРѕС‚РІРµС‚СЃС‚РІРёРё СЃ polygon_material
         std::vector<face_type> face_array_copy = face_array;
 
         for(unsigned i = 0, n = polygon_material.size(); i < n; i++) {
@@ -569,7 +569,7 @@ void MeshTranslator::constructVertexIndex() {
 			#endif
 		}
 
-		// записать индексы
+		// Р·Р°РїРёСЃР°С‚СЊ РёРЅРґРµРєСЃС‹
 		index_array.push_back(face_vertex[0]);
 		index_array.push_back(face_vertex[1]);
 		index_array.push_back(face_vertex[2]);
@@ -584,7 +584,7 @@ MStatus MeshTranslator::exportMesh(const MDagPath &path)
 
 	MStatus status;
 
-	// получить меш
+	// РїРѕР»СѓС‡РёС‚СЊ РјРµС€
 	MFnMesh mesh(path,&status);
 	LOG_DEBUG("mesh = "<<mesh.partialPathName().asChar());
 
@@ -594,11 +594,11 @@ MStatus MeshTranslator::exportMesh(const MDagPath &path)
 		LOG_DEBUG("instance_number = "<<instance_number);
 	}
 
-	// получить преобразования
+	// РїРѕР»СѓС‡РёС‚СЊ РїСЂРµРѕР±СЂР°Р·РѕРІР°РЅРёСЏ
 	LOG_DEBUG("*** extractTransform()");
 	extractTransform(path);
 
-	// получить геометрию
+	// РїРѕР»СѓС‡РёС‚СЊ РіРµРѕРјРµС‚СЂРёСЋ
 	LOG_DEBUG("*** extractGeometry()");
 	extractGeometry(mesh);
 
@@ -607,19 +607,19 @@ MStatus MeshTranslator::exportMesh(const MDagPath &path)
 		return MStatus::kFailure;
 	}
 
-	// получить стороны
+	// РїРѕР»СѓС‡РёС‚СЊ СЃС‚РѕСЂРѕРЅС‹
 	LOG_DEBUG("*** extractIndices()");
 	if(extractIndices(mesh) == MStatus::kFailure) return MStatus::kFailure;
 
-	// получить маетраиалы
+	// РїРѕР»СѓС‡РёС‚СЊ РјР°РµС‚СЂР°РёР°Р»С‹
 	LOG_DEBUG("*** extractMaterials()");
 	extractMaterials(mesh);
 
-	// сконструировать буфер вершин и буфер индексов
+	// СЃРєРѕРЅСЃС‚СЂСѓРёСЂРѕРІР°С‚СЊ Р±СѓС„РµСЂ РІРµСЂС€РёРЅ Рё Р±СѓС„РµСЂ РёРЅРґРµРєСЃРѕРІ
 	LOG_DEBUG("*** constructVertexIndex()");
 	constructVertexIndex();
 
-	// записать наконец меш
+	// Р·Р°РїРёСЃР°С‚СЊ РЅР°РєРѕРЅРµС† РјРµС€
 	LOG_DEBUG("> mesh header");
 	boost::uint32_t data_tag = tag_mesh, vertex_array_size = vertex_array.size(), index_array_size = index_array.size(),
 		materials_count = mesh_material_names.size();
@@ -657,10 +657,10 @@ MStatus MeshTranslator::exportMesh(const MDagPath &path)
 	n=polygon_material.size();
 	unsigned index_number = 0;
 	while(i<n) {
-		// получить материал
+		// РїРѕР»СѓС‡РёС‚СЊ РјР°С‚РµСЂРёР°Р»
 		unsigned material = polygon_material[i].first;
 
-		// просканировать полигоны и собрать данные
+		// РїСЂРѕСЃРєР°РЅРёСЂРѕРІР°С‚СЊ РїРѕР»РёРіРѕРЅС‹ Рё СЃРѕР±СЂР°С‚СЊ РґР°РЅРЅС‹Рµ
 		unsigned l,min_vertex=unsigned(-1),max_vertex=0;
 		for(j=i; i<n && polygon_material[j].first==material; j++) {
 			for(l=0; l<3; l++) {
@@ -677,7 +677,7 @@ MStatus MeshTranslator::exportMesh(const MDagPath &path)
 			<<", min_vertex = "<<min_vertex
 			<<", max_vertex = "<<max_vertex);
 
-		// вывести эти данные
+		// РІС‹РІРµСЃС‚Рё СЌС‚Рё РґР°РЅРЅС‹Рµ
 		boost::uint32_t indices_count = j-i, vertices_count = max_vertex-min_vertex;
 		file_stream.write(mesh_material_names[material].c_str(), mesh_material_names[material].size() + 1);
 		file_stream.write((char const *) &indices_count, sizeof(indices_count));
@@ -687,7 +687,7 @@ MStatus MeshTranslator::exportMesh(const MDagPath &path)
 		i=j;
 	}
 
-	// очистить данные
+	// РѕС‡РёСЃС‚РёС‚СЊ РґР°РЅРЅС‹Рµ
 	clearBuffers();
 
 	LOG_DEBUG("done.");

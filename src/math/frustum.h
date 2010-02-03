@@ -22,7 +22,7 @@ namespace math {
 template<class T>
 class math::frustum {
 public:
-	// типы и константы
+	// С‚РёРїС‹ Рё РєРѕРЅСЃС‚Р°РЅС‚С‹
 	typedef T scalar_t;
 	typedef size_t size_t;
 	static const size_t ARITY=3;
@@ -33,12 +33,12 @@ public:
 	typedef triangle<ARITY,scalar_t> triangle_t;
 	typedef frustum<scalar_t> frustum_t;
 
-	// данные
+	// РґР°РЅРЅС‹Рµ
 	vec_t origin,bisector;
 	scalar_t bisector_length;
 	triangle_t top,bottom,left,right;
 
-	// конструкторы
+	// РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂС‹
 	void construct(const vec_t &o,const vec_t &b,scalar_t fovx,scalar_t fovy) {
 		origin=o;
 		bisector=b;
@@ -66,7 +66,7 @@ public:
 		right.construct(origin,C,A);
 	}
 
-	// пересечение с aabb
+	// РїРµСЂРµСЃРµС‡РµРЅРёРµ СЃ aabb
 	bool contains(const vec_t &v) const {
 		return top.position(v)>=0 && bottom.position(v)>=0
 			&& left.position(v)>=0 && right.position(v)>=0;

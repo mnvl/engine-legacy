@@ -28,7 +28,7 @@ intersects(sphere<N, T> const &s, sphere<N, T> const &t)
 	return (s.centre - t.centre).length_sq() <= square(s.radius + t.radius);
 }
 
-// ïğîâåğèòü íà ïåğåñå÷åíèå ñ ëó÷îì
+// Ğ¿Ñ€Ğ¾Ğ²ĞµÑ€Ğ¸Ñ‚ÑŒ Ğ½Ğ° Ğ¿ĞµÑ€ĞµÑĞµÑ‡ĞµĞ½Ğ¸Ğµ Ñ Ğ»ÑƒÑ‡Ğ¾Ğ¼
 template<int N, class T> bool inline
 intersects(sphere<N, T> const &s, ray<N, T> const &r)
 {
@@ -127,7 +127,7 @@ intersect(ray<3, T> const &ray1, ray<3, T> const &ray2, T &t)
 	matrix<3,3> m;
 	m.assign(ray2.r0 - ray1.r0, ray2.a, a1_x_a2);
 	t = m.determinant() / a1_x_a2_len_sq;
-	return true; 
+	return true;
 }
 
 template<class T> bool inline

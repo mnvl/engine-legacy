@@ -150,7 +150,7 @@ public:
 		operator =(a);
 	}
 
-	// ñêîíñòðóèðîâàòü obb èç aabb
+	// ÑÐºÐ¾Ð½ÑÑ‚Ñ€ÑƒÐ¸Ñ€Ð¾Ð²Ð°Ñ‚ÑŒ obb Ð¸Ð· aabb
 	obb_t &operator =(const aabb_t &a) {
 		origin = a.lo;
 		tangent.set(a.hi.x - a.lo.x, 0, 0);
@@ -159,7 +159,7 @@ public:
 		return *this;
 	}
 
-	// ïîëó÷èòü îáúåì
+	// Ð¿Ð¾Ð»ÑƒÑ‡Ð¸Ñ‚ÑŒ Ð¾Ð±ÑŠÐµÐ¼
 	vec_t get_centre() const {
 		return origin + (tangent + normal + binormal) / scalar_t(2);
 	}
@@ -168,7 +168,7 @@ public:
 		return tangent.length() * normal.length() * binormal.length();
 	}
 
-	// ïîëó÷èòü aabb
+	// Ð¿Ð¾Ð»ÑƒÑ‡Ð¸Ñ‚ÑŒ aabb
 	void get_aabb(aabb_t &b) const {
 		b.lo = b.hi = origin;
 		b.extend(origin + tangent);
@@ -180,34 +180,34 @@ public:
 		b.extend(origin + tangent + normal + binormal);
 	}
 	
-	// òðàíñôîðìèðîâàòü obb ìàòðèöåé tf
+	// Ñ‚Ñ€Ð°Ð½ÑÑ„Ð¾Ñ€Ð¼Ð¸Ñ€Ð¾Ð²Ð°Ñ‚ÑŒ obb Ð¼Ð°Ñ‚Ñ€Ð¸Ñ†ÐµÐ¹ tf
 	void transform(const matrix_t &tf) {
-		// ïîëó÷èòü êîîðäèíàòû òî÷åê - âåðøèí
+		// Ð¿Ð¾Ð»ÑƒÑ‡Ð¸Ñ‚ÑŒ ÐºÐ¾Ð¾Ñ€Ð´Ð¸Ð½Ð°Ñ‚Ñ‹ Ñ‚Ð¾Ñ‡ÐµÐº - Ð²ÐµÑ€ÑˆÐ¸Ð½
 		vec_t O = origin,
 			 Ox = tangent + origin,
 			 Oy = normal + origin,
 			 Oz = binormal + origin;
 
-		// òðàíñôîðìèðîâàòü ýòè êîîðäèíàòû
+		// Ñ‚Ñ€Ð°Ð½ÑÑ„Ð¾Ñ€Ð¼Ð¸Ñ€Ð¾Ð²Ð°Ñ‚ÑŒ ÑÑ‚Ð¸ ÐºÐ¾Ð¾Ñ€Ð´Ð¸Ð½Ð°Ñ‚Ñ‹
 		mul(origin, O, tf);
 		mul(tangent, Ox, tf);
 		mul(normal, Oy, tf);
 		mul(binormal, Oz, tf);
 
-		// âû÷èñëèòü çíà÷åíèÿ tangent, normal, binormal îòíîñèòåëüíî origin
+		// Ð²Ñ‹Ñ‡Ð¸ÑÐ»Ð¸Ñ‚ÑŒ Ð·Ð½Ð°Ñ‡ÐµÐ½Ð¸Ñ tangent, normal, binormal Ð¾Ñ‚Ð½Ð¾ÑÐ¸Ñ‚ÐµÐ»ÑŒÐ½Ð¾ origin
 		tangent -= origin;
 		normal -= origin;
 		binormal -= origin;
 	}
 
-	// ïîëó÷èòü êîîðäèíàòû âåðøèíû
+	// Ð¿Ð¾Ð»ÑƒÑ‡Ð¸Ñ‚ÑŒ ÐºÐ¾Ð¾Ñ€Ð´Ð¸Ð½Ð°Ñ‚Ñ‹ Ð²ÐµÑ€ÑˆÐ¸Ð½Ñ‹
 	void get_vertex(size_t vertex_number, vec_t &position) const {
 		position = origin +	scalar_t(vertex_number & 1) * tangent;
 		if (vertex_number & 2) position += normal;
 		if (vertex_number & 4) position += binormal;
 	}
 
-	// ïîëó÷èòü obb ñåãìåíòà
+	// Ð¿Ð¾Ð»ÑƒÑ‡Ð¸Ñ‚ÑŒ obb ÑÐµÐ³Ð¼ÐµÐ½Ñ‚Ð°
 	void get_segment(size_t segment_number, obb_t &segment_obb) {
 		segment_obb.tangent = tangent / scalar_t(2);
 		segment_obb.normal = normal / scalar_t(2);
@@ -219,26 +219,26 @@ public:
 		if(segment_number & 4) segment_obb.origin += segment_obb.binormal;
 	}
 
-	// ïîëó÷èòü êîîðäèíàòû âåêòîðà â ëîêàëüíîé ñèñòåìå êîîðäèíàò ñ
-	// áàçèñîì (tangent,normal,binormal)
+	// Ð¿Ð¾Ð»ÑƒÑ‡Ð¸Ñ‚ÑŒ ÐºÐ¾Ð¾Ñ€Ð´Ð¸Ð½Ð°Ñ‚Ñ‹ Ð²ÐµÐºÑ‚Ð¾Ñ€Ð° Ð² Ð»Ð¾ÐºÐ°Ð»ÑŒÐ½Ð¾Ð¹ ÑÐ¸ÑÑ‚ÐµÐ¼Ðµ ÐºÐ¾Ð¾Ñ€Ð´Ð¸Ð½Ð°Ñ‚ Ñ
+	// Ð±Ð°Ð·Ð¸ÑÐ¾Ð¼ (tangent,normal,binormal)
 	void forward_vector(vec_t &v,const vec_t &v0) const {
 		v.x = (v0 & tangent) / tangent.length_sq();
 		v.y = (v0 & normal)	/ normal.length_sq();
 		v.z = (v0 & binormal) / binormal.length_sq();
 	}
 
-	// ïîëó÷èòü êîîðäèíàòû òî÷êè â ëîêàëüíîé ñèñòåìå êîîðäèíàò
+	// Ð¿Ð¾Ð»ÑƒÑ‡Ð¸Ñ‚ÑŒ ÐºÐ¾Ð¾Ñ€Ð´Ð¸Ð½Ð°Ñ‚Ñ‹ Ñ‚Ð¾Ñ‡ÐºÐ¸ Ð² Ð»Ð¾ÐºÐ°Ð»ÑŒÐ½Ð¾Ð¹ ÑÐ¸ÑÑ‚ÐµÐ¼Ðµ ÐºÐ¾Ð¾Ñ€Ð´Ð¸Ð½Ð°Ñ‚
 	void forward_point(vec_t &v,const vec_t &v0) const {
 		forward_vector(v, v0 - origin);
 	}
 
-	// ïåðåíåñòè ïðÿìóþ â ëîêàëüíóþ ñèñòåìó êîîðäèíàò
+	// Ð¿ÐµÑ€ÐµÐ½ÐµÑÑ‚Ð¸ Ð¿Ñ€ÑÐ¼ÑƒÑŽ Ð² Ð»Ð¾ÐºÐ°Ð»ÑŒÐ½ÑƒÑŽ ÑÐ¸ÑÑ‚ÐµÐ¼Ñƒ ÐºÐ¾Ð¾Ñ€Ð´Ð¸Ð½Ð°Ñ‚
 	void forward_ray(ray_t &r,const ray_t &r0) const {
 		forward_point(r.r0,r0.r0);
 		forward_vector(r.a,r0.a);
 	}
 
-	// ïðîâåðèòü ïðèíàäëåæíîñòü òî÷êè
+	// Ð¿Ñ€Ð¾Ð²ÐµÑ€Ð¸Ñ‚ÑŒ Ð¿Ñ€Ð¸Ð½Ð°Ð´Ð»ÐµÐ¶Ð½Ð¾ÑÑ‚ÑŒ Ñ‚Ð¾Ñ‡ÐºÐ¸
 	bool contains(const vec_t &v) const {
 		vec_t v1;
 		forward_point(v1, v);
@@ -247,36 +247,36 @@ public:
 		    && v1.z>=0 && v1.z<=1;
 	}
 
-	// ïðîâåðèòü ïðèíàäëåæíîñòü òðåóãîëüíèêà
+	// Ð¿Ñ€Ð¾Ð²ÐµÑ€Ð¸Ñ‚ÑŒ Ð¿Ñ€Ð¸Ð½Ð°Ð´Ð»ÐµÐ¶Ð½Ð¾ÑÑ‚ÑŒ Ñ‚Ñ€ÐµÑƒÐ³Ð¾Ð»ÑŒÐ½Ð¸ÐºÐ°
 	bool contains(const triangle_t &tri) const {
 		return contains(tri.A) && contains(tri.B) && contains(tri.C);
 	}
 
-	// ïðîâåðèòü ïåðåñå÷åíèå ñ ëó÷îì
+	// Ð¿Ñ€Ð¾Ð²ÐµÑ€Ð¸Ñ‚ÑŒ Ð¿ÐµÑ€ÐµÑÐµÑ‡ÐµÐ½Ð¸Ðµ Ñ Ð»ÑƒÑ‡Ð¾Ð¼
 	 bool trace(const ray_t &r, scalar_t t_min = 1,
 			 scalar_t t_max = 1) const;
        	
-	// ïðîâåðèòü íà ñîäåðæàíèå obb
+	// Ð¿Ñ€Ð¾Ð²ÐµÑ€Ð¸Ñ‚ÑŒ Ð½Ð° ÑÐ¾Ð´ÐµÑ€Ð¶Ð°Ð½Ð¸Ðµ obb
 	bool contains(const obb_t &r) const;
 
-	// ïåðåñåêàþòñÿ ëè obb è òðåóãîëüíèê?
+	// Ð¿ÐµÑ€ÐµÑÐµÐºÐ°ÑŽÑ‚ÑÑ Ð»Ð¸ obb Ð¸ Ñ‚Ñ€ÐµÑƒÐ³Ð¾Ð»ÑŒÐ½Ð¸Ðº?
 	bool intersects(const triangle_t &tri) const {
 		return !not_intersects(tri);
 	}
 	
-	// ïåðåñåêàþòñÿ ëè äâà obb?
+	// Ð¿ÐµÑ€ÐµÑÐµÐºÐ°ÑŽÑ‚ÑÑ Ð»Ð¸ Ð´Ð²Ð° obb?
 	bool intersects(const obb_t &box) const {
 		return !not_intersects(box) && !box.not_intersects(*this);
 	}
 
-	// ñòîëêíóòñÿ ëè äâà äâèæóùèõñÿ obb â èíòåðâàëå âðåìåíè [t_min, t_max]?
+	// ÑÑ‚Ð¾Ð»ÐºÐ½ÑƒÑ‚ÑÑ Ð»Ð¸ Ð´Ð²Ð° Ð´Ð²Ð¸Ð¶ÑƒÑ‰Ð¸Ñ…ÑÑ obb Ð² Ð¸Ð½Ñ‚ÐµÑ€Ð²Ð°Ð»Ðµ Ð²Ñ€ÐµÐ¼ÐµÐ½Ð¸ [t_min, t_max]?
 	bool collides(triangle_t const &tri, const vec_t &vel, scalar_t t_min = 0,
 		scalar_t t_max = 1) const
 	{
 		return !not_collides(tri, vel, t_min, t_max);
 	}
 
-	// ñòîëêíóòñÿ ëè äâà äâèæóùèõñÿ obb â èíòåðâàëå âðåìåíè [t_min, t_max]?
+	// ÑÑ‚Ð¾Ð»ÐºÐ½ÑƒÑ‚ÑÑ Ð»Ð¸ Ð´Ð²Ð° Ð´Ð²Ð¸Ð¶ÑƒÑ‰Ð¸Ñ…ÑÑ obb Ð² Ð¸Ð½Ñ‚ÐµÑ€Ð²Ð°Ð»Ðµ Ð²Ñ€ÐµÐ¼ÐµÐ½Ð¸ [t_min, t_max]?
 	bool collides(obb_t const &box, const vec_t &vel, scalar_t t_min = 0,
 		scalar_t t_max = 1) const
 	{
@@ -285,23 +285,23 @@ public:
 	}
 
 private:
-	// ïðîâåðèòü íà íå-ïåðåñå÷åíèå ñ òðåóãîëüíèêîì
+	// Ð¿Ñ€Ð¾Ð²ÐµÑ€Ð¸Ñ‚ÑŒ Ð½Ð° Ð½Ðµ-Ð¿ÐµÑ€ÐµÑÐµÑ‡ÐµÐ½Ð¸Ðµ Ñ Ñ‚Ñ€ÐµÑƒÐ³Ð¾Ð»ÑŒÐ½Ð¸ÐºÐ¾Ð¼
 	bool not_intersects(const triangle_t &r) const;
 
-	// ïðîâåðèòü íà îäíîñòîðîííåå íå-ïåðåñå÷åíèå ñ obb
+	// Ð¿Ñ€Ð¾Ð²ÐµÑ€Ð¸Ñ‚ÑŒ Ð½Ð° Ð¾Ð´Ð½Ð¾ÑÑ‚Ð¾Ñ€Ð¾Ð½Ð½ÐµÐµ Ð½Ðµ-Ð¿ÐµÑ€ÐµÑÐµÑ‡ÐµÐ½Ð¸Ðµ Ñ obb
 	bool not_intersects(const obb_t &r) const;
 
-	// ïðîâåðèòü íà îäíîñòîðîííåå íå-ñòîëêíîâåíèå ñ òðåóãîëüíèêîì
-	// r -- äàííûé òðåóãîëüíèê
-	// vel -- ñêîðîñòü box îòíîñèòåëüíî íàñòîÿùåãî obb
-	// t_min, t_max -- èíòåðâàë âðåìåíè, âíóòðè êîòîðîãî ñëåäóåò èñêàòü ñòîëêíîâåíèå
+	// Ð¿Ñ€Ð¾Ð²ÐµÑ€Ð¸Ñ‚ÑŒ Ð½Ð° Ð¾Ð´Ð½Ð¾ÑÑ‚Ð¾Ñ€Ð¾Ð½Ð½ÐµÐµ Ð½Ðµ-ÑÑ‚Ð¾Ð»ÐºÐ½Ð¾Ð²ÐµÐ½Ð¸Ðµ Ñ Ñ‚Ñ€ÐµÑƒÐ³Ð¾Ð»ÑŒÐ½Ð¸ÐºÐ¾Ð¼
+	// r -- Ð´Ð°Ð½Ð½Ñ‹Ð¹ Ñ‚Ñ€ÐµÑƒÐ³Ð¾Ð»ÑŒÐ½Ð¸Ðº
+	// vel -- ÑÐºÐ¾Ñ€Ð¾ÑÑ‚ÑŒ box Ð¾Ñ‚Ð½Ð¾ÑÐ¸Ñ‚ÐµÐ»ÑŒÐ½Ð¾ Ð½Ð°ÑÑ‚Ð¾ÑÑ‰ÐµÐ³Ð¾ obb
+	// t_min, t_max -- Ð¸Ð½Ñ‚ÐµÑ€Ð²Ð°Ð» Ð²Ñ€ÐµÐ¼ÐµÐ½Ð¸, Ð²Ð½ÑƒÑ‚Ñ€Ð¸ ÐºÐ¾Ñ‚Ð¾Ñ€Ð¾Ð³Ð¾ ÑÐ»ÐµÐ´ÑƒÐµÑ‚ Ð¸ÑÐºÐ°Ñ‚ÑŒ ÑÑ‚Ð¾Ð»ÐºÐ½Ð¾Ð²ÐµÐ½Ð¸Ðµ
 	bool not_collides(const triangle_t &r, const vec_t &vel, scalar_t t_min = 0,
 		scalar_t t_max = 1) const;
 
-	// ïðîâåðèòü íà îäíîñòîðîííåå íå-ñòîëêíîâåíèå ñ obb
-	// r -- äàííûé obb
-	// vel -- ñêîðîñòü box îòíîñèòåëüíî íàñòîÿùåãî obb
-	// t_min, t_max -- èíòåðâàë âðåìåíè, âíóòðè êîòîðîãî ñëåäóåò èñêàòü ñòîëêíîâåíèå
+	// Ð¿Ñ€Ð¾Ð²ÐµÑ€Ð¸Ñ‚ÑŒ Ð½Ð° Ð¾Ð´Ð½Ð¾ÑÑ‚Ð¾Ñ€Ð¾Ð½Ð½ÐµÐµ Ð½Ðµ-ÑÑ‚Ð¾Ð»ÐºÐ½Ð¾Ð²ÐµÐ½Ð¸Ðµ Ñ obb
+	// r -- Ð´Ð°Ð½Ð½Ñ‹Ð¹ obb
+	// vel -- ÑÐºÐ¾Ñ€Ð¾ÑÑ‚ÑŒ box Ð¾Ñ‚Ð½Ð¾ÑÐ¸Ñ‚ÐµÐ»ÑŒÐ½Ð¾ Ð½Ð°ÑÑ‚Ð¾ÑÑ‰ÐµÐ³Ð¾ obb
+	// t_min, t_max -- Ð¸Ð½Ñ‚ÐµÑ€Ð²Ð°Ð» Ð²Ñ€ÐµÐ¼ÐµÐ½Ð¸, Ð²Ð½ÑƒÑ‚Ñ€Ð¸ ÐºÐ¾Ñ‚Ð¾Ñ€Ð¾Ð³Ð¾ ÑÐ»ÐµÐ´ÑƒÐµÑ‚ Ð¸ÑÐºÐ°Ñ‚ÑŒ ÑÑ‚Ð¾Ð»ÐºÐ½Ð¾Ð²ÐµÐ½Ð¸Ðµ
 	bool not_collides(const obb_t &r, const vec_t &vel, scalar_t t_min = 0,
 		scalar_t t_max = 1) const;
 };

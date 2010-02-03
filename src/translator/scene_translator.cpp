@@ -137,7 +137,7 @@ MStatus SceneTranslator::exportAll() {
 			return MStatus::kFailure;
 		}
 
-		// экспоритровать
+		// СЌРєСЃРїРѕСЂРёС‚СЂРѕРІР°С‚СЊ
 		if(dagPath.hasFn(MFn::kMesh) && dagPath.apiType()==MFn::kTransform) exportMesh(dagPath);
 		else if(dagPath.hasFn(MFn::kAmbientLight)) exportAmbientLight(dagPath);
 		else if(dagPath.hasFn(MFn::kDirectionalLight)) exportDirectionalLight(dagPath);

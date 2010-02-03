@@ -44,13 +44,13 @@ swing_twist_decomposition(const quaternion<T> &rotation,const vec<3,T> &directio
 template<class T>
 class quaternion {
 public:
-	// типы и константы
+	// С‚РёРїС‹ Рё РєРѕРЅСЃС‚Р°РЅС‚С‹
 	typedef T scalar_t;
 	typedef vec<3,T> vec_t;
 	typedef matrix<3,3,T> matrix_t;
 	typedef quaternion<T> quaternion_t;
 
-	// данные
+	// РґР°РЅРЅС‹Рµ
     scalar_t x,y,z,w;
 
     quaternion() {
@@ -239,20 +239,20 @@ public:
 		}
     }
 
-	// построить кватернион поворотов на углы alpha, beta, gamma
+	// РїРѕСЃС‚СЂРѕРёС‚СЊ РєРІР°С‚РµСЂРЅРёРѕРЅ РїРѕРІРѕСЂРѕС‚РѕРІ РЅР° СѓРіР»С‹ alpha, beta, gamma
 	void rotation(scalar_t alpha, scalar_t beta, scalar_t gamma) {
 		vec_t axis(alpha, beta, gamma);
 		scalar_t angle = axis.length();
 		rotation(axis, angle);
 	}
 
-	// построить кватернион поворотов на углы rot.x, rot.y, rot.z
+	// РїРѕСЃС‚СЂРѕРёС‚СЊ РєРІР°С‚РµСЂРЅРёРѕРЅ РїРѕРІРѕСЂРѕС‚РѕРІ РЅР° СѓРіР»С‹ rot.x, rot.y, rot.z
 	void rotation(const vec_t &rot) {
 		scalar_t angle = rot.length();
 		rotation(rot, angle);
 	}
 
-	// получить кватернион поворота вектора (1,0,0) в вектор dir
+	// РїРѕР»СѓС‡РёС‚СЊ РєРІР°С‚РµСЂРЅРёРѕРЅ РїРѕРІРѕСЂРѕС‚Р° РІРµРєС‚РѕСЂР° (1,0,0) РІ РІРµРєС‚РѕСЂ dir
 	void direction(const vec_t &dir) {
 		matrix_t m;
 		m.direction(dir);
@@ -260,7 +260,7 @@ public:
 		set_unit(m);
 	}
 
-	// умножить настоящий кватернион на кватернион поворота вектора (1,0,0) в вектор dir
+	// СѓРјРЅРѕР¶РёС‚СЊ РЅР°СЃС‚РѕСЏС‰РёР№ РєРІР°С‚РµСЂРЅРёРѕРЅ РЅР° РєРІР°С‚РµСЂРЅРёРѕРЅ РїРѕРІРѕСЂРѕС‚Р° РІРµРєС‚РѕСЂР° (1,0,0) РІ РІРµРєС‚РѕСЂ dir
 	void direct(const vec_t &dir) {
 		quaternion_t q;
 		q.direction(dir);

@@ -26,10 +26,10 @@ public:
 	typedef ray<ARITY,scalar_t> ray_t;
 	typedef plane<scalar_t> plane_t;
 
-	// äàííûå
+	// Ğ´Ğ°Ğ½Ğ½Ñ‹Ğµ
 	scalar_t A, B, C, D;
 
-	// êîíñòğóêòîğû
+	// ĞºĞ¾Ğ½ÑÑ‚Ñ€ÑƒĞºÑ‚Ğ¾Ñ€Ñ‹
 	plane() {
 	}
 
@@ -44,12 +44,12 @@ public:
 		D = -(o & n);
 	}
 
-	// ğàñïîëîæåíèå òî÷êè
+	// Ñ€Ğ°ÑĞ¿Ğ¾Ğ»Ğ¾Ğ¶ĞµĞ½Ğ¸Ğµ Ñ‚Ğ¾Ñ‡ĞºĞ¸
 	scalar_t position(const vec_t &v) const {
 		return A*v.x + B*v.y + C*v.z + D;
 	}
 
-	// ïåğåñå÷åíèå ñ ïğÿìîé
+	// Ğ¿ĞµÑ€ĞµÑĞµÑ‡ĞµĞ½Ğ¸Ğµ Ñ Ğ¿Ñ€ÑĞ¼Ğ¾Ğ¹
 	bool intersects(const ray_t &r) const {
 		return abs(A*r.a.x + B*r.a.y + C*r.a.z)>EPSILON
 			|| contains(r);
@@ -72,28 +72,28 @@ public:
 		return -(A*r.r0.x + B*r.r0.y + C*r.r0.z + D) / a_n;
 	}
 
-	// íàéòè ïåğåñå÷åíèå ñ ëó÷îì r
-	// r -- äàííûé ëó÷
-	// t -- ïàğàìåòğ â óğàâíåíèè ïğÿìîé r = r.origin + r.direction * t;
+	// Ğ½Ğ°Ğ¹Ñ‚Ğ¸ Ğ¿ĞµÑ€ĞµÑĞµÑ‡ĞµĞ½Ğ¸Ğµ Ñ Ğ»ÑƒÑ‡Ğ¾Ğ¼ r
+	// r -- Ğ´Ğ°Ğ½Ğ½Ñ‹Ğ¹ Ğ»ÑƒÑ‡
+	// t -- Ğ¿Ğ°Ñ€Ğ°Ğ¼ĞµÑ‚Ñ€ Ğ² ÑƒÑ€Ğ°Ğ²Ğ½ĞµĞ½Ğ¸Ğ¸ Ğ¿Ñ€ÑĞ¼Ğ¾Ğ¹ r = r.origin + r.direction * t;
 	bool trace(const ray_t &r,scalar_t &t,scalar_t t_min = 0, scalar_t t_max = 1) const {
 		t = trace(r);
 		return t >= t_min && t <= t_max;
 	}
 
-	// íàéòè ïåğåñå÷åíèå ñ ëó÷îì r
-	// r -- äàííûé ëó÷
-	// t -- ïàğàìåòğ â óğàâíåíèè ïğÿìîé r = r.origin + r.direction * t;
-	// v -- òî÷êà ïåğåñå÷åíèÿ
+	// Ğ½Ğ°Ğ¹Ñ‚Ğ¸ Ğ¿ĞµÑ€ĞµÑĞµÑ‡ĞµĞ½Ğ¸Ğµ Ñ Ğ»ÑƒÑ‡Ğ¾Ğ¼ r
+	// r -- Ğ´Ğ°Ğ½Ğ½Ñ‹Ğ¹ Ğ»ÑƒÑ‡
+	// t -- Ğ¿Ğ°Ñ€Ğ°Ğ¼ĞµÑ‚Ñ€ Ğ² ÑƒÑ€Ğ°Ğ²Ğ½ĞµĞ½Ğ¸Ğ¸ Ğ¿Ñ€ÑĞ¼Ğ¾Ğ¹ r = r.origin + r.direction * t;
+	// v -- Ñ‚Ğ¾Ñ‡ĞºĞ° Ğ¿ĞµÑ€ĞµÑĞµÑ‡ĞµĞ½Ğ¸Ñ
 	bool trace(const ray_t &r,scalar_t &t,vec_t &v,scalar_t t_min = 0, scalar_t t_max = 1) const {
 		if(!trace(r,t,t_min,t_max)) return false;
 		v = r.r0 + r.a * t;
 		return true;
 	}
 
-	// íàéòè ïåğåñå÷åíèå ñ ïëîñêîñòüş pl
-	// pl -- ïëîñêîñòü
-	// result -- èñêîìàÿ ïğÿìàÿ ïåğåñå÷åíèÿ
-	// åñëè ïëîñêîñòè ïàğàëëåëüíû -- âîçâğàùàåò false
+	// Ğ½Ğ°Ğ¹Ñ‚Ğ¸ Ğ¿ĞµÑ€ĞµÑĞµÑ‡ĞµĞ½Ğ¸Ğµ Ñ Ğ¿Ğ»Ğ¾ÑĞºĞ¾ÑÑ‚ÑŒÑ pl
+	// pl -- Ğ¿Ğ»Ğ¾ÑĞºĞ¾ÑÑ‚ÑŒ
+	// result -- Ğ¸ÑĞºĞ¾Ğ¼Ğ°Ñ Ğ¿Ñ€ÑĞ¼Ğ°Ñ Ğ¿ĞµÑ€ĞµÑĞµÑ‡ĞµĞ½Ğ¸Ñ
+	// ĞµÑĞ»Ğ¸ Ğ¿Ğ»Ğ¾ÑĞºĞ¾ÑÑ‚Ğ¸ Ğ¿Ğ°Ñ€Ğ°Ğ»Ğ»ĞµĞ»ÑŒĞ½Ñ‹ -- Ğ²Ğ¾Ğ·Ğ²Ñ€Ğ°Ñ‰Ğ°ĞµÑ‚ false
 	bool intersect(const plane_t &pl, ray_t &r) const {
 		r.a = vec_t(A,B,C) ^ vec_t(pl.A, pl.B, pl.C);
 		vec_t dir2 = r.a * r.a;

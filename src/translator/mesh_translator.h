@@ -39,16 +39,16 @@ protected:
 		tag_mesh = 0x02020202,
 	};
 
-	// название текущей сцены
+	// РЅР°Р·РІР°РЅРёРµ С‚РµРєСѓС‰РµР№ СЃС†РµРЅС‹
 	std::string scene_name;
 
-	// файловый поток для данных
+	// С„Р°Р№Р»РѕРІС‹Р№ РїРѕС‚РѕРє РґР»СЏ РґР°РЅРЅС‹С…
 	std::fstream file_stream;
 
-	// копия меша
+	// РєРѕРїРёСЏ РјРµС€Р°
 	unsigned instance_number;
 
-	// материалы
+	// РјР°С‚РµСЂРёР°Р»С‹
 	std::vector<std::string> exported_material_names;
 	std::vector<std::string> mesh_material_names;
 
@@ -56,7 +56,7 @@ protected:
 	typedef std::vector<polygon_material_type> polygon_material_vector_type;
         polygon_material_vector_type polygon_material;
 
-	// геометрия
+	// РіРµРѕРјРµС‚СЂРёСЏ
 	math::vec<3> mesh_origin;
 	math::quaternion<> mesh_rotation;
 	math::vec<3> mesh_scale;
@@ -69,7 +69,7 @@ protected:
 	std::vector<math::vec<3> > normal_array;
 	std::vector<math::vec<2> > tex2_array;
 
-	// стороны
+	// СЃС‚РѕСЂРѕРЅС‹
 	struct index_type {
 		unsigned position_index, normal_index, tex2_index;
 
@@ -91,7 +91,7 @@ protected:
 	std::vector<face_type> face_array;
 	std::vector<math::vec<3> > polygon_normal;
 
-	// сконвертированная информация
+	// СЃРєРѕРЅРІРµСЂС‚РёСЂРѕРІР°РЅРЅР°СЏ РёРЅС„РѕСЂРјР°С†РёСЏ
 	typedef graphic::vertex_pnt vertex_type;
 	typedef std::vector<vertex_type> vertex_array_type;
 
@@ -103,40 +103,40 @@ protected:
 	MString defaultExtension() const;
 	MString filter() const;
 
-	// конструктор и деструктор
+	// РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ Рё РґРµСЃС‚СЂСѓРєС‚РѕСЂ
 	MeshTranslator();
 	~MeshTranslator();
 
-	virtual MStatus exportSelection();	// вызывает функцию exportMesh() для всех выбранных мешей
-	virtual MStatus exportAll();		// вызывает функцию exportMesh() для всех мешей
+	virtual MStatus exportSelection();	// РІС‹Р·С‹РІР°РµС‚ С„СѓРЅРєС†РёСЋ exportMesh() РґР»СЏ РІСЃРµС… РІС‹Р±СЂР°РЅРЅС‹С… РјРµС€РµР№
+	virtual MStatus exportAll();		// РІС‹Р·С‹РІР°РµС‚ С„СѓРЅРєС†РёСЋ exportMesh() РґР»СЏ РІСЃРµС… РјРµС€РµР№
 
-	// проверяет fnDag на видимость
+	// РїСЂРѕРІРµСЂСЏРµС‚ fnDag РЅР° РІРёРґРёРјРѕСЃС‚СЊ
 	bool isVisible(MFnDagNode &fnDag, MStatus& status);
 
-	// записывает материал в файл
+	// Р·Р°РїРёСЃС‹РІР°РµС‚ РјР°С‚РµСЂРёР°Р» РІ С„Р°Р№Р»
 	MStatus exportMaterial(const MPlug &shader_plug);
 
-	// получить название текстуры материала
+	// РїРѕР»СѓС‡РёС‚СЊ РЅР°Р·РІР°РЅРёРµ С‚РµРєСЃС‚СѓСЂС‹ РјР°С‚РµСЂРёР°Р»Р°
 	MStatus extractTextureName(const MPlug &shaderPlug,std::string &texture_name);
 
-	// получает матрицу преобразования
+	// РїРѕР»СѓС‡Р°РµС‚ РјР°С‚СЂРёС†Сѓ РїСЂРµРѕР±СЂР°Р·РѕРІР°РЅРёСЏ
 	MStatus extractTransform(const MDagPath &path);
 
-	// получает геометрию из меша
+	// РїРѕР»СѓС‡Р°РµС‚ РіРµРѕРјРµС‚СЂРёСЋ РёР· РјРµС€Р°
 	MStatus extractGeometry(MFnMesh const &mesh);
 
-	// получает стороны из меша
+	// РїРѕР»СѓС‡Р°РµС‚ СЃС‚РѕСЂРѕРЅС‹ РёР· РјРµС€Р°
 	MStatus extractIndices(MFnMesh const &mesh);
 
-	// получает информацию по материалам меша
+	// РїРѕР»СѓС‡Р°РµС‚ РёРЅС„РѕСЂРјР°С†РёСЋ РїРѕ РјР°С‚РµСЂРёР°Р»Р°Рј РјРµС€Р°
 	MStatus extractMaterials(MFnMesh const &mesh);
 
-	// сконуструировать буфер вертексов и индексов
+	// СЃРєРѕРЅСѓСЃС‚СЂСѓРёСЂРѕРІР°С‚СЊ Р±СѓС„РµСЂ РІРµСЂС‚РµРєСЃРѕРІ Рё РёРЅРґРµРєСЃРѕРІ
 	void constructVertexIndex();
 
-	// экспортирует меш
+	// СЌРєСЃРїРѕСЂС‚РёСЂСѓРµС‚ РјРµС€
 	virtual MStatus exportMesh(const MDagPath &path);
 
-	// освобождает временные буферы, использованные при экспорте
+	// РѕСЃРІРѕР±РѕР¶РґР°РµС‚ РІСЂРµРјРµРЅРЅС‹Рµ Р±СѓС„РµСЂС‹, РёСЃРїРѕР»СЊР·РѕРІР°РЅРЅС‹Рµ РїСЂРё СЌРєСЃРїРѕСЂС‚Рµ
 	void clearBuffers();
 };

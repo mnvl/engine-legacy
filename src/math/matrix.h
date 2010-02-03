@@ -45,7 +45,7 @@ namespace math
 template<class T>
 class math::matrix<3,3,T> {
 public:
-	// типы и константы
+	// С‚РёРїС‹ Рё РєРѕРЅСЃС‚Р°РЅС‚С‹
 	static const size_t WIDTH=3,HEIGHT=3;
 	typedef T scalar_t;
 	typedef vec<WIDTH-1,scalar_t> point_t;
@@ -53,10 +53,10 @@ public:
 	typedef quaternion<scalar_t> quaternion_t;
 	typedef matrix<WIDTH,HEIGHT,scalar_t> matrix_t;
 
-	// данные
+	// РґР°РЅРЅС‹Рµ
 	scalar_t ij[WIDTH][HEIGHT];
 
-	// конструкторы
+	// РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂС‹
 	void assign(vec_t const &l1, vec_t const &l2, vec_t const &l3);
 	void identity();
 	void translation(scalar_t x,scalar_t y);
@@ -82,9 +82,9 @@ public:
 	void direction(const vec_t &dir);
 	void direct(const vec_t &dir);
 
-	// вычислить детерминант минора
-	// r0, r1 -- индексы столбцов минора
-	// c0, c1 -- индексы строк минора
+	// РІС‹С‡РёСЃР»РёС‚СЊ РґРµС‚РµСЂРјРёРЅР°РЅС‚ РјРёРЅРѕСЂР°
+	// r0, r1 -- РёРЅРґРµРєСЃС‹ СЃС‚РѕР»Р±С†РѕРІ РјРёРЅРѕСЂР°
+	// c0, c1 -- РёРЅРґРµРєСЃС‹ СЃС‚СЂРѕРє РјРёРЅРѕСЂР°
 	scalar_t minor(int r0,int r1,int c0,int c1) const {
 		return ij[r0][c0] * ij[r1][c1] - ij[r1][c0] * ij[r0][c1];
 	}
@@ -111,8 +111,8 @@ public:
 		return ij[0][0] + ij[1][1] + ij[2][2];
 	}
 
-	// вычислить обратную матрицу и записать ее в M
-	// возвращает false если детерминант равен нулю
+	// РІС‹С‡РёСЃР»РёС‚СЊ РѕР±СЂР°С‚РЅСѓСЋ РјР°С‚СЂРёС†Сѓ Рё Р·Р°РїРёСЃР°С‚СЊ РµРµ РІ M
+	// РІРѕР·РІСЂР°С‰Р°РµС‚ false РµСЃР»Рё РґРµС‚РµСЂРјРёРЅР°РЅС‚ СЂР°РІРµРЅ РЅСѓР»СЋ
 	bool inverse(matrix_t &M) const {
 		scalar_t det = determinant();
 		if(det == 0) return false;
@@ -121,13 +121,13 @@ public:
 		return true;
 	}
 
-	// инвертирует матрицу
-	// возвращает false если детерминант равен нулю
+	// РёРЅРІРµСЂС‚РёСЂСѓРµС‚ РјР°С‚СЂРёС†Сѓ
+	// РІРѕР·РІСЂР°С‰Р°РµС‚ false РµСЃР»Рё РґРµС‚РµСЂРјРёРЅР°РЅС‚ СЂР°РІРµРЅ РЅСѓР»СЋ
 	bool invert() {
 		return inverse(*this);
 	}
 
-	// записать в T транспонированную матрицу
+	// Р·Р°РїРёСЃР°С‚СЊ РІ T С‚СЂР°РЅСЃРїРѕРЅРёСЂРѕРІР°РЅРЅСѓСЋ РјР°С‚СЂРёС†Сѓ
 	void transpose(matrix_t &tp) {
         tp.ij[0][0] = ij[0][0];		tp.ij[0][1] = ij[1][0];		tp.ij[0][2] = ij[2][0];
 		tp.ij[1][0] = ij[0][1];		tp.ij[1][1] = ij[1][1];		tp.ij[1][2] = ij[2][1];
@@ -158,7 +158,7 @@ public:
 template<class T>
 class math::matrix<4,4,T> {
 public:
-	// типы и константы
+	// С‚РёРїС‹ Рё РєРѕРЅСЃС‚Р°РЅС‚С‹
 	static size_t const WIDTH=4,HEIGHT=4;
 	typedef T scalar_t;
 	typedef vec<WIDTH,scalar_t> vec_t;
@@ -166,10 +166,10 @@ public:
 	typedef quaternion<scalar_t> quaternion_t;
 	typedef matrix<WIDTH,HEIGHT,scalar_t> matrix_t;
 
-	// данные
+	// РґР°РЅРЅС‹Рµ
 	scalar_t ij[WIDTH][HEIGHT];
 
-	// конструкторы
+	// РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂС‹
 	matrix() {
 	}
 
@@ -198,9 +198,9 @@ public:
 	void ortho(scalar_t width,scalar_t height,scalar_t z_near,scalar_t z_far);
 	void perspective(scalar_t fovy,scalar_t aspect,scalar_t z_near,scalar_t z_far);
 
-	// вычислить детерминант минора
-	// r0, r1, r2 -- индексы столбцов минора
-	// c0, c1, c2 -- индексы строк минора
+	// РІС‹С‡РёСЃР»РёС‚СЊ РґРµС‚РµСЂРјРёРЅР°РЅС‚ РјРёРЅРѕСЂР°
+	// r0, r1, r2 -- РёРЅРґРµРєСЃС‹ СЃС‚РѕР»Р±С†РѕРІ РјРёРЅРѕСЂР°
+	// c0, c1, c2 -- РёРЅРґРµРєСЃС‹ СЃС‚СЂРѕРє РјРёРЅРѕСЂР°
 	scalar_t minor(int r0,int r1,int r2,int c0,int c1,int c2) const {
 		return
 			ij[r0][c0] * (ij[r1][c1] * ij[r2][c2] - ij[r2][c1] * ij[r1][c2]) -
@@ -235,8 +235,8 @@ public:
 			ij[0][3] * minor(1, 2, 3, 0, 1, 2);
 	}
 
-	// вычислить обратную матрицу и записать ее в M
-	// возвращает false если детерминант равен нулю
+	// РІС‹С‡РёСЃР»РёС‚СЊ РѕР±СЂР°С‚РЅСѓСЋ РјР°С‚СЂРёС†Сѓ Рё Р·Р°РїРёСЃР°С‚СЊ РµРµ РІ M
+	// РІРѕР·РІСЂР°С‰Р°РµС‚ false РµСЃР»Рё РґРµС‚РµСЂРјРёРЅР°РЅС‚ СЂР°РІРµРЅ РЅСѓР»СЋ
 	bool inverse(matrix_t &M) const {
 		scalar_t det = determinant();
 		if(det == 0) return false;
@@ -245,13 +245,13 @@ public:
 		return true;
 	}
 
-	// инвертирует матрицу
-	// возвращает false если детерминант равен нулю
+	// РёРЅРІРµСЂС‚РёСЂСѓРµС‚ РјР°С‚СЂРёС†Сѓ
+	// РІРѕР·РІСЂР°С‰Р°РµС‚ false РµСЃР»Рё РґРµС‚РµСЂРјРёРЅР°РЅС‚ СЂР°РІРµРЅ РЅСѓР»СЋ
 	bool invert() {
 		return matrix_t(*this).inverse(*this);
 	}
 
-	// записать в T транспонированную матрицу
+	// Р·Р°РїРёСЃР°С‚СЊ РІ T С‚СЂР°РЅСЃРїРѕРЅРёСЂРѕРІР°РЅРЅСѓСЋ РјР°С‚СЂРёС†Сѓ
 	void transpose(matrix_t &tp) const {
        	tp.ij[0][0] = ij[0][0];	tp.ij[0][1] = ij[1][0];	tp.ij[0][2] = ij[2][0]; tp.ij[0][3] = ij[3][0];
 		tp.ij[1][0] = ij[0][1];	tp.ij[1][1] = ij[1][1];	tp.ij[1][2] = ij[2][1]; tp.ij[1][3] = ij[3][1];
