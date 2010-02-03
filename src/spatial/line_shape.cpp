@@ -29,7 +29,7 @@ LineShape::LineShape()
 }
 
 LineShape::LineShape(math::vec<3> const &A, math::vec<3> const &B):
-	line(A, B)
+	math::line<3>(A, B)
 {
 }
 
@@ -39,7 +39,7 @@ LineShape::~LineShape()
 
 math::aabb<3> LineShape::get_bounds() const
 {
-	return line::get_aabb();
+	return math::line<3>::get_aabb();
 }
 
 bool LineShape::intersects(Shape const *shape) const

@@ -29,7 +29,6 @@ template<class T>
 class obb<2, T> {
 public:
 	typedef T scalar_t;
-	typedef size_t size_t;
 	static const size_t ARITY = 2;
 	typedef vec<ARITY,scalar_t> vec_t;
 	typedef sphere<ARITY,scalar_t> sphere_t;
@@ -129,7 +128,6 @@ template<class T>
 class obb<3,T> {
 public:
 	typedef T scalar_t;
-	typedef size_t size_t;
 	static const size_t ARITY = 3;
 	typedef vec<ARITY,scalar_t> vec_t;
 	typedef sphere<ARITY,scalar_t> sphere_t;

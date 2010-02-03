@@ -45,9 +45,7 @@ template<class T>
 class vec<2,T> {
 public:
 	typedef T scalar_t;
-	typedef size_t size_t;
 	static const size_t ARITY = 2;
-	typedef vec<ARITY,scalar_t> vec_t;
 	typedef size_t mask_t;
 
 	union {
@@ -73,7 +71,7 @@ public:
 	vec() {
 	}
 
-	vec(const vec_t &v):
+	vec(const vec &v):
 	x(v.x), y(v.y) {
 	}
 
@@ -100,101 +98,101 @@ public:
 		set(a, a);
 	}
 
-	vec_t &operator =(const vec_t &v)
+	vec &operator =(const vec &v)
 	{
 		x = v.x;
 		y = v.y;
 		return *this;
 	}
 
-	vec_t operator -() const
+	vec operator -() const
 	{
-		return vec_t(-x, -y);
+		return vec(-x, -y);
 	}
 
-	vec_t &operator *=(const scalar_t k)
+	vec &operator *=(const scalar_t k)
 	{
 		x *= k;
 		y *= k;
 		return *this;
 	}
 
-	vec_t &operator /=(const scalar_t k)
+	vec &operator /=(const scalar_t k)
 	{
 		x /= k;
 		y /= k;
 		return *this;
 	}
 
-	vec_t &operator +=(const vec_t &v)
+	vec &operator +=(const vec &v)
 	{
 		x += v.x;
 		y += v.y;
 		return *this;
 	}
 
-	vec_t &operator -=(const vec_t &v)
+	vec &operator -=(const vec &v)
 	{
 		x -= v.x;
 		y -= v.y;
 		return *this;
 	}
 
-	vec_t &operator *=(const vec_t &v)
+	vec &operator *=(const vec &v)
 	{
 		x *= v.x;
 		y *= v.y;
 		return *this;
 	}
 
-	vec_t &operator /=(const vec_t &v)
+	vec &operator /=(const vec &v)
 	{
 		x /= v.x;
 		y /= v.y;
 		return *this;
 	}
 
-	vec_t operator +(vec_t const &rhs) const
+	vec operator +(vec const &rhs) const
 	{
-		return vec_t(x + rhs.x, y + rhs.y);
+		return vec(x + rhs.x, y + rhs.y);
 	}
 
-	vec_t operator -(vec_t const &rhs) const
+	vec operator -(vec const &rhs) const
 	{
-		return vec_t(x - rhs.x, y - rhs.y);
+		return vec(x - rhs.x, y - rhs.y);
 	}
 
-	vec_t operator *(scalar_t const k) const
+	vec operator *(scalar_t const k) const
 	{
-		return vec_t(x * k, y * k);
+		return vec(x * k, y * k);
 	}
 
-	vec_t operator /(scalar_t const k) const
+	vec operator /(scalar_t const k) const
 	{
-		return vec_t(x / k, y / k);
+		return vec(x / k, y / k);
 	}
 
-	bool operator <(vec_t const &rhs) const
-	{
-		return x < rhs.x && y < rhs.y;
-	}
-
-	bool operator <=(vec_t const &rhs) const
+	bool operator <(vec const &rhs) const
 	{
 		return x < rhs.x && y < rhs.y;
 	}
 
-	bool operator >(vec_t const &rhs) const
+	bool operator <=(vec const &rhs) const
+	{
+		return x < rhs.x && y < rhs.y;
+	}
+
+	bool operator >(vec const &rhs) const
 	{
 		return x > rhs.x && y > rhs.y;
 	}
 
-	bool operator >=(vec_t const &rhs) const
+	bool operator >=(vec const &rhs) const
 	{
 		return x > rhs.x && y > rhs.y;
 	}
 
-	bool operator ==(vec_t const &rhs) const
+	bool operator ==(vec const &rhs) const
 	{
 		return x == rhs.x && y == rhs.y;
 	}
@@ -226,7 +224,7 @@ public:
 		y = -y;
 	}
 
-	bool is_collinear(vec_t const &v) const
+	bool is_collinear(vec const &v) const
 	{
 		return abs(x*v.y - y*v.x) < EPSILON;
 	}
@@ -247,10 +245,8 @@ template<class T>
 class vec<3,T> {
 public:
 	typedef T scalar_t;
-	typedef size_t size_t;
 	static const size_t ARITY = 3;
 	typedef vec<2, scalar_t> vec2_t;
-	typedef vec<ARITY,scalar_t> vec_t;
 	typedef size_t mask_t;
 
 	union {
@@ -273,7 +269,7 @@ public:
 	{
 	}
 
-	vec(vec_t const &v):
+	vec(vec const &v):
 		x(v.x), y(v.y), z(v.z)
 	{
 	}
@@ -300,12 +296,12 @@ public:
 		set(a, a, a);
 	}
 
-	vec_t operator -() const
+	vec operator -() const
 	{
-		return vec_t(-x, -y, -z);
+		return vec(-x, -y, -z);
 	}
 
-	vec_t &operator =(const vec_t &v)
+	vec &operator =(const vec &v)
 	{
 		x = v.x;
 		y = v.y;
@@ -313,7 +309,7 @@ public:
 		return *this;
 	}
 
-	vec_t &operator *=(const scalar_t k)
+	vec &operator *=(const scalar_t k)
 	{
 		x *= k;
 		y *= k;
@@ -321,7 +317,7 @@ public:
 		return *this;
 	}
 
-	vec_t &operator /=(const scalar_t k)
+	vec &operator /=(const scalar_t k)
 	{
 		x /= k;
 		y /= k;
@@ -329,7 +325,7 @@ public:
 		return *this;
 	}
 
-	vec_t &operator +=(const vec_t &v)
+	vec &operator +=(const vec &v)
 	{
 		x += v.x;
 		y += v.y;
@@ -337,7 +333,7 @@ public:
 		return *this;
 	}
 
-	vec_t &operator -=(const vec_t &v)
+	vec &operator -=(const vec &v)
 	{
 		x -= v.x;
 		y -= v.y;
@@ -345,7 +341,7 @@ public:
 		return *this;
 	}
 
-	vec_t &operator *=(const vec_t &v)
+	vec &operator *=(const vec &v)
 	{
 		x *= v.x;
 		y *= v.y;
@@ -353,7 +349,7 @@ public:
 		return *this;
 	}
 
-	vec_t &operator /=(const vec_t &v)
+	vec &operator /=(const vec &v)
 	{
 		x /= v.x;
 		y /= v.y;
@@ -361,47 +357,47 @@ public:
 		return *this;
 	}
 
-	vec_t operator +(vec_t const &rhs) const
+	vec operator +(vec const &rhs) const
 	{
-		return vec_t(x + rhs.x, y + rhs.y, z + rhs.z);
+		return vec(x + rhs.x, y + rhs.y, z + rhs.z);
 	}
 
-	vec_t operator -(vec_t const &rhs) const
+	vec operator -(vec const &rhs) const
 	{
-		return vec_t(x - rhs.x, y - rhs.y, z - rhs.z);
+		return vec(x - rhs.x, y - rhs.y, z - rhs.z);
 	}
 
-	vec_t operator *(scalar_t const k) const
+	vec operator *(scalar_t const k) const
 	{
-		return vec_t(x * k, y * k, z * k);
+		return vec(x * k, y * k, z * k);
 	}
 
-	vec_t operator /(scalar_t const k) const
+	vec operator /(scalar_t const k) const
 	{
-		return vec_t(x / k, y / k, z / k);
+		return vec(x / k, y / k, z / k);
 	}
 
-	bool operator <(vec_t const &rhs) const
+	bool operator <(vec const &rhs) const
 	{
 		return x < rhs.x && y < rhs.y && z < rhs.z;
 	}
 
-	bool operator <=(vec_t const &rhs) const
+	bool operator <=(vec const &rhs) const
 	{
 		return x <= rhs.x && y <= rhs.y && z <= rhs.z;
 	}
 
-	bool operator >(vec_t const &rhs) const
+	bool operator >(vec const &rhs) const
 	{
 		return x > rhs.x && y > rhs.y && z > rhs.z;
 	}
 
-	bool operator >=(vec_t const &rhs) const
+	bool operator >=(vec const &rhs) const
 	{
 		return x >= rhs.x && y >= rhs.y && z >= rhs.z;
 	}
 
-	bool operator ==(vec_t const &rhs) const
+	bool operator ==(vec const &rhs) const
 	{
 		return x == rhs.x && y == rhs.y && z == rhs.z;
 	}
@@ -429,9 +425,9 @@ public:
 		z = -z;
 	}
 
-	void to_axis_angle(vec_t &axis, scalar_t &angle) const;
+	void to_axis_angle(vec &axis, scalar_t &angle) const;
 
-	bool is_collinear(vec_t const &v) const
+	bool is_collinear(vec const &v) const
 	{
 		scalar_t k = length() / v.length();
 		return v * k == *this;
@@ -449,7 +445,7 @@ public:
 	vec perpendicular_yz() const;
 	vec perpendicular_xz() const;
 
-	static vec_t const I, J, K, null;
+	static vec const I, J, K, null;
 };
 #pragma pack(pop)
 
@@ -458,9 +454,7 @@ template<class T>
 class vec<4,T> {
 public:
 	typedef T scalar_t;
-	typedef size_t size_t;
 	static const size_t ARITY = 4;
-	typedef vec<ARITY,scalar_t> vec_t;
 	typedef size_t mask_t;
 
 	union {
@@ -482,7 +476,7 @@ public:
 	vec() {
 	}
 
-	vec(const vec_t &v):
+	vec(const vec &v):
 		x(v.x), y(v.y), z(v.z), w(v.w)
 	{
 	}
@@ -504,7 +498,7 @@ public:
 		set(a, a, a, a);
 	}
 
-	vec_t &operator =(const vec_t &v) {
+	vec &operator =(const vec &v) {
 		x = v.x;
 		y = v.y;
 		z = v.z;
@@ -512,7 +506,7 @@ public:
 		return *this;
 	}
 
-	vec_t &operator *=(const scalar_t k)
+	vec &operator *=(const scalar_t k)
 	{
 		x *= k;
 		y *= k;
@@ -521,7 +515,7 @@ public:
 		return *this;
 	}
 
-	vec_t &operator /=(const scalar_t k)
+	vec &operator /=(const scalar_t k)
 	{
 		x /= k;
 		y /= k;
@@ -530,7 +524,7 @@ public:
 		return *this;
 	}
 
-	vec_t &operator +=(const vec_t &v)
+	vec &operator +=(const vec &v)
 	{
 		x += v.x;
 		y += v.y;
@@ -539,7 +533,7 @@ public:
 		return *this;
 	}
 
-	vec_t &operator -=(const vec_t &v)
+	vec &operator -=(const vec &v)
 	{
 		x -= v.x;
 		y -= v.y;
@@ -548,7 +542,7 @@ public:
 		return *this;
 	}
 
-	vec_t &operator *=(const vec_t &v)
+	vec &operator *=(const vec &v)
 	{
 		x *= v.x;
 		y *= v.y;
@@ -557,7 +551,7 @@ public:
 		return *this;
 	}
 
-	vec_t &operator /=(const vec_t &v)
+	vec &operator /=(const vec &v)
 	{
 		x /= v.x;
 		y /= v.y;
@@ -566,47 +560,47 @@ public:
 		return *this;
 	}
 
-	vec_t operator +(vec_t const &rhs) const
+	vec operator +(vec const &rhs) const
 	{
-		return vec_t(x + rhs.x, y + rhs.y, z + rhs.z, w + rhs.w);
+		return vec(x + rhs.x, y + rhs.y, z + rhs.z, w + rhs.w);
 	}
 
-	vec_t operator -(vec_t const &rhs) const
+	vec operator -(vec const &rhs) const
 	{
-		return vec_t(x - rhs.x, y - rhs.y, z - rhs.z, w - rhs.w);
+		return vec(x - rhs.x, y - rhs.y, z - rhs.z, w - rhs.w);
 	}
 
-	vec_t operator *(scalar_t const k) const
+	vec operator *(scalar_t const k) const
 	{
-		return vec_t(x * k, y * k, z * k, w * k);
+		return vec(x * k, y * k, z * k, w * k);
 	}
 
-	vec_t operator /(scalar_t const k) const
+	vec operator /(scalar_t const k) const
 	{
-		return vec_t(x / k, y / k, z / k, w / k);
+		return vec(x / k, y / k, z / k, w / k);
 	}
 
-	bool operator <(vec_t const &rhs) const
+	bool operator <(vec const &rhs) const
 	{
 		return x < rhs.x && y < rhs.y && z < rhs.z && w < rhs.w;
 	}
 
-	bool operator <=(vec_t const &rhs) const
+	bool operator <=(vec const &rhs) const
 	{
 		return x <= rhs.x && y <= rhs.y && z <= rhs.z && w <= rhs.w;
 	}
 
-	bool operator >(vec_t const &rhs) const
+	bool operator >(vec const &rhs) const
 	{
 		return x > rhs.x && y > rhs.y && z > rhs.z && w > rhs.w;
 	}
 
-	bool operator >=(vec_t const &rhs) const
+	bool operator >=(vec const &rhs) const
 	{
 		return x >= rhs.x && y >= rhs.y && z >= rhs.z && w >= rhs.w;
 	}
 
-	bool operator ==(vec_t const &rhs) const
+	bool operator ==(vec const &rhs) const
 	{
 		return x == rhs.x && y == rhs.y && z == rhs.z && w == rhs.w;
 	}
@@ -648,10 +642,8 @@ public:
 template<int N,class T>
 class vec {
 public:
-    typedef size_t size_t;
 	static const size_t ARITY=N;
 	typedef T scalar_t;
-	typedef vec<ARITY,scalar_t> vec_t;
 	typedef int mask_t;
 
 	scalar_t i[ARITY];
@@ -662,70 +654,70 @@ public:
 			i[n] = a;
 	}
 
-	vec_t &operator *=(const scalar_t k)
+	vec &operator *=(const scalar_t k)
 	{
 		for (size_t n = 0; n < ARITY; n++)
 			i[n] *= k;
 		return *this;
 	}
 
-	vec_t &operator /=(const scalar_t k)
+	vec &operator /=(const scalar_t k)
 	{
 		for (size_t n = 0; n < ARITY; n++)
 			i[n] /= k;
 		return *this;
 	}
 
-    vec_t &operator =(const vec_t &v)
+    vec &operator =(const vec &v)
 	{
         std::copy(v.i, v.i + ARITY, i);
         return *this;
     }
 
     template<class X>
-    vec_t &operator =(const vec<ARITY, X> &v)
+    vec &operator =(const vec<ARITY, X> &v)
 	{
         for (size_t n = 0; n < ARITY; n++)
             i[n] = (scalar_t) v.i[n];
         return *this;
     }
 
-	vec_t &operator +=(const vec_t &v)
+	vec &operator +=(const vec &v)
 	{
 		for (size_t n = 0; n < ARITY; n++)
 			i[n] += v.i[n];
 		return *this;
 	}
 
-	vec_t &operator -=(const vec_t &v)
+	vec &operator -=(const vec &v)
 	{
 		for (size_t n = 0; n < ARITY; n++)
 			i[n] -= v.i[n];
 		return *this;
 	}
 
-	vec_t &operator *=(const vec_t &v)
+	vec &operator *=(const vec &v)
 	{
 		for (size_t n = 0; n < ARITY; n++)
 			i[n] *= v.i[n];
 		return *this;
 	}
 
-	vec_t &operator /=(const vec_t &v)
+	vec &operator /=(const vec &v)
 	{
 		for (size_t n = 0; n < ARITY; n++)
 			i[n] /= v.i[n];
 		return *this;
 	}
 
-	bool operator <(vec_t const &rhs) const
+	bool operator <(vec const &rhs) const
 	{
 		for (size_t n = 0; n < ARITY; n++)
 			if (i[n] > rhs.i[n]) return false;
 		return true;
 	}
 
-	bool operator >(vec_t const &rhs) const
+	bool operator >(vec const &rhs) const
 	{
 		for (size_t n = 0; n > ARITY; n++)
 			if (i[n] < rhs.i[n]) return false;

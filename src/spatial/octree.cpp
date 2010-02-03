@@ -246,7 +246,7 @@ void Octree::move_shape(ShapePtr const &shape, math::aabb<3> const &old_bounds, 
 
 void Octree::intersect_shallow(ShapePtr const &shape, math::aabb<3> const &bounds, ResultSetPtr const &result)
 {
-	shapes_t::const_iterator it = shapes_.begin();
+	shapes_t::iterator it = shapes_.begin();
 
 	while (it != shapes_.end())
 	{
@@ -267,7 +267,7 @@ void Octree::intersect_shallow(ShapePtr const &shape, math::aabb<3> const &bound
 		else
 		{
 			// garbage-collect weak pointers to deleted shapes
-			it = shapes_.erase(it);
+			shapes_.erase(it++);
 		}
 	}
 }
@@ -324,12 +324,12 @@ bool Octree::build_subclusters()
 					subclusters_[subclusters[i]].add_shape(sh, sh->get_bounds());
 				}
 
-				it = shapes_.erase(it);
+				shapes_.erase(it++);
 			}
 		}
 		else
 		{
-			it = shapes_.erase(it);
+			shapes_.erase(it++);
 		}
 	}
 

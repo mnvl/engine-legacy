@@ -20,7 +20,8 @@
 #undef minor
 #endif
 
-namespace math {
+namespace math
+{
 	template<int N,int M,class T=scalar> class matrix;
 	template<class T> class matrix<3,3,T>;
 	template<class T> class matrix<4,4,T>;
@@ -45,7 +46,6 @@ template<class T>
 class math::matrix<3,3,T> {
 public:
 	// типы и константы
-	typedef size_t size_t;
 	static const size_t WIDTH=3,HEIGHT=3;
 	typedef T scalar_t;
 	typedef vec<WIDTH-1,scalar_t> point_t;
@@ -159,7 +159,6 @@ template<class T>
 class math::matrix<4,4,T> {
 public:
 	// типы и константы
-	typedef size_t size_t;
 	static size_t const WIDTH=4,HEIGHT=4;
 	typedef T scalar_t;
 	typedef vec<WIDTH,scalar_t> vec_t;

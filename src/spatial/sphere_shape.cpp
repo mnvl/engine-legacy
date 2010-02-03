@@ -30,7 +30,7 @@ SphereShape::SphereShape()
 }
 
 SphereShape::SphereShape(math::vec<3> const &centre, math::scalar radius):
-	sphere(centre, radius)
+	math::sphere<3>(centre, radius)
 {
 }
 

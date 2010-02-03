@@ -26,7 +26,6 @@ public:
 	// типы и константы
 	typedef T scalar_t;
 	typedef std::numeric_limits<scalar_t> limits_t;
-	typedef size_t size_t;
 	static const size_t ARITY = N;
 	typedef vec<ARITY,scalar_t> vec_t;
 	static const size_t vertices_count = 1 << ARITY;

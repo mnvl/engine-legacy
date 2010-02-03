@@ -20,7 +20,6 @@ namespace math
 template<int N,class T=scalar>
 class sphere {
 public:
-	typedef size_t size_t;
 	static const size_t ARITY = N;
 	typedef T scalar_t;
 	typedef std::numeric_limits<scalar_t> limits_t;

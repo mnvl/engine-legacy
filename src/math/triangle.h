@@ -27,7 +27,6 @@ class triangle<3,T> {
 public:
     typedef T scalar_t;
     typedef std::numeric_limits<scalar_t> limits_t;
-    typedef size_t size_t;
     static const size_t ARITY = 3;
     typedef vec<ARITY,scalar_t> vec_t;
     typedef ray<ARITY,scalar_t> ray_t;

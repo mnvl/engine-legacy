@@ -30,7 +30,7 @@ CapsuleShape::CapsuleShape()
 }
 
 CapsuleShape::CapsuleShape(math::vec<3> const &A, math::vec<3> const &B, math::scalar radius):
-	capsule(A, B, radius)
+	math::capsule<3>(A, B, radius)
 {
 }
 

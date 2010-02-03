@@ -15,8 +15,6 @@
 namespace math
 {
 
-template capsule<3>;
-
 template<int N, class T> void
 capsule<N, T>::get_aabb(aabb<ARITY, scalar_t> &bounds) const
 {
@@ -43,5 +41,7 @@ void bind_capsule(lua_State *L)
 		.def_readwrite("radius", &capsule<3>::radius)
 	];
 }
+
+template class capsule<3>;
 
 }
