@@ -17,25 +17,16 @@
 MStatus initializePlugin(MObject obj)
 {
 	MStatus status;
-	MFnPlugin plugin(obj, "(c) 2004, 2005, 2006 Manvel Avetisian <avetisian@gmail.com>", "2", "Any");
+	MFnPlugin plugin(obj, "(c) 2004-2010 Manvel Avetisian <manvel.avetisian@gmail.com>", "2", "Any");
 
-	status =  plugin.registerFileTranslator("Mesh Translator",
-											"",
-											MeshTranslator::creator,
-											"",
-											"",
-											true);
+	status =  plugin.registerFileTranslator("Mesh Translator", "", MeshTranslator::creator, "", "", true);
+
 	if (!status) {
 		status.perror("registerFileTranslator");
 		return status;
 	}
 
-	status =  plugin.registerFileTranslator("Scene Translator",
-											"",
-											SceneTranslator::creator,
-											"",
-											"",
-											true);
+	status =  plugin.registerFileTranslator("Scene Translator", "", SceneTranslator::creator, "", "", true);
 	return status;
 }
 

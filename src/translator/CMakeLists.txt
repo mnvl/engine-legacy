@@ -7,6 +7,8 @@ IF(MAYA_FOUND)
   FILE(GLOB TRANSLATOR_SOURCES *.h *.cpp)
   ADD_LIBRARY(translator SHARED ${TRANSLATOR_SOURCES})
   TARGET_LINK_LIBRARIES(translator ${ENGINE_LIBRARIES} ${MAYA_LIBRARIES} d3d9 dxerr d3dx9 util graphic math)
+
+  SET_TARGET_PROPERTIES(translator PROPERTIES LINK_FLAGS "/export:initializePlugin /export:uninitializePlugin")
 ELSE()
   MESSAGE(STATUS "translator disabled")
 ENDIF()
