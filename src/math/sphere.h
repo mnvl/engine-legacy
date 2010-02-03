@@ -59,6 +59,8 @@ public:
 
 	aabb_t get_aabb() const
 	{
+		assert(radius >= 0);
+
 		vec_t r;
 		r.set_all(radius);
 		return aabb_t(centre - r, centre + r);

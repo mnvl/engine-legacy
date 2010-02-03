@@ -51,6 +51,8 @@ unsigned Octree::get_subcluster_by_point(math::vec<3> const &point) const
 
 size_t Octree::get_subclusters_by_aabb(math::aabb<3> const &bounds, unsigned subclusters[SUBCLUSTERS_COUNT]) const
 {
+	assert(bounds.lo <= bounds.hi);
+
 	unsigned c1 = get_subcluster_by_point(bounds.lo);
 	unsigned c2 = get_subcluster_by_point(bounds.hi);
 
