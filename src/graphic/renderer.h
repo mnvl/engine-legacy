@@ -97,6 +97,8 @@ public:
 	void draw_triangles(VertexBuffer *buffer, size_t first_vertex, size_t triangles_count);
 
 	void disable_all_tests();
+	void set_texture_factor(math::vec<4> const &factor);
+	void disable_texture_factor();
 
     static void bind(lua_State *L);
 

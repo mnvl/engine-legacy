@@ -91,13 +91,6 @@ void Renderer::postconstruct()
     shared_resources_.reset(new SharedResources(this));
 	resources_directory_.reset(new ResourcesDirectory());
 	window_ptr_->signal_resize.connect(boost::bind(&Renderer::thunk_resize, boost::weak_ptr<Renderer>(shared_from_this())));
-
-	// TODO: use this to colorize model when spawning
-	device_ptr_->SetRenderState(D3DRS_TEXTUREFACTOR, 0xffa0a0);
-	device_ptr_->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_MODULATE);
-	device_ptr_->SetTextureStageState(0, D3DTSS_COLORARG1, D3DTA_TEXTURE);
-	device_ptr_->SetTextureStageState(0, D3DTSS_COLORARG2, D3DTA_TFACTOR);
-	device_ptr_->SetTextureStageState(0, D3DTSS_ALPHAOP, D3DTOP_DISABLE);
 }
 
 void Renderer::begin_frame()
@@ -175,6 +168,35 @@ void Renderer::disable_all_tests()
 	if (FAILED(hr)) throw exception::directx_error(hr);
 
 	hr = device_ptr_->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
+	if (FAILED(hr)) throw exception::directx_error(hr);
+}
+
+void Renderer::set_texture_factor(math::vec<4> const &factor)
+{
+	HRESULT hr;
+
+	hr = device_ptr_->SetRenderState(D3DRS_TEXTUREFACTOR,
+		D3DCOLOR_ARGB(unsigned(factor.a * 255), unsigned(factor.r * 255), unsigned(factor.g * 255), unsigned(factor.b * 255)));
+	if (FAILED(hr)) throw exception::directx_error(hr);
+
+	//hr = device_ptr_->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_MODULATE);
+	//if (FAILED(hr)) throw exception::directx_error(hr);
+
+	//hr = device_ptr_->SetTextureStageState(0, D3DTSS_COLORARG1, D3DTA_TEXTURE);
+	//if (FAILED(hr)) throw exception::directx_error(hr);
+
+	hr = device_ptr_->SetTextureStageState(0, D3DTSS_COLORARG2, D3DTA_TFACTOR);
+	if (FAILED(hr)) throw exception::directx_error(hr);
+
+	//hr = device_ptr_->SetTextureStageState(0, D3DTSS_ALPHAOP, D3DTOP_DISABLE);
+	//if (FAILED(hr)) throw exception::directx_error(hr);
+}
+
+void Renderer::disable_texture_factor()
+{
+	HRESULT hr;
+
+	hr = device_ptr_->SetTextureStageState(0, D3DTSS_COLORARG2, D3DTA_CURRENT);
 	if (FAILED(hr)) throw exception::directx_error(hr);
 }
 
