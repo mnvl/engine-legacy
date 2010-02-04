@@ -273,7 +273,6 @@ matrix<4,4,T>::scaling(const point_t &s) {
 
 template<class T> void
 matrix<4,4,T>::scale(scalar_t sx,scalar_t sy,scalar_t sz) {
-
 	matrix_t m;
 	m.scaling(sx,sy,sz);
 	*this *= m;
