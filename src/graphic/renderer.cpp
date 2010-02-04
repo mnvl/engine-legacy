@@ -91,6 +91,13 @@ void Renderer::postconstruct()
     shared_resources_.reset(new SharedResources(this));
 	resources_directory_.reset(new ResourcesDirectory());
 	window_ptr_->signal_resize.connect(boost::bind(&Renderer::thunk_resize, boost::weak_ptr<Renderer>(shared_from_this())));
+
+	// TODO: use this to colorize model when spawning
+	device_ptr_->SetRenderState(D3DRS_TEXTUREFACTOR, 0xffa0a0);
+	device_ptr_->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_MODULATE);
+	device_ptr_->SetTextureStageState(0, D3DTSS_COLORARG1, D3DTA_TEXTURE);
+	device_ptr_->SetTextureStageState(0, D3DTSS_COLORARG2, D3DTA_TFACTOR);
+	device_ptr_->SetTextureStageState(0, D3DTSS_ALPHAOP, D3DTOP_DISABLE);
 }
 
 void Renderer::begin_frame()
