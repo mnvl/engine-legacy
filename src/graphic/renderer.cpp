@@ -179,17 +179,8 @@ void Renderer::set_texture_factor(math::vec<4> const &factor)
 		D3DCOLOR_ARGB(unsigned(factor.a * 255), unsigned(factor.r * 255), unsigned(factor.g * 255), unsigned(factor.b * 255)));
 	if (FAILED(hr)) throw exception::directx_error(hr);
 
-	//hr = device_ptr_->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_MODULATE);
-	//if (FAILED(hr)) throw exception::directx_error(hr);
-
-	//hr = device_ptr_->SetTextureStageState(0, D3DTSS_COLORARG1, D3DTA_TEXTURE);
-	//if (FAILED(hr)) throw exception::directx_error(hr);
-
 	hr = device_ptr_->SetTextureStageState(0, D3DTSS_COLORARG2, D3DTA_TFACTOR);
 	if (FAILED(hr)) throw exception::directx_error(hr);
-
-	//hr = device_ptr_->SetTextureStageState(0, D3DTSS_ALPHAOP, D3DTOP_DISABLE);
-	//if (FAILED(hr)) throw exception::directx_error(hr);
 }
 
 void Renderer::disable_texture_factor()
