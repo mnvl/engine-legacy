@@ -27,7 +27,8 @@ void bind_vec(lua_State *L)
 		.def_readwrite("x", &vec<2>::x)
 		.def_readwrite("y", &vec<2>::y)
 		.def("set", &vec<2>::set)
-		.def(const_self < const_self),
+		.def(const_self < const_self)
+		.def(tostring(const_self)),
 
 		class_<vec<3> >("vec3")
 		.def(constructor<>())
@@ -46,7 +47,8 @@ void bind_vec(lua_State *L)
 		.def("length", &vec<3>::length)
 		.def("length_sq", &vec<3>::length_sq)
 		.def("normalize", &vec<3>::normalize)
-		.def("set", &vec<3>::set),
+		.def("set", &vec<3>::set)
+		.def(tostring(const_self)),
 
 		class_<vec<3,bool> >("vec3b")
 		.def(constructor<>())
@@ -55,7 +57,8 @@ void bind_vec(lua_State *L)
 		.def_readwrite("x", &vec<3,bool>::x)
 		.def_readwrite("y", &vec<3,bool>::y)
 		.def_readwrite("z", &vec<3,bool>::z)
-		.def(const_self < const_self),
+		.def(const_self < const_self)
+		.def(tostring(const_self)),
 
 		class_<vec<4> >("vec4")
 		.def(constructor<>())
@@ -65,7 +68,8 @@ void bind_vec(lua_State *L)
 		.def_readwrite("y", &vec<4>::y)
 		.def_readwrite("z", &vec<4>::z)
 		.def_readwrite("w", &vec<4>::w)
-		.def(const_self < const_self),
+		.def(const_self < const_self)
+		.def(tostring(const_self)),
 
 		def("dot_product", (scalar (*)(const vec<2> &,const vec<2> &)) dot_product),
 		def("dot_product", (scalar (*)(const vec<3> &,const vec<3> &)) dot_product),
