@@ -24,15 +24,15 @@ public:
 	{
 	public:
 		Particle(CylindricalEmitter *emitter):
-			position_(emitter->origin_),
-			size_(emitter->size_.random()),
-			velocity_(emitter->direction_ * emitter->velocity_.random()),
-			acceleration_(emitter->direction_ * emitter->acceleration_.random()),
-			ttl_(emitter->ttl_.random()),
-			radius_(emitter->radius_.random()),
-			angle_(emitter->angle_.random()),
+			position_(emitter->origin),
+			size_(emitter->size_interval.random()),
+			velocity_(emitter->direction * emitter->velocity_interval.random()),
+			acceleration_(emitter->direction * emitter->acceleration_interval.random()),
+			ttl_(emitter->ttl_interval.random())
 		{
-			position_ += angle_
+			math::scalar radius = emitter->radius_interval.random();
+			math::scalar angle = emitter->angle_interval.random();
+			position_ += math::vec<3>(radius * math::sin(angle), 0, radius * math::cos(angle));
 		}
 
 		math::vec<3> const &get_position() const { return position_; }
@@ -56,63 +56,29 @@ public:
 		math::vec<3> velocity_;
 		math::vec<3> acceleration_;
 		math::scalar ttl_;
-		math::scalar radius_;
 	};
 
 	typedef Particle particle_t;
 
-	void set_size_interval(math::interval<> const &size)
+	math::vec<3> origin, direction;
+	math::interval<> size_interval;
+	math::interval<> velocity_interval;
+	math::interval<> acceleration_interval;
+	math::interval<> ttl_interval;
+	math::interval<> radius_interval;
+	math::interval<> angle_interval;
+
+	CylindricalEmitter():
+		origin(0, 0, 0),
+		direction(0, 1, 0),
+		size_interval(0, 1),
+		velocity_interval(0, 1),
+		acceleration_interval(0, 1),
+		ttl_interval(0, 1),
+		radius_interval(1, 1),
+		angle_interval(0, math::PI * 2)
 	{
-		size_ = size;
 	}
-
-	void set_origin(math::vec<3> const &origin)
-	{
-		origin_ = origin;
-	}
-
-	void set_direction(math::vec<3> const &direction)
-	{
-		direction_ = direction;
-	}
-
-	void set_velocity_interval(math::interval<> const &velocity)
-	{
-		velocity_ = velocity;
-	}
-
-	void set_acceleration_interval(math::interval<> const &acceleration)
-	{
-		acceleration_ = acceleration;
-	}
-
-	void set_ttl_interval(math::interval<> const &ttl)
-	{
-		ttl_ = ttl;
-	}
-
-	void set_radius_interval(math::interval<> const &radius)
-	{
-		radius_ = radius;
-	}
-
-	void set_angle_interval(math::interval<> const &angle)
-	{
-		angle_ = angle;
-	}
-
-	void bind(lua_State *L);
-
-protected:
-	friend Particle;
-
-	math::vec<3> origin_, direction_;
-	math::interval<> size_;
-	math::interval<> velocity_;
-	math::interval<> acceleration_;
-	math::interval<> ttl_;
-	math::interval<> radius_;
-	math::interval<> angle_;
 };
 
 }

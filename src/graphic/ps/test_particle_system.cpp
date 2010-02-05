@@ -15,6 +15,7 @@
 #include <graphic/material.h>
 #include <graphic/renderer.h>
 #include "directional_particle_system.h"
+#include "cylindrical_particle_system.h"
 
 BOOST_AUTO_TEST_SUITE (test_particle_system)
 
@@ -67,6 +68,56 @@ BOOST_AUTO_TEST_CASE (test_directional_ps)
 
 		BOOST_ASSERT (ps->get_keeper().get_particles_count() == ps->get_particles_count_limit() ||
 			abs(ps->get_keeper().get_particles_count() - 500 * total_time) <= 1);
+	}
+}
+
+BOOST_AUTO_TEST_CASE (test_cylindrical_ps)
+{
+	boost::shared_ptr<platform::Window> window(new platform::Window("test_particle_system"));
+	boost::shared_ptr<graphic::Renderer> renderer(new graphic::Renderer(window));
+
+	graphic::Camera camera;
+	camera.set_orthographic_projection(20.0f, 20.0f * renderer->get_screen_height() / renderer->get_screen_width(), 1.0f, 1000.0f);
+	camera.set_eye_lookat_up(math::vec<3>(10, 10, 10), math::vec<3>(0, 0, 0), math::vec<3>(0, 1, 0));
+
+	renderer->postconstruct();
+
+	platform::Timer timer;
+	boost::shared_ptr<graphic::ps::CylindricalParticleSystem> ps(new graphic::ps::CylindricalParticleSystem(renderer));
+
+	boost::shared_ptr<graphic::Material> material(new graphic::Material(renderer));
+	material->set_texture(util::get_graphic_sources_path() + "test_particle.png");
+
+	ps->get_emitter().size_interval = math::interval<>(2, 2);
+	ps->get_emitter().velocity_interval = math::interval<>(10, 10);
+	ps->get_emitter().acceleration_interval = math::interval<>(-10, -10);
+	ps->get_emitter().ttl_interval = math::interval<>(1, 1);
+	ps->get_emitter().radius_interval = math::interval<>(2, 2);
+	ps->get_controller().set_emissions_per_sec(math::interval<>(500, 500));
+	ps->get_drawer().set_material(material);
+
+	math::scalar total_time = 0;
+	double prev_t = timer.get_current_time();
+
+	for (int i = 0; i < 100 && window->run_message_loop(); i++)
+	{
+		renderer->set_camera(camera);
+
+		double t = timer.get_current_time();
+		math::scalar dt = math::scalar(t - prev_t);
+
+		total_time += dt;
+
+		ps->move(dt);
+		prev_t = t;
+
+		renderer->begin_frame();
+		renderer->disable_all_tests();
+		ps->draw();
+		renderer->finish_frame();
+
+		LOG_DEBUG("frame " << i << " (t = " << total_time << ", dt = " << dt <<")");
+		LOG_DEBUG("\tnparticles = " << ps->get_keeper().get_particles_count());
 	}
 }
 
