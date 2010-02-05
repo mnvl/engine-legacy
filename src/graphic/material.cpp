@@ -8,6 +8,7 @@
 // prior written consent of Manvel Avetisian.
 //-----------------------------------------------------------------------------
 
+#include <luabind/luabind.hpp>
 #include <exception/directx_error.h>
 #include <util/logger.h>
 #include "material.h"
@@ -51,6 +52,19 @@ void Material::select()
 
 	hr = renderer_ptr_->get_device()->SetMaterial(&properties_);
 	if (FAILED(hr)) throw exception::directx_error(hr);
+}
+
+void Material::bind(lua_State *L)
+{
+	using namespace luabind;
+
+	module(L, "graphic")
+	[
+		class_<Material, boost::shared_ptr<Material> >("Material")
+		.def(constructor<boost::shared_ptr<Renderer> const &>())
+		.def("set_texture", &Material::set_texture)
+		.def("select", &Material::select)
+	];
 }
 
 }

@@ -11,6 +11,7 @@
 #include "resource.h"
 #include "vertex.h"
 #include "vertex_array.h"
+#include "material.h"
 #include "texture.h"
 #include "joint.h"
 #include "model.h"
@@ -21,6 +22,7 @@
 #include "camera.h"
 #include "font.h"
 #include "renderer.h"
+#include "ps/billboard_drawer.h"
 #include "ps/directional_emitter.h"
 #include "ps/directional_particle_system.h"
 #include "ps/cylindrical_emitter.h"
@@ -35,6 +37,7 @@ void bind(lua_State *L)
 	Resource::bind(L);
 	bind_vertex(L);
 	bind_vertex_array(L);
+	Material::bind(L);
 	Texture::bind(L);
 	Joint::bind(L);
     Model::bind(L);
@@ -45,6 +48,7 @@ void bind(lua_State *L)
 	Camera::bind(L);
 	Font::bind(L);
     Renderer::bind(L);
+	ps::BillboardDrawer::bind(L);
 	ps::DirectionalEmitter::bind(L);
 	ps::DirectionalParticleSystem::bind("DirectionalParticleSystem", L);
 	ps::CylindricalEmitter::bind(L);

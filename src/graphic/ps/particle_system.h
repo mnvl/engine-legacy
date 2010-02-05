@@ -23,7 +23,7 @@ template
 	class Emitter,
 	template<class> class Controller,
 	template<class> class Keeper,
-	template<class> class Drawer
+	class Drawer
 >
 class ParticleSystem
 {
@@ -32,7 +32,7 @@ public:
 	typedef typename emitter_t::particle_t particle_t;
 	typedef Controller<particle_t> controller_t;
 	typedef Keeper<particle_t> keeper_t;
-	typedef Drawer<keeper_t> drawer_t;
+	typedef Drawer drawer_t;
 
 	ParticleSystem(boost::shared_ptr<Renderer> const &renderer, size_t const max_nparticles = 1000):
 		max_nparticles_(max_nparticles),

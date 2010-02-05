@@ -17,7 +17,7 @@ namespace graphic
 namespace ps
 {
 
-template<class E, template<class> class C, template<class> class K, template<class> class D>
+template<class E, template<class> class C, template<class> class K, class D>
 void ParticleSystem<E, C, K, D>::bind(char const *class_name, lua_State *L)
 {
 	using namespace luabind;
@@ -27,6 +27,7 @@ void ParticleSystem<E, C, K, D>::bind(char const *class_name, lua_State *L)
 		class_<ParticleSystem, boost::shared_ptr<ParticleSystem> >(class_name)
 		.def(constructor<boost::shared_ptr<Renderer> const &, size_t const>())
 		.def("get_emitter", &ParticleSystem::get_emitter)
+		.def("get_drawer", &ParticleSystem::get_drawer)
 		.def("move", &ParticleSystem::move)
 		.def("draw", &ParticleSystem::draw)
 	];

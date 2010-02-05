@@ -59,7 +59,6 @@ BOOST_AUTO_TEST_CASE (test_directional_ps)
 		prev_t = t;
 
 		renderer->begin_frame();
-		renderer->disable_all_tests();
 		ps->draw();
 		renderer->finish_frame();
 
@@ -112,7 +111,6 @@ BOOST_AUTO_TEST_CASE (test_cylindrical_ps)
 		prev_t = t;
 
 		renderer->begin_frame();
-		renderer->disable_all_tests();
 		ps->draw();
 		renderer->finish_frame();
 

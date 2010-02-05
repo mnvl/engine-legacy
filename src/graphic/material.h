@@ -10,9 +10,10 @@
 //-----------------------------------------------------------------------------
 
 #include <boost/shared_ptr.hpp>
+#include <luabind/lua_include.hpp>
 #include <math/vec.h>
-#include <graphic/texture.h>
-#include <graphic/renderer.h>
+#include "texture.h"
+#include "renderer.h"
 
 namespace graphic
 {
@@ -79,6 +80,8 @@ public:
 	void set_texture(std::string const &filename);
 
 	void select();
+
+	static void bind(lua_State *L);
 
 private:
 	std::string name_;

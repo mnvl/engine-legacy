@@ -8,6 +8,8 @@
 // or copied or duplicated in any form, in whole or in part, without the
 // prior written consent of Manvel Avetisian.
 //-----------------------------------------------------------------------------
+
+#include <luabind/lua_include.hpp>
 #include <graphic/material.h>
 #include <graphic/vertex_array.h>
 #include <graphic/renderer.h>
@@ -17,12 +19,9 @@ namespace graphic
 namespace ps
 {
 
-template<class Keeper>
 class BillboardDrawer
 {
 public:
-	typedef Keeper keeper_t;
-
 	BillboardDrawer(boost::shared_ptr<Renderer> const &renderer, size_t max_nparticles):
 		renderer_(renderer),
 		max_nparticles_(max_nparticles),
@@ -36,7 +35,8 @@ public:
 		material_ = material;
 	}
 
-	void preprocess(keeper_t const &keeper)
+	template<class Keeper>
+	void preprocess(Keeper const &keeper)
 	{
 		Camera const &camera = renderer_->get_camera();
 
@@ -45,7 +45,7 @@ public:
 		vertex_pnt *v = vertex_array_->lock(true);
 		nparticles_ = 0;
 
-		for (keeper_t::iterator it = keeper.begin(); it != keeper.end(); ++it)
+		for (Keeper::iterator it = keeper.begin(); it != keeper.end(); ++it)
 		{
 			math::vec<3> up = camera.get_up_dir() * it->get_size();
 			math::vec<3> cross = camera.get_cross_dir() * it->get_size();
@@ -57,17 +57,17 @@ public:
 			v->texcoords.set(0, 0);
 			v++;
 
-			v->position = position + cross;
-			v->normal = normal;
-			v->texcoords.set(0, 1);
-			v++;
-
 			v->position = position + cross - up;
 			v->normal = normal;
 			v->texcoords.set(1, 1);
 			v++;
 
-			v[0] = v[-1];
+			v->position = position + cross;
+			v->normal = normal;
+			v->texcoords.set(0, 1);
+			v++;
+
+			v[0] = v[-3];
 			v++;
 
 			v->position = position - up;
@@ -75,7 +75,7 @@ public:
 			v->texcoords.set(1, 0);
 			v++;
 
-			v[0] = v[-5];
+			v[0] = v[-4];
 			v++;
 
 			if (++nparticles_ > max_nparticles_)
@@ -101,6 +101,8 @@ public:
 			renderer_->get_device()->SetRenderState(D3DRS_ZENABLE, TRUE);
 		}
 	}
+
+	static void bind(lua_State *L);
 
 private:
 	static size_t const VERTICES_PER_PARTICLE = 6;
