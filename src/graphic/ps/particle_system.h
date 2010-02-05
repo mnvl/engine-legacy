@@ -8,6 +8,7 @@
 // or copied or duplicated in any form, in whole or in part, without the
 // prior written consent of Manvel Avetisian.
 //-----------------------------------------------------------------------------
+
 #include <graphic/renderer.h>
 #include <boost/shared_ptr.hpp>
 

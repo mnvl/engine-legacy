@@ -9,6 +9,7 @@
 // prior written consent of Manvel Avetisian.
 //-----------------------------------------------------------------------------
 
+#include <luabind/lua_include.hpp>
 #include <math/interval.h>
 #include <math/vec.h>
 
@@ -85,6 +86,8 @@ public:
 	{
 		ttl_ = ttl;
 	}
+
+	void bind(lua_State *L);
 
 protected:
 	friend Particle;
