@@ -35,12 +35,10 @@ BOOST_AUTO_TEST_CASE (test_directional_ps)
 	boost::shared_ptr<graphic::Material> material(new graphic::Material(renderer));
 	material->set_texture(util::get_graphic_sources_path() + "test_particle.png");
 
-	ps->get_emitter().set_origin(math::vec<3>(0, 0, 0));
-	ps->get_emitter().set_size_interval(math::interval<>(2, 2));
-	ps->get_emitter().set_direction(math::vec<3>(0, 1, 0));
-	ps->get_emitter().set_velocity_interval(math::interval<>(10, 20));
-	ps->get_emitter().set_acceleration_interval(math::interval<>(1, 3));
-	ps->get_emitter().set_ttl_interval(math::interval<>(7, 10));
+	ps->get_emitter().size_interval = math::interval<>(2, 2);
+	ps->get_emitter().velocity_interval = math::interval<>(10, 20);
+	ps->get_emitter().acceleration_interval = math::interval<>(1, 3);
+	ps->get_emitter().ttl_interval = math::interval<>(7, 10);
 	ps->get_controller().set_emissions_per_sec(math::interval<>(500, 500));
 	ps->get_drawer().set_material(material);
 
