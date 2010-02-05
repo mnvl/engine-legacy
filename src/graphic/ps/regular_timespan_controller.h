@@ -23,6 +23,7 @@ public:
 	typedef P particle_t;
 
 	RegularTimespanController():
+		emissions_per_sec_(50, 100),
 		time_accumulated_(0),
 		next_emission_time_(0)
 	{

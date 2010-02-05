@@ -22,7 +22,7 @@ void DirectionalEmitter::bind(lua_State *L)
 
 	module_(L, "ps")
 	[
-		class_<DirectionalEmitter>("Renderer")
+		class_<DirectionalEmitter>("DirectionalEmitter")
 		.def_readwrite("origin", &DirectionalEmitter::origin)
 		.def_readwrite("direction", &DirectionalEmitter::direction)
 		.def_readwrite("size_interval", &DirectionalEmitter::size_interval)

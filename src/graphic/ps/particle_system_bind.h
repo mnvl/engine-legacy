@@ -24,7 +24,7 @@ void ParticleSystem<E, C, K, D>::bind(char const *class_name, lua_State *L)
 
 	module_(L, "ps")
 	[
-		class_<ParticleSystem, boost::shared_ptr<ParticleSystem> >("Renderer")
+		class_<ParticleSystem, boost::shared_ptr<ParticleSystem> >(class_name)
 		.def(constructor<boost::shared_ptr<Renderer> const &, size_t const>())
 		.def("get_emitter", &ParticleSystem::get_emitter)
 		.def("move", &ParticleSystem::move)
