@@ -29,7 +29,7 @@ void Octree::bind(lua_State *L)
 		.def("pre_move_shape", (void (Octree::*)(ShapePtr const &, math::aabb<3> const &, ResultSetPtr const &)) &Octree::pre_move_shape)
 		.def("post_move_shape", (void (Octree::*)(ShapePtr const &, math::aabb<3> const &)) &Octree::post_move_shape)
 		.def("post_move_shape", (void (Octree::*)(ShapePtr const &, math::aabb<3> const &, ResultSetPtr const &)) &Octree::post_move_shape)
-		.def("intersect", (void (Octree::*)(ShapePtr const &, ResultSetPtr const &)) &Octree::intersect)
+		.def("query_intersection", (void (Octree::*)(ShapePtr const &, ResultSetPtr const &)) &Octree::query_intersection)
 	];
 }
 

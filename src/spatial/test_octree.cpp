@@ -163,11 +163,11 @@ BOOST_AUTO_TEST_CASE (test_intersect_correctness_1)
 		boost::shared_ptr<spatial::SphereShape> shape(new spatial::SphereShape(centre, radius));
 
 		spatial::ResultSetPtr result(new spatial::ResultSet());
-		octree.intersect(shape, result);
+		octree.query_intersection(shape, result);
 
 		for (size_t j = 0; j < shapes.size(); j++)
 		{
-			bool p1 = shapes[j]->intersects(shape.get());
+			bool p1 = shapes[j]->test_intersection(shape.get());
 			bool p2 = result->have(shapes[j]);
 
 			BOOST_ASSERT (p1 == p2);
@@ -204,11 +204,11 @@ BOOST_AUTO_TEST_CASE (test_intersect_correctness_2)
 		spatial::ShapePtr shape(new spatial::SphereShape(centre, radius));
 
 		spatial::ResultSetPtr result(new spatial::ResultSet());
-		octree.intersect(shape, result);
+		octree.query_intersection(shape, result);
 
 		for (size_t j = 0; j < N; j++)
 		{
-			bool p1 = shapes[j]->intersects(shape.get());
+			bool p1 = shapes[j]->test_intersection(shape.get());
 			bool p2 = result->have(shapes[j]);
 
 			BOOST_ASSERT (p1 == p2);
@@ -263,11 +263,11 @@ BOOST_AUTO_TEST_CASE (test_remove_correctness)
 
 		spatial::ShapePtr shape(new spatial::SphereShape(centre, radius));
 
-		spatial::ResultSetPtr result(new spatial::ResultSet());		octree.intersect(shape, result);
+		spatial::ResultSetPtr result(new spatial::ResultSet());		octree.query_intersection(shape, result);
 
 		for (size_t j = 0; j < shapes.size(); j++)
 		{
-			bool p1 = shapes[j]->intersects(shape.get());
+			bool p1 = shapes[j]->test_intersection(shape.get());
 			bool p2 = result->have(shapes[j]);
 
 			BOOST_ASSERT (p1 == p2);
@@ -322,11 +322,11 @@ BOOST_AUTO_TEST_CASE (test_move_correctness)
 		spatial::ShapePtr shape(new spatial::SphereShape(centre, radius));
 
 		spatial::ResultSetPtr result(new spatial::ResultSet());
-		octree.intersect(shape, result);
+		octree.query_intersection(shape, result);
 
 		for (size_t j = 0; j < shapes.size(); j++)
 		{
-			bool p1 = shapes[j]->intersects(shape.get());
+			bool p1 = shapes[j]->test_intersection(shape.get());
 			bool p2 = result->have(shapes[j]);
 
 			BOOST_ASSERT (p1 == p2);
@@ -359,7 +359,7 @@ BOOST_AUTO_TEST_CASE (test_add_shape_result)
 
 		for (size_t j = 0; j < i; j++)
 		{
-			bool p1 = shapes[j]->intersects(shape.get());
+			bool p1 = shapes[j]->test_intersection(shape.get());
 			bool p2 = result->have(shapes[j]);
 
 			BOOST_ASSERT (p1 == p2);
@@ -401,7 +401,7 @@ BOOST_AUTO_TEST_CASE (test_move_result)
 
 		for (size_t j = 0; j < i; j++)
 		{
-			bool p1 = shapes[j]->intersects(shape);
+			bool p1 = shapes[j]->test_intersection(shape);
 			bool p2 = result->have(shapes[j]);
 
 			BOOST_ASSERT (p1 == p2);

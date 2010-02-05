@@ -24,10 +24,10 @@ public:
 
 	virtual math::aabb<3> get_bounds() const;
 
-	virtual bool intersects(Shape const *shape) const;
-	virtual bool intersects(SphereShape const *shape) const;
-	virtual bool intersects(LineShape const *shape) const;
-	virtual bool intersects(CapsuleShape const *shape) const;
+	virtual bool test_intersection(Shape const *shape) const;
+	virtual bool test_intersection(SphereShape const *shape) const;
+	virtual bool test_intersection(LineShape const *shape) const;
+	virtual bool test_intersection(CapsuleShape const *shape) const;
 
 	void set_centre(math::vec<3> const &c)
 	{

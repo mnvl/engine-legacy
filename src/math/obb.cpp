@@ -106,7 +106,7 @@ template<class T> bool obb<3,T>::contains(const obb_t &r) const {
 }
 
 template<class T> bool
-obb<3,T>::not_intersects(const triangle_t &r) const
+obb<3,T>::test_nonintersection(const triangle_t &r) const
 {
 	// получить координаты вершин треугольника в локальной системе координат
 	vec_t A, B, C;
@@ -114,7 +114,7 @@ obb<3,T>::not_intersects(const triangle_t &r) const
 	forward_point(B, r.B);
 	forward_point(C, r.C);
 	
-	// см. функцию not_intersects()
+	// см. функцию test_nonintersection()
 	if((A.x<0 && B.x<0 && C.x<0) || (A.y<0 && B.y<0 && C.y<0) || (A.z<0 && B.z<0 && C.z<0)
 	|| (A.x>1 && B.x>1 && C.x>1) || (A.y>1 && B.y>1 && C.y>1) || (C.z>1 && B.z>1 && C.z>1))
 	{
@@ -138,7 +138,7 @@ obb<3,T>::not_intersects(const triangle_t &r) const
 	    || (k1<0 && k2<0 && k3<0 && k4<0 && k5<0 && k6<0 && k7<0 && k8<0);
 }
 	
-template<class T> bool obb<3,T>::not_intersects(const obb_t &r) const {
+template<class T> bool obb<3,T>::test_nonintersection(const obb_t &r) const {
 	// получить координаты r в локальной системе координат
 	vec_t r_origin, r_tangent, r_normal, r_binormal;
 	forward_point(r_origin,r.origin);
@@ -168,7 +168,7 @@ template<class T> bool obb<3,T>::not_intersects(const obb_t &r) const {
 }
 
 template<class T> bool
-obb<3,T>::not_collides(const triangle_t &tri, const vec_t &vel, scalar_t t_min,
+obb<3,T>::test_noncollision(const triangle_t &tri, const vec_t &vel, scalar_t t_min,
 	scalar_t t_max) const
 {
 	vec_t tri_A, tri_B, tri_C, tri_vel;
@@ -217,7 +217,7 @@ obb<3,T>::not_collides(const triangle_t &tri, const vec_t &vel, scalar_t t_min,
 }
 
 template<class T> bool
-obb<3,T>::not_collides(const obb_t &box, const vec_t &vel, scalar_t t_min,
+obb<3,T>::test_noncollision(const obb_t &box, const vec_t &vel, scalar_t t_min,
 	scalar_t t_max) const
 {
 	// получить координаты box в локальной системе координат

@@ -42,22 +42,22 @@ math::aabb<3> LineShape::get_bounds() const
 	return math::line<3>::get_aabb();
 }
 
-bool LineShape::intersects(Shape const *shape) const
+bool LineShape::test_intersection(Shape const *shape) const
 {
-	return shape->intersects(this);
+	return shape->test_intersection(this);
 }
 
-bool LineShape::intersects(SphereShape const *shape) const
+bool LineShape::test_intersection(SphereShape const *shape) const
 {
-	return math::intersects(*shape, *this);
+	return math::test_intersection(*shape, *this);
 }
 
-bool LineShape::intersects(LineShape const *shape) const
+bool LineShape::test_intersection(LineShape const *shape) const
 {
-	return math::intersects(*this, *shape);
+	return math::test_intersection(*this, *shape);
 }
 
-bool LineShape::intersects(CapsuleShape const *shape) const
+bool LineShape::test_intersection(CapsuleShape const *shape) const
 {
 	// NOT IMPLEMENTED
 	assert(0);

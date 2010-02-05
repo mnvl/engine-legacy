@@ -45,22 +45,22 @@ math::aabb<3> CapsuleShape::get_bounds() const
 	return bounds;
 }
 
-bool CapsuleShape::intersects(Shape const *shape) const
+bool CapsuleShape::test_intersection(Shape const *shape) const
 {
-	return shape->intersects(this);
+	return shape->test_intersection(this);
 }
 
-bool CapsuleShape::intersects(SphereShape const *shape) const
+bool CapsuleShape::test_intersection(SphereShape const *shape) const
 {
-	return math::intersects(*shape, *this);
+	return math::test_intersection(*shape, *this);
 }
 
-bool CapsuleShape::intersects(LineShape const *shape) const
+bool CapsuleShape::test_intersection(LineShape const *shape) const
 {
-	return math::intersects((math::sphere<3> const &) *this, (math::line<3> const &) *shape);
+	return math::test_intersection((math::sphere<3> const &) *this, (math::line<3> const &) *shape);
 }
 
-bool CapsuleShape::intersects(CapsuleShape const *shape) const
+bool CapsuleShape::test_intersection(CapsuleShape const *shape) const
 {
 	// NOT IMPLEMENTED
 	assert(0);

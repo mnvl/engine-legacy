@@ -37,7 +37,7 @@ void Shape::bind(lua_State *L)
 	[
 		class_<Shape, ShapePtr>("Shape")
 		.def("get_bounds", &Shape::get_bounds)
-		.def("intersects", (bool (Shape::*)(Shape const *) const) &Shape::intersects)
+		.def("test_intersection", (bool (Shape::*)(Shape const *) const) &Shape::test_intersection)
 		.scope [ def("naked_cast", &naked_cast) ]
 	];
 }

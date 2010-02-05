@@ -43,24 +43,24 @@ math::aabb<3> SphereShape::get_bounds() const
 	return get_aabb();
 }
 
-bool SphereShape::intersects(Shape const *shape) const
+bool SphereShape::test_intersection(Shape const *shape) const
 {
-	return shape->intersects(this);
+	return shape->test_intersection(this);
 }
 
-bool SphereShape::intersects(SphereShape const *shape) const
+bool SphereShape::test_intersection(SphereShape const *shape) const
 {
-	return math::intersects(*this, *shape);
+	return math::test_intersection(*this, *shape);
 }
 
-bool SphereShape::intersects(LineShape const *shape) const
+bool SphereShape::test_intersection(LineShape const *shape) const
 {
-	return math::intersects((math::sphere<3> const &) *this, (math::line<3> const &) *shape);
+	return math::test_intersection((math::sphere<3> const &) *this, (math::line<3> const &) *shape);
 }
 
-bool SphereShape::intersects(CapsuleShape const *shape) const
+bool SphereShape::test_intersection(CapsuleShape const *shape) const
 {
-	return math::intersects(*this, *shape);
+	return math::test_intersection(*this, *shape);
 }
 
 void SphereShape::bind(lua_State *L)

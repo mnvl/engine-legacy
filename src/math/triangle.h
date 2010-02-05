@@ -282,22 +282,22 @@ public:
         return trace(r,t,v,t_min,t_max);
     }
 
-    bool intersects(const triangle_t &t) const {
+    bool test_intersection(const triangle_t &t) const {
         line_t ln;
-        return intersect(t, ln);
+        return query_intersection(t, ln);
     }
 
-    bool intersect(const triangle_t &t,line_t &ln) const {
+    bool query_intersection(const triangle_t &t,line_t &ln) const {
         ray_t r;
-        if(!get_plane().intersect(t.get_plane(),r)) return false;
+        if(!get_plane().query_intersection(t.get_plane(),r)) return false;
 
         vec_t v[2];
         size_t v_size = 0;
         line_t a(A,B), b(B,C), c(C,A);
 	
-        if(a.intersect(r,v[v_size])) v_size++;
-        if(b.intersect(r,v[v_size])) v_size++;
-        if(v_size<2 && c.intersect(r,v[v_size])) v_size++; 
+        if(a.query_intersection(r,v[v_size])) v_size++;
+        if(b.query_intersection(r,v[v_size])) v_size++;
+        if(v_size<2 && c.query_intersection(r,v[v_size])) v_size++; 
 	
         if(v_size<2) return false;
 	

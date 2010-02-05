@@ -24,7 +24,7 @@ BOOST_AUTO_TEST_CASE (ray_ray_intersection_1)
 	r2.r0.set(1, 0);
 	r2.a.set(-1, 3);
 
-	math::intersect(r1, r2, s);
+	math::query_intersection(r1, r2, s);
 
 	math::vec<2> p1 = r1.r0 + r1.a * s;
 	BOOST_ASSERT (r2.contains(p1));
@@ -43,7 +43,7 @@ BOOST_AUTO_TEST_CASE (ray_ray_intersection_2)
 
 		math::scalar s;
 
-		if(math::intersect(r1, r2, s))
+		if(math::query_intersection(r1, r2, s))
 		{
 			math::vec<3> p1 = r1.apply(s);
 			BOOST_ASSERT (r2.contains(p1));
@@ -62,7 +62,7 @@ BOOST_AUTO_TEST_CASE (ray_ray_intersection_3)
 
 		math::scalar s;
 
-		if(math::intersect(r1, r2, s))
+		if(math::query_intersection(r1, r2, s))
 		{
 			math::vec<3> p1 = r1.apply(s);
 			BOOST_ASSERT (r2.contains(p1));
@@ -81,7 +81,7 @@ BOOST_AUTO_TEST_CASE (test_sphere_line_intersection)
 	l.B.set(0, -1);
 
 	math::vec<2> p1, p2;
-	int npoints = math::intersect(s, l, p1, p2);
+	int npoints = math::query_intersection(s, l, p1, p2);
 
 	BOOST_ASSERT (npoints == 1);
 	BOOST_ASSERT ((p1 - math::vec<2>(0, 0)).length() < math::EPSILON);
@@ -92,7 +92,7 @@ BOOST_AUTO_TEST_CASE (test_sphere_capsule_intersection_1)
 	math::sphere<3> s(math::vec<3>(0, 0, 0), 0.5f);
 	math::capsule<3> c(math::vec<3>(0.7f, -1, 0), math::vec<3>(0.7f, 1, 0), 0.5f);
 
-	BOOST_ASSERT (math::intersects(s, c) == true);
+	BOOST_ASSERT (math::test_intersection(s, c) == true);
 }
 
 BOOST_AUTO_TEST_CASE (test_sphere_capsule_intersection_2)
@@ -100,7 +100,7 @@ BOOST_AUTO_TEST_CASE (test_sphere_capsule_intersection_2)
 	math::sphere<3> s(math::vec<3>(0, 0, 0), 0.5f);
 	math::capsule<3> c(math::vec<3>(1.7f, -1, 0), math::vec<3>(1.7f, 1, 0), 0.5f);
 
-	BOOST_ASSERT (math::intersects(s, c) == false);
+	BOOST_ASSERT (math::test_intersection(s, c) == false);
 }
 
 BOOST_AUTO_TEST_SUITE_END()

@@ -105,7 +105,7 @@ namespace math {
 	bool collide(line<N, S> const &l, sphere<N, S> const &s, vec<N, S> const &vel, contact_info<2, S> &ci) {
 		vec<N, S> p1, p2;
 
-		if (intersect(s, l, p1, p2) == 2) {
+		if (query_intersection(s, l, p1, p2) == 2) {
 			ci.position = (p1 + p2) / S(2);
 			ci.penetration_depth = s.radius - (s.centre - ci.position).length();
 
@@ -129,7 +129,7 @@ namespace math {
 
 		ci.position = s.centre + l_norm_v * s.radius;
 
-		if (!intersect(ray<N, S>(ci.position, l_norm_v * abs(l_vel)), l.get_ray(), ci.time)) {
+		if (!query_intersection(ray<N, S>(ci.position, l_norm_v * abs(l_vel)), l.get_ray(), ci.time)) {
 			ci.happened = false;
 		} else if (ci.time < 0) {
 			ci.happened = false;

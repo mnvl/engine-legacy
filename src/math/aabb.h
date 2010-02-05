@@ -117,7 +117,7 @@ public:
 		return contains(right.lo) && contains(right.hi);
 	}
 
-	bool intersects(const aabb_t &right) const {
+	bool test_intersection(const aabb_t &right) const {
 		return right.hi >= lo && hi >= right.lo;
 	}
 

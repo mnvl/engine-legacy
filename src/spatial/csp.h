@@ -29,7 +29,7 @@ public:
 	void add_shape(ShapePtr const &shape, math::aabb<3> const &bounds, ResultSetPtr const &result_set = ResultSetPtr());
 	void remove_shape(ShapePtr const &shape, math::aabb<3> const &bounds);
 	void move_shape(ShapePtr const &shape, math::aabb<3> const &old_bounds, math::aabb<3> const &new_bounds, ResultSetPtr const &result_set = ResultSetPtr());
-	void intersect(ShapePtr const &shape, math::aabb<3> const &bounds, ResultSetPtr const &result); // does not clear result
+	void query_intersection(ShapePtr const &shape, math::aabb<3> const &bounds, ResultSetPtr const &result); // does not clear result
 
 	void add_shape(ShapePtr const &shape)
 		{ add_shape(shape, shape->get_bounds(), ResultSetPtr()); }
@@ -45,8 +45,8 @@ public:
 		{ move_shape(shape, old_bounds, shape->get_bounds()); }
 	void post_move_shape(ShapePtr const &shape, math::aabb<3> const &old_bounds, ResultSetPtr const &result_set)
 		{ move_shape(shape, old_bounds, shape->get_bounds(), result_set); }
-	void intersect(ShapePtr const &shape, ResultSetPtr const &result)
-		{ intersect(shape, shape->get_bounds(), result); }
+	void query_intersection(ShapePtr const &shape, ResultSetPtr const &result)
+		{ query_intersection(shape, shape->get_bounds(), result); }
 
 	static void bind(lua_State *L);
 };

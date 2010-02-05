@@ -31,10 +31,10 @@ public:
 	virtual ~Shape();
 	virtual math::aabb<3> get_bounds() const = 0;
 
-	virtual bool intersects(Shape const *shape) const = 0;
-	virtual bool intersects(SphereShape const *shape) const = 0;
-	virtual bool intersects(LineShape const *shape) const = 0;
-	virtual bool intersects(CapsuleShape const *shape) const = 0;
+	virtual bool test_intersection(Shape const *shape) const = 0;
+	virtual bool test_intersection(SphereShape const *shape) const = 0;
+	virtual bool test_intersection(LineShape const *shape) const = 0;
+	virtual bool test_intersection(CapsuleShape const *shape) const = 0;
 
 	static void bind(lua_State *L);
 };

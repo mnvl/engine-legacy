@@ -50,7 +50,7 @@ public:
 	}
 
 	// пересечение с прямой
-	bool intersects(const ray_t &r) const {
+	bool test_intersection(const ray_t &r) const {
 		return abs(A*r.a.x + B*r.a.y + C*r.a.z)>EPSILON
 			|| contains(r);
 	}
@@ -64,7 +64,7 @@ public:
 	}
 
 	bool parallel(const ray_t &r) const {
-		return !intersects(r);
+		return !test_intersection(r);
 	}
 
 	scalar_t trace(const ray_t &r) const {
@@ -94,7 +94,7 @@ public:
 	// pl -- плоскость
 	// result -- искомая прямая пересечения
 	// если плоскости параллельны -- возвращает false
-	bool intersect(const plane_t &pl, ray_t &r) const {
+	bool query_intersection(const plane_t &pl, ray_t &r) const {
 		r.a = vec_t(A,B,C) ^ vec_t(pl.A, pl.B, pl.C);
 		vec_t dir2 = r.a * r.a;
 

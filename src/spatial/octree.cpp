@@ -115,7 +115,7 @@ void Octree::add_shape(ShapePtr const &shape, math::aabb<3> const &bounds, Resul
 {
 	if (is_leaf() && !build_subclusters())
 	{
-		if (result_set) intersect(shape, bounds, result_set);
+		if (result_set) query_intersection(shape, bounds, result_set);
 		shapes_.insert(shape);
 		return;
 	}
@@ -125,7 +125,7 @@ void Octree::add_shape(ShapePtr const &shape, math::aabb<3> const &bounds, Resul
 
 	if (nsubclusters == SUBCLUSTERS_COUNT)
 	{
-		if (result_set) intersect(shape, bounds, result_set);
+		if (result_set) query_intersection(shape, bounds, result_set);
 
 		shapes_.insert(shape);
 	}
@@ -184,7 +184,7 @@ void Octree::move_shape(ShapePtr const &shape, math::aabb<3> const &old_bounds, 
 	{
 		if (nsubclusters_new == SUBCLUSTERS_COUNT)
 		{
-			if (result_set) intersect(shape, new_bounds, result_set);
+			if (result_set) query_intersection(shape, new_bounds, result_set);
 			return;
 		}
 		else
@@ -199,7 +199,7 @@ void Octree::move_shape(ShapePtr const &shape, math::aabb<3> const &old_bounds, 
 		if (nsubclusters_new == SUBCLUSTERS_COUNT)
 		{
 			remove_shape(shape, old_bounds);
-			if (result_set) intersect(shape, new_bounds, result_set);
+			if (result_set) query_intersection(shape, new_bounds, result_set);
 			shapes_.insert(shape);
 			return;
 		}
@@ -254,11 +254,11 @@ void Octree::intersect_shallow(ShapePtr const &shape, math::aabb<3> const &bound
 	{
 		if (ShapePtr sh = it->lock())
 		{
-			if (sh->get_bounds().intersects(bounds))
+			if (sh->get_bounds().test_intersection(bounds))
 			{
 				// maybe check here that result does not contain shape
 
-				if (sh->intersects(shape.get()))
+				if (sh->test_intersection(shape.get()))
 				{
 					result->insert(sh);
 				}
@@ -274,7 +274,7 @@ void Octree::intersect_shallow(ShapePtr const &shape, math::aabb<3> const &bound
 	}
 }
 
-void Octree::intersect(ShapePtr const &shape, math::aabb<3> const &bounds, ResultSetPtr const &result)
+void Octree::query_intersection(ShapePtr const &shape, math::aabb<3> const &bounds, ResultSetPtr const &result)
 {
 	if (result) intersect_shallow(shape, bounds, result);
 
@@ -285,7 +285,7 @@ void Octree::intersect(ShapePtr const &shape, math::aabb<3> const &bounds, Resul
 
 		for (size_t i = 0; i < nsubclusters; i++)
 		{
-			subclusters_[subclusters[i]].intersect(shape, bounds, result);
+			subclusters_[subclusters[i]].query_intersection(shape, bounds, result);
 		}
 	}
 }

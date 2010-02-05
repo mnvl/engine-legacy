@@ -260,49 +260,49 @@ public:
 	bool contains(const obb_t &r) const;
 
 	// пересекаются ли obb и треугольник?
-	bool intersects(const triangle_t &tri) const {
-		return !not_intersects(tri);
+	bool test_intersection(const triangle_t &tri) const {
+		return !test_nonintersection(tri);
 	}
 	
 	// пересекаются ли два obb?
-	bool intersects(const obb_t &box) const {
-		return !not_intersects(box) && !box.not_intersects(*this);
+	bool test_intersection(const obb_t &box) const {
+		return !test_nonintersection(box) && !box.test_nonintersection(*this);
 	}
 
 	// столкнутся ли два движущихся obb в интервале времени [t_min, t_max]?
-	bool collides(triangle_t const &tri, const vec_t &vel, scalar_t t_min = 0,
+	bool test_collision(triangle_t const &tri, const vec_t &vel, scalar_t t_min = 0,
 		scalar_t t_max = 1) const
 	{
-		return !not_collides(tri, vel, t_min, t_max);
+		return !test_noncollision(tri, vel, t_min, t_max);
 	}
 
 	// столкнутся ли два движущихся obb в интервале времени [t_min, t_max]?
-	bool collides(obb_t const &box, const vec_t &vel, scalar_t t_min = 0,
+	bool test_collision(obb_t const &box, const vec_t &vel, scalar_t t_min = 0,
 		scalar_t t_max = 1) const
 	{
-		return !not_collides(box, vel, t_min, t_max)
-		    && !box.not_collides(*this, -vel, t_min, t_max);
+		return !test_noncollision(box, vel, t_min, t_max)
+		    && !box.test_noncollision(*this, -vel, t_min, t_max);
 	}
 
 private:
 	// проверить на не-пересечение с треугольником
-	bool not_intersects(const triangle_t &r) const;
+	bool test_nonintersection(const triangle_t &r) const;
 
 	// проверить на одностороннее не-пересечение с obb
-	bool not_intersects(const obb_t &r) const;
+	bool test_nonintersection(const obb_t &r) const;
 
 	// проверить на одностороннее не-столкновение с треугольником
 	// r -- данный треугольник
 	// vel -- скорость box относительно настоящего obb
 	// t_min, t_max -- интервал времени, внутри которого следует искать столкновение
-	bool not_collides(const triangle_t &r, const vec_t &vel, scalar_t t_min = 0,
+	bool test_noncollision(const triangle_t &r, const vec_t &vel, scalar_t t_min = 0,
 		scalar_t t_max = 1) const;
 
 	// проверить на одностороннее не-столкновение с obb
 	// r -- данный obb
 	// vel -- скорость box относительно настоящего obb
 	// t_min, t_max -- интервал времени, внутри которого следует искать столкновение
-	bool not_collides(const obb_t &r, const vec_t &vel, scalar_t t_min = 0,
+	bool test_noncollision(const obb_t &r, const vec_t &vel, scalar_t t_min = 0,
 		scalar_t t_max = 1) const;
 };
 

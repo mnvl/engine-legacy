@@ -23,14 +23,14 @@ namespace math
 {
 
 template<int N, class T> bool inline
-intersects(sphere<N, T> const &s, sphere<N, T> const &t)
+test_intersection(sphere<N, T> const &s, sphere<N, T> const &t)
 {
 	return (s.centre - t.centre).length_sq() <= square(s.radius + t.radius);
 }
 
 // проверить на пересечение с лучом
 template<int N, class T> bool inline
-intersects(sphere<N, T> const &s, ray<N, T> const &r)
+test_intersection(sphere<N, T> const &s, ray<N, T> const &r)
 {
 	// |x-r0|=R
 	// x=x0+a*t
@@ -51,7 +51,7 @@ intersects(sphere<N, T> const &s, ray<N, T> const &r)
 }
 
 template<int N, class T> int inline
-intersect(sphere<N, T> const &s, ray<N, T> const &r, vec<N, T> &p1, vec<N, T> &p2)
+query_intersection(sphere<N, T> const &s, ray<N, T> const &r, vec<N, T> &p1, vec<N, T> &p2)
 {
 	// p = r.direction * t + r.origin
 	// |p - s.centre| ^ 2 = s.radius ^ 2
@@ -88,13 +88,13 @@ intersect(sphere<N, T> const &s, ray<N, T> const &r, vec<N, T> &p1, vec<N, T> &p
 }
 
 template<int N, class T> bool inline
-intersects(sphere<N, T> const &s, line<N, T> const &l)
+test_intersection(sphere<N, T> const &s, line<N, T> const &l)
 {
 	vec<N, T> p1, p2;
 
 	T ll = l.length_sq();
 
-	switch(intersect(s, l.get_ray(), p1, p2)) {
+	switch(query_intersection(s, l.get_ray(), p1, p2)) {
 		case 0: return false;
 		case 1: return (p1 - l.A).length_sq() < ll;
 		default: return (p1 - l.A).length_sq() < ll || (p2 - l.A).length_sq() < ll;
@@ -102,8 +102,8 @@ intersects(sphere<N, T> const &s, line<N, T> const &l)
 }
 
 template<int N, class T> int inline
-intersect(sphere<N, T> const &s, line<N, T> const &l, vec<N, T> &p1, vec<N, T> &p2) {
-	switch(intersect(s, l.get_ray(), p1, p2)) {
+query_intersection(sphere<N, T> const &s, line<N, T> const &l, vec<N, T> &p1, vec<N, T> &p2) {
+	switch(query_intersection(s, l.get_ray(), p1, p2)) {
 		case 0: return 0;
 		case 1: return int(l.contains(p1));
 		default: return int(l.contains(p1)) + int(l.contains(p2));
@@ -111,13 +111,13 @@ intersect(sphere<N, T> const &s, line<N, T> const &l, vec<N, T> &p1, vec<N, T> &
 }
 
 template<class T> bool inline
-intersects(ray<3, T> const &r1, ray<3, T> const &r2)
+test_intersection(ray<3, T> const &r1, ray<3, T> const &r2)
 {
 	return r1.distance(r2) < EPSILON;
 }
 
 template<class T> bool
-intersect(ray<3, T> const &ray1, ray<3, T> const &ray2, T &t)
+query_intersection(ray<3, T> const &ray1, ray<3, T> const &ray2, T &t)
 {
 	vec<3,T> a1_x_a2 = ray1.a ^ ray2.a;
 	T a1_x_a2_len_sq = a1_x_a2.length_sq();
@@ -131,20 +131,20 @@ intersect(ray<3, T> const &ray1, ray<3, T> const &ray2, T &t)
 }
 
 template<class T> bool inline
-intersect(ray<2, T> const &r1, ray<2, T> const &r2, T &s)
+query_intersection(ray<2, T> const &r1, ray<2, T> const &r2, T &s)
 {
-	return intersect(ray<3,T>(r1.r0, r1.a), ray<3,T>(r2.r0, r2.a), s);
+	return query_intersection(ray<3,T>(r1.r0, r1.a), ray<3,T>(r2.r0, r2.a), s);
 }
 
 template<int N, class T> bool inline
-intersects(line<N, T> const &l1, line<N, T> const &l2)
+test_intersection(line<N, T> const &l1, line<N, T> const &l2)
 {
 	T s;
-	return intersect(l1.get_ray(), l2.get_ray(), s) && s > 0 && s < 1;
+	return query_intersection(l1.get_ray(), l2.get_ray(), s) && s > 0 && s < 1;
 }
 
 template<int N, class T> bool inline
-intersects(sphere<N,T> const &s, capsule<N, T> const &c)
+test_intersection(sphere<N,T> const &s, capsule<N, T> const &c)
 {
 	return c.distance(s.centre) <= s.radius;
 }

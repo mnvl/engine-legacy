@@ -76,15 +76,15 @@ public:
 		return contains(b.lo) || contains(b.hi);
 	}
 
-	bool intersects(const aabb_t &b) const {
+	bool test_intersection(const aabb_t &b) const {
 		if(contains(b)) return true;
 
 		vec_t v;
 		edge_t e;
 		for(int i=0; i<aabb_t::edges_count; i++) {
 			b.get_edge(i,e);
-			if(top.intersect(e,v) || bottom.intersect(e,v)
-				|| left.intersect(e,v) || right.intersect(e,v)) return true;
+			if(top.query_intersection(e,v) || bottom.query_intersection(e,v)
+				|| left.query_intersection(e,v) || right.query_intersection(e,v)) return true;
 		}
 
 		return true;
