@@ -79,6 +79,8 @@ public:
 		angle_interval(0, math::PI * 2)
 	{
 	}
+
+	static void bind(lua_State *L);
 };
 
 }

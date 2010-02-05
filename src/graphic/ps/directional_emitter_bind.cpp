@@ -23,6 +23,12 @@ void DirectionalEmitter::bind(lua_State *L)
 	module_(L, "ps")
 	[
 		class_<DirectionalEmitter>("Renderer")
+		.def_readwrite("origin", &DirectionalEmitter::origin)
+		.def_readwrite("direction", &DirectionalEmitter::direction)
+		.def_readwrite("size_interval", &DirectionalEmitter::size_interval)
+		.def_readwrite("velocity_interval", &DirectionalEmitter::velocity_interval)
+		.def_readwrite("acceleration_interval", &DirectionalEmitter::acceleration_interval)
+		.def_readwrite("ttl_interval", &DirectionalEmitter::ttl_interval)
 	];
 }
 

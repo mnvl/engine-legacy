@@ -21,6 +21,10 @@
 #include "camera.h"
 #include "font.h"
 #include "renderer.h"
+#include "ps/directional_emitter.h"
+#include "ps/directional_particle_system.h"
+#include "ps/cylindrical_emitter.h"
+#include "ps/cylindrical_particle_system.h"
 #include "bind.h"
 
 namespace graphic
@@ -41,6 +45,10 @@ void bind(lua_State *L)
 	Camera::bind(L);
 	Font::bind(L);
     Renderer::bind(L);
+	ps::DirectionalEmitter::bind(L);
+	ps::DirectionalParticleSystem::bind("DirectionalParticleSystem", L);
+	ps::CylindricalEmitter::bind(L);
+	ps::CylindricalParticleSystem::bind("CylindricalParticleSystem", L);
 }
 
 }

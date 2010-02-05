@@ -9,8 +9,9 @@
 // prior written consent of Manvel Avetisian.
 //-----------------------------------------------------------------------------
 
-#include <graphic/renderer.h>
 #include <boost/shared_ptr.hpp>
+#include <luabind/luabind.hpp>
+#include <graphic/renderer.h>
 
 namespace graphic
 {
@@ -66,6 +67,8 @@ public:
 	{
 		return max_nparticles_;
 	}
+
+	static void bind(char const *class_name, lua_State *L);
 
 private:
 	size_t max_nparticles_;

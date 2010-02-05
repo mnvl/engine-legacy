@@ -73,7 +73,7 @@ public:
 	{
 	}
 
-	void bind(lua_State *L);
+	static void bind(lua_State *L);
 };
 
 }
