@@ -22,7 +22,6 @@
 #include <math/bind.h>
 #include <spatial/bind.h>
 #include <util/logger.h>
-#include <util/lua_backtrace.h>
 
 extern "C"
 {
@@ -67,8 +66,12 @@ public:
 
 	void run(char const *filename)
 	{
+		lua_getglobal(L_, "debug");
+		lua_getfield(L_, -1, "traceback");
+		lua_remove(L_, -2);
+
 		int result = luaL_loadfile(L_, filename);
-		if (result == 0) result = luabind::detail::pcall(L_, 0, 0);
+		if (result == 0) result = lua_pcall(L_, 0, 0, -2);
 
 		switch (result)
 		{
@@ -96,8 +99,6 @@ INT WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpstrCmdLine, INT
 {
     try
     {
-		luabind::set_pcall_callback(util::make_lua_backtrace);
-
 		Main().run(lpstrCmdLine);
     }
     catch (std::exception const &error)
