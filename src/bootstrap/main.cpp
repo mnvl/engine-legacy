@@ -13,6 +13,7 @@
 #include <xercesc/util/PlatformUtils.hpp>
 #include <luabind/luabind.hpp>
 #include <luabind/detail/pcall.hpp>
+#include <log4cplus/configurator.h>
 #include <graphic/bind.h>
 #include <platform/timer.h>
 #include <platform/window.h>
@@ -99,6 +100,7 @@ INT WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpstrCmdLine, INT
 {
     try
     {
+		log4cplus::PropertyConfigurator::doConfigure(LOG4CPLUS_TEXT("log4cplus.properties")); 
 		Main().run(lpstrCmdLine);
     }
     catch (std::exception const &error)
