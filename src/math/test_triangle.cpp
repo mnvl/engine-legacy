@@ -9,7 +9,7 @@
 //-----------------------------------------------------------------------------
 
 #include <boost/test/unit_test.hpp>
-#include <math/triangle.h>
+#include "triangle.h"
 
 BOOST_AUTO_TEST_SUITE (test_triangle)
 

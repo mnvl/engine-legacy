@@ -8,218 +8,72 @@
 // prior written consent of Manvel Avetisian.
 //-----------------------------------------------------------------------------
 
-extern "C"
-{
-	#include <lauxlib.h>
-}
-
-#if defined(WIN32)
-#include <windows.h>
-#endif
-
-#include <boost/date_time/posix_time/posix_time.hpp>
 #include "logger.h"
 
 namespace util
 {
 
-Logger::Output::~Output()
-{
-}
-
 namespace
 {
 
-#if defined(WIN32)
-class DebugStringOutput: public Logger::Output
+int log_message(lua_State *L, log4cplus::LogLevel level)
 {
-public:
-	void print_line(char const *message)
-	{
-		OutputDebugString(message);
-	}
-};
-#endif
+	log4cplus::Logger logger = log4cplus::Logger::getRoot();
 
-class StdoutOutput: public Logger::Output
-{
-public:
-	void print_line(char const *message)
-	{
-		fwrite(message, 1, strlen(message), stdout);
-		fflush(stdout);
-	}
-};
-
-class StderrOutput: public Logger::Output
-{
-public:
-	void print_line(char const *message)
-	{
-		fwrite(message, 1, strlen(message), stderr);
-		fflush(stderr);
-	}
-};
-
-}
-
-char const *Logger::get_level_text(level_t level)
-{
-	switch (level) {
-	case LEVEL_DEBUG: return "DEBUG";
-	case LEVEL_INFO: return "INFO";
-	case LEVEL_NOTICE: return "NOTICE";
-	case LEVEL_WARNING: return "WARNING";
-	case LEVEL_ERROR: return "ERROR";
-	case LEVEL_CRITICAL: return "CRITICAL";
-	default: return "UNKNOWN";
-	}
-}
-
-Logger::Message::Message(Logger *logger_ptr, level_t level, char const *filename, int line, char const *pretty_function):
-logger_ptr_(logger_ptr),
-filename_(filename),
-line_(line),
-pretty_function_(pretty_function)
-{
-	stream_ << boost::posix_time::microsec_clock::local_time() << '\t'
-			<< get_level_text(level) << '\t';
-}
-
-Logger::Message::~Message()
-{
-	if (logger_ptr_->is_source_position_enabled())
-	{
-		stream_ << "\t\t"
-				<< filename_ << ':' << line_;
-		if (pretty_function_) stream_  << ' ' << pretty_function_;
-		stream_ << '\n';
-	}
-	else
-	{
-		stream_ << '\n';
-	}
-
-	logger_ptr_->print_line(stream_.str().c_str());
-}
-
-Logger::Logger():
-	source_position_enabled_(false)
-{
-#if defined(WIN32)
-	add_debug_string_output();
-#endif
-	add_stderr_output();
-}
-
-Logger::~Logger()
-{
-}
-
-Logger &Logger::instance()
-{
-	static Logger singleton;
-	return singleton;
-}
-
-void Logger::print_line(char const *str)
-{
-	for (outputs_t::iterator it = outputs_.begin(); it != outputs_.end(); it++)
-	{
-		(*it)->print_line(str);
-	}
-}
-
-#if defined(WIN32)
-void Logger::add_debug_string_output()
-{
-	outputs_.push_back(OutputPtr(new DebugStringOutput()));
-}
-#endif
-
-void Logger::add_stdout_output()
-{
-	outputs_.push_back(OutputPtr(new StdoutOutput()));
-}
-
-void Logger::add_stderr_output()
-{
-	outputs_.push_back(OutputPtr(new StderrOutput()));
-}
-
-void Logger::enable_source_position()
-{
-	source_position_enabled_ = true;
-}
-
-void Logger::disable_source_position()
-{
-	source_position_enabled_ = false;
-}
-
-bool Logger::is_source_position_enabled() const
-{
-	return source_position_enabled_;
-}
-
-namespace
-{
-
-int lua_message(lua_State *L, Logger::level_t level)
-{
 	lua_Debug d;
 	lua_getstack(L, 1, &d);
 	lua_getinfo(L, "Sln", &d);
 
+	if(logger.isEnabledFor(level))
 	{
-		Logger::Message message(&Logger::instance(), level, d.short_src, d.currentline, d.name);
-		message.stream() << lua_tostring(L, -1);
-	}
+        log4cplus::tostringstream formatter;
+
+		for (size_t i = 1, n = lua_gettop(L); i < n; i++)
+		{
+			formatter << lua_tostring(L, i);
+		}
+
+		logger.forcedLog(level, formatter.str(), d.short_src, d.currentline);
+    }
 
 	lua_pop(L, 1);
 
 	return 0;
 }
 
-int lua_debug(lua_State *L)
+int log_debug(lua_State *L)
 {
-	return lua_message(L, Logger::LEVEL_DEBUG);
+	return log_message(L, log4cplus::DEBUG_LOG_LEVEL);
 }
 
-int lua_info(lua_State *L)
+int log_info(lua_State *L)
 {
-	return lua_message(L, Logger::LEVEL_INFO);
+	return log_message(L, log4cplus::INFO_LOG_LEVEL);
 }
 
-int lua_warning(lua_State *L)
+int log_warn(lua_State *L)
 {
-	return lua_message(L, Logger::LEVEL_WARNING);
+	return log_message(L, log4cplus::WARN_LOG_LEVEL);
 }
 
-int lua_error(lua_State *L)
+int log_error(lua_State *L)
 {
-	return lua_message(L, Logger::LEVEL_ERROR);
+	return log_message(L, log4cplus::ERROR_LOG_LEVEL);
 }
 
-int lua_critical(lua_State *L)
-{
-	return lua_message(L, Logger::LEVEL_CRITICAL);
-}
-
-luaL_reg const log_functions[] = {
-	{"debug", lua_debug},
-	{"info", lua_info},
-	{"warning", lua_warning},
-	{"error", lua_error},
-	{"critical", lua_critical},
+luaL_reg const lua_functions[] = {
+	{"debug", log_debug},
+	{"info", log_info},
+	{"warn", log_warn},
+	{"error", log_error},
 	{0, 0}
 };
 
 }
 
-void Logger::bind(lua_State *L)
+void bind_logger(lua_State *L)
 {
-	luaL_register(L, "log", log_functions);
+	luaL_register(L, "log", lua_functions);
 }
 
 }

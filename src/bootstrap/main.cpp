@@ -50,7 +50,7 @@ public:
 		math::bind(L_);
 		spatial::bind(L_);
 
-		util::Logger::bind(L_);
+		util::bind_logger(L_);
 
 		platform::Input::bind(L_);
 		platform::Keyboard::bind(L_);

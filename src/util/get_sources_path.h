@@ -25,7 +25,7 @@ inline std::string get_sources_path()
 		return std::string(ENGINE_SOURCE_DIR) + "/src/";
 	}
 
-	LOG_WARNING("ENGINE_SOURCE_DIR is not defined, defaulting to current directory");
+	LOG_WARN("ENGINE_SOURCE_DIR is not defined, defaulting to current directory");
 	return std::string();
 }
 

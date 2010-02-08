@@ -74,8 +74,8 @@ private:
 	{
 		if (compilation_errors_ptr && compilation_errors_ptr->GetBufferSize() > 0)
         {
-            LOG_WARNING("compilation messages:");
-			util::Logger::instance().print_line(std::string((char const *) compilation_errors_ptr->GetBufferPointer(), compilation_errors_ptr->GetBufferSize()).c_str());
+            LOG_WARN("compilation messages:" << std::string((char const *) compilation_errors_ptr->GetBufferPointer(),
+				compilation_errors_ptr->GetBufferSize()));
             compilation_errors_ptr->Release();
         }
 	}

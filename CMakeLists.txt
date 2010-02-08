@@ -64,7 +64,7 @@ INCLUDE_DIRECTORIES(${ENGINE_SOURCE_DIR}/src)
 INCLUDE_DIRECTORIES(${ENGINE_SOURCE_DIR}/build/src)
 
 SET(Boost_USE_MULTITHREADED ON)
-FIND_PACKAGE(Boost 1.40 REQUIRED COMPONENTS system thread date_time regex filesystem unit_test_framework)
+FIND_PACKAGE(Boost 1.42 REQUIRED COMPONENTS system thread date_time regex filesystem unit_test_framework)
 INCLUDE_DIRECTORIES(${Boost_INCLUDE_DIRS})
 LIST(APPEND ENGINE_LIBRARIES ${Boost_LIBRARIES})
 
@@ -78,8 +78,9 @@ ENDIF()
 
 FIND_PACKAGE(Maya COMPONENTS Foundation OpenMaya)
 
-INCLUDE_DIRECTORIES(contrib/lua/src contrib/luabind)
-LIST(APPEND ENGINE_LIBRARIES lua luabind LuaBitOp)
+ADD_DEFINITIONS(-DLOG4CPLUS_STATIC)
+INCLUDE_DIRECTORIES(contrib/lua/src contrib/luabind contrib/log4cplus/include)
 ADD_SUBDIRECTORY(contrib)
+LIST(APPEND ENGINE_LIBRARIES lua luabind LuaBitOp log4cplus)
 
 ADD_SUBDIRECTORY(src)

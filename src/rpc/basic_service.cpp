@@ -9,7 +9,6 @@
 //-----------------------------------------------------------------------------
 
 #include <boost/bind.hpp>
-#include <util/logger.h>
 #include "basic_service.h"
 
 namespace rpc

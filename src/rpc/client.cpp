@@ -11,11 +11,12 @@
 #include <deque>
 #include <boost/thread/mutex.hpp>
 #include <boost/thread/locks.hpp>
-#include <util/logger.h>
 #include "handler.h"
 #include "connection.h"
 #include "client_service.h"
 #include "client.h"
+
+#include <util/logger.h>
 
 namespace rpc
 {

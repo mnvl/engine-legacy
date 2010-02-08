@@ -1024,13 +1024,13 @@ namespace collada_elements
 
 							if (ligtest_index == size_t(-1))
 							{
-								LOG_WARNING("vertex with more than 8 joint weights found in mesh " << mesh_ptr->id
+								LOG_WARN("vertex with more than 8 joint weights found in mesh " << mesh_ptr->id
 									<< " and last one is lightest with weight = " << weight
 									<< ", index = " << index << " -- ignoring it");
 							}
 							else
 							{
-								LOG_WARNING("vertex with more than 8 joint weights found in mesh " << mesh_ptr->id
+								LOG_WARN("vertex with more than 8 joint weights found in mesh " << mesh_ptr->id
 									<< " and lightest weight index = " << ligtest_index
 									<< ", weight = " << ligtest_weight
 									<< ", joint = " << joint_indices.i[ligtest_index]

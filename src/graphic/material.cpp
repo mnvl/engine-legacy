@@ -38,7 +38,7 @@ void Material::set_texture(std::string const &filename)
 	}
 	else
 	{
-		LOG_WARNING("material without renderer: set_texture() will create texture without renderer"); 
+		LOG_WARN("material without renderer: set_texture() will create texture without renderer"); 
 		texture_ptr_.reset(new Texture(renderer_ptr_, filename));
 	}
 }

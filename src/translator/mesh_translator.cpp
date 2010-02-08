@@ -228,7 +228,7 @@ MStatus MeshTranslator::exportMaterial(const MPlug &shader_plug) {
 		emission = convert(lambert.color())*lambert.glowIntensity();
 		shininess = lambert.glowIntensity();
 	} else {
-		LOG_WARNING("can't extract shader");
+		LOG_WARN("can't extract shader");
 		return MStatus::kFailure;
 	}
 
@@ -245,7 +245,7 @@ MStatus MeshTranslator::exportMaterial(const MPlug &shader_plug) {
 	if(extractTextureName(shader_plug,texture_name) == MStatus::kSuccess) {
 		LOG_DEBUG("texture_name = "<<texture_name);
 	} else {
-		LOG_WARNING("no texture found\n");
+		LOG_WARN("no texture found\n");
 	}
 	file_stream.write(texture_name.c_str(), texture_name.size() + 1);
 
@@ -393,14 +393,14 @@ MStatus MeshTranslator::extractGeometry(MFnMesh const &mesh) {
 
 	if(uvset_names.length() != 1)
 	{
-        LOG_WARNING("uvsets_count = "<<uvset_names.length());
+        LOG_WARN("uvsets_count = "<<uvset_names.length());
 	}
 
   	MFloatArray u_array,v_array;
 	for(j=0, m=0; j<uvset_names.length(); j++) {
 		mesh.getUVs(u_array,v_array,0);
 
-		if(u_array.length() != v_array.length()) LOG_WARNING("UV array mismatch");
+		if(u_array.length() != v_array.length()) LOG_WARN("UV array mismatch");
 
 		n = u_array.length();
 		tex2_array.resize(m+n);
@@ -457,7 +457,7 @@ MStatus MeshTranslator::extractIndices(MFnMesh const &mesh) {
 		for(unsigned j=0; j<m; j++) {
 			mesh.getPolygonUVid(i,j,uv_index,0);
 			if(uv_index < 0) {
-				LOG_WARNING("negative UV index for vertex " << j
+				LOG_WARN("negative UV index for vertex " << j
 					           << " of face " << i << ", defaulting to zero");
 				uv_index = 0;
 			}
@@ -468,7 +468,7 @@ MStatus MeshTranslator::extractIndices(MFnMesh const &mesh) {
 			index.tex2_index = uv_index;
 
 			#if defined(TRANSLATOR_PARANOIDAL_LOGGING)
-			LOG_WARNING("\tvertex = " << j
+			LOG_WARN("\tvertex = " << j
 				<< ", position_index = " << index.position_index
 				<< ", normal_index = " << index.normal_index
 				<< ", tex2_index = " << index.tex2_index);
@@ -540,7 +540,7 @@ void MeshTranslator::constructVertexIndex() {
 			index_type &index = face_array[i].i[j];
 
 			if(index.tex2_index > tex2_array.size()) {
-				LOG_WARNING("warning: invalid uv, index = "<<index.tex2_index<<", face = "<<i);
+				LOG_WARN("warning: invalid uv, index = "<<index.tex2_index<<", face = "<<i);
 				index.tex2_index = 0;
 			}
 

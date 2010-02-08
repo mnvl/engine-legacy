@@ -15,6 +15,9 @@
 #include "vec.h"
 #include "ray.h"
 
+#undef min
+#undef max
+
 namespace math
 {
 
