@@ -16,7 +16,11 @@
 #include <boost/enable_shared_from_this.hpp>
 #include <boost/thread/mutex.hpp>
 #include <boost/cstdint.hpp>
+
+#if defined(PROTOBUF_FOUND)
 #include <google/protobuf/message.h>
+#endif
+
 #include "buffer.h"
 #include "handler.h"
 
@@ -36,7 +40,10 @@ public:
 
 	void start();
 	void write(BufferPtr const &buffer_ptr);
+
+#if defined(PROTOBUF_FOUND)
 	void write(boost::uint16_t id, google::protobuf::Message const &message);
+#endif
 
 private:
 	static size_t const MINIMAL_ASYNC_READ_BUFFER_SIZE = 1024;

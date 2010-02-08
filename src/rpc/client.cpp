@@ -74,10 +74,12 @@ public:
 		return error_message_;
 	}
 
+#if defined(PROTOBUF_FOUND)
 	void send(boost::uint16_t id, google::protobuf::Message const &message)
 	{
 		connection_->write(id, message);
 	}
+#endif
 
 	boost::tuple<boost::uint16_t, rpc::BufferPtr> receive()
 	{
@@ -164,10 +166,12 @@ std::string Client::error_message() const
 	return impl_->error_message();
 }
 
+#if defined(PROTOBUF_FOUND)
 void Client::send(boost::uint16_t id, google::protobuf::Message const &message)
 {
 	return impl_->send(id, message);
 }
+#endif
 
 boost::tuple<boost::uint16_t, rpc::BufferPtr> Client::receive()
 {

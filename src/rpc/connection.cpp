@@ -59,6 +59,7 @@ void Connection::write(BufferPtr const &buffer_ptr)
 	}
 }
 
+#if defined(PROTOBUF_FOUND)
 void Connection::write(boost::uint16_t id, google::protobuf::Message const &message)
 {
 	size_t message_size = message.ByteSize();
@@ -81,6 +82,7 @@ void Connection::write(boost::uint16_t id, google::protobuf::Message const &mess
 
 	write(buffer);
 }
+#endif
 
 void Connection::schedule_write()
 {

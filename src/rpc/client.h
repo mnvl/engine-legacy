@@ -12,7 +12,11 @@
 #include <boost/noncopyable.hpp>
 #include <boost/scoped_ptr.hpp>
 #include <boost/tuple/tuple.hpp>
+
+#if defined(PROTOBUF_FOUND)
 #include <google/protobuf/message.h>
+#endif
+
 #include "buffer.h"
 
 namespace rpc
@@ -31,7 +35,10 @@ public:
 	bool have_error() const;
 	std::string error_message() const;
 
+#if defined(PROTOBUF_FOUND)
 	void send(boost::uint16_t id, google::protobuf::Message const &message);
+#endif
+
 	boost::tuple<boost::uint16_t, rpc::BufferPtr> receive();
 
 private:
