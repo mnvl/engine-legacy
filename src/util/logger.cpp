@@ -20,15 +20,15 @@ int log_message(lua_State *L, log4cplus::LogLevel level)
 {
 	log4cplus::Logger logger = log4cplus::Logger::getRoot();
 
-	lua_Debug d;
-	lua_getstack(L, 1, &d);
-	lua_getinfo(L, "Sln", &d);
-
 	if(logger.isEnabledFor(level))
 	{
+		lua_Debug d;
+		lua_getstack(L, 1, &d);
+		lua_getinfo(L, "Sln", &d);
+
         log4cplus::tostringstream formatter;
 
-		for (size_t i = 1, n = lua_gettop(L); i < n; i++)
+		for (size_t i = 1, n = lua_gettop(L); i <= n; i++)
 		{
 			formatter << lua_tostring(L, i);
 		}
