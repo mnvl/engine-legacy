@@ -88,7 +88,7 @@ void AnimatedMesh::draw(Joint *joint_ptr)
     hr = shader_->get()->Begin(&passes_count, D3DXFX_DONOTSAVESTATE);
     if (FAILED(hr)) throw exception::directx_error(hr);
 
-    for(UINT pass = 0; pass < passes_count; pass++ )
+    for(UINT pass = 0; pass < passes_count; pass++)
     {
         hr = shader_->get()->BeginPass(pass);
         if (FAILED(hr)) throw exception::directx_error(hr);
