@@ -19,7 +19,7 @@ namespace graphic
 {
 
 static char ANIMATED_MODEL_FX[] = {
-    #include "animated_model.dump.h"
+    #include "animated_model.fx.h"
 };
 
 SharedResources::SharedResources(Renderer * const renderer_ptr):
