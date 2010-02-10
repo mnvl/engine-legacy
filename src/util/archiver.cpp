@@ -8,25 +8,30 @@
 // prior written consent of Manvel Avetisian.
 //-----------------------------------------------------------------------------
 
+#include <fstream>
 #include <iostream>
 #include <boost/algorithm/string/split.hpp>
 #include <boost/algorithm/string/classification.hpp>
 #include "file_handle.h"
 #include "archive.h"
 
-void create_archive(std::string const &filename, int argc, char *argv[])
+void create_archive(std::string const &archive_file, std::string const &list_file)
 {
-	std::cerr << "creating archive " << filename << "...\n";
+	std::cerr << "creating archive " << archive_file << "...\n";
 	util::ArchiveWriter archive_writer;
-	archive_writer.create(filename);
+	archive_writer.create(archive_file);
 
-	while (argc > 0)
+	std::ifstream fs(list_file.c_str());
+
+	std::string line;
+	while (std::getline(fs, line))
 	{
-		std::vector<std::string> parts;
-		boost::split(parts, *argv++, boost::is_any_of("="), boost::algorithm::token_compress_on);
-		--argc;
+		if (line.empty()) continue;
 
-		if (parts.size() != 2) throw std::runtime_error("invalid argument " + std::string(*argv));
+		std::vector<std::string> parts;
+		boost::split(parts, line, boost::is_any_of("="), boost::algorithm::token_compress_on);
+
+		if (parts.size() != 2) throw std::runtime_error("invalid argument " + line);
 
 		std::cerr << "adding " << parts[0] << " = " << parts[1] << "...\n";
 		util::FileHandle file(parts[1], O_RDONLY);
@@ -38,9 +43,9 @@ void create_archive(std::string const &filename, int argc, char *argv[])
 
 int main(int argc, char *argv[])
 {
-	if (argc <= 3)
+	if (argc != 4)
 	{
-		std::cerr << "usage: " << argv[0] << " create <archive-file> <key>=<filename> <key>=<filename> ..." << std::endl;
+		std::cerr << "usage: " << argv[0] << " create <archive-file> <list-file>" << std::endl;
 		return 1;
 	}
 
@@ -52,12 +57,15 @@ int main(int argc, char *argv[])
 		std::string command = *argv++;
 		--argc;
 
-		std::string archive = *argv++;
+		std::string archive_file = *argv++;
+		--argc;
+
+		std::string list_file = *argv++;
 		--argc;
 
 		if (command == "create")
 		{
-			create_archive(archive, argc, argv);
+			create_archive(archive_file, list_file);
 		}
 		else
 		{
