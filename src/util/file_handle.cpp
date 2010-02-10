@@ -23,7 +23,7 @@ FileHandle::FileHandle(int handle):
 {
 }
 
-FileHandle::FileHandle(char const *filename, int flags, int mode):
+FileHandle::FileHandle(std::string const &filename, int flags, int mode):
 	handle_(-1)
 {
 	open(filename, flags, mode);
@@ -46,11 +46,11 @@ void FileHandle::set_handle(int handle)
 	filename_.erase();
 }
 
-void FileHandle::open(char const *filename, int flags, int mode)
+void FileHandle::open(std::string const &filename, int flags, int mode)
 {
 	if(is_open()) throw std::logic_error("open() called on already opened file");
 
-	handle_ = ::open(filename, flags | O_BINARY, mode);
+	handle_ = ::open(filename.c_str(), flags | O_BINARY, mode);
 	if(handle_ < 0) throw error(std::string("error opening file ") + filename, errno);
 
 	filename_ = filename;

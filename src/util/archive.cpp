@@ -13,9 +13,93 @@
 namespace util
 {
 
+void Archive::read_directory()
+{
+	chunks_.clear();
+
+	ARCHIVE_HEADER header;
+	file_.lseek(0, SEEK_SET);
+	file_.read(&header, sizeof(ARCHIVE_HEADER));
+
+	if (header.version != VERSION)
+	{
+		throw std::runtime_error("archive with invalid version");
+	}
+
+	if (header.directory_layout.length == 0)
+	{
+		return;
+	}
+
+	std::vector<char> buffer(header.directory_layout.length);
+	file_.lseek(header.directory_layout.offset, SEEK_SET);
+	file_.read(&buffer[0], buffer.size());
+
+	char *cursor = &buffer[0];
+	size_t bytes_left = buffer.size();
+
+	while (bytes_left > 0)
+	{
+		std::string name;
+
+		while (bytes_left > 0 && *cursor)
+		{
+			name += *cursor++;
+			--bytes_left;
+		}
+
+		if (bytes_left > 0 && *cursor == 0)
+		{
+			--bytes_left;
+			++cursor;
+		}
+		else
+		{
+			throw std::runtime_error("invalid directory record");
+		}
+
+		CHUNK_LAYOUT chunk_layout;
+
+		if (bytes_left >= sizeof(CHUNK_LAYOUT))
+		{
+			std::copy(cursor, cursor + sizeof(CHUNK_LAYOUT), (char *) &chunk_layout);
+
+			cursor += sizeof(CHUNK_LAYOUT);
+			bytes_left -= sizeof(CHUNK_LAYOUT);
+		}
+		else
+		{
+			throw std::runtime_error("invalid directory record");
+		}
+
+		chunks_.insert(std::make_pair(name, chunk_layout));
+	}
+}
+
+void ArchiveReader::open(std::string const &filename)
+{
+	file_.open(filename, O_RDONLY);
+	read_directory();
+}
+
+void ArchiveReader::read_data(std::string const &name, std::vector<char> &buffer)
+{
+	chunks_t::const_iterator it = chunks_.find(name);
+	if (it == chunks_.end()) throw std::runtime_error("can't find chunk " + name);
+
+	buffer.resize(it->second.length);
+	file_.lseek(it->second.offset, SEEK_SET);
+	file_.read(&buffer[0], buffer.size());
+}
+
+void ArchiveReader::close()
+{
+	file_.close();
+}
+
 void ArchiveWriter::create(std::string const &filename)
 {
-	file_.open(filename, O_WRONLY);
+	file_.open(filename, O_WRONLY | O_CREAT | O_TRUNC);
 
 	ARCHIVE_HEADER header;
 	header.version = VERSION;
@@ -24,7 +108,13 @@ void ArchiveWriter::create(std::string const &filename)
 	file_.write(&header, sizeof(ARCHIVE_HEADER));
 }
 
-void ArchiveWriter::write_data(std::string const &name, void *data, size_t len)
+void ArchiveWriter::open(std::string const &filename)
+{
+	file_.open(filename, O_RDWR);
+	read_directory();
+}
+
+void ArchiveWriter::write_data(std::string const &name, void const *data, size_t len)
 {
 	CHUNK_LAYOUT chunk_layout;
 	chunk_layout.offset = file_.tell();
@@ -32,7 +122,7 @@ void ArchiveWriter::write_data(std::string const &name, void *data, size_t len)
 
 	file_.write(data, len);
 
-	if (!chunks_.insert(std::make_pair(name, chunk_layout)).first)
+	if (!chunks_.insert(std::make_pair(name, chunk_layout)).second)
 	{
 		throw std::runtime_error("archive already contains file with name " + name);
 	}

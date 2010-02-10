@@ -36,20 +36,29 @@ protected:
 
 	typedef boost::unordered_map<std::string, CHUNK_LAYOUT> chunks_t;
 
-	file_handle file_;
+	FileHandle file_;
 	chunks_t chunks_;
+
+	void read_directory();
+};
+
+class ArchiveReader: public Archive
+{
+public:
+	void open(std::string const &filename);
+	void read_data(std::string const &name, std::vector<char> &buffer);
+	void close();
 };
 
 class ArchiveWriter: public Archive
 {
 public:
 	void create(std::string const &filename);
-	void write_data(std::string const &name, void *data, size_t len);
+	void open(std::string const &filename);
+	void write_data(std::string const &name, void const *data, size_t len);
 	void close();
 
 private:
-	file_handle file_;
-
 	void write_directory();
 };
 

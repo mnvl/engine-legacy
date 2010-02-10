@@ -45,12 +45,12 @@ public:
 
 	FileHandle();
 	explicit FileHandle(int handle);
-	FileHandle(char const *filename, int flags, int mode = S_IREAD | S_IWRITE);
+	FileHandle(std::string const &filename, int flags, int mode = S_IREAD | S_IWRITE);
 	FileHandle(FileHandle const &rhs);
 	~FileHandle();
 
 	void set_handle(int handle);
-	void open(char const *filename, int flags, int mode = S_IREAD | S_IWRITE);
+	void open(std::string const &filename, int flags, int mode = S_IREAD | S_IWRITE);
 	void close();
 
 	bool is_open() const;
