@@ -52,7 +52,7 @@ Renderer::Renderer(boost::shared_ptr<platform::Window> const &window, int width,
 		pp_.BackBufferWidth = screen_width_;
 		pp_.BackBufferHeight = screen_height_;
 		pp_.BackBufferCount = 1;
-		pp_.BackBufferFormat = fullscreen_ ? D3DFMT_UNKNOWN : D3DFMT_X8R8G8B8;
+		pp_.BackBufferFormat = fullscreen_ ? D3DFMT_A8R8G8B8 : D3DFMT_UNKNOWN;
 		pp_.MultiSampleType = D3DMULTISAMPLE_NONE;
 		pp_.MultiSampleQuality = 0;
 		pp_.SwapEffect = D3DSWAPEFFECT_FLIP;
@@ -91,6 +91,19 @@ void Renderer::postconstruct()
     shared_resources_.reset(new SharedResources(this));
 	resources_directory_.reset(new ResourcesDirectory());
 	window_ptr_->signal_resize.connect(boost::bind(&Renderer::thunk_resize, boost::weak_ptr<Renderer>(shared_from_this())));
+
+	{
+		HRESULT hr;
+
+		hr = device_ptr_->SetRenderState(D3DRS_ALPHAREF, 1u);
+		if (FAILED(hr)) throw exception::directx_error(hr);
+
+		hr = device_ptr_->SetRenderState(D3DRS_ALPHATESTENABLE, TRUE); 
+		if (FAILED(hr)) throw exception::directx_error(hr);
+
+		hr = device_ptr_->SetRenderState(D3DRS_ALPHAFUNC, D3DCMP_GREATEREQUAL);
+		if (FAILED(hr)) throw exception::directx_error(hr);
+	}
 }
 
 void Renderer::begin_frame()

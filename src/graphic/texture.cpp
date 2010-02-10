@@ -50,6 +50,20 @@ void Texture::load_from_file(std::string const &filename)
 		texture_ptr_.reset(texture_ptr);
 		texture_ptr->Release();
 	}
+
+#if defined(_DEBUG)
+	if (texture_ptr_)
+	{
+		D3DSURFACE_DESC ddsd;
+		HRESULT hr = texture_ptr_->GetLevelDesc(0, &ddsd);
+		if (FAILED(hr)) throw exception::directx_error(hr);
+
+		typedef unsigned char uchar;
+
+		LOG_DEBUG("format = " << std::hex << ddsd.Format << " (" << uchar(ddsd.Format >> 24) <<
+			uchar(ddsd.Format >> 16) << uchar(ddsd.Format >> 8) << uchar(ddsd.Format) << ")");
+	}
+#endif
 }
 
 void Texture::select()
