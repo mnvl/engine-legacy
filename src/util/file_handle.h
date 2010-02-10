@@ -40,8 +40,7 @@ public:
 		}
 	};
 
-	typedef size_t size_type;
-	typedef long offset_type;
+	typedef long offset_t;
     typedef struct stat stat_t;
 
 	FileHandle();
@@ -56,9 +55,10 @@ public:
 
 	bool is_open() const;
 
-	void read(void *buffer, size_type length);
-	void write(void const *buffer, size_type length);
-	void lseek(offset_type offset, int origin);
+	void read(void *buffer, size_t length);
+	void write(void const *buffer, size_t length);
+	offset_t lseek(offset_t offset, int origin);
+	offset_t tell() { return lseek(0, SEEK_CUR); }
 
 	void read_string(std::string &str);
 	void write_string(std::string const &str);

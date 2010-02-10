@@ -86,12 +86,16 @@ void FileHandle::write(void const *buffer, size_t length) {
 	if(bytes_written != length) throw error("error writing to file " + filename_, errno);
 }
 
-void FileHandle::lseek(offset_type offset, int origin) {
+FileHandle::offset_t FileHandle::lseek(offset_t offset, int origin) {
 	if(!is_open())
 		throw std::logic_error("file handle is not open but lseek() is called");
 
-	if(::lseek(handle_, offset, origin) < 0)
+	offset_t current_offset = ::lseek(handle_, offset, origin);
+
+	if(current_offset < 0)
 		throw error("error seeking in file " + filename_, errno);
+
+	return current_offset;
 }
 
 void FileHandle::read_string(std::string &str) {
