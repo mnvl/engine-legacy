@@ -56,6 +56,7 @@ public:
 	void create(std::string const &filename);
 	void open(std::string const &filename);
 	void write_data(std::string const &name, void const *data, size_t len);
+	void write_file(std::string const &name, FileHandle &file_handle);
 	void close();
 
 private:

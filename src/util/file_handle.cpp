@@ -98,15 +98,6 @@ FileHandle::offset_t FileHandle::lseek(offset_t offset, int origin) {
 	return current_offset;
 }
 
-void FileHandle::read_string(std::string &str) {
-	str.clear();
-	for(char ch; read(&ch, sizeof(ch)), ch != 0; str += ch);
-}
-
-void FileHandle::write_string(std::string const &str) {
-	write(str.c_str(), str.size());
-}
-
 FileHandle::stat_t FileHandle::stat() const {
     stat_t st;
     if(fstat(handle_, &st) < 0)

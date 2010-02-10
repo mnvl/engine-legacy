@@ -128,6 +128,13 @@ void ArchiveWriter::write_data(std::string const &name, void const *data, size_t
 	}
 }
 
+void ArchiveWriter::write_file(std::string const &name, FileHandle &file_handle)
+{
+	std::vector<char> buffer;
+	file_handle.read_all(buffer);
+	write_data(name, &buffer[0], buffer.size());
+}
+
 void ArchiveWriter::close()
 {
 	write_directory();
