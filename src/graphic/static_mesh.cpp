@@ -46,19 +46,26 @@ StaticModel *BasicStaticMesh<T>::get_model()
 template<class T>
 void BasicStaticMesh<T>::draw(Joint *joint_ptr)
 {
+	HRESULT hr;
+
 	boost::shared_ptr<Renderer> const renderer_ptr = get_model()->get_renderer();
     SharedResources *shared_resources_ptr = renderer_ptr->get_shared_resources();
 	IDirect3DDevice9 *device_ptr = renderer_ptr->get_device();
 
 	{
 		math::matrix<4,4> tf = joint_ptr->matrix * renderer_ptr->get_world_matrix();
-		device_ptr->SetTransform(D3DTS_WORLD, (D3DMATRIX const *) tf.ij);
+		hr = device_ptr->SetTransform(D3DTS_WORLD, (D3DMATRIX const *) tf.ij);
+		if (FAILED(hr)) throw exception::directx_error(hr);
 	}
 
-	device_ptr->SetVertexDeclaration(shared_resources_ptr->get_vertex_decl<vertex_t>());
-    device_ptr->SetStreamSource(0, vertex_buffer_->get(), 0, sizeof(vertex_t));
+	hr = device_ptr->SetVertexDeclaration(shared_resources_ptr->get_vertex_decl<vertex_t>());
+	if (FAILED(hr)) throw exception::directx_error(hr);
 
-    device_ptr->SetIndices(index_buffer_->get());
+    hr = device_ptr->SetStreamSource(0, vertex_buffer_->get(), 0, sizeof(vertex_t));
+	if (FAILED(hr)) throw exception::directx_error(hr);
+
+    hr = device_ptr->SetIndices(index_buffer_->get());
+	if (FAILED(hr)) throw exception::directx_error(hr);
 
     draw_triangles_list();
 }
@@ -178,6 +185,8 @@ void BasicStaticMesh<T>::unlock()
 template<class T>
 void BasicStaticMesh<T>::draw_triangles_list()
 {
+	HRESULT hr;
+
 	boost::shared_ptr<Renderer> renderer_ptr = get_model()->get_renderer();
     SharedResources *shared_resources_ptr = renderer_ptr->get_shared_resources();
 	IDirect3DDevice9 *device_ptr = renderer_ptr->get_device();
@@ -194,8 +203,9 @@ void BasicStaticMesh<T>::draw_triangles_list()
 			shared_resources_ptr->get_default_material()->select();
 		}
 
-		device_ptr->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, it->minimal_vertex_index, it->vertices_count,
+		hr = device_ptr->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, it->minimal_vertex_index, it->vertices_count,
 			it->first_index_offset, it->triangles_count);
+		if (FAILED(hr)) throw exception::directx_error(hr);
 	}
 }
 
