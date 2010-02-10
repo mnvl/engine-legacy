@@ -1651,6 +1651,11 @@ namespace collada_elements
 
 					if (j == texcoords_input->get_offset()) {
 						texcoords_source->get(*indices_get, v.texcoords);
+
+						// For texture coordinates, COLLADA’s right-handed coordinate system applies; therefore, an ST texture
+						// coordinate of [0,0] maps to the lower-left texel of a texture image, when loaded in a professional 2-D
+						// texture viewer/editor. [COLLADA 1.4 Specification http://www.khronos.org/files/collada_spec_1_4.pdf]
+						v.texcoords.y = 1 - v.texcoords.y;
 					}
 
 					indices_get++;
