@@ -47,6 +47,7 @@ public:
 	int const get_screen_height() const { return screen_height_; }
 
 	void postconstruct();
+	void reset_state();
 
 	void begin_frame();
 	void finish_frame();

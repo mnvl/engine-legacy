@@ -91,19 +91,21 @@ void Renderer::postconstruct()
     shared_resources_.reset(new SharedResources(this));
 	resources_directory_.reset(new ResourcesDirectory());
 	window_ptr_->signal_resize.connect(boost::bind(&Renderer::thunk_resize, boost::weak_ptr<Renderer>(shared_from_this())));
+	reset_state();
+}
 
-	{
-		HRESULT hr;
+void Renderer::reset_state()
+{
+	HRESULT hr;
 
-		hr = device_ptr_->SetRenderState(D3DRS_ALPHAREF, 1u);
-		if (FAILED(hr)) throw exception::directx_error(hr);
+	hr = device_ptr_->SetRenderState(D3DRS_ALPHAREF, 1u);
+	if (FAILED(hr)) throw exception::directx_error(hr);
 
-		hr = device_ptr_->SetRenderState(D3DRS_ALPHATESTENABLE, TRUE); 
-		if (FAILED(hr)) throw exception::directx_error(hr);
+	hr = device_ptr_->SetRenderState(D3DRS_ALPHATESTENABLE, TRUE); 
+	if (FAILED(hr)) throw exception::directx_error(hr);
 
-		hr = device_ptr_->SetRenderState(D3DRS_ALPHAFUNC, D3DCMP_GREATEREQUAL);
-		if (FAILED(hr)) throw exception::directx_error(hr);
-	}
+	hr = device_ptr_->SetRenderState(D3DRS_ALPHAFUNC, D3DCMP_GREATEREQUAL);
+	if (FAILED(hr)) throw exception::directx_error(hr);
 }
 
 void Renderer::begin_frame()
@@ -230,6 +232,9 @@ void Renderer::handle_resize()
 
 		LOG_INFO("restoring all resources...");
 		resources_directory_->handle_reset_device();
+
+		LOG_INFO("resetting render state...");
+		reset_state();
 
 		LOG_INFO("Direct3D device reset completed successfully...");
 	}
