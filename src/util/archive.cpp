@@ -82,10 +82,10 @@ void ArchiveReader::open(std::string const &filename)
 	read_directory();
 }
 
-void ArchiveReader::read_data(std::string const &name, std::vector<char> &buffer)
+void ArchiveReader::read_data(std::string const &key, std::vector<char> &buffer)
 {
-	chunks_t::const_iterator it = chunks_.find(name);
-	if (it == chunks_.end()) throw std::runtime_error("can't find chunk " + name);
+	chunks_t::const_iterator it = chunks_.find(key);
+	if (it == chunks_.end()) throw std::runtime_error("can't find chunk " + key);
 
 	buffer.resize(it->second.length);
 	file_.lseek(it->second.offset, SEEK_SET);
@@ -114,7 +114,7 @@ void ArchiveWriter::open(std::string const &filename)
 	read_directory();
 }
 
-void ArchiveWriter::write_data(std::string const &name, void const *data, size_t len)
+void ArchiveWriter::write_data(std::string const &key, void const *data, size_t len)
 {
 	CHUNK_LAYOUT chunk_layout;
 	chunk_layout.offset = file_.tell();
@@ -122,17 +122,23 @@ void ArchiveWriter::write_data(std::string const &name, void const *data, size_t
 
 	file_.write(data, len);
 
-	if (!chunks_.insert(std::make_pair(name, chunk_layout)).second)
+	if (!chunks_.insert(std::make_pair(key, chunk_layout)).second)
 	{
-		throw std::runtime_error("archive already contains file with name " + name);
+		throw std::runtime_error("archive already contains file with key " + key);
 	}
 }
 
-void ArchiveWriter::write_file(std::string const &name, FileHandle &file_handle)
+void ArchiveWriter::write_file(std::string const &key, FileHandle &file_handle)
 {
 	std::vector<char> buffer;
 	file_handle.read_all(buffer);
-	write_data(name, &buffer[0], buffer.size());
+	write_data(key, &buffer[0], buffer.size());
+}
+
+void ArchiveWriter::write_file(std::string const &key, std::string const &path)
+{
+	FileHandle file(path, O_RDONLY);
+	write_file(key, file);
 }
 
 void ArchiveWriter::close()

@@ -23,6 +23,7 @@
 #include <math/bind.h>
 #include <spatial/bind.h>
 #include <util/logger.h>
+#include <util/archive.h>
 
 extern "C"
 {
@@ -52,6 +53,7 @@ public:
 		spatial::bind(L_);
 
 		util::bind_logger(L_);
+		util::ArchiveWriter::bind(L_);
 
 		platform::Input::bind(L_);
 		platform::Keyboard::bind(L_);

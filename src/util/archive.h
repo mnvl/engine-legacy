@@ -11,6 +11,7 @@
 
 #include <boost/cstdint.hpp>
 #include <boost/unordered_map.hpp>
+#include <luabind/lua_include.hpp>
 #include "file_handle.h"
 
 namespace util
@@ -46,7 +47,7 @@ class ArchiveReader: public Archive
 {
 public:
 	void open(std::string const &filename);
-	void read_data(std::string const &name, std::vector<char> &buffer);
+	void read_data(std::string const &key, std::vector<char> &buffer);
 	void close();
 };
 
@@ -55,9 +56,12 @@ class ArchiveWriter: public Archive
 public:
 	void create(std::string const &filename);
 	void open(std::string const &filename);
-	void write_data(std::string const &name, void const *data, size_t len);
-	void write_file(std::string const &name, FileHandle &file_handle);
+	void write_data(std::string const &key, void const *data, size_t len);
+	void write_file(std::string const &key, FileHandle &file_handle);
+	void write_file(std::string const &key, std::string const &path);
 	void close();
+
+	static void bind(lua_State *L);
 
 private:
 	void write_directory();
