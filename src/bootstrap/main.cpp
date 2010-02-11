@@ -60,10 +60,15 @@ public:
 		platform::Keyboard::bind(L_);
 		platform::Mouse::bind(L_);
 
+		try
 		{
-			boost::shared_ptr<util::ArchiveReader> archive_reader(new util::ArchiveReader());
-			archive_reader->open("pack0.dat");
-			luabind::globals(L_)["archive"] = archive_reader;
+			archive_reader_.reset(new util::ArchiveReader());
+			archive_reader_->open("pack0.dat");
+			luabind::globals(L_)["SCRIPTS_ARCHIVE_READER"] = archive_reader_;
+		}
+		catch(...)
+		{
+			archive_reader_.reset();
 		}
 	}
 
@@ -80,7 +85,19 @@ public:
 		lua_getfield(L_, -1, "traceback");
 		lua_remove(L_, -2);
 
-		int result = luaL_loadfile(L_, filename);
+		int result;
+
+		if (archive_reader_)
+		{
+			std::vector<char> buffer;
+			archive_reader_->read_data(filename, buffer);
+			result = luaL_loadbuffer(L_, &buffer[0], buffer.size(), filename);
+		}
+		else
+		{
+			result = luaL_loadfile(L_, filename);
+		}
+
 		if (result == 0) result = lua_pcall(L_, 0, 0, -2);
 
 		switch (result)
@@ -102,6 +119,7 @@ public:
 
 private:
     lua_State *L_;
+	boost::shared_ptr<util::ArchiveReader> archive_reader_;
 };
 
 

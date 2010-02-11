@@ -46,6 +46,10 @@ void Texture::load_from_file(std::string const &filename)
 				filename_ = filename;
 			}
 		}
+		else
+		{
+			filename_ = filename;
+		}
 	}
 
 	LOG_INFO("loading texture from file " << filename_);
