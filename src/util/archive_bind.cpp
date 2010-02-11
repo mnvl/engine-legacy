@@ -15,6 +15,20 @@
 namespace util
 {
 
+void ArchiveReader::bind(lua_State *L)
+{
+	using namespace luabind;
+
+	module_(L, "util")
+	[
+		class_<ArchiveReader, boost::shared_ptr<ArchiveReader> >("ArchiveReader")
+		.def(constructor<>())
+		.def("open", &ArchiveReader::open)
+		.def("read_string", &ArchiveReader::read_string)
+		.def("close", &ArchiveReader::close)
+	];
+}
+
 void ArchiveWriter::bind(lua_State *L)
 {
 	using namespace luabind;

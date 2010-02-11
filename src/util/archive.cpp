@@ -92,6 +92,16 @@ void ArchiveReader::read_data(std::string const &key, std::vector<char> &buffer)
 	file_.read(&buffer[0], buffer.size());
 }
 
+luabind::object ArchiveReader::read_string(lua_State *L, std::string const &key)
+{
+	std::vector<char> buffer;
+	read_data(key, buffer);
+
+	lua_pushlstring(L, &buffer[0], buffer.size());
+
+	return luabind::object(luabind::from_stack(L, -1));
+}
+
 void ArchiveReader::close()
 {
 	file_.close();

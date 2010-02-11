@@ -53,11 +53,18 @@ public:
 		spatial::bind(L_);
 
 		util::bind_logger(L_);
+		util::ArchiveReader::bind(L_);
 		util::ArchiveWriter::bind(L_);
 
 		platform::Input::bind(L_);
 		platform::Keyboard::bind(L_);
 		platform::Mouse::bind(L_);
+
+		{
+			boost::shared_ptr<util::ArchiveReader> archive_reader(new util::ArchiveReader());
+			archive_reader->open("pack0.dat");
+			luabind::globals(L_)["archive"] = archive_reader;
+		}
 	}
 
     ~Main()
@@ -102,7 +109,7 @@ INT WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpstrCmdLine, INT
 {
     try
     {
-		log4cplus::PropertyConfigurator::doConfigure(LOG4CPLUS_TEXT("log4cplus.properties")); 
+		log4cplus::PropertyConfigurator::doConfigure(LOG4CPLUS_TEXT("log4cplus.properties"));
 		Main().run(lpstrCmdLine);
     }
     catch (std::exception const &error)
