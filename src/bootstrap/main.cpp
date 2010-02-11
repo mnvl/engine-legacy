@@ -11,6 +11,7 @@
 #include <crtdbg.h>
 #include <windows.h>
 #include <xercesc/util/PlatformUtils.hpp>
+#include <boost/filesystem.hpp>
 #include <luabind/luabind.hpp>
 #include <luabind/detail/pcall.hpp>
 #include <log4cplus/configurator.h>
@@ -60,15 +61,11 @@ public:
 		platform::Keyboard::bind(L_);
 		platform::Mouse::bind(L_);
 
-		try
+		if (boost::filesystem::exists(boost::filesystem::path("pack0.dat", boost::filesystem::native)))
 		{
 			archive_reader_.reset(new util::ArchiveReader());
 			archive_reader_->open("pack0.dat");
 			luabind::globals(L_)["SCRIPTS_ARCHIVE_READER"] = archive_reader_;
-		}
-		catch(...)
-		{
-			archive_reader_.reset();
 		}
 	}
 
@@ -111,6 +108,9 @@ public:
 
 		case LUA_ERRRUN:
 			throw std::runtime_error(lua_tostring(L_, -1));
+
+		case LUA_ERRFILE:
+			throw std::runtime_error("file not found");
 
 		default:
 			throw std::runtime_error("unknown error");
