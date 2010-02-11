@@ -29,18 +29,26 @@ Texture::~Texture()
 
 void Texture::load_from_file(std::string const &filename)
 {
-	boost::filesystem::path dds_file_path = boost::filesystem::change_extension(boost::filesystem::path(filename, boost::filesystem::native), ".dds");
+	{
+		boost::filesystem::path original_file_path(filename, boost::filesystem::native);
 
-	if (boost::filesystem::exists(dds_file_path))
-	{
-		filename_ = dds_file_path.native_file_string();
-		LOG_INFO("loading texture from file " << filename_ << " (instead of " << filename << ")");
+		if (original_file_path.extension() != ".dds")
+		{
+			boost::filesystem::path dds_file_path = boost::filesystem::change_extension(original_file_path, ".dds");
+
+			if (boost::filesystem::exists(dds_file_path))
+			{
+				filename_ = dds_file_path.native_file_string();
+				LOG_INFO("overrided " << filename << " to " << filename_);
+			}
+			else
+			{
+				filename_ = filename;
+			}
+		}
 	}
-	else
-	{
-		filename_ = filename;
-		LOG_INFO("loading texture from file " << filename_);
-	}
+
+	LOG_INFO("loading texture from file " << filename_);
 
 	if (renderer_ptr_)
 	{
