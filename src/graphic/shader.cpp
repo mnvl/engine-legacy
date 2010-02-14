@@ -53,7 +53,7 @@ void Shader::load_from_buffer(char const *buffer, size_t len)
 
 	ID3DXEffect *effect_ptr;
 	ID3DXBuffer *compilation_errors_ptr;
-	hr = D3DXCreateEffect(renderer_ptr_->get_device(), buffer, len, 0, 0, D3DXSHADER_DEBUG, 0,
+	hr = D3DXCreateEffect(renderer_ptr_->get_device(), buffer, len, 0, 0, D3DXSHADER_OPTIMIZATION_LEVEL3, 0,
 		&effect_ptr, &compilation_errors_ptr);
 
 	log_compilation_errors(compilation_errors_ptr);

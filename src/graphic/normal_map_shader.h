@@ -21,12 +21,9 @@ public:
 	NormalMapShader(boost::shared_ptr<Renderer> renderer_ptr);
 	~NormalMapShader();
 
-	shader_parameter::float4x4 inverse_world_matrix;
 	shader_parameter::float4x4 view_world_projection_matrix;
-	shader_parameter::integer  projection_type;
-	shader_parameter::float3   camera_view_direction;
-	shader_parameter::texture  diffuse_texture;
-	shader_parameter::texture  normal_map_texture;
+	shader_parameter::texture diffuse_texture;
+	shader_parameter::texture normal_map_texture;
 
 	virtual void postconstruct();
 };

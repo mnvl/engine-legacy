@@ -32,11 +32,17 @@ struct Mtrl
 	float specPower;
 };
 
-struct DirLight
+struct PointLight
 {
-	math::vec<4> ambient, diffuse, specular;
-	math::vec<3> direction;
+	math::vec<3> position;
+	math::vec<4> color;
+	math::scalar inv_attenuation;
 };
+
+struct DirLight {
+	PointLight pl[5];
+};
+
 #pragma pack(pop)
 
 BOOST_AUTO_TEST_SUITE(normal_map)
@@ -116,33 +122,29 @@ BOOST_AUTO_TEST_CASE(basic)
         renderer->get_view_matrix() *
         renderer->get_projection_matrix();
 
-	shader->projection_type.set(2);
-	shader->camera_view_direction.set(camera.get_view_dir());
-	shader->inverse_world_matrix.set(camera.get_inverted_view_matrix());
 	shader->view_world_projection_matrix.set(view_projection_matrix);
 	shader->diffuse_texture.set(material->get_diffuse_texture().get());
 	shader->normal_map_texture.set(material->get_normal_map_texture().get());
 
-	graphic::ShaderParameter<DirLight> dlight(shader.get(), "dir_light_1");
+	D3DXHANDLE tech = shader->get()->GetTechniqueByName("PL2");
+	shader->get()->SetTechnique(tech);
+
+	graphic::ShaderParameter<DirLight> dlight(shader.get(), "point_lights");
 	dlight.init();
 
-	graphic::ShaderParameter<Mtrl> mtrl(shader.get(), "material");
-	mtrl.init();
-
 	DirLight light;
-	light.ambient = math::vec<4>(1, 1, 1, 1);
-	light.diffuse = math::vec<4>(1, 1, 1, 1);
-	light.specular = math::vec<4>(1, 1, 1, 1);
-	light.direction = math::vec<3>(1, 1, 1);
+	light.pl[1].color = math::vec<4>(1, 1, 1, 1);
+	light.pl[1].inv_attenuation = 0.90f;
 	dlight.set(light);
 
-	Mtrl m;
-	mtrl.set(m);
+	light.pl[0].position = math::vec<3>(0, 0, 10);
+	light.pl[0].color = math::vec<4>(1, 1, 1, 1);
+	light.pl[0].inv_attenuation = 1.0f;
+	dlight.set(light);
 
 	for (int i = 0; i < 1000 && window->run_message_loop(); i++)
 	{
-		light.direction = math::vec<3>(cos(math::scalar(i) / 100), 0, sin(math::scalar(i) / 100));
-		light.direction.normalize();
+		light.pl[1].position = math::vec<3>(cos(math::scalar(i) / 100), 0, sin(math::scalar(i) / 100));
 		dlight.set(light);
 
 		renderer->begin_frame();

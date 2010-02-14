@@ -15,10 +15,7 @@ namespace graphic
 
 NormalMapShader::NormalMapShader(boost::shared_ptr<Renderer> renderer_ptr):
 	Shader(renderer_ptr),
-	inverse_world_matrix(this, "inverse_world_matrix"),
 	view_world_projection_matrix(this, "view_world_projection_matrix"),
-	projection_type(this, "projection_type"),
-	camera_view_direction(this, "camera_view_direction"),
 	diffuse_texture(this, "diffuse_texture"),
 	normal_map_texture(this, "normal_map_texture")
 {
@@ -30,10 +27,7 @@ NormalMapShader::~NormalMapShader()
 
 void NormalMapShader::postconstruct()
 {
-	inverse_world_matrix.init();
 	view_world_projection_matrix.init();
-	projection_type.init();
-	camera_view_direction.init();
 	diffuse_texture.init();
 	normal_map_texture.init();
 }
