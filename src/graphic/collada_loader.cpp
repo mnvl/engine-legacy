@@ -1457,34 +1457,21 @@ namespace collada_elements
 		{
 			MaterialPtr material_ptr(new Material(get_model()->get_renderer()));
 
-			std::string const &diffuse_texture = get_surface_filename("diffuse");
-
-			if (diffuse_texture.size())
 			{
-				std::string const &filename = (get_root()->get_basepath() / diffuse_texture).native_file_string();
+				std::string const &diffuse_texture = get_surface_filename("diffuse");
 
-				LOG_DEBUG("texture = " << diffuse_texture << ", filename = " << filename);
-				material_ptr->set_texture(filename);
-			}
-			else
-			{
-				LOG_DEBUG("no texture");
-			}
+				if (diffuse_texture.size())
+				{
+					std::string const &filename = (get_root()->get_basepath() / diffuse_texture).native_file_string();
 
-			// NOT IMPLEMENTED
-			/*
-			std::string const &specular_texture = get_surface_filename("specular");
-
-			if (specular_texture.size())
-			{
-				LOG_DEBUG("specular_texture = " << diffuse_texture);
-				material_ptr->set_specular_map(specular_texture);
+					LOG_DEBUG("diffuse texture = " << diffuse_texture << ", filename = " << filename);
+					material_ptr->set_diffuse_texture(filename);
+				}
+				else
+				{
+					LOG_DEBUG("no diffuse texture");
+				}
 			}
-			else
-			{
-				LOG_DEBUG("no specular_texture");
-			}
-			*/
 
 			return material_ptr;
 		}

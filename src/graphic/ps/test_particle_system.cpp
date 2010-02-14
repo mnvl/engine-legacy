@@ -34,7 +34,7 @@ BOOST_AUTO_TEST_CASE (test_directional_ps)
 	boost::shared_ptr<graphic::ps::DirectionalParticleSystem> ps(new graphic::ps::DirectionalParticleSystem(renderer));
 
 	boost::shared_ptr<graphic::Material> material(new graphic::Material(renderer));
-	material->set_texture(util::get_graphic_sources_path() + "test_particle.png");
+	material->set_diffuse_texture(util::get_graphic_sources_path() + "test_particle.png");
 
 	ps->get_emitter().size_interval = math::interval<>(2, 2);
 	ps->get_emitter().velocity_interval = math::interval<>(10, 20);
@@ -85,7 +85,7 @@ BOOST_AUTO_TEST_CASE (test_cylindrical_ps)
 	boost::shared_ptr<graphic::ps::CylindricalParticleSystem> ps(new graphic::ps::CylindricalParticleSystem(renderer));
 
 	boost::shared_ptr<graphic::Material> material(new graphic::Material(renderer));
-	material->set_texture(util::get_graphic_sources_path() + "test_particle.png");
+	material->set_diffuse_texture(util::get_graphic_sources_path() + "test_particle.png");
 
 	ps->get_emitter().size_interval = math::interval<>(2, 2);
 	ps->get_emitter().velocity_interval = math::interval<>(10, 10);

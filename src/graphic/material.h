@@ -25,43 +25,6 @@ public:
 	Material(boost::shared_ptr<Renderer> const &renderer_ptr = boost::shared_ptr<Renderer>());
 	~Material();
 
-	void set_diffuse(math::vec<4> const &v)
-	{
-		properties_.Specular.r = v.r;
-		properties_.Specular.g = v.g;
-		properties_.Specular.b = v.b;
-		properties_.Specular.a = v.a;
-	}
-
-	void set_ambient(math::vec<4> const &v)
-	{
-		properties_.Ambient.r = v.r;
-		properties_.Ambient.g = v.g;
-		properties_.Ambient.b = v.b;
-		properties_.Ambient.a = v.a;
-	}
-
-	void set_specular(math::vec<4> const &v)
-	{
-		properties_.Specular.r = v.r;
-		properties_.Specular.g = v.g;
-		properties_.Specular.b = v.b;
-		properties_.Specular.a = v.a;
-	}
-
-	void set_emissive(math::vec<4> const &v)
-	{
-		properties_.Specular.r = v.r;
-		properties_.Specular.g = v.g;
-		properties_.Specular.b = v.b;
-		properties_.Specular.a = v.a;
-	}
-
-	void set_power(math::scalar s)
-	{
-		properties_.Power = s;
-	}
-
 	void set_name(std::string const &name)
 	{
 		name_ = name;
@@ -72,12 +35,18 @@ public:
 		return name_;
 	}
 
-	std::string const &get_texture_name() const
+	boost::shared_ptr<Texture> get_diffuse_texture() const
 	{
-		return texture_ptr_->get_filename();
+		return diffuse_texture_ptr_;
 	}
 
-	void set_texture(std::string const &filename);
+	boost::shared_ptr<Texture> get_normal_map_texture() const
+	{
+		return normal_map_texture_ptr_;
+	}
+
+	void set_diffuse_texture(std::string const &filename);
+	void set_normal_map_texture(std::string const &filename);
 
 	void select();
 
@@ -87,9 +56,8 @@ private:
 	std::string name_;
 
 	boost::shared_ptr<Renderer> renderer_ptr_;
-	D3DMATERIAL9 properties_;
-
-	boost::shared_ptr<Texture> texture_ptr_;
+	boost::shared_ptr<Texture> diffuse_texture_ptr_;
+	boost::shared_ptr<Texture> normal_map_texture_ptr_;
 };
 
 }

@@ -101,11 +101,23 @@ void Renderer::reset_state()
 	hr = device_ptr_->SetRenderState(D3DRS_ALPHAREF, 1u);
 	if (FAILED(hr)) throw exception::directx_error(hr);
 
-	hr = device_ptr_->SetRenderState(D3DRS_ALPHATESTENABLE, TRUE); 
+	hr = device_ptr_->SetRenderState(D3DRS_ALPHATESTENABLE, TRUE);
 	if (FAILED(hr)) throw exception::directx_error(hr);
 
 	hr = device_ptr_->SetRenderState(D3DRS_ALPHAFUNC, D3DCMP_GREATEREQUAL);
 	if (FAILED(hr)) throw exception::directx_error(hr);
+
+	{
+		D3DMATERIAL9 material;
+		material.Ambient.r = material.Ambient.g = material.Ambient.b = material.Ambient.a = 1.0f;
+		material.Diffuse = material.Ambient;
+		material.Specular = material.Ambient;
+		material.Emissive = material.Ambient;
+		material.Power = 1.0f;
+
+		hr = device_ptr_->SetMaterial(&material);
+		if (FAILED(hr)) throw exception::directx_error(hr);
+	}
 }
 
 void Renderer::begin_frame()

@@ -82,11 +82,7 @@ void HeightfieldLoader::load_from_raw(math::matrix<4,4> const &tf, size_t nrows,
     }
 
 	LOG_DEBUG("building smooth normals...");
-#if 0
     build_smooth_normals(positions, indices, &normals);
-#else
-    normals.resize(positions.size());
-#endif
 
 	LOG_DEBUG("building mesh...");
 
@@ -102,7 +98,7 @@ void HeightfieldLoader::load_from_raw(math::matrix<4,4> const &tf, size_t nrows,
 	LOG_DEBUG("setting material and texture (" << texture_name << ")...");
     MaterialPtr material_ptr(new Material(renderer_ptr_));
     material_ptr->set_name(texture_name + " material");
-    material_ptr->set_texture(texture_name);
+    material_ptr->set_diffuse_texture(texture_name);
     model_ptr_->materials.push_back(material_ptr);
 
 	LOG_DEBUG("adding triangle lists and joints...");

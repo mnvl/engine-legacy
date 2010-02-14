@@ -19,27 +19,35 @@ namespace graphic
 Material::Material(boost::shared_ptr<Renderer> const &renderer_ptr):
 	renderer_ptr_(renderer_ptr)
 {
-	properties_.Ambient.r = properties_.Ambient.g = properties_.Ambient.b = properties_.Ambient.a = 1.0f;
-	properties_.Diffuse = properties_.Ambient;
-	properties_.Specular = properties_.Ambient;
-	properties_.Emissive = properties_.Ambient;
-	properties_.Power = 1.0f;
 }
 
 Material::~Material()
 {
 }
 
-void Material::set_texture(std::string const &filename)
+void Material::set_diffuse_texture(std::string const &filename)
 {
 	if (renderer_ptr_)
 	{
-		texture_ptr_ = renderer_ptr_->create_texture(filename);
+		diffuse_texture_ptr_ = renderer_ptr_->create_texture(filename);
 	}
 	else
 	{
-		LOG_WARN("material without renderer: set_texture() will create texture without renderer"); 
-		texture_ptr_.reset(new Texture(renderer_ptr_, filename));
+		LOG_WARN("material without renderer: set_diffuse_texture() will create texture without renderer");
+		diffuse_texture_ptr_.reset(new Texture(renderer_ptr_, filename));
+	}
+}
+
+void Material::set_normal_map_texture(std::string const &filename)
+{
+	if (renderer_ptr_)
+	{
+		normal_map_texture_ptr_ = renderer_ptr_->create_texture(filename);
+	}
+	else
+	{
+		LOG_WARN("material without renderer: set_normal_map_texture() will create texture without renderer");
+		normal_map_texture_ptr_.reset(new Texture(renderer_ptr_, filename));
 	}
 }
 
@@ -47,10 +55,10 @@ void Material::select()
 {
 	HRESULT hr;
 
-	hr = renderer_ptr_->get_device()->SetTexture(0, texture_ptr_ ? texture_ptr_->get() : 0);
+	hr = renderer_ptr_->get_device()->SetTexture(0, diffuse_texture_ptr_ ? diffuse_texture_ptr_->get() : 0);
 	if (FAILED(hr)) throw exception::directx_error(hr);
 
-	hr = renderer_ptr_->get_device()->SetMaterial(&properties_);
+	hr = renderer_ptr_->get_device()->SetTexture(1, normal_map_texture_ptr_ ? normal_map_texture_ptr_->get() : 0);
 	if (FAILED(hr)) throw exception::directx_error(hr);
 }
 
@@ -62,7 +70,8 @@ void Material::bind(lua_State *L)
 	[
 		class_<Material, boost::shared_ptr<Material> >("Material")
 		.def(constructor<boost::shared_ptr<Renderer> const &>())
-		.def("set_texture", &Material::set_texture)
+		.def("set_diffuse_texture", &Material::set_diffuse_texture)
+		.def("set_normal_map_texture", &Material::set_normal_map_texture)
 		.def("select", &Material::select)
 	];
 }
