@@ -14,9 +14,9 @@
 #include "font.h"
 #include "renderer.h"
 
-BOOST_AUTO_TEST_SUITE (test_window_resize)
+BOOST_AUTO_TEST_SUITE(window_resize)
 
-BOOST_AUTO_TEST_CASE (test_basic)
+BOOST_AUTO_TEST_CASE(basic)
 {
 	boost::shared_ptr<platform::Window> window(new platform::Window("test_window_resize"));
 	boost::shared_ptr<graphic::Renderer> renderer(new graphic::Renderer(window));
@@ -30,7 +30,7 @@ BOOST_AUTO_TEST_CASE (test_basic)
 	}
 }
 
-BOOST_AUTO_TEST_CASE (test_with_postconstruct)
+BOOST_AUTO_TEST_CASE(with_postconstruct)
 {
 	boost::shared_ptr<platform::Window> window(new platform::Window("test_window_resize"));
 
@@ -46,7 +46,7 @@ BOOST_AUTO_TEST_CASE (test_with_postconstruct)
 	}
 }
 
-BOOST_AUTO_TEST_CASE (test_with_postconstruct_and_vertex_array)
+BOOST_AUTO_TEST_CASE(with_postconstruct_and_vertex_array)
 {
 	boost::shared_ptr<platform::Window> window(new platform::Window("test_window_resize"));
 
@@ -78,7 +78,7 @@ BOOST_AUTO_TEST_CASE (test_with_postconstruct_and_vertex_array)
 	}
 }
 
-BOOST_AUTO_TEST_CASE (test_with_postconstruct_and_index_array)
+BOOST_AUTO_TEST_CASE(with_postconstruct_and_index_array)
 {
 	boost::shared_ptr<platform::Window> window(new platform::Window("test_window_resize"));
 
@@ -110,7 +110,7 @@ BOOST_AUTO_TEST_CASE (test_with_postconstruct_and_index_array)
 	}
 }
 
-BOOST_AUTO_TEST_CASE (test_with_postconstruct_and_texture)
+BOOST_AUTO_TEST_CASE(with_postconstruct_and_texture)
 {
 	boost::shared_ptr<platform::Window> window(new platform::Window("test_window_resize"));
 
@@ -136,7 +136,7 @@ BOOST_AUTO_TEST_CASE (test_with_postconstruct_and_texture)
 	}
 }
 
-BOOST_AUTO_TEST_CASE (test_with_postconstruct_and_font)
+BOOST_AUTO_TEST_CASE(with_postconstruct_and_font)
 {
 	boost::shared_ptr<platform::Window> window(new platform::Window("test_window_resize"));
 

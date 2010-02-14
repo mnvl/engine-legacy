@@ -31,9 +31,9 @@ struct Fixture
 
 }
 
-BOOST_AUTO_TEST_SUITE (test_collada_loader)
+BOOST_AUTO_TEST_SUITE(collada_loader)
 
-BOOST_AUTO_TEST_CASE (test_plane)
+BOOST_AUTO_TEST_CASE(plane)
 {
 	Fixture fixture;
 
@@ -66,7 +66,7 @@ BOOST_AUTO_TEST_CASE (test_plane)
     BOOST_ASSERT (mesh_ptr->get_index_buffer()[5] == 3);
 }
 
-BOOST_AUTO_TEST_CASE (test_joint)
+BOOST_AUTO_TEST_CASE(joint)
 {
 	Fixture fixture;
 
@@ -102,7 +102,7 @@ BOOST_AUTO_TEST_CASE (test_joint)
     BOOST_ASSERT (abs(vertices2[0].position.y - 1.0f) < 0.1f);
 }
 
-BOOST_AUTO_TEST_CASE (test_animation)
+BOOST_AUTO_TEST_CASE(animation)
 {
 	Fixture fixture;
 
@@ -148,7 +148,7 @@ BOOST_AUTO_TEST_CASE (test_animation)
     BOOST_ASSERT((vertices2[3].position - math::vec<3>(2.0f, 0.0f, -0.3f)).length_sq() < 0.1f);
 }
 
-BOOST_AUTO_TEST_CASE (test_materials)
+BOOST_AUTO_TEST_CASE(materials)
 {
 	Fixture fixture;
 
