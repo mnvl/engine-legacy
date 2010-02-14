@@ -30,6 +30,15 @@ struct vertex_pnt
 	math::vec<2> texcoords;
 };
 
+struct vertex_ptbnt
+{
+	math::vec<3> position;
+	math::vec<3> tangent;
+	math::vec<3> binormal;
+	math::vec<3> normal;
+	math::vec<2> texcoords;
+};
+
 struct vertex_pnjwt
 {
 	math::vec<3> position;
@@ -51,6 +60,12 @@ struct vertex_traits<vertex_pt>
 
 template<>
 struct vertex_traits<vertex_pnt>
+{
+	static D3DVERTEXELEMENT9 *get_descr();
+};
+
+template<>
+struct vertex_traits<vertex_ptbnt>
 {
 	static D3DVERTEXELEMENT9 *get_descr();
 };

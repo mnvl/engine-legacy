@@ -89,6 +89,7 @@ protected:
 
 typedef VertexArray<vertex_pt> VertexArrayPT;
 typedef VertexArray<vertex_pnt> VertexArrayPNT;
+typedef VertexArray<vertex_ptbnt> VertexArrayPTBNT;
 typedef VertexArray<vertex_pnjwt> VertexArrayPNJWT;
 
 void bind_vertex_array(lua_State *L);

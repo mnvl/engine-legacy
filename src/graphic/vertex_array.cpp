@@ -89,38 +89,21 @@ void VertexBuffer::handle_reset_device()
 	unlock();
 }
 
-template<>
-IDirect3DVertexDeclaration9 *VertexArrayPT::get_vertex_decl() const
+template<class T>
+IDirect3DVertexDeclaration9 *VertexArray<T>::get_vertex_decl() const
 {
-	return renderer_->get_shared_resources()->get_vertex_decl<vertex_pt>();
+	return renderer_->get_shared_resources()->get_vertex_decl<T>();
 }
 
-template<>
-size_t VertexArrayPT::get_vertex_size() const {
-	return sizeof(vertex_pt);
+template<class T>
+size_t VertexArray<T>::get_vertex_size() const {
+	return sizeof(T);
 }
 
-template<>
-IDirect3DVertexDeclaration9 *VertexArrayPNT::get_vertex_decl() const
-{
-	return renderer_->get_shared_resources()->get_vertex_decl<vertex_pnt>();
-}
-
-template<>
-size_t VertexArrayPNT::get_vertex_size() const {
-	return sizeof(vertex_pnt);
-}
-
-template<>
-IDirect3DVertexDeclaration9 *VertexArrayPNJWT::get_vertex_decl() const
-{
-	return renderer_->get_shared_resources()->get_vertex_decl<vertex_pnjwt>();
-}
-
-template<>
-size_t VertexArrayPNJWT::get_vertex_size() const {
-	return sizeof(vertex_pnjwt);
-}
+template class VertexArray<vertex_pt>;
+template class VertexArray<vertex_pnt>;
+template class VertexArray<vertex_ptbnt>;
+template class VertexArray<vertex_pnjwt>;
 
 void bind_vertex_array(lua_State *L)
 {

@@ -41,6 +41,13 @@ SharedResources::SharedResources(Renderer * const renderer_ptr):
 
     {
         IDirect3DVertexDeclaration9 *decl_ptr;
+        HRESULT hr = renderer_ptr_->get_device()->CreateVertexDeclaration(vertex_traits<vertex_ptbnt>::get_descr(), &decl_ptr);
+        if (FAILED(hr)) throw exception::directx_error(hr);
+        ptbnt_decl_.reset(decl_ptr);
+    }
+
+    {
+        IDirect3DVertexDeclaration9 *decl_ptr;
         HRESULT hr = renderer_ptr_->get_device()->CreateVertexDeclaration(vertex_traits<vertex_pnjwt>::get_descr(), &decl_ptr);
         if (FAILED(hr)) throw exception::directx_error(hr);
         pnjwt_decl_.reset(decl_ptr);

@@ -79,6 +79,61 @@ D3DVERTEXELEMENT9 *vertex_traits<vertex_pnt>::get_descr()
 	return descr;
 }
 
+D3DVERTEXELEMENT9 *vertex_traits<vertex_ptbnt>::get_descr()
+{
+	static D3DVERTEXELEMENT9 descr[] = {
+		{
+			0,
+			offsetof(vertex_ptbnt, position),
+			D3DDECLTYPE_FLOAT3,
+			D3DDECLMETHOD_DEFAULT,
+			D3DDECLUSAGE_POSITION,
+			0
+		},
+
+		{
+			0,
+			offsetof(vertex_ptbnt, tangent),
+			D3DDECLTYPE_FLOAT3,
+			D3DDECLMETHOD_DEFAULT,
+			D3DDECLUSAGE_TANGENT,
+			0
+		},
+
+		{
+			0,
+			offsetof(vertex_ptbnt, normal),
+			D3DDECLTYPE_FLOAT3,
+			D3DDECLMETHOD_DEFAULT,
+			D3DDECLUSAGE_NORMAL,
+			0
+		},
+
+
+		{
+			0,
+			offsetof(vertex_ptbnt, binormal),
+			D3DDECLTYPE_FLOAT3,
+			D3DDECLMETHOD_DEFAULT,
+			D3DDECLUSAGE_BINORMAL,
+			0
+		},
+
+		{
+			0,
+			offsetof(vertex_ptbnt, texcoords),
+			D3DDECLTYPE_FLOAT2,
+			D3DDECLMETHOD_DEFAULT,
+			D3DDECLUSAGE_TEXCOORD,
+			0
+		},
+
+		D3DDECL_END()
+	};
+
+	return descr;
+}
+
 D3DVERTEXELEMENT9 *vertex_traits<vertex_pnjwt>::get_descr()
 {
 	static D3DVERTEXELEMENT9 descr[] = {

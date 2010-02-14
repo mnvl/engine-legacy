@@ -39,6 +39,12 @@ public:
     }
 
     template<>
+    IDirect3DVertexDeclaration9 *get_vertex_decl<vertex_ptbnt>() const
+    {
+        return ptbnt_decl_.get();
+    }
+
+    template<>
     IDirect3DVertexDeclaration9 *get_vertex_decl<vertex_pnt>() const
     {
         return pnt_decl_.get();
@@ -59,6 +65,7 @@ private:
 
     boost::intrusive_ptr<IDirect3DVertexDeclaration9> pt_decl_;
     boost::intrusive_ptr<IDirect3DVertexDeclaration9> pnt_decl_;
+    boost::intrusive_ptr<IDirect3DVertexDeclaration9> ptbnt_decl_;
     boost::intrusive_ptr<IDirect3DVertexDeclaration9> pnjwt_decl_;
 
 	boost::weak_ptr<Font> default_font_;
