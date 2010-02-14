@@ -9,57 +9,23 @@
 // prior written consent of Manvel Avetisian.
 //-----------------------------------------------------------------------------
 
+#include <d3dx9.h>
 #include <boost/intrusive_ptr.hpp>
-#include <util/logger.h>
+#include <boost/shared_ptr.hpp>
 #include <util/boost_com_intrusive_ptr.h>
-#include <exception/directx_error.h>
-#include <graphic/renderer.h>
 
 namespace graphic
 {
 
+class Renderer;
+
 class Shader {
 public:
-    Shader(boost::shared_ptr<Renderer> const &renderer_ptr):
-        renderer_ptr_(renderer_ptr)
-    {
-    }
+    Shader(boost::shared_ptr<Renderer> const &renderer_ptr);
+	virtual ~Shader();
 
-    void load_from_file(std::string const &filename)
-    {
-        HRESULT hr;
-
-        LOG_INFO("loading shader from file " << filename);
-
-        ID3DXEffect *effect_ptr;
-        ID3DXBuffer *compilation_errors_ptr;
-        hr = D3DXCreateEffectFromFile(renderer_ptr_->get_device(), filename.c_str(), 0, 0, D3DXSHADER_DEBUG, 0,
-            &effect_ptr, &compilation_errors_ptr);
-
-		log_compilation_errors(compilation_errors_ptr);
-
-        if (FAILED(hr)) throw exception::directx_error(hr);
-
-        effect_ptr_.reset(effect_ptr);
-    }
-
-    void load_from_buffer(char const *buffer, size_t len)
-    {
-        HRESULT hr;
-
-        LOG_INFO("loading shader from buffer");
-
-        ID3DXEffect *effect_ptr;
-        ID3DXBuffer *compilation_errors_ptr;
-        hr = D3DXCreateEffect(renderer_ptr_->get_device(), buffer, len, 0, 0, D3DXSHADER_DEBUG, 0,
-            &effect_ptr, &compilation_errors_ptr);
-
-		log_compilation_errors(compilation_errors_ptr);
-
-        if (FAILED(hr)) throw exception::directx_error(hr);
-
-        effect_ptr_.reset(effect_ptr);
-    }
+    void load_from_file(std::string const &filename);
+    void load_from_buffer(char const *buffer, size_t len);
 
     ID3DXEffect *get() const
     {
@@ -70,15 +36,7 @@ private:
 	boost::shared_ptr<Renderer> const renderer_ptr_;
     boost::intrusive_ptr<ID3DXEffect> effect_ptr_;
 
-	static void log_compilation_errors(ID3DXBuffer *compilation_errors_ptr)
-	{
-		if (compilation_errors_ptr && compilation_errors_ptr->GetBufferSize() > 0)
-        {
-            LOG_WARN("compilation messages:" << std::string((char const *) compilation_errors_ptr->GetBufferPointer(),
-				compilation_errors_ptr->GetBufferSize()));
-            compilation_errors_ptr->Release();
-        }
-	}
+	static void log_compilation_errors(ID3DXBuffer *compilation_errors_ptr);
 };
 
 }
