@@ -12,6 +12,7 @@
 #include <platform/window.h>
 #include <util/get_sources_path.h>
 #include "material.h"
+#include "normal_map_shader.h"
 #include "renderer.h"
 
 BOOST_AUTO_TEST_SUITE(normal_map)
@@ -27,26 +28,26 @@ BOOST_AUTO_TEST_CASE(basic)
 	renderer->reset_state();
 
 	boost::shared_ptr<graphic::Material> material(new graphic::Material(renderer));
-	material->set_diffuse_texture(src + "test_white.png");
-	material->set_normal_map_texture(src + "test_particle.png");
+	material->set_diffuse_texture(src + "test_gray.png");
+	material->set_normal_map_texture(src + "test_normal_map.jpeg");
 
 	boost::shared_ptr<graphic::VertexArrayPTBNT> vertex_array = renderer->create_vertex_array<graphic::vertex_ptbnt>(6);
 
 	{
 		graphic::vertex_ptbnt *v = vertex_array->lock(true);
 
+		v->position  .set(0, 1, 0);
+		v->tangent   .set(1, 0, 0);
+		v->binormal  .set(0, 1, 0);
+		v->normal    .set(0, 0, 1);
+		v->texcoords .set(0, 1);
+		++v;
+
 		v->position  .set(0, 0, 0);
 		v->tangent   .set(1, 0, 0);
 		v->binormal  .set(0, 1, 0);
 		v->normal    .set(0, 0, 1);
 		v->texcoords .set(0, 0);
-		++v;
-
-		v->position  .set(1, 1, 0);
-		v->tangent   .set(1, 0, 0);
-		v->binormal  .set(0, 1, 0);
-		v->normal    .set(0, 0, 1);
-		v->texcoords .set(1, 1);
 		++v;
 
 		v->position  .set(1, 0, 0);
@@ -56,33 +57,70 @@ BOOST_AUTO_TEST_CASE(basic)
 		v->texcoords .set(1, 0);
 		++v;
 
-		v[0] = v[-3];
+		v[0] = v[-1];
 		++v;
 
-		v->position  .set(0, 1, 0);
+		v->position  .set(1, 1, 0);
 		v->tangent   .set(1, 0, 0);
 		v->binormal  .set(0, 1, 0);
 		v->normal    .set(0, 0, 1);
-		v->texcoords .set(0, 1);
+		v->texcoords .set(1, 1);
 		++v;
 
-		v[0] = v[-4];
+
+		v[0] = v[-5];
 
 		vertex_array->unlock();
 	}
+
+	boost::shared_ptr<graphic::NormalMapShader> shader(new graphic::NormalMapShader(renderer));
+	shader->load_from_file(src + "normal_map.fx");
 
 	graphic::Camera camera;
 	camera.set_orthographic_projection(1, math::scalar(renderer->get_screen_height()) / renderer->get_screen_width(), 0, 2);
 	camera.set_eye_lookat_up(math::vec<3>(0, 0, 1), math::vec<3>(0.5f, 0.5f, 0), math::vec<3>(0, 1, 0));
 
+	{
+		math::matrix<4,4> tf;
+		tf.identity();
+		renderer->set_world_matrix(tf);
+	}
+
+	math::matrix<4,4> view_projection_matrix =
+        renderer->get_world_matrix() *
+        renderer->get_view_matrix() *
+        renderer->get_projection_matrix();
+
+	shader->inverse_world_matrix.set(camera.get_inverted_view_matrix());
+	shader->view_world_projection_matrix.set(view_projection_matrix);
+	shader->camera_view_direction.set(camera.get_view_dir());
+	shader->diffuse_texture.set(material->get_diffuse_texture().get());
+	shader->normal_map_texture.set(material->get_normal_map_texture().get());
+
 	for (int i = 0; i < 1000 && window->run_message_loop(); i++)
 	{
-		renderer->disable_all_tests();
-
 		renderer->begin_frame();
 		renderer->set_camera(camera);
 		material->select();
-		renderer->draw_triangles(vertex_array.get(), 6);
+
+		UINT passes_count;
+		HRESULT hr = shader->get()->Begin(&passes_count, D3DXFX_DONOTSAVESTATE);
+		if (FAILED(hr)) throw exception::directx_error(hr);
+
+		for(UINT pass = 0; pass < passes_count; pass++)
+		{
+			hr = shader->get()->BeginPass(pass);
+			if (FAILED(hr)) throw exception::directx_error(hr);
+
+			renderer->draw_triangles(vertex_array.get(), 6);
+
+			hr = shader->get()->EndPass();
+			if (FAILED(hr)) throw exception::directx_error(hr);
+		}
+
+		hr = shader->get()->End();
+		if (FAILED(hr)) throw exception::directx_error(hr);
+
 		renderer->finish_frame();
 	}
 }

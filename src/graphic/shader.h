@@ -27,6 +27,8 @@ public:
     void load_from_file(std::string const &filename);
     void load_from_buffer(char const *buffer, size_t len);
 
+	virtual void postconstruct();
+
     ID3DXEffect *get() const
     {
         return effect_ptr_.get();

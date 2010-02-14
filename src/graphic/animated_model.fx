@@ -24,12 +24,12 @@ struct VS_OUTPUT
 VS_OUTPUT VS(const VS_INPUT i)
 {
     VS_OUTPUT o;
-    
+
     float3 position = { 0, 0, 0 };
 
     int indices1[4] = (int[4]) i.joints1;
     float weights1[4] = (float[4]) i.weights1;
-    
+
     for (int index1 = 0; index1 < 4; index1++)
     {
         position += mul(float4(i.position.xyz, 1.0), joint_matrix_array[indices1[index1]]) * weights1[index1];
