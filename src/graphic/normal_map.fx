@@ -29,7 +29,7 @@ uniform extern texture  diffuse_texture;
 uniform extern texture  normal_map_texture;
 
 uniform extern Material material;
-uniform extern DirLight light1;
+uniform extern DirLight dir_light_1;
 
 sampler TexS = sampler_state
 {
@@ -94,7 +94,7 @@ VS_OUTPUT NormalMapVS(
 	}
 
 	// Transform light direction to tangent space.
-	float3 lightDirL = mul(float4(gLight.dirW, 0.0f), inverse_world_matrix).xyz;
+	float3 lightDirL = mul(float4(dir_light_1.dirW, 0.0f), inverse_world_matrix).xyz;
 	o.lightDirT  = mul(lightDirL, toTangentSpace);
 
 	// Transform to homogeneous clip space.
@@ -130,7 +130,7 @@ float4 NormalMapPS(float3 toEyeT    : TEXCOORD0,
 	float3 r = reflect(-lightVecT, normalT);
 	
 	// Determine how much (if any) specular light makes it into the eye.
-	float t  = pow(saturate(dot(r, toEyeT)), gMtrl.specPower);
+	float t  = pow(saturate(dot(r, toEyeT)), material.specPower);
 	
 	// Determine the diffuse light intensity that strikes the vertex.
 	float s = saturate(dot(lightVecT, normalT));
@@ -142,9 +142,9 @@ float4 NormalMapPS(float3 toEyeT    : TEXCOORD0,
 	     t = 0.0f;
 	
 	// Compute the ambient, diffuse and specular terms separatly. 
-	float3 spec = t*(gMtrl.spec*gLight.spec).rgb;
-	float3 diffuse = s*(gMtrl.diffuse*gLight.diffuse).rgb;
-	float3 ambient = gMtrl.ambient*gLight.ambient;
+	float3 spec = t*(material.spec*dir_light_1.spec).rgb;
+	float3 diffuse = s*(material.diffuse*dir_light_1.diffuse).rgb;
+	float3 ambient = material.ambient*dir_light_1.ambient;
 	
 	// Get the texture color.
 	float4 texColor = tex2D(TexS, tex0);
@@ -153,7 +153,7 @@ float4 NormalMapPS(float3 toEyeT    : TEXCOORD0,
 	float3 color = (ambient + diffuse)*texColor.rgb + spec;
 	
 	// Output the color and the alpha.
-    return float4(color, gMtrl.diffuse.a*texColor.a);
+    return float4(color, material.diffuse.a*texColor.a);
 }
 
 technique NormalMapTech

@@ -11,8 +11,8 @@
 
 #include <math/vec.h>
 #include <math/matrix.h>
-#include "shader.h"
 #include "texture.h"
+#include "shader.h"
 
 namespace graphic
 {
@@ -32,7 +32,11 @@ public:
 	{
 	}
 
-	inline void set(T const &value);
+	inline void set(T const &value)
+	{
+		HRESULT hr = shader_->get()->SetValue(handle_, &value, sizeof(value));
+		if (FAILED(hr)) throw exception::directx_error(hr);
+	}
 
 	void init()
 	{
@@ -45,18 +49,6 @@ private:
 	std::string const name_;
 	D3DXHANDLE handle_;
 };
-
-void ShaderParameter<int>::set(int const &value)
-{
-	HRESULT hr = shader_->get()->SetValue(handle_, &value, sizeof(value));
-	if (FAILED(hr)) throw exception::directx_error(hr);
-}
-
-void ShaderParameter<math::vec<3> >::set(math::vec<3> const &value)
-{
-	HRESULT hr = shader_->get()->SetValue(handle_, value.i, sizeof(value));
-	if (FAILED(hr)) throw exception::directx_error(hr);
-}
 
 void ShaderParameter<math::matrix<4,4> >::set(math::matrix<4,4> const &value)
 {

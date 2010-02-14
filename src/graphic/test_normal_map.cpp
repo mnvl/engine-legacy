@@ -15,6 +15,30 @@
 #include "normal_map_shader.h"
 #include "renderer.h"
 
+const D3DXCOLOR WHITE(1.0f, 1.0f, 1.0f, 1.0f);
+
+#pragma pack(push, 1)
+struct Mtrl
+{
+	Mtrl()
+		:ambient(WHITE), diffuse(WHITE), spec(WHITE), specPower(8.0f){}
+	Mtrl(const D3DXCOLOR& a, const D3DXCOLOR& d, 
+		const D3DXCOLOR& s, float power)
+		:ambient(a), diffuse(d), spec(s), specPower(power){}
+
+	D3DXCOLOR ambient;
+	D3DXCOLOR diffuse;
+	D3DXCOLOR spec;
+	float specPower;
+};
+
+struct DirLight
+{
+	math::vec<4> ambient, diffuse, specular;
+	math::vec<3> direction;
+};
+#pragma pack(pop)
+
 BOOST_AUTO_TEST_SUITE(normal_map)
 
 BOOST_AUTO_TEST_CASE(basic)
@@ -96,6 +120,22 @@ BOOST_AUTO_TEST_CASE(basic)
 	shader->camera_view_direction.set(camera.get_view_dir());
 	shader->diffuse_texture.set(material->get_diffuse_texture().get());
 	shader->normal_map_texture.set(material->get_normal_map_texture().get());
+
+	graphic::ShaderParameter<DirLight> dlight(shader.get(), "dir_light_1");
+	dlight.init();
+
+	graphic::ShaderParameter<Mtrl> mtrl(shader.get(), "material");
+	mtrl.init();
+
+	DirLight light;
+	light.ambient = math::vec<4>(1, 1, 1, 1);
+	light.diffuse = math::vec<4>(1, 1, 1, 1);
+	light.specular = math::vec<4>(1, 1, 1, 1);
+	light.direction = math::vec<3>(1, 1, 1);
+	dlight.set(light);
+
+	Mtrl m;
+	mtrl.set(m);
 
 	for (int i = 0; i < 1000 && window->run_message_loop(); i++)
 	{
