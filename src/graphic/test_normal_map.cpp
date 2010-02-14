@@ -72,8 +72,8 @@ BOOST_AUTO_TEST_CASE(basic)
 	}
 
 	graphic::Camera camera;
-	camera.set_perspective_projection(math::PI / 2, renderer->get_screen_width() / renderer->get_screen_height(), 0, 2);
-	camera.set_translation_rotation(math::vec<3>(0, 0, 1), math::vec<3>(math::PI / 3, 0, math::PI / 6));
+	camera.set_orthographic_projection(1, math::scalar(renderer->get_screen_height()) / renderer->get_screen_width(), 0, 2);
+	camera.set_eye_lookat_up(math::vec<3>(0, 0, 1), math::vec<3>(0.5f, 0.5f, 0), math::vec<3>(0, 1, 0));
 
 	for (int i = 0; i < 1000 && window->run_message_loop(); i++)
 	{
