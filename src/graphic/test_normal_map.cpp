@@ -103,6 +103,7 @@ BOOST_AUTO_TEST_CASE(basic)
 	graphic::Camera camera;
 	camera.set_orthographic_projection(1, math::scalar(renderer->get_screen_height()) / renderer->get_screen_width(), 0, 2);
 	camera.set_eye_lookat_up(math::vec<3>(0, 0, 1), math::vec<3>(0.5f, 0.5f, 0), math::vec<3>(0, 1, 0));
+	renderer->set_camera(camera);
 
 	{
 		math::matrix<4,4> tf;
@@ -115,9 +116,10 @@ BOOST_AUTO_TEST_CASE(basic)
         renderer->get_view_matrix() *
         renderer->get_projection_matrix();
 
+	shader->projection_type.set(2);
+	shader->camera_view_direction.set(camera.get_view_dir());
 	shader->inverse_world_matrix.set(camera.get_inverted_view_matrix());
 	shader->view_world_projection_matrix.set(view_projection_matrix);
-	shader->camera_view_direction.set(camera.get_view_dir());
 	shader->diffuse_texture.set(material->get_diffuse_texture().get());
 	shader->normal_map_texture.set(material->get_normal_map_texture().get());
 
@@ -139,6 +141,10 @@ BOOST_AUTO_TEST_CASE(basic)
 
 	for (int i = 0; i < 1000 && window->run_message_loop(); i++)
 	{
+		light.direction = math::vec<3>(cos(math::scalar(i) / 100), 0, sin(math::scalar(i) / 100));
+		light.direction.normalize();
+		dlight.set(light);
+
 		renderer->begin_frame();
 		renderer->set_camera(camera);
 		material->select();

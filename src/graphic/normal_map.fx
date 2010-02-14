@@ -53,6 +53,15 @@ sampler NormalMapS = sampler_state
     AddressV  = WRAP;
 };
 
+struct VS_INPUT
+{
+	float3 position  : POSITION0;
+	float3 tangent   : TANGENT0;
+	float3 binormal  : BINORMAL0;
+	float3 normal    : NORMAL0;
+	float2 texcoords : TEXCOORD0;
+};
+
 struct VS_OUTPUT
 {
     float4 posH      : POSITION0;
@@ -61,19 +70,14 @@ struct VS_OUTPUT
     float2 tex0      : TEXCOORD2;
 };
 
-VS_OUTPUT NormalMapVS(
-	float3 posL      : POSITION0,
-	float3 tangentL  : TANGENT0,
-	float3 binormalL : BINORMAL0,
-	float3 normalL   : NORMAL0,
-	float2 tex0      : TEXCOORD0)
+VS_OUTPUT NormalMapVS(const VS_INPUT i)
 {
 	VS_OUTPUT o;
 
 	float3x3 TBN;
-	TBN[0] = tangentL;
-	TBN[1] = binormalL;
-	TBN[2] = normalL;
+	TBN[0] = i.tangent;
+	TBN[1] = i.binormal;
+	TBN[2] = i.normal;
 
 	// Matrix transforms from object space to tangent space.
 	float3x3 toTangentSpace = transpose(TBN);
@@ -84,7 +88,7 @@ VS_OUTPUT NormalMapVS(
 		float3 eyePosL = mul(float4(eye_position, 1.0f), inverse_world_matrix);
 
 		// Transform to-eye vector to tangent space.
-		float3 toEyeL = eyePosL - posL;
+		float3 toEyeL = eyePosL - i.position;
 		o.toEyeT = mul(toEyeL, toTangentSpace);
 	}
 
@@ -98,10 +102,10 @@ VS_OUTPUT NormalMapVS(
 	o.lightDirT  = mul(lightDirL, toTangentSpace);
 
 	// Transform to homogeneous clip space.
-	o.posH = mul(float4(posL, 1.0f), view_world_projection_matrix);
+	o.posH = mul(float4(i.position, 1.0f), view_world_projection_matrix);
 
 	// Pass on texture coordinates to be interpolated in rasterization.
-	o.tex0 = tex0;
+	o.tex0 = i.texcoords;
 
     return o;
 }
@@ -153,7 +157,7 @@ float4 NormalMapPS(float3 toEyeT    : TEXCOORD0,
 	float3 color = (ambient + diffuse)*texColor.rgb + spec;
 	
 	// Output the color and the alpha.
-    return float4(color, material.diffuse.a*texColor.a);
+	return float4(color, material.diffuse.a*texColor.a);
 }
 
 technique NormalMapTech
