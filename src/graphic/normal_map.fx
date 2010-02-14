@@ -74,13 +74,7 @@ VS_OUTPUT NormalMapVS(const VS_INPUT i)
 {
 	VS_OUTPUT o;
 
-	float3x3 TBN;
-	TBN[0] = i.tangent;
-	TBN[1] = i.binormal;
-	TBN[2] = i.normal;
-
-	// Matrix transforms from object space to tangent space.
-	float3x3 toTangentSpace = transpose(TBN);
+	float3x3 world_to_tangent = transpose(float3x3(i.tangent, i.binormal, i.normal));
 
 	if (projection_type == PROJECTION_PERSPECTIVE)
 	{
@@ -89,17 +83,17 @@ VS_OUTPUT NormalMapVS(const VS_INPUT i)
 
 		// Transform to-eye vector to tangent space.
 		float3 toEyeL = eyePosL - i.position;
-		o.toEyeT = mul(toEyeL, toTangentSpace);
+		o.toEyeT = mul(toEyeL, world_to_tangent);
 	}
 
 	if (projection_type == PROJECTION_ORTHO)
 	{
-		o.toEyeT = mul(camera_view_direction, toTangentSpace);
+		o.toEyeT = mul(camera_view_direction, world_to_tangent);
 	}
 
 	// Transform light direction to tangent space.
 	float3 lightDirL = mul(float4(dir_light_1.dirW, 0.0f), inverse_world_matrix).xyz;
-	o.lightDirT  = mul(lightDirL, toTangentSpace);
+	o.lightDirT  = mul(lightDirL, world_to_tangent);
 
 	// Transform to homogeneous clip space.
 	o.posH = mul(float4(i.position, 1.0f), view_world_projection_matrix);
