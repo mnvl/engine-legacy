@@ -101,9 +101,6 @@ void AnimatedMesh::draw(Joint *joint_ptr)
 
     hr = shader_->get()->End();
     if (FAILED(hr)) throw exception::directx_error(hr);
-
-    hr = device_ptr->SetVertexShader(0);
-    if (FAILED(hr)) throw exception::directx_error(hr);
 }
 
 }

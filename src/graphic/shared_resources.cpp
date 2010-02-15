@@ -9,11 +9,11 @@
 //-----------------------------------------------------------------------------
 
 #include <exception/directx_error.h>
-#include <graphic/font.h>
-#include <graphic/material.h>
-#include <graphic/shader.h>
-#include <graphic/renderer.h>
-#include <graphic/shared_resources.h>
+#include "font.h"
+#include "material.h"
+#include "shader.h"
+#include "renderer.h"
+#include "shared_resources.h"
 
 namespace graphic
 {
@@ -80,12 +80,12 @@ boost::shared_ptr<Material> SharedResources::get_default_material()
 	return material;
 }
 
-boost::shared_ptr<Shader> SharedResources::get_animated_model_shader()
+boost::shared_ptr<shader::Shader> SharedResources::get_animated_model_shader()
 {
-	boost::shared_ptr<Shader> shader = animated_model_shader_ptr_.lock();
+	boost::shared_ptr<shader::Shader> shader = animated_model_shader_ptr_.lock();
 	if (shader) return shader;
 
-	shader.reset(new Shader(renderer_ptr_->shared_from_this()));
+	shader.reset(new shader::Shader(renderer_ptr_->shared_from_this()));
     shader->load_from_buffer(ANIMATED_MODEL_FX, sizeof(ANIMATED_MODEL_FX));
 
 	animated_model_shader_ptr_ = shader;

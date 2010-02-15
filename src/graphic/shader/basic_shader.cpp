@@ -32,7 +32,6 @@ void BasicShader::postconstruct()
 	world_view_projection_matrix.postconstruct(this);
 	world_matrix.postconstruct(this);
 	diffuse_texture.postconstruct(this);
-	normal_map_texture.postconstruct(this);
 }
 
 }

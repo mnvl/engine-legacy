@@ -20,6 +20,9 @@ namespace shader
 class BasicShader: public virtual Shader
 {
 public:
+	BasicShader(boost::shared_ptr<Renderer> renderer_ptr);
+	~BasicShader();
+
 	parameter::float4x4 world_view_projection_matrix;
 	parameter::float4x4 world_matrix;
 	parameter::texture diffuse_texture;

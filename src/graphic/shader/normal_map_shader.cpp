@@ -16,8 +16,8 @@ namespace shader
 {
 
 NormalMapShader::NormalMapShader(boost::shared_ptr<Renderer> renderer_ptr):
-	BasicShader(renderer_ptr),
-	normal_map_texture(this, "normal_map_texture")
+	Shader(renderer_ptr),
+	normal_map_texture("normal_map_texture")
 {
 }
 
@@ -27,8 +27,7 @@ NormalMapShader::~NormalMapShader()
 
 void NormalMapShader::postconstruct()
 {
-	BasicShader::postconstruct();
-	normal_map_texture.postconstruct(ths);
+	normal_map_texture.postconstruct(this);
 }
 
 }

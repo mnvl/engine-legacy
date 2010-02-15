@@ -12,7 +12,7 @@
 #include <platform/window.h>
 #include <util/get_sources_path.h>
 #include "material.h"
-#include "normal_map_shader.h"
+#include "shader/static_model_shader.h"
 #include "renderer.h"
 
 const D3DXCOLOR WHITE(1.0f, 1.0f, 1.0f, 1.0f);
@@ -102,8 +102,8 @@ BOOST_AUTO_TEST_CASE(basic)
 		vertex_array->unlock();
 	}
 
-	boost::shared_ptr<graphic::NormalMapShader> shader(new graphic::NormalMapShader(renderer));
-	shader->load_from_file(src + "static_model_normal_map.fx");
+	boost::shared_ptr<graphic::shader::StaticModelShader> shader(new graphic::shader::StaticModelShader(renderer));
+	shader->load_from_file(src + "shader/static_model.fx");
 
 	graphic::Camera camera;
 	camera.set_orthographic_projection(2, 2 * math::scalar(renderer->get_screen_height()) / renderer->get_screen_width(), 0, 2);
@@ -123,28 +123,23 @@ BOOST_AUTO_TEST_CASE(basic)
 
 	shader->world_view_projection_matrix.set(world_view_projection_matrix);
 	shader->world_matrix.set(renderer->get_world_matrix());
-	shader->diffuse_texture.set(material->get_diffuse_texture().get());
-	shader->normal_map_texture.set(material->get_normal_map_texture().get());
+	shader->diffuse_texture.set(material->get_diffuse_texture());
+	shader->normal_map_texture.set(material->get_normal_map_texture());
 
-	graphic::ShaderParameter<DirLight> dlight(shader.get(), "point_lights");
-	dlight.init();
-
-	DirLight light;
+	graphic::shader::PointLightShader::POINT_LIGHTS light;
 	memset(&light, 0, sizeof(light));
 
-	light.pl[1].color = math::vec<4>(1, 1, 1, 1);
-	light.pl[1].inv_attenuation = 0.90f;
-	dlight.set(light);
+	light.items[0].position = math::vec<3>(0, 0, 10);
+	light.items[0].color = math::vec<4>(1, 1, 1, 1);
+	light.items[0].inv_attenuation = 1.0f;
 
-	light.pl[0].position = math::vec<3>(0, 0, 10);
-	light.pl[0].color = math::vec<4>(1, 1, 1, 1);
-	light.pl[0].inv_attenuation = 1.0f;
-	dlight.set(light);
+	light.items[1].color = math::vec<4>(1, 1, 1, 1);
+	light.items[1].inv_attenuation = 0.90f;
 
 	for (int i = 0; i < 1000 && window->run_message_loop(); i++)
 	{
-		light.pl[1].position = math::vec<3>(cos(math::scalar(i) / 100) + 0.5f, 0, sin(math::scalar(i) / 100) + 0.5f);
-		dlight.set(light);
+		light.items[1].position = math::vec<3>(cos(math::scalar(i) / 100) + 0.5f, 0, sin(math::scalar(i) / 100) + 0.5f);
+		shader->point_lights.set(light);
 
 		renderer->begin_frame();
 		renderer->set_camera(camera);

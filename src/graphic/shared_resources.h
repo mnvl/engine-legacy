@@ -14,15 +14,15 @@
 #include <boost/weak_ptr.hpp>
 #include <boost/intrusive_ptr.hpp>
 #include <util/boost_com_intrusive_ptr.h>
-#include <graphic/vertex.h>
+#include "vertex.h"
 
 namespace graphic
 {
 
 class Font;
+namespace shader { class Shader; }
 class Material;
 class Renderer;
-class Shader;
 
 class SharedResources {
 public:
@@ -58,7 +58,7 @@ public:
 
 	boost::shared_ptr<Font> get_default_font();
 	boost::shared_ptr<Material> get_default_material();
-	boost::shared_ptr<Shader> get_animated_model_shader();
+	boost::shared_ptr<shader::Shader> get_animated_model_shader();
 
 private:
 	Renderer * const renderer_ptr_;
@@ -70,7 +70,7 @@ private:
 
 	boost::weak_ptr<Font> default_font_;
 	boost::weak_ptr<Material> default_material_;
-    boost::weak_ptr<Shader> animated_model_shader_ptr_;
+	boost::weak_ptr<shader::Shader> animated_model_shader_ptr_;
 };
 
 }

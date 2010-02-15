@@ -40,7 +40,7 @@ public:
 		if (!handle_) throw std::logic_error("can't get " + name_ + " parameter handle");
 	}
 
-private:
+protected:
 	Shader *shader_;
 	std::string const name_;
 	D3DXHANDLE handle_;

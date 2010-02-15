@@ -26,7 +26,7 @@ public:
     virtual void draw(Joint *joint_ptr);
 
 private:
-	boost::shared_ptr<Shader> shader_;
+	boost::shared_ptr<shader::Shader> shader_;
 };
 
 }

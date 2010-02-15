@@ -51,10 +51,10 @@ void Parameter<boost::shared_ptr<Texture> >::set(boost::shared_ptr<Texture> cons
 namespace parameter
 {
 
-typedef ShaderParameter<int> integer;
-typedef ShaderParameter<math::vec<3> > float3;
-typedef ShaderParameter<math::matrix<4,4> > float4x4;
-typedef ShaderParameter<Texture *> texture;
+typedef Parameter<int> integer;
+typedef Parameter<math::vec<3> > float3;
+typedef Parameter<math::matrix<4,4> > float4x4;
+typedef Parameter<boost::shared_ptr<Texture> > texture;
 
 }
 

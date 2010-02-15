@@ -9,14 +9,15 @@
 // prior written consent of Manvel Avetisian.
 //-----------------------------------------------------------------------------
 
-#include "basic_shader.h"
+#include "parameter.h"
+#include "shader.h"
 
 namespace graphic
 {
 namespace shader
 {
 
-class NormalMapShader: public BasicShader
+class NormalMapShader: public virtual Shader
 {
 public:
 	NormalMapShader(boost::shared_ptr<Renderer> renderer_ptr);
