@@ -1,6 +1,4 @@
 
-#include "point_light.fx"
-
 uniform extern texture  normal_map_texture;
 
 sampler NORMAL_MAP_SAMPLER = sampler_state
@@ -15,7 +13,7 @@ sampler NORMAL_MAP_SAMPLER = sampler_state
 
 float3 GetNormalMapNormal(const float2 texcoords, const float3 tangent, const float3 binormal, const float3 normal)
 {
-	float3 normal_tangent = normalize(2.0f * tex2D(NORMAL_MAP_SAMPLER, i.texcoords) - 1.0f);
+	float3 normal_tangent = normalize(2.0f * tex2D(NORMAL_MAP_SAMPLER, texcoords) - 1.0f);
     float3 normal_world = mul(normal_tangent, float3x3(tangent, binormal, normal));
 	return normal_world;
 }
