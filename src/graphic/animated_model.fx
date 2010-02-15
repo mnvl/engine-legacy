@@ -1,58 +1,101 @@
 
-static const int MAX_MATRICES = 54;
-
 float4x4 view_projection_matrix : VIEWPROJECTION;
-float4x4 joint_matrix_array[MAX_MATRICES] : WORLDMATRIXARRAY;
+float4x4 view_matrix : VIEW;
+
+#include "skeletal_animation.fx"
 
 struct VS_INPUT
 {
-    float3 position : POSITION;
-    float3 normal : NORMAL;
-    int4 joints1 : BLENDINDICES0;
-    int4 joints2 : BLENDINDICES1;
-    float4 weights1 : BLENDWEIGHT0;
-    float4 weights2 : BLENDWEIGHT1;
+    float3 position  : POSITION;
+    float3 normal    : NORMAL;
+    int4 joints1     : BLENDINDICES0;
+    int4 joints2     : BLENDINDICES1;
+    float4 weights1  : BLENDWEIGHT0;
+    float4 weights2  : BLENDWEIGHT1;
     float2 texcoords : TEXCOORD0;
 };
 
 struct VS_OUTPUT
 {
-    float4  position : POSITION;
-    float2  texcoords : TEXCOORD0;
+    float4 position  : POSITION;
+	float3 normal    : NORMAL;
+    float2 texcoords : TEXCOORD0;
 };
 
-VS_OUTPUT VS(const VS_INPUT i)
+VS_OUTPUT VS(uniform const int count1, uniform const int count2, const VS_INPUT i)
 {
     VS_OUTPUT o;
 
-    float3 position = { 0, 0, 0 };
+	float3 position = ApplySkeletalAnimationToPosition(i.position, count1, i.joints1, i.weights1, count2, i.joints2, i.weights2);
+	float3 normal = ApplySkeletalAnimationToVector(i.normal, count1, i.joints1, i.weights1, count2, i.joints2, i.weights2);
 
-    int indices1[4] = (int[4]) i.joints1;
-    float weights1[4] = (float[4]) i.weights1;
-
-    for (int index1 = 0; index1 < 4; index1++)
-    {
-        position += mul(float4(i.position.xyz, 1.0), joint_matrix_array[indices1[index1]]) * weights1[index1];
-    }
-
-    int indices2[4] = (int[4]) i.joints2;
-    float weights2[4] = (float[4]) i.weights2;
-
-    for (int index2 = 0; index2 < 4; index2++)
-    {
-        position += mul(float4(i.position.xyz, 1.0), joint_matrix_array[indices2[index2]]) * weights2[index2];
-    }
-
-    o.position = mul(float4(position.xyz, 1.0), view_projection_matrix);
-    o.texcoords  = i.texcoords.xy;
+    o.position = mul(float4(position, 1.0f), view_projection_matrix);
+    o.normal = mul(normal, view_matrix);
+    o.texcoords  = i.texcoords;
 
     return o;
 }
 
-technique t0
+technique AnimatedModel_J1
 {
     pass p0
     {
-        VertexShader = compile vs_2_0 VS();
+        VertexShader = compile vs_2_0 VS(1, 0);
+    }
+}
+
+technique AnimatedModel_J2
+{
+    pass p0
+    {
+        VertexShader = compile vs_2_0 VS(2, 0);
+    }
+}
+
+technique AnimatedModel_J3
+{
+    pass p0
+    {
+        VertexShader = compile vs_2_0 VS(3, 0);
+    }
+}
+
+technique AnimatedModel_J4
+{
+    pass p0
+    {
+        VertexShader = compile vs_2_0 VS(4, 0);
+    }
+}
+
+technique AnimatedModel_J5
+{
+    pass p0
+    {
+        VertexShader = compile vs_2_0 VS(4, 1);
+    }
+}
+
+technique AnimatedModel_J6
+{
+    pass p0
+    {
+        VertexShader = compile vs_2_0 VS(4, 2);
+    }
+}
+
+technique AnimatedModel_J7
+{
+    pass p0
+    {
+        VertexShader = compile vs_2_0 VS(4, 3);
+    }
+}
+
+technique AnimatedModel_J8
+{
+    pass p0
+    {
+        VertexShader = compile vs_2_0 VS(4, 4);
     }
 }
