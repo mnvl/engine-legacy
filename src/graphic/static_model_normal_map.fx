@@ -2,8 +2,8 @@
 #include "point_light.fx"
 #include "normal_map.fx"
 
-float4x4 view_projection_matrix : VIEWPROJECTION;
-float4x4 view_matrix : VIEW;
+float4x4 world_view_projection_matrix : VIEWPROJECTION;
+uniform extern float4x4 world_matrix : WORLD;
 
 uniform extern texture diffuse_texture;
 
@@ -35,12 +35,12 @@ VS_OUTPUT VS(const VS_INPUT i)
 {
     VS_OUTPUT o;
 
-    o.position_h = mul(float4(i.position, 1.0f), view_projection_matrix);
+    o.position_h = mul(float4(i.position, 1.0f), world_view_projection_matrix);
     o.texcoords  = i.texcoords;
-	o.position   = mul(float4(i.position, 1.0f), view_matrix);
-    o.tangent    = mul(i.tangent,  view_matrix);
-    o.binormal   = mul(i.binormal, view_matrix);
-    o.normal     = mul(i.normal,   view_matrix);
+	o.position   = mul(float4(i.position, 1.0f), world_matrix);
+    o.tangent    = mul(i.tangent,  world_matrix);
+    o.binormal   = mul(i.binormal, world_matrix);
+    o.normal     = mul(i.normal,   world_matrix);
 
     return o;
 }

@@ -3,8 +3,8 @@
 #include "point_light.fx"
 #include "normal_map.fx"
 
-float4x4 view_projection_matrix : VIEWPROJECTION;
-float4x4 view_matrix : VIEW;
+float4x4 world_view_projection_matrix : VIEWPROJECTION;
+float4x4 world_matrix : WORLD;
 
 uniform extern texture diffuse_texture;
 
@@ -44,19 +44,19 @@ VS_OUTPUT VS(uniform const int count, const VS_INPUT i)
 	const float weights[8] = { i.weights1, i.weights2 };
 
 	float3 position = ApplySkeletalAnimationToPosition(i.position, count, joints, weights);
-    o.position_h = mul(float4(position, 1.0f), view_projection_matrix);
+    o.position_h = mul(float4(position, 1.0f), world_view_projection_matrix);
 
     o.texcoords  = i.texcoords;
 	o.position = position;
 
 	float3 binormal = ApplySkeletalAnimationToVector(i.binormal, count, joints, weights);
-    o.binormal = mul(binormal, view_matrix);
+    o.binormal = mul(binormal, world_matrix);
 
 	float3 tangent = ApplySkeletalAnimationToVector(i.tangent,  count, joints, weights);
-    o.tangent = mul(tangent, view_matrix);
+    o.tangent = mul(tangent, world_matrix);
 
 	float3 normal = ApplySkeletalAnimationToVector(i.normal,   count, joints, weights);
-    o.normal = mul(normal, view_matrix);
+    o.normal = mul(normal, world_matrix);
 
     return o;
 }

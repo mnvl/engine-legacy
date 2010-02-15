@@ -15,7 +15,8 @@ namespace graphic
 
 NormalMapShader::NormalMapShader(boost::shared_ptr<Renderer> renderer_ptr):
 	Shader(renderer_ptr),
-	view_world_projection_matrix(this, "view_world_projection_matrix"),
+	world_view_projection_matrix(this, "world_view_projection_matrix"),
+	world_matrix(this, "world_matrix"),
 	diffuse_texture(this, "diffuse_texture"),
 	normal_map_texture(this, "normal_map_texture")
 {
@@ -27,7 +28,8 @@ NormalMapShader::~NormalMapShader()
 
 void NormalMapShader::postconstruct()
 {
-	view_world_projection_matrix.init();
+	world_view_projection_matrix.init();
+	world_matrix.init();
 	diffuse_texture.init();
 	normal_map_texture.init();
 }

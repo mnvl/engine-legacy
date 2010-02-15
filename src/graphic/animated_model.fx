@@ -2,8 +2,8 @@
 #include "skeletal_animation.fx"
 #include "point_light.fx"
 
-float4x4 view_projection_matrix : VIEWPROJECTION;
-float4x4 view_matrix : VIEW;
+float4x4 world_view_projection_matrix : VIEWPROJECTION;
+float4x4 world_matrix : WORLD;
 
 uniform extern texture diffuse_texture;
 
@@ -41,10 +41,10 @@ VS_OUTPUT VS(uniform const int count, const VS_INPUT i)
 	float3 position = ApplySkeletalAnimationToPosition(i.position, count, joints, weights);
 	float3 normal = ApplySkeletalAnimationToVector(i.normal, count, joints, weights);
 
-    o.position_h = mul(float4(position, 1.0f), view_projection_matrix);
+    o.position_h = mul(float4(position, 1.0f), world_view_projection_matrix);
     o.texcoords  = i.texcoords;
 	o.position   = position;
-    o.normal     = mul(normal, view_matrix);
+    o.normal     = mul(normal, world_matrix);
 
     return o;
 }

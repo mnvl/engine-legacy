@@ -97,18 +97,17 @@ BOOST_AUTO_TEST_CASE(basic)
 		v->texcoords .set(1, 1);
 		++v;
 
-
 		v[0] = v[-5];
 
 		vertex_array->unlock();
 	}
 
 	boost::shared_ptr<graphic::NormalMapShader> shader(new graphic::NormalMapShader(renderer));
-	shader->load_from_file(src + "normal_map.fx");
+	shader->load_from_file(src + "static_model_normal_map.fx");
 
 	graphic::Camera camera;
-	camera.set_orthographic_projection(1, math::scalar(renderer->get_screen_height()) / renderer->get_screen_width(), 0, 2);
-	camera.set_eye_lookat_up(math::vec<3>(0, 0, 1), math::vec<3>(0.5f, 0.5f, 0), math::vec<3>(0, 1, 0));
+	camera.set_orthographic_projection(2, 2 * math::scalar(renderer->get_screen_height()) / renderer->get_screen_width(), 0, 2);
+	camera.set_eye_lookat_up(math::vec<3>(0.5f, 0.5f, 1), math::vec<3>(0.5f, 0.5f, 0), math::vec<3>(0, 1, 0));
 	renderer->set_camera(camera);
 
 	{
@@ -117,22 +116,22 @@ BOOST_AUTO_TEST_CASE(basic)
 		renderer->set_world_matrix(tf);
 	}
 
-	math::matrix<4,4> view_projection_matrix =
-        renderer->get_world_matrix() *
-        renderer->get_view_matrix() *
-        renderer->get_projection_matrix();
+	math::matrix<4,4> world_view_projection_matrix =
+		renderer->get_world_matrix()
+		* renderer->get_view_matrix()
+		* renderer->get_projection_matrix();
 
-	shader->view_world_projection_matrix.set(view_projection_matrix);
+	shader->world_view_projection_matrix.set(world_view_projection_matrix);
+	shader->world_matrix.set(renderer->get_world_matrix());
 	shader->diffuse_texture.set(material->get_diffuse_texture().get());
 	shader->normal_map_texture.set(material->get_normal_map_texture().get());
-
-	D3DXHANDLE tech = shader->get()->GetTechniqueByName("PL2");
-	shader->get()->SetTechnique(tech);
 
 	graphic::ShaderParameter<DirLight> dlight(shader.get(), "point_lights");
 	dlight.init();
 
 	DirLight light;
+	memset(&light, 0, sizeof(light));
+
 	light.pl[1].color = math::vec<4>(1, 1, 1, 1);
 	light.pl[1].inv_attenuation = 0.90f;
 	dlight.set(light);
@@ -144,7 +143,7 @@ BOOST_AUTO_TEST_CASE(basic)
 
 	for (int i = 0; i < 1000 && window->run_message_loop(); i++)
 	{
-		light.pl[1].position = math::vec<3>(cos(math::scalar(i) / 100), 0, sin(math::scalar(i) / 100));
+		light.pl[1].position = math::vec<3>(cos(math::scalar(i) / 100) + 0.5f, 0, sin(math::scalar(i) / 100) + 0.5f);
 		dlight.set(light);
 
 		renderer->begin_frame();
