@@ -32,6 +32,9 @@ void StaticModelShader::postconstruct()
 	BasicShader::postconstruct();
 	PointLightShader::postconstruct();
 	NormalMapShader::postconstruct();
+
+	basic_tech.reset(new Technique(this, "BASIC_TECH"));
+	normal_map_tech.reset(new Technique(this, "NORMAL_MAP_TECH"));
 }
 
 }

@@ -18,10 +18,6 @@
 namespace graphic
 {
 
-static char ANIMATED_MODEL_FX[] = {
-    #include "animated_model.fx.h"
-};
-
 SharedResources::SharedResources(Renderer * const renderer_ptr):
     renderer_ptr_(renderer_ptr)
 {
@@ -82,6 +78,8 @@ boost::shared_ptr<Material> SharedResources::get_default_material()
 
 boost::shared_ptr<shader::Shader> SharedResources::get_animated_model_shader()
 {
+	// TODO:
+#if 0
 	boost::shared_ptr<shader::Shader> shader = animated_model_shader_ptr_.lock();
 	if (shader) return shader;
 
@@ -91,6 +89,9 @@ boost::shared_ptr<shader::Shader> SharedResources::get_animated_model_shader()
 	animated_model_shader_ptr_ = shader;
 
 	return shader;
+#endif
+
+	return boost::shared_ptr<shader::Shader>();
 }
 
 }

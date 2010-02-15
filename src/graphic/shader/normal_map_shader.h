@@ -9,6 +9,7 @@
 // prior written consent of Manvel Avetisian.
 //-----------------------------------------------------------------------------
 
+#include <boost/scoped_ptr.hpp>
 #include "parameter.h"
 #include "shader.h"
 
@@ -23,7 +24,7 @@ public:
 	NormalMapShader(boost::shared_ptr<Renderer> renderer_ptr);
 	~NormalMapShader();
 
-	boost::shared_ptr<parameter::texture> normal_map_texture;
+	boost::scoped_ptr<parameter::texture> normal_map_texture;
 
 	virtual void postconstruct();
 };

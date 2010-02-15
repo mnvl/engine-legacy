@@ -9,6 +9,8 @@
 // prior written consent of Manvel Avetisian.
 //-----------------------------------------------------------------------------
 
+#include <boost/scoped_ptr.hpp>
+#include "technique.h"
 #include "basic_shader.h"
 #include "point_light_shader.h"
 #include "normal_map_shader.h"
@@ -23,6 +25,9 @@ class StaticModelShader: public BasicShader, public PointLightShader, public Nor
 public:
 	StaticModelShader(boost::shared_ptr<Renderer> renderer_ptr);
 	~StaticModelShader();
+
+	boost::scoped_ptr<Technique> basic_tech;
+	boost::scoped_ptr<Technique> normal_map_tech;
 
 	virtual void postconstruct();
 };

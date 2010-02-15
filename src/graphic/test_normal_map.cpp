@@ -125,6 +125,7 @@ BOOST_AUTO_TEST_CASE(basic)
 	shader->world_matrix->set(renderer->get_world_matrix());
 	shader->diffuse_texture->set(material->get_diffuse_texture());
 	shader->normal_map_texture->set(material->get_normal_map_texture());
+	shader->normal_map_tech->set();
 
 	graphic::shader::PointLightShader::POINT_LIGHTS light;
 	memset(&light, 0, sizeof(light));
@@ -136,17 +137,32 @@ BOOST_AUTO_TEST_CASE(basic)
 	light.items[1].color = math::vec<4>(1, 1, 1, 1);
 	light.items[1].inv_attenuation = 0.90f;
 
+#pragma pack(push, 1)
+	struct POINT_VERTEX
+	{
+		math::vec<3> position;
+		math::vec<4> color;
+	};
+#pragma pack(pop)
+
+	POINT_VERTEX point;
+	point.color.set(1.0f, 1.0f, 0, 1.0f);
+
+	HRESULT hr;
+
 	for (int i = 0; i < 1000 && window->run_message_loop(); i++)
 	{
-		light.items[1].position = math::vec<3>(cos(math::scalar(i) / 100) + 0.5f, 0, sin(math::scalar(i) / 100) + 0.5f);
+		point.position.set(cos(math::scalar(i) / 100) * 0.5f + 0.5f, 0.5f, sin(math::scalar(i) / 100) * 0.5f);
+		light.items[1].position = point.position;
 		shader->point_lights->set(light);
 
 		renderer->begin_frame();
 		renderer->set_camera(camera);
+
 		material->select();
 
 		UINT passes_count;
-		HRESULT hr = shader->get()->Begin(&passes_count, D3DXFX_DONOTSAVESTATE);
+		hr = shader->get()->Begin(&passes_count, 0);
 		if (FAILED(hr)) throw exception::directx_error(hr);
 
 		for(UINT pass = 0; pass < passes_count; pass++)
@@ -161,6 +177,16 @@ BOOST_AUTO_TEST_CASE(basic)
 		}
 
 		hr = shader->get()->End();
+		if (FAILED(hr)) throw exception::directx_error(hr);
+
+		hr = renderer->get_device()->SetFVF(D3DFVF_XYZ|D3DFVF_DIFFUSE);
+		if (FAILED(hr)) throw exception::directx_error(hr);
+
+		float point_size = 32.0f;
+		hr = renderer->get_device()->SetRenderState(D3DRS_POINTSIZE, *((DWORD*) &point_size));
+		if (FAILED(hr)) throw exception::directx_error(hr);
+
+		hr = renderer->get_device()->DrawPrimitiveUP(D3DPT_POINTLIST, 1, &point, sizeof(POINT_VERTEX));
 		if (FAILED(hr)) throw exception::directx_error(hr);
 
 		renderer->finish_frame();

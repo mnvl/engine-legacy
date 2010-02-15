@@ -85,7 +85,7 @@ float4 PS_NormalMap(uniform const int point_lights_count, const VS_OUTPUT_NORMAL
 	return color * tex2D(DIFFUSE_TEXTURE_SAMPLER, i.texcoords);
 }
 
-technique StaticModel_PointLights5
+technique BASIC_TECH
 {
     pass p0
     {
@@ -94,12 +94,12 @@ technique StaticModel_PointLights5
     }
 }
 
-technique StaticModel_PointLights5_NormalMap
+technique NORMAL_MAP_TECH
 {
     pass p0
     {
         VertexShader = compile vs_2_0 VS_NormalMap();
-		PixelShader = compile ps_2_0 PS(5);
+		PixelShader = compile ps_2_0 PS_NormalMap(5);
     }
 }
 
