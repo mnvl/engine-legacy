@@ -121,10 +121,10 @@ BOOST_AUTO_TEST_CASE(basic)
 		* renderer->get_view_matrix()
 		* renderer->get_projection_matrix();
 
-	shader->world_view_projection_matrix.set(world_view_projection_matrix);
-	shader->world_matrix.set(renderer->get_world_matrix());
-	shader->diffuse_texture.set(material->get_diffuse_texture());
-	shader->normal_map_texture.set(material->get_normal_map_texture());
+	shader->world_view_projection_matrix->set(world_view_projection_matrix);
+	shader->world_matrix->set(renderer->get_world_matrix());
+	shader->diffuse_texture->set(material->get_diffuse_texture());
+	shader->normal_map_texture->set(material->get_normal_map_texture());
 
 	graphic::shader::PointLightShader::POINT_LIGHTS light;
 	memset(&light, 0, sizeof(light));
@@ -139,7 +139,7 @@ BOOST_AUTO_TEST_CASE(basic)
 	for (int i = 0; i < 1000 && window->run_message_loop(); i++)
 	{
 		light.items[1].position = math::vec<3>(cos(math::scalar(i) / 100) + 0.5f, 0, sin(math::scalar(i) / 100) + 0.5f);
-		shader->point_lights.set(light);
+		shader->point_lights->set(light);
 
 		renderer->begin_frame();
 		renderer->set_camera(camera);

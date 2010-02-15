@@ -24,8 +24,8 @@ template<class T>
 class Parameter: public BasicParameter
 {
 public:
-	Parameter(std::string const &name):
-		BasicParameter(name)
+	Parameter(Shader *shader, std::string const &name):
+		BasicParameter(shader, name)
 	{
 	}
 

@@ -16,10 +16,7 @@ namespace shader
 {
 
 BasicShader::BasicShader(boost::shared_ptr<Renderer> renderer_ptr):
-	Shader(renderer_ptr),
-	world_view_projection_matrix("world_view_projection_matrix"),
-	world_matrix("world_matrix"),
-	diffuse_texture("diffuse_texture")
+	Shader(renderer_ptr)
 {
 }
 
@@ -29,9 +26,9 @@ BasicShader::~BasicShader()
 
 void BasicShader::postconstruct()
 {
-	world_view_projection_matrix.postconstruct(this);
-	world_matrix.postconstruct(this);
-	diffuse_texture.postconstruct(this);
+	world_view_projection_matrix.reset(new parameter::float4x4(this, "world_view_projection_matrix"));
+	world_matrix.reset(new parameter::float4x4(this, "world_matrix"));
+	diffuse_texture.reset(new parameter::texture(this, "diffuse_texture"));
 }
 
 }

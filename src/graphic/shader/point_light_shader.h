@@ -9,6 +9,7 @@
 // prior written consent of Manvel Avetisian.
 //-----------------------------------------------------------------------------
 
+#include <boost/scoped_ptr.hpp>
 #include <math/vec.h>
 #include "parameter.h"
 #include "shader.h"
@@ -37,10 +38,12 @@ public:
 	};
 #pragma pack(pop)
 
+	typedef Parameter<POINT_LIGHTS> point_lights_parameter;
+
 	PointLightShader(boost::shared_ptr<Renderer> renderer_ptr);
 	~PointLightShader();
 
-	Parameter<POINT_LIGHTS> point_lights;
+	boost::scoped_ptr<point_lights_parameter> point_lights;
 
 	virtual void postconstruct();
 };

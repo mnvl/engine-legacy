@@ -23,7 +23,7 @@ public:
 	NormalMapShader(boost::shared_ptr<Renderer> renderer_ptr);
 	~NormalMapShader();
 
-	parameter::texture normal_map_texture;
+	boost::shared_ptr<parameter::texture> normal_map_texture;
 
 	virtual void postconstruct();
 };

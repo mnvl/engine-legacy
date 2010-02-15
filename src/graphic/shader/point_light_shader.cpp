@@ -16,8 +16,7 @@ namespace shader
 {
 
 PointLightShader::PointLightShader(boost::shared_ptr<Renderer> renderer_ptr):
-	Shader(renderer_ptr),
-	point_lights("point_lights")
+	Shader(renderer_ptr)
 {
 }
 
@@ -27,7 +26,7 @@ PointLightShader::~PointLightShader()
 
 void PointLightShader::postconstruct()
 {
-	point_lights.postconstruct(this);
+	point_lights.reset(new point_lights_parameter(this, "point_lights"));
 }
 
 }

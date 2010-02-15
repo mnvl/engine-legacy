@@ -21,23 +21,17 @@ namespace shader
 class BasicParameter
 {
 public:
-	BasicParameter(std::string const &name):
-		shader_(0),
+	BasicParameter(Shader *shader, std::string const &name):
+		shader_(shader),
 		name_(name),
 		handle_(0)
 	{
+		handle_ = shader_->get()->GetParameterByName(0, name_.c_str());
+		if (!handle_) throw std::logic_error("can't get " + name_ + " parameter handle");
 	}
 
 	~BasicParameter()
 	{
-	}
-
-	void postconstruct(Shader *shader)
-	{
-		shader_ = shader;
-
-		handle_ = shader_->get()->GetParameterByName(0, name_.c_str());
-		if (!handle_) throw std::logic_error("can't get " + name_ + " parameter handle");
 	}
 
 protected:
