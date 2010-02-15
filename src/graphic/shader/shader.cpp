@@ -15,6 +15,8 @@
 
 namespace graphic
 {
+namespace shader
+{
 
 Shader::Shader(boost::shared_ptr<Renderer> const &renderer_ptr):
 	renderer_ptr_(renderer_ptr)
@@ -80,3 +82,5 @@ void Shader::log_compilation_errors(ID3DXBuffer *compilation_errors_ptr)
 }
 
 }
+}
+

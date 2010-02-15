@@ -55,13 +55,13 @@ public:
 	IDirect3DDevice9 *get_device() const { return device_ptr_.get(); }
     SharedResources *get_shared_resources() const { return shared_resources_.get(); }
 
+    void set_world_matrix(math::matrix<4,4> const &tf);
 	void set_camera(Camera const &camera); // stores copy of camera
+
+	math::matrix<4,4> const &get_world_matrix() const { return world_matrix_; }
 	Camera const &get_camera() const { return camera_; }
 	math::matrix<4,4> const &get_view_matrix() const { return camera_.get_view_matrix(); }
 	math::matrix<4,4> const &get_projection_matrix() const { return camera_.get_projection_matrix(); }
-
-    void set_world_matrix(math::matrix<4,4> const &tf);
-	math::matrix<4,4> const &get_world_matrix() const { return world_matrix_; }
 
 	boost::shared_ptr<Texture> create_texture(std::string const &filename)
 	{

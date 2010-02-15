@@ -9,24 +9,42 @@
 // prior written consent of Manvel Avetisian.
 //-----------------------------------------------------------------------------
 
+#include <math/vec.h>
+#include <math/matrix.h>
 #include "shader.h"
-#include "shader_parameter.h"
 
 namespace graphic
 {
+namespace shader
+{
 
-class NormalMapShader: public Shader
+class BasicParameter
 {
 public:
-	NormalMapShader(boost::shared_ptr<Renderer> renderer_ptr);
-	~NormalMapShader();
+	BasicParameter(std::string const &name):
+		shader_(0),
+		name_(name),
+		handle_(0)
+	{
+	}
 
-	shader_parameter::float4x4 world_view_projection_matrix;
-	shader_parameter::float4x4 world_matrix;
-	shader_parameter::texture diffuse_texture;
-	shader_parameter::texture normal_map_texture;
+	~BasicParameter()
+	{
+	}
 
-	virtual void postconstruct();
+	void postconstruct(Shader *shader)
+	{
+		shader_ = shader;
+
+		handle_ = shader_->get()->GetParameterByName(0, name_.c_str());
+		if (!handle_) throw std::logic_error("can't get " + name_ + " parameter handle");
+	}
+
+private:
+	Shader *shader_;
+	std::string const name_;
+	D3DXHANDLE handle_;
 };
 
+}
 }

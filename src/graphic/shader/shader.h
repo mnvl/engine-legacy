@@ -19,6 +19,9 @@ namespace graphic
 
 class Renderer;
 
+namespace shader
+{
+
 class Shader {
 public:
     Shader(boost::shared_ptr<Renderer> const &renderer_ptr);
@@ -41,4 +44,5 @@ private:
 	static void log_compilation_errors(ID3DXBuffer *compilation_errors_ptr);
 };
 
+}
 }
