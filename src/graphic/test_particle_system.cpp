@@ -12,10 +12,10 @@
 #include <platform/timer.h>
 #include <platform/window.h>
 #include <util/get_sources_path.h>
-#include <graphic/material.h>
-#include <graphic/renderer.h>
-#include "directional_particle_system.h"
-#include "cylindrical_particle_system.h"
+#include "material.h"
+#include "renderer.h"
+#include "ps/directional_particle_system.h"
+#include "ps/cylindrical_particle_system.h"
 
 BOOST_AUTO_TEST_SUITE (test_particle_system)
 
