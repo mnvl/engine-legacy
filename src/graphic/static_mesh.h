@@ -22,7 +22,7 @@ namespace graphic
 
 class StaticModel;
 
-template<class V = vertex_pnt>
+template<class V = VERTEX_PNT>
 class BasicStaticMesh: public Mesh {
 public:
 	typedef V vertex_t;
@@ -61,6 +61,6 @@ protected:
 };
 
 typedef BasicStaticMesh<> StaticMesh;
-typedef BasicStaticMesh<vertex_pnjwt> PnjwtStaticMesh;
+typedef BasicStaticMesh<VERTEX_PNJWT> PnjwtStaticMesh;
 
 }

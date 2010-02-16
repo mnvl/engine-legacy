@@ -120,13 +120,13 @@ void BasicStaticMesh<T>::set_normals(math::vec<3> const *buffer)
 }
 
 template<>
-void BasicStaticMesh<vertex_pnt>::set_joint_indices(math::vec<8, unsigned> const *buffer)
+void BasicStaticMesh<VERTEX_PNT>::set_joint_indices(math::vec<8, unsigned> const *buffer)
 {
     // not supported
 }
 
 template<>
-void BasicStaticMesh<vertex_pnjwt>::set_joint_indices(math::vec<8, unsigned> const *buffer)
+void BasicStaticMesh<VERTEX_PNJWT>::set_joint_indices(math::vec<8, unsigned> const *buffer)
 {
     vertex_t *p = vertex_buffer_->begin();
 
@@ -137,13 +137,13 @@ void BasicStaticMesh<vertex_pnjwt>::set_joint_indices(math::vec<8, unsigned> con
 }
 
 template<>
-void BasicStaticMesh<vertex_pnt>::set_joint_weights(math::vec<8> const *buffer)
+void BasicStaticMesh<VERTEX_PNT>::set_joint_weights(math::vec<8> const *buffer)
 {
     // not supported
 }
 
 template<>
-void BasicStaticMesh<vertex_pnjwt>::set_joint_weights(math::vec<8> const *buffer)
+void BasicStaticMesh<VERTEX_PNJWT>::set_joint_weights(math::vec<8> const *buffer)
 {
     vertex_t *p = vertex_buffer_->begin();
 

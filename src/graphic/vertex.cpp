@@ -16,12 +16,12 @@
 namespace graphic
 {
 
-D3DVERTEXELEMENT9 *vertex_traits<vertex_pt>::get_descr()
+D3DVERTEXELEMENT9 *vertex_traits<VERTEX_PT>::get_descr()
 {
 	static D3DVERTEXELEMENT9 descr[] = {
 		{
 			0,
-			offsetof(vertex_pt, position),
+			offsetof(VERTEX_PT, position),
 			D3DDECLTYPE_FLOAT3,
 			D3DDECLMETHOD_DEFAULT,
 			D3DDECLUSAGE_POSITION,
@@ -30,7 +30,7 @@ D3DVERTEXELEMENT9 *vertex_traits<vertex_pt>::get_descr()
 
 		{
 			0,
-			offsetof(vertex_pt, texcoords),
+			offsetof(VERTEX_PT, texcoords),
 			D3DDECLTYPE_FLOAT2,
 			D3DDECLMETHOD_DEFAULT,
 			D3DDECLUSAGE_TEXCOORD,
@@ -43,12 +43,12 @@ D3DVERTEXELEMENT9 *vertex_traits<vertex_pt>::get_descr()
 	return descr;
 }
 
-D3DVERTEXELEMENT9 *vertex_traits<vertex_pnt>::get_descr()
+D3DVERTEXELEMENT9 *vertex_traits<VERTEX_PNT>::get_descr()
 {
 	static D3DVERTEXELEMENT9 descr[] = {
 		{
 			0,
-			offsetof(vertex_pnt, position),
+			offsetof(VERTEX_PNT, position),
 			D3DDECLTYPE_FLOAT3,
 			D3DDECLMETHOD_DEFAULT,
 			D3DDECLUSAGE_POSITION,
@@ -57,7 +57,7 @@ D3DVERTEXELEMENT9 *vertex_traits<vertex_pnt>::get_descr()
 
 		{
 			0,
-			offsetof(vertex_pnt, normal),
+			offsetof(VERTEX_PNT, normal),
 			D3DDECLTYPE_FLOAT3,
 			D3DDECLMETHOD_DEFAULT,
 			D3DDECLUSAGE_NORMAL,
@@ -66,7 +66,7 @@ D3DVERTEXELEMENT9 *vertex_traits<vertex_pnt>::get_descr()
 
 		{
 			0,
-			offsetof(vertex_pnt, texcoords),
+			offsetof(VERTEX_PNT, texcoords),
 			D3DDECLTYPE_FLOAT2,
 			D3DDECLMETHOD_DEFAULT,
 			D3DDECLUSAGE_TEXCOORD,
@@ -79,12 +79,12 @@ D3DVERTEXELEMENT9 *vertex_traits<vertex_pnt>::get_descr()
 	return descr;
 }
 
-D3DVERTEXELEMENT9 *vertex_traits<vertex_ptbnt>::get_descr()
+D3DVERTEXELEMENT9 *vertex_traits<VERTEX_PTBNT>::get_descr()
 {
 	static D3DVERTEXELEMENT9 descr[] = {
 		{
 			0,
-			offsetof(vertex_ptbnt, position),
+			offsetof(VERTEX_PTBNT, position),
 			D3DDECLTYPE_FLOAT3,
 			D3DDECLMETHOD_DEFAULT,
 			D3DDECLUSAGE_POSITION,
@@ -93,7 +93,7 @@ D3DVERTEXELEMENT9 *vertex_traits<vertex_ptbnt>::get_descr()
 
 		{
 			0,
-			offsetof(vertex_ptbnt, tangent),
+			offsetof(VERTEX_PTBNT, tangent),
 			D3DDECLTYPE_FLOAT3,
 			D3DDECLMETHOD_DEFAULT,
 			D3DDECLUSAGE_TANGENT,
@@ -102,7 +102,7 @@ D3DVERTEXELEMENT9 *vertex_traits<vertex_ptbnt>::get_descr()
 
 		{
 			0,
-			offsetof(vertex_ptbnt, normal),
+			offsetof(VERTEX_PTBNT, normal),
 			D3DDECLTYPE_FLOAT3,
 			D3DDECLMETHOD_DEFAULT,
 			D3DDECLUSAGE_NORMAL,
@@ -112,7 +112,7 @@ D3DVERTEXELEMENT9 *vertex_traits<vertex_ptbnt>::get_descr()
 
 		{
 			0,
-			offsetof(vertex_ptbnt, binormal),
+			offsetof(VERTEX_PTBNT, binormal),
 			D3DDECLTYPE_FLOAT3,
 			D3DDECLMETHOD_DEFAULT,
 			D3DDECLUSAGE_BINORMAL,
@@ -121,7 +121,7 @@ D3DVERTEXELEMENT9 *vertex_traits<vertex_ptbnt>::get_descr()
 
 		{
 			0,
-			offsetof(vertex_ptbnt, texcoords),
+			offsetof(VERTEX_PTBNT, texcoords),
 			D3DDECLTYPE_FLOAT2,
 			D3DDECLMETHOD_DEFAULT,
 			D3DDECLUSAGE_TEXCOORD,
@@ -134,12 +134,12 @@ D3DVERTEXELEMENT9 *vertex_traits<vertex_ptbnt>::get_descr()
 	return descr;
 }
 
-D3DVERTEXELEMENT9 *vertex_traits<vertex_pnjwt>::get_descr()
+D3DVERTEXELEMENT9 *vertex_traits<VERTEX_PNJWT>::get_descr()
 {
 	static D3DVERTEXELEMENT9 descr[] = {
 		{
 			0,
-			offsetof(vertex_pnjwt, position),
+			offsetof(VERTEX_PNJWT, position),
 			D3DDECLTYPE_FLOAT3,
 			D3DDECLMETHOD_DEFAULT,
 			D3DDECLUSAGE_POSITION,
@@ -148,7 +148,7 @@ D3DVERTEXELEMENT9 *vertex_traits<vertex_pnjwt>::get_descr()
 
 		{
 			0,
-			offsetof(vertex_pnjwt, normal),
+			offsetof(VERTEX_PNJWT, normal),
 			D3DDECLTYPE_FLOAT3,
 			D3DDECLMETHOD_DEFAULT,
 			D3DDECLUSAGE_NORMAL,
@@ -157,7 +157,7 @@ D3DVERTEXELEMENT9 *vertex_traits<vertex_pnjwt>::get_descr()
 
 		{
 			0,
-			offsetof(vertex_pnjwt, joints),
+			offsetof(VERTEX_PNJWT, joints),
 			D3DDECLTYPE_UBYTE4,
 			D3DDECLMETHOD_DEFAULT,
 			D3DDECLUSAGE_BLENDINDICES,
@@ -166,7 +166,7 @@ D3DVERTEXELEMENT9 *vertex_traits<vertex_pnjwt>::get_descr()
 
         {
 			0,
-			offsetof(vertex_pnjwt, joints) + 4,
+			offsetof(VERTEX_PNJWT, joints) + 4,
 			D3DDECLTYPE_UBYTE4,
 			D3DDECLMETHOD_DEFAULT,
 			D3DDECLUSAGE_BLENDINDICES,
@@ -175,7 +175,7 @@ D3DVERTEXELEMENT9 *vertex_traits<vertex_pnjwt>::get_descr()
 
 		{
 			0,
-			offsetof(vertex_pnjwt, weights),
+			offsetof(VERTEX_PNJWT, weights),
 			D3DDECLTYPE_FLOAT4,
 			D3DDECLMETHOD_DEFAULT,
 			D3DDECLUSAGE_BLENDWEIGHT,
@@ -184,7 +184,7 @@ D3DVERTEXELEMENT9 *vertex_traits<vertex_pnjwt>::get_descr()
 
         {
 			0,
-			offsetof(vertex_pnjwt, weights) + 16,
+			offsetof(VERTEX_PNJWT, weights) + 16,
 			D3DDECLTYPE_FLOAT4,
 			D3DDECLMETHOD_DEFAULT,
 			D3DDECLUSAGE_BLENDWEIGHT,
@@ -193,7 +193,7 @@ D3DVERTEXELEMENT9 *vertex_traits<vertex_pnjwt>::get_descr()
 
 		{
 			0,
-			offsetof(vertex_pnjwt, texcoords),
+			offsetof(VERTEX_PNJWT, texcoords),
 			D3DDECLTYPE_FLOAT2,
 			D3DDECLMETHOD_DEFAULT,
 			D3DDECLUSAGE_TEXCOORD,
@@ -212,24 +212,24 @@ void bind_vertex(lua_State *L)
 
 	module(L, "graphic")
 	[
-		class_<vertex_pt>("vertex_pt")
+		class_<VERTEX_PT>("vertex_pt")
 		.def(constructor<>())
-		.def_readwrite("position", &vertex_pt::position)
-		.def_readwrite("texcoords", &vertex_pt::texcoords),
+		.def_readwrite("position", &VERTEX_PT::position)
+		.def_readwrite("texcoords", &VERTEX_PT::texcoords),
 
-		class_<vertex_pnt>("vertex_pnt")
+		class_<VERTEX_PNT>("vertex_pnt")
 		.def(constructor<>())
-		.def_readwrite("position", &vertex_pnt::position)
-		.def_readwrite("normal", &vertex_pnt::normal)
-		.def_readwrite("texcoords", &vertex_pnt::texcoords),
+		.def_readwrite("position", &VERTEX_PNT::position)
+		.def_readwrite("normal", &VERTEX_PNT::normal)
+		.def_readwrite("texcoords", &VERTEX_PNT::texcoords),
 
-		class_<vertex_pnjwt>("vertex_pnjwt")
+		class_<VERTEX_PNJWT>("vertex_pnjwt")
 		.def(constructor<>())
-		.def_readwrite("position", &vertex_pnjwt::position)
-		.def_readwrite("normal", &vertex_pnjwt::normal)
-		.def_readwrite("joints", &vertex_pnjwt::normal)
-		.def_readwrite("wegiths", &vertex_pnjwt::normal)
-		.def_readwrite("texcoords", &vertex_pnjwt::texcoords)
+		.def_readwrite("position", &VERTEX_PNJWT::position)
+		.def_readwrite("normal", &VERTEX_PNJWT::normal)
+		.def_readwrite("joints", &VERTEX_PNJWT::normal)
+		.def_readwrite("wegiths", &VERTEX_PNJWT::normal)
+		.def_readwrite("texcoords", &VERTEX_PNJWT::texcoords)
 	 ];
 }
 

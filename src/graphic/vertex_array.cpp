@@ -100,10 +100,10 @@ size_t VertexArray<T>::get_vertex_size() const {
 	return sizeof(T);
 }
 
-template class VertexArray<vertex_pt>;
-template class VertexArray<vertex_pnt>;
-template class VertexArray<vertex_ptbnt>;
-template class VertexArray<vertex_pnjwt>;
+template class VertexArray<VERTEX_PT>;
+template class VertexArray<VERTEX_PNT>;
+template class VertexArray<VERTEX_PTBNT>;
+template class VertexArray<VERTEX_PNJWT>;
 
 void bind_vertex_array(lua_State *L)
 {
@@ -114,19 +114,19 @@ void bind_vertex_array(lua_State *L)
 		class_<VertexBuffer, Resource, boost::shared_ptr<VertexBuffer> >("VertexBuffer"),
 
 		class_<VertexArrayPT, VertexBuffer, boost::shared_ptr<VertexArrayPT> >("VertexArrayPT")
-		.def("lock", (vertex_pt *(VertexArrayPT::*)(bool)) &VertexArrayPT::lock)
+		.def("lock", (VERTEX_PT *(VertexArrayPT::*)(bool)) &VertexArrayPT::lock)
 		.def("unlock", (void (VertexArrayPT::*)()) &VertexArrayPT::unlock)
-		.def("at", (vertex_pt *(VertexArrayPT::*)(size_t)) &VertexArrayPT::at),
+		.def("at", (VERTEX_PT *(VertexArrayPT::*)(size_t)) &VertexArrayPT::at),
 
 		class_<VertexArrayPNT, VertexBuffer, boost::shared_ptr<VertexArrayPNT> >("VertexArrayPNT")
-		.def("lock", (vertex_pnt *(VertexArrayPNT::*)(bool)) &VertexArrayPNT::lock)
+		.def("lock", (VERTEX_PNT *(VertexArrayPNT::*)(bool)) &VertexArrayPNT::lock)
 		.def("unlock", (void (VertexArrayPNT::*)()) &VertexArrayPNT::unlock)
-		.def("at", (vertex_pnt *(VertexArrayPNT::*)(size_t)) &VertexArrayPNT::at),
+		.def("at", (VERTEX_PNT *(VertexArrayPNT::*)(size_t)) &VertexArrayPNT::at),
 
 		class_<VertexArrayPNJWT, VertexBuffer, boost::shared_ptr<VertexArrayPNJWT> >("VertexArrayPNJWT")
-		.def("lock", (vertex_pnjwt *(VertexArrayPNJWT::*)(bool)) &VertexArrayPNJWT::lock)
+		.def("lock", (VERTEX_PNJWT *(VertexArrayPNJWT::*)(bool)) &VertexArrayPNJWT::lock)
 		.def("unlock", (void (VertexArrayPNJWT::*)()) &VertexArrayPNJWT::unlock)
-		.def("at", (vertex_pnjwt *(VertexArrayPNJWT::*)(size_t)) &VertexArrayPNJWT::at)
+		.def("at", (VERTEX_PNJWT *(VertexArrayPNJWT::*)(size_t)) &VertexArrayPNJWT::at)
 	];
 }
 

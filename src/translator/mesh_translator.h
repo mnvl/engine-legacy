@@ -92,7 +92,7 @@ protected:
 	std::vector<math::vec<3> > polygon_normal;
 
 	// сконвертированная информация
-	typedef graphic::vertex_pnt vertex_type;
+	typedef graphic::VERTEX_PNT vertex_type;
 	typedef std::vector<vertex_type> vertex_array_type;
 
 	vertex_array_type vertex_array;

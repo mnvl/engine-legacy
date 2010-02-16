@@ -87,10 +87,10 @@ protected:
 	}
 };
 
-typedef VertexArray<vertex_pt> VertexArrayPT;
-typedef VertexArray<vertex_pnt> VertexArrayPNT;
-typedef VertexArray<vertex_ptbnt> VertexArrayPTBNT;
-typedef VertexArray<vertex_pnjwt> VertexArrayPNJWT;
+typedef VertexArray<VERTEX_PT> VertexArrayPT;
+typedef VertexArray<VERTEX_PNT> VertexArrayPNT;
+typedef VertexArray<VERTEX_PTBNT> VertexArrayPTBNT;
+typedef VertexArray<VERTEX_PNJWT> VertexArrayPNJWT;
 
 void bind_vertex_array(lua_State *L);
 

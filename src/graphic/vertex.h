@@ -17,20 +17,20 @@ namespace graphic
 {
 
 #pragma pack(push, 1)
-struct vertex_pt
+struct VERTEX_PT
 {
 	math::vec<3> position;
 	math::vec<2> texcoords;
 };
 
-struct vertex_pnt
+struct VERTEX_PNT
 {
 	math::vec<3> position;
 	math::vec<3> normal;
 	math::vec<2> texcoords;
 };
 
-struct vertex_ptbnt
+struct VERTEX_PTBNT
 {
 	math::vec<3> position;
 	math::vec<3> tangent;
@@ -39,9 +39,20 @@ struct vertex_ptbnt
 	math::vec<2> texcoords;
 };
 
-struct vertex_pnjwt
+struct VERTEX_PNJWT
 {
 	math::vec<3> position;
+	math::vec<3> normal;
+	math::vec<8, boost::uint8_t> joints;
+	math::vec<8> weights;
+	math::vec<2> texcoords;
+};
+
+struct VERTEX_PTBNJWT
+{
+	math::vec<3> position;
+	math::vec<3> tangent;
+	math::vec<3> binormal;
 	math::vec<3> normal;
 	math::vec<8, boost::uint8_t> joints;
 	math::vec<8> weights;
@@ -53,25 +64,25 @@ template <class T>
 struct vertex_traits;
 
 template<>
-struct vertex_traits<vertex_pt>
+struct vertex_traits<VERTEX_PT>
 {
 	static D3DVERTEXELEMENT9 *get_descr();
 };
 
 template<>
-struct vertex_traits<vertex_pnt>
+struct vertex_traits<VERTEX_PNT>
 {
 	static D3DVERTEXELEMENT9 *get_descr();
 };
 
 template<>
-struct vertex_traits<vertex_ptbnt>
+struct vertex_traits<VERTEX_PTBNT>
 {
 	static D3DVERTEXELEMENT9 *get_descr();
 };
 
 template<>
-struct vertex_traits<vertex_pnjwt>
+struct vertex_traits<VERTEX_PNJWT>
 {
 	static D3DVERTEXELEMENT9 *get_descr();
 };

@@ -25,7 +25,7 @@ typedef boost::shared_ptr<class MemoryMesh> MemoryMeshPtr;
 
 class MemoryMesh: public Mesh {
 public:
-    typedef vertex_pnt vertex_t;
+    typedef VERTEX_PNT vertex_t;
 
 	MemoryMesh(MemoryModel *m);
 	virtual ~MemoryMesh();

@@ -33,25 +33,25 @@ public:
     IDirect3DVertexDeclaration9 *get_vertex_decl() const;
 
     template<>
-    IDirect3DVertexDeclaration9 *get_vertex_decl<vertex_pt>() const
+    IDirect3DVertexDeclaration9 *get_vertex_decl<VERTEX_PT>() const
     {
         return pt_decl_.get();
     }
 
     template<>
-    IDirect3DVertexDeclaration9 *get_vertex_decl<vertex_ptbnt>() const
+    IDirect3DVertexDeclaration9 *get_vertex_decl<VERTEX_PTBNT>() const
     {
         return ptbnt_decl_.get();
     }
 
     template<>
-    IDirect3DVertexDeclaration9 *get_vertex_decl<vertex_pnt>() const
+    IDirect3DVertexDeclaration9 *get_vertex_decl<VERTEX_PNT>() const
     {
         return pnt_decl_.get();
     }
 
     template<>
-    IDirect3DVertexDeclaration9 *get_vertex_decl<vertex_pnjwt>() const
+    IDirect3DVertexDeclaration9 *get_vertex_decl<VERTEX_PNJWT>() const
     {
         return pnjwt_decl_.get();
     }

@@ -61,10 +61,10 @@ BOOST_AUTO_TEST_CASE(basic)
 	material->set_diffuse_texture(src + "test_gray.png");
 	material->set_normal_map_texture(src + "test_normal_map.jpeg");
 
-	boost::shared_ptr<graphic::VertexArrayPTBNT> vertex_array = renderer->create_vertex_array<graphic::vertex_ptbnt>(6);
+	boost::shared_ptr<graphic::VertexArrayPTBNT> vertex_array = renderer->create_vertex_array<graphic::VERTEX_PTBNT>(6);
 
 	{
-		graphic::vertex_ptbnt *v = vertex_array->lock(true);
+		graphic::VERTEX_PTBNT *v = vertex_array->lock(true);
 
 		v->position  .set(0, 1, 0);
 		v->tangent   .set(1, 0, 0);

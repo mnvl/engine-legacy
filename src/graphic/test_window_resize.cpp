@@ -62,10 +62,10 @@ BOOST_AUTO_TEST_CASE(with_postconstruct_and_vertex_array)
 	{
 		if (i == 5)
 		{
-			vertex_array1 = renderer->create_vertex_array<graphic::vertex_pt>(100, false, false);
-			vertex_array2 = renderer->create_vertex_array<graphic::vertex_pt>(100, false, true);
-			vertex_array3 = renderer->create_vertex_array<graphic::vertex_pt>(100, true, false);
-			vertex_array4 = renderer->create_vertex_array<graphic::vertex_pt>(100, true, true);
+			vertex_array1 = renderer->create_vertex_array<graphic::VERTEX_PT>(100, false, false);
+			vertex_array2 = renderer->create_vertex_array<graphic::VERTEX_PT>(100, false, true);
+			vertex_array3 = renderer->create_vertex_array<graphic::VERTEX_PT>(100, true, false);
+			vertex_array4 = renderer->create_vertex_array<graphic::VERTEX_PT>(100, true, true);
 		}
 
 		if (i == 15)

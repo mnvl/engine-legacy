@@ -27,7 +27,7 @@ public:
 		max_nparticles_(max_nparticles),
 		nparticles_(0)
 	{
-		vertex_array_ = renderer->create_vertex_array<graphic::vertex_pnt>(max_nparticles_ * VERTICES_PER_PARTICLE, true, true);
+		vertex_array_ = renderer->create_vertex_array<graphic::VERTEX_PNT>(max_nparticles_ * VERTICES_PER_PARTICLE, true, true);
 	}
 
 	void set_material(boost::shared_ptr<Material> const &material)
@@ -42,7 +42,7 @@ public:
 
 		math::vec<3> normal = -camera.get_view_dir();
 
-		vertex_pnt *v = vertex_array_->lock(true);
+		VERTEX_PNT *v = vertex_array_->lock(true);
 		nparticles_ = 0;
 
 		for (Keeper::iterator it = keeper.begin(); it != keeper.end(); ++it)
