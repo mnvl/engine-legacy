@@ -17,34 +17,6 @@
 
 const D3DXCOLOR WHITE(1.0f, 1.0f, 1.0f, 1.0f);
 
-#pragma pack(push, 1)
-struct Mtrl
-{
-	Mtrl()
-		:ambient(WHITE), diffuse(WHITE), spec(WHITE), specPower(8.0f){}
-	Mtrl(const D3DXCOLOR& a, const D3DXCOLOR& d, 
-		const D3DXCOLOR& s, float power)
-		:ambient(a), diffuse(d), spec(s), specPower(power){}
-
-	D3DXCOLOR ambient;
-	D3DXCOLOR diffuse;
-	D3DXCOLOR spec;
-	float specPower;
-};
-
-struct PointLight
-{
-	math::vec<3> position;
-	math::vec<4> color;
-	math::scalar inv_attenuation;
-};
-
-struct DirLight {
-	PointLight pl[5];
-};
-
-#pragma pack(pop)
-
 BOOST_AUTO_TEST_SUITE(normal_map)
 
 BOOST_AUTO_TEST_CASE(basic)
