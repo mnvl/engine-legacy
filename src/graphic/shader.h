@@ -1,3 +1,4 @@
+#pragma once
 //-----------------------------------------------------------------------------
 // Copyright (c) 2004 - 2010 Manvel Avetisian.
 // All Rights Reserved.
@@ -8,4 +9,40 @@
 // prior written consent of Manvel Avetisian.
 //-----------------------------------------------------------------------------
 
-#include "shader/shader.h"
+#include <d3dx9.h>
+#include <boost/intrusive_ptr.hpp>
+#include <boost/shared_ptr.hpp>
+#include <util/boost_com_intrusive_ptr.h>
+
+namespace graphic
+{
+
+class Renderer;
+
+namespace shader
+{
+
+class Shader {
+public:
+    Shader(boost::shared_ptr<Renderer> const &renderer_ptr);
+	virtual ~Shader();
+
+    void load_from_file(std::string const &filename);
+    void load_from_buffer(char const *buffer, size_t len);
+
+	virtual void postconstruct();
+
+    ID3DXEffect *get() const
+    {
+        return effect_ptr_.get();
+    }
+
+private:
+	boost::shared_ptr<Renderer> const renderer_ptr_;
+    boost::intrusive_ptr<ID3DXEffect> effect_ptr_;
+
+	static void log_compilation_errors(ID3DXBuffer *compilation_errors_ptr);
+};
+
+}
+}
