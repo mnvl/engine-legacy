@@ -12,7 +12,7 @@
 #include <platform/window.h>
 #include <util/get_sources_path.h>
 #include "material.h"
-#include "shader/static_model_shader.h"
+#include "shader.h"
 #include "renderer.h"
 
 const D3DXCOLOR WHITE(1.0f, 1.0f, 1.0f, 1.0f);
@@ -74,8 +74,14 @@ BOOST_AUTO_TEST_CASE(basic)
 		vertex_array->unlock();
 	}
 
-	boost::shared_ptr<graphic::shader::StaticModelShader> shader(new graphic::shader::StaticModelShader(renderer));
-	shader->load_from_file(src + "shader/static_model.fx");
+	boost::shared_ptr<graphic::Shader> shader(new graphic::Shader(renderer));
+	shader->load_from_file(src + "static_model.fx");
+	graphic::shader_parameters::float4x4 world_view_projection_matrix(shader.get(), "world_view_projection_matrix");
+	graphic::shader_parameters::float4x4 world_matrix(shader.get(), "world_matrix");
+	graphic::shader_parameters::texture diffuse_texture(shader.get(), "diffuse_texture");
+	graphic::shader_parameters::texture normal_map_texture(shader.get(), "normal_map_texture");
+	graphic::shader_parameters::point_lights point_lights(shader.get(), "point_lights");
+	graphic::shader_parameters::Technique normal_map_tech(shader.get(), "NORMAL_MAP_TECH");
 
 	graphic::Camera camera;
 	camera.set_orthographic_projection(2, 2 * math::scalar(renderer->get_screen_height()) / renderer->get_screen_width(), 0, 2);
@@ -88,26 +94,23 @@ BOOST_AUTO_TEST_CASE(basic)
 		renderer->set_world_matrix(tf);
 	}
 
-	math::matrix<4,4> world_view_projection_matrix =
-		renderer->get_world_matrix()
+	world_view_projection_matrix.set(renderer->get_world_matrix()
 		* renderer->get_view_matrix()
-		* renderer->get_projection_matrix();
+		* renderer->get_projection_matrix());
+	world_matrix.set(renderer->get_world_matrix());
+	diffuse_texture.set(material->get_diffuse_texture());
+	normal_map_texture.set(material->get_normal_map_texture());
+	normal_map_tech.set();
 
-	shader->world_view_projection_matrix->set(world_view_projection_matrix);
-	shader->world_matrix->set(renderer->get_world_matrix());
-	shader->diffuse_texture->set(material->get_diffuse_texture());
-	shader->normal_map_texture->set(material->get_normal_map_texture());
-	shader->normal_map_tech->set();
+	graphic::shader_parameters::POINT_LIGHTS lights;
+	memset(&lights, 0, sizeof(lights));
 
-	graphic::shader::PointLightShader::POINT_LIGHTS light;
-	memset(&light, 0, sizeof(light));
+	lights.items[0].position = math::vec<3>(0, 0, 10);
+	lights.items[0].color = math::vec<4>(1, 1, 1, 1);
+	lights.items[0].inv_attenuation = 1.0f;
 
-	light.items[0].position = math::vec<3>(0, 0, 10);
-	light.items[0].color = math::vec<4>(1, 1, 1, 1);
-	light.items[0].inv_attenuation = 1.0f;
-
-	light.items[1].color = math::vec<4>(1, 1, 1, 1);
-	light.items[1].inv_attenuation = 0.90f;
+	lights.items[1].color = math::vec<4>(1, 1, 1, 1);
+	lights.items[1].inv_attenuation = 0.90f;
 
 #pragma pack(push, 1)
 	struct POINT_VERTEX
@@ -125,8 +128,8 @@ BOOST_AUTO_TEST_CASE(basic)
 	for (int i = 0; i < 1000 && window->run_message_loop(); i++)
 	{
 		point.position.set(cos(math::scalar(i) / 100) * 0.5f + 0.5f, 0.5f, sin(math::scalar(i) / 100) * 0.5f);
-		light.items[1].position = point.position;
-		shader->point_lights->set(light);
+		lights.items[1].position = point.position;
+		point_lights.set(lights);
 
 		renderer->begin_frame();
 		renderer->set_camera(camera);

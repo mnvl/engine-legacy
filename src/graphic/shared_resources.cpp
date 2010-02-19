@@ -76,7 +76,7 @@ boost::shared_ptr<Material> SharedResources::get_default_material()
 	return material;
 }
 
-boost::shared_ptr<shader::Shader> SharedResources::get_animated_model_shader()
+boost::shared_ptr<Shader> SharedResources::get_animated_model_shader()
 {
 	// TODO:
 #if 0
@@ -91,7 +91,7 @@ boost::shared_ptr<shader::Shader> SharedResources::get_animated_model_shader()
 	return shader;
 #endif
 
-	return boost::shared_ptr<shader::Shader>();
+	return boost::shared_ptr<Shader>();
 }
 
 }
