@@ -15,8 +15,6 @@
 #include "shader.h"
 #include "renderer.h"
 
-const D3DXCOLOR WHITE(1.0f, 1.0f, 1.0f, 1.0f);
-
 BOOST_AUTO_TEST_SUITE(normal_map)
 
 BOOST_AUTO_TEST_CASE(basic)

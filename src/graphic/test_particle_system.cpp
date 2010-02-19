@@ -17,11 +17,11 @@
 #include "ps/directional_particle_system.h"
 #include "ps/cylindrical_particle_system.h"
 
-BOOST_AUTO_TEST_SUITE (test_particle_system)
+BOOST_AUTO_TEST_SUITE(particle_system)
 
-BOOST_AUTO_TEST_CASE (test_directional_ps)
+BOOST_AUTO_TEST_CASE(directional_ps)
 {
-	boost::shared_ptr<platform::Window> window(new platform::Window("test_particle_system"));
+	boost::shared_ptr<platform::Window> window(new platform::Window("particle_system"));
 	boost::shared_ptr<graphic::Renderer> renderer(new graphic::Renderer(window));
 
 	graphic::Camera camera;
@@ -70,9 +70,9 @@ BOOST_AUTO_TEST_CASE (test_directional_ps)
 	}
 }
 
-BOOST_AUTO_TEST_CASE (test_cylindrical_ps)
+BOOST_AUTO_TEST_CASE(cylindrical_ps)
 {
-	boost::shared_ptr<platform::Window> window(new platform::Window("test_particle_system"));
+	boost::shared_ptr<platform::Window> window(new platform::Window("particle_system"));
 	boost::shared_ptr<graphic::Renderer> renderer(new graphic::Renderer(window));
 
 	graphic::Camera camera;
