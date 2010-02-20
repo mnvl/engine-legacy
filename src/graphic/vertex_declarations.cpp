@@ -30,7 +30,7 @@ IDirect3DVertexDeclaration9 *VertexDeclarations::get(VertexTraits const *vertex_
 	{
 		IDirect3DVertexDeclaration9 *decl_ptr;
 
-		HRESULT hr = renderer_ptr_->get_device()->CreateVertexDeclaration(VertexTraits::get<VERTEX_PT>()->get_descr(), &decl_ptr);
+		HRESULT hr = renderer_ptr_->get_device()->CreateVertexDeclaration(vertex_traits->get_descr(), &decl_ptr);
 		if (FAILED(hr)) throw exception::directx_error(hr);
 
 		traits_to_declarations_.insert(std::make_pair(vertex_traits, VertexDeclarationPtr(decl_ptr)));
