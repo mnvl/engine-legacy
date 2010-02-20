@@ -13,26 +13,21 @@
 #include <math/interval.h>
 #include <math/vec.h>
 
-namespace graphic
-{
-namespace ps
+namespace particle_system
 {
 
-class CylindricalEmitter {
+class DirectionalEmitter {
 public:
 	class Particle
 	{
 	public:
-		Particle(CylindricalEmitter *emitter):
+		Particle(DirectionalEmitter *emitter):
 			position_(emitter->origin),
 			size_(emitter->size_interval.random()),
 			velocity_(emitter->direction * emitter->velocity_interval.random()),
 			acceleration_(emitter->direction * emitter->acceleration_interval.random()),
 			ttl_(emitter->ttl_interval.random())
 		{
-			math::scalar radius = emitter->radius_interval.random();
-			math::scalar angle = emitter->angle_interval.random();
-			position_ += math::vec<3>(radius * math::sin(angle), 0, radius * math::cos(angle));
 		}
 
 		math::vec<3> const &get_position() const { return position_; }
@@ -65,23 +60,18 @@ public:
 	math::interval<> velocity_interval;
 	math::interval<> acceleration_interval;
 	math::interval<> ttl_interval;
-	math::interval<> radius_interval;
-	math::interval<> angle_interval;
 
-	CylindricalEmitter():
+	DirectionalEmitter():
 		origin(0, 0, 0),
 		direction(0, 1, 0),
 		size_interval(0, 1),
 		velocity_interval(0, 1),
 		acceleration_interval(0, 1),
-		ttl_interval(0, 1),
-		radius_interval(1, 1),
-		angle_interval(0, math::PI * 2)
+		ttl_interval(0, 1)
 	{
 	}
 
 	static void bind(lua_State *L);
 };
 
-}
 }

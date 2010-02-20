@@ -35,4 +35,10 @@ inline std::string get_graphic_sources_path()
 	return sources_path.empty() ? std::string() : sources_path + "graphic/";
 }
 
+inline std::string get_particle_system_sources_path()
+{
+	std::string const &sources_path = get_sources_path();
+	return sources_path.empty() ? std::string() : sources_path + "particle_system/";
+}
+
 }

@@ -12,10 +12,10 @@
 #include <platform/timer.h>
 #include <platform/window.h>
 #include <util/get_sources_path.h>
-#include "material.h"
-#include "renderer.h"
-#include "ps/directional_particle_system.h"
-#include "ps/cylindrical_particle_system.h"
+#include <graphic/material.h>
+#include <graphic/renderer.h>
+#include "directional_particle_system.h"
+#include "cylindrical_particle_system.h"
 
 BOOST_AUTO_TEST_SUITE(particle_system)
 
@@ -31,10 +31,10 @@ BOOST_AUTO_TEST_CASE(directional_ps)
 	renderer->postconstruct();
 
 	platform::Timer timer;
-	boost::shared_ptr<graphic::ps::DirectionalParticleSystem> ps(new graphic::ps::DirectionalParticleSystem(renderer));
+	boost::shared_ptr<particle_system::DirectionalParticleSystem> ps(new particle_system::DirectionalParticleSystem(renderer));
 
 	boost::shared_ptr<graphic::Material> material(new graphic::Material(renderer));
-	material->set_diffuse_texture(util::get_graphic_sources_path() + "test_particle.png");
+	material->set_diffuse_texture(util::get_particle_system_sources_path() + "test_particle.png");
 
 	ps->get_emitter().size_interval = math::interval<>(2, 2);
 	ps->get_emitter().velocity_interval = math::interval<>(10, 20);
@@ -82,10 +82,10 @@ BOOST_AUTO_TEST_CASE(cylindrical_ps)
 	renderer->postconstruct();
 
 	platform::Timer timer;
-	boost::shared_ptr<graphic::ps::CylindricalParticleSystem> ps(new graphic::ps::CylindricalParticleSystem(renderer));
+	boost::shared_ptr<particle_system::CylindricalParticleSystem> ps(new particle_system::CylindricalParticleSystem(renderer));
 
 	boost::shared_ptr<graphic::Material> material(new graphic::Material(renderer));
-	material->set_diffuse_texture(util::get_graphic_sources_path() + "test_particle.png");
+	material->set_diffuse_texture(util::get_particle_system_sources_path() + "test_particle.png");
 
 	ps->get_emitter().size_interval = math::interval<>(2, 2);
 	ps->get_emitter().velocity_interval = math::interval<>(10, 10);

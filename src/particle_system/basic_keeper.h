@@ -11,9 +11,7 @@
 
 #include <deque>
 
-namespace graphic
-{
-namespace ps
+namespace particle_system
 {
 
 template<class P>
@@ -60,5 +58,4 @@ private:
 	particles_t particles_;
 };
 
-}
 }

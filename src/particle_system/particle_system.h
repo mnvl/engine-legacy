@@ -13,9 +13,7 @@
 #include <luabind/luabind.hpp>
 #include <graphic/renderer.h>
 
-namespace graphic
-{
-namespace ps
+namespace particle_system
 {
 
 template
@@ -34,7 +32,7 @@ public:
 	typedef Keeper<particle_t> keeper_t;
 	typedef Drawer drawer_t;
 
-	ParticleSystem(boost::shared_ptr<Renderer> const &renderer, size_t const max_nparticles = 1000):
+	ParticleSystem(boost::shared_ptr<graphic::Renderer> const &renderer, size_t const max_nparticles = 1000):
 		max_nparticles_(max_nparticles),
 		drawer_(renderer, max_nparticles)
 	{
@@ -79,5 +77,4 @@ private:
 	drawer_t drawer_;
 };
 
-}
 }

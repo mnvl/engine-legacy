@@ -11,9 +11,7 @@
 
 #include <math/interval.h>
 
-namespace graphic
-{
-namespace ps
+namespace particle_system
 {
 
 template<class P>
@@ -55,5 +53,4 @@ private:
 	math::scalar time_accumulated_, next_emission_time_;
 };
 
-}
 }

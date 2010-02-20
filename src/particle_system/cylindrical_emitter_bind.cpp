@@ -11,16 +11,14 @@
 #include <luabind/luabind.hpp>
 #include "cylindrical_emitter.h"
 
-namespace graphic
-{
-namespace ps
+namespace particle_system
 {
 
 void CylindricalEmitter::bind(lua_State *L)
 {
 	using namespace luabind;
 
-	module_(L, "ps")
+	module_(L, "particle_system")
 	[
 		class_<CylindricalEmitter>("CylindricalEmitter")
 		.def_readwrite("origin", &CylindricalEmitter::origin)
@@ -34,5 +32,4 @@ void CylindricalEmitter::bind(lua_State *L)
 	];
 }
 
-}
 }

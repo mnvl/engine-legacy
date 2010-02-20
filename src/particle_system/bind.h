@@ -1,3 +1,4 @@
+#pragma once
 //-----------------------------------------------------------------------------
 // Copyright (c) 2004 - 2010 Manvel Avetisian.
 // All Rights Reserved.
@@ -8,15 +9,11 @@
 // prior written consent of Manvel Avetisian.
 //-----------------------------------------------------------------------------
 
-#include "particle_system_bind.h"
-#include "directional_particle_system.h"
+#include <luabind/lua_include.hpp>
 
-namespace graphic
-{
-namespace ps
+namespace particle_system
 {
 
-template DirectionalParticleSystem;
+void bind(lua_State *L);
 
-}
 }

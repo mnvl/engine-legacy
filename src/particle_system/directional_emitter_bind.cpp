@@ -11,16 +11,14 @@
 #include <luabind/luabind.hpp>
 #include "directional_emitter.h"
 
-namespace graphic
-{
-namespace ps
+namespace particle_system
 {
 
 void DirectionalEmitter::bind(lua_State *L)
 {
 	using namespace luabind;
 
-	module_(L, "ps")
+	module_(L, "particle_system")
 	[
 		class_<DirectionalEmitter>("DirectionalEmitter")
 		.def_readwrite("origin", &DirectionalEmitter::origin)
@@ -32,5 +30,4 @@ void DirectionalEmitter::bind(lua_State *L)
 	];
 }
 
-}
 }

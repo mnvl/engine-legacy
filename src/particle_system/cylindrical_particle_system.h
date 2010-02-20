@@ -1,3 +1,4 @@
+#pragma once
 //-----------------------------------------------------------------------------
 // Copyright (c) 2004 - 2010 Manvel Avetisian.
 // All Rights Reserved.
@@ -7,16 +8,15 @@
 // or copied or duplicated in any form, in whole or in part, without the
 // prior written consent of Manvel Avetisian.
 //-----------------------------------------------------------------------------
+#include "cylindrical_emitter.h"
+#include "regular_timespan_controller.h"
+#include "basic_keeper.h"
+#include "billboard_drawer.h"
+#include "particle_system.h"
 
-#include "particle_system_bind.h"
-#include "cylindrical_particle_system.h"
-
-namespace graphic
+namespace particle_system
 {
-namespace ps
-{
 
-template CylindricalParticleSystem;
+typedef ParticleSystem<CylindricalEmitter, RegularTimespanController, BasicKeeper, BillboardDrawer> CylindricalParticleSystem;
 
-}
 }

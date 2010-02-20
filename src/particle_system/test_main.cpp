@@ -8,24 +8,22 @@
 // prior written consent of Manvel Avetisian.
 //-----------------------------------------------------------------------------
 
-#include <luabind/luabind.hpp>
-#include "billboard_drawer.h"
+#include <log4cplus/configurator.h>
 
-namespace graphic
+#define BOOST_TEST_MAIN
+#include <boost/test/unit_test.hpp>
+
+namespace
 {
-namespace ps
+
+struct Dummy
 {
+	Dummy()
+	{
+		log4cplus::BasicConfigurator::doConfigure();
+	}
+};
 
-void BillboardDrawer::bind(lua_State *L)
-{
-	using namespace luabind;
+Dummy dummy;
 
-	module(L, "ps")
-	[
-		class_<BillboardDrawer>("BillboardDrawer")
-		.def("set_material", &BillboardDrawer::set_material)
-	];
-}
-
-}
 }

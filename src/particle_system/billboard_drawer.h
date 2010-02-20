@@ -14,15 +14,13 @@
 #include <graphic/vertex_array.h>
 #include <graphic/renderer.h>
 
-namespace graphic
-{
-namespace ps
+namespace particle_system
 {
 
 class BillboardDrawer
 {
 public:
-	BillboardDrawer(boost::shared_ptr<Renderer> const &renderer, size_t max_nparticles):
+	BillboardDrawer(boost::shared_ptr<graphic::Renderer> const &renderer, size_t max_nparticles):
 		renderer_(renderer),
 		max_nparticles_(max_nparticles),
 		nparticles_(0)
@@ -30,7 +28,7 @@ public:
 		vertex_array_ = renderer->create_vertex_array<graphic::VERTEX_PNT>(max_nparticles_ * VERTICES_PER_PARTICLE, true, true);
 	}
 
-	void set_material(boost::shared_ptr<Material> const &material)
+	void set_material(boost::shared_ptr<graphic::Material> const &material)
 	{
 		material_ = material;
 	}
@@ -38,11 +36,11 @@ public:
 	template<class Keeper>
 	void preprocess(Keeper const &keeper)
 	{
-		Camera const &camera = renderer_->get_camera();
+		graphic::Camera const &camera = renderer_->get_camera();
 
 		math::vec<3> normal = -camera.get_view_dir();
 
-		VERTEX_PNT *v = vertex_array_->lock(true);
+		graphic::VERTEX_PNT *v = vertex_array_->lock(true);
 		nparticles_ = 0;
 
 		for (Keeper::iterator it = keeper.begin(); it != keeper.end(); ++it)
@@ -107,14 +105,13 @@ public:
 private:
 	static size_t const VERTICES_PER_PARTICLE = 6;
 
-	boost::shared_ptr<Renderer> const renderer_;
+	boost::shared_ptr<graphic::Renderer> const renderer_;
 
 	size_t const max_nparticles_;
 	size_t nparticles_;
 
-	boost::shared_ptr<Material> material_;
-	boost::shared_ptr<VertexArrayPNT> vertex_array_;
+	boost::shared_ptr<graphic::Material> material_;
+	boost::shared_ptr<graphic::VertexArrayPNT> vertex_array_;
 };
 
-}
 }
