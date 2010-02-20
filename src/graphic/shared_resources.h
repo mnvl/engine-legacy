@@ -9,12 +9,9 @@
 // prior written consent of Manvel Avetisian.
 //-----------------------------------------------------------------------------
 
-#include <d3d9.h>
 #include <boost/shared_ptr.hpp>
 #include <boost/weak_ptr.hpp>
-#include <boost/intrusive_ptr.hpp>
-#include <util/boost_com_intrusive_ptr.h>
-#include "vertex.h"
+#include "vertex_declarations.h"
 #include "shader.h"
 
 namespace graphic
@@ -30,32 +27,11 @@ public:
     SharedResources(Renderer * const renderer_ptr);
     ~SharedResources();
 
-    template<class T>
-    IDirect3DVertexDeclaration9 *get_vertex_decl() const;
-
-    template<>
-    IDirect3DVertexDeclaration9 *get_vertex_decl<VERTEX_PT>() const
-    {
-        return pt_decl_.get();
-    }
-
-    template<>
-    IDirect3DVertexDeclaration9 *get_vertex_decl<VERTEX_PTBNT>() const
-    {
-        return ptbnt_decl_.get();
-    }
-
-    template<>
-    IDirect3DVertexDeclaration9 *get_vertex_decl<VERTEX_PNT>() const
-    {
-        return pnt_decl_.get();
-    }
-
-    template<>
-    IDirect3DVertexDeclaration9 *get_vertex_decl<VERTEX_PNJWT>() const
-    {
-        return pnjwt_decl_.get();
-    }
+    template<class V>
+    IDirect3DVertexDeclaration9 *get_vertex_decl()
+	{
+		return vertex_declarations_.get<V>();
+	}
 
 	boost::shared_ptr<Font> get_default_font();
 	boost::shared_ptr<Material> get_default_material();
@@ -64,10 +40,7 @@ public:
 private:
 	Renderer * const renderer_ptr_;
 
-    boost::intrusive_ptr<IDirect3DVertexDeclaration9> pt_decl_;
-    boost::intrusive_ptr<IDirect3DVertexDeclaration9> pnt_decl_;
-    boost::intrusive_ptr<IDirect3DVertexDeclaration9> ptbnt_decl_;
-    boost::intrusive_ptr<IDirect3DVertexDeclaration9> pnjwt_decl_;
+	VertexDeclarations vertex_declarations_;
 
 	boost::weak_ptr<Font> default_font_;
 	boost::weak_ptr<Material> default_material_;

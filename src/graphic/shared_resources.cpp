@@ -19,35 +19,9 @@ namespace graphic
 {
 
 SharedResources::SharedResources(Renderer * const renderer_ptr):
-    renderer_ptr_(renderer_ptr)
+    renderer_ptr_(renderer_ptr),
+	vertex_declarations_(renderer_ptr)
 {
-    {
-        IDirect3DVertexDeclaration9 *decl_ptr;
-        HRESULT hr = renderer_ptr_->get_device()->CreateVertexDeclaration(vertex_traits<VERTEX_PT>::get_descr(), &decl_ptr);
-        if (FAILED(hr)) throw exception::directx_error(hr);
-        pt_decl_.reset(decl_ptr);
-    }
-
-    {
-        IDirect3DVertexDeclaration9 *decl_ptr;
-        HRESULT hr = renderer_ptr_->get_device()->CreateVertexDeclaration(vertex_traits<VERTEX_PNT>::get_descr(), &decl_ptr);
-        if (FAILED(hr)) throw exception::directx_error(hr);
-        pnt_decl_.reset(decl_ptr);
-    }
-
-    {
-        IDirect3DVertexDeclaration9 *decl_ptr;
-        HRESULT hr = renderer_ptr_->get_device()->CreateVertexDeclaration(vertex_traits<VERTEX_PTBNT>::get_descr(), &decl_ptr);
-        if (FAILED(hr)) throw exception::directx_error(hr);
-        ptbnt_decl_.reset(decl_ptr);
-    }
-
-    {
-        IDirect3DVertexDeclaration9 *decl_ptr;
-        HRESULT hr = renderer_ptr_->get_device()->CreateVertexDeclaration(vertex_traits<VERTEX_PNJWT>::get_descr(), &decl_ptr);
-        if (FAILED(hr)) throw exception::directx_error(hr);
-        pnjwt_decl_.reset(decl_ptr);
-    }
 }
 
 SharedResources::~SharedResources()

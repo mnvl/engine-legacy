@@ -10,6 +10,7 @@
 //-----------------------------------------------------------------------------
 
 #include <string>
+#include <d3d9.h>
 #include <d3dx9.h>
 #include <boost/intrusive_ptr.hpp>
 #include <boost/shared_ptr.hpp>

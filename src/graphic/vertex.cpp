@@ -8,203 +8,11 @@
 // prior written consent of Manvel Avetisian.
 //-----------------------------------------------------------------------------
 
-#include <stddef.h>
-#include <d3dx9.h>
 #include <luabind/luabind.hpp>
-#include <graphic/vertex.h>
+#include "vertex.h"
 
 namespace graphic
 {
-
-D3DVERTEXELEMENT9 *vertex_traits<VERTEX_PT>::get_descr()
-{
-	static D3DVERTEXELEMENT9 descr[] = {
-		{
-			0,
-			offsetof(VERTEX_PT, position),
-			D3DDECLTYPE_FLOAT3,
-			D3DDECLMETHOD_DEFAULT,
-			D3DDECLUSAGE_POSITION,
-			0
-		},
-
-		{
-			0,
-			offsetof(VERTEX_PT, texcoords),
-			D3DDECLTYPE_FLOAT2,
-			D3DDECLMETHOD_DEFAULT,
-			D3DDECLUSAGE_TEXCOORD,
-			0
-		},
-
-		D3DDECL_END()
-	};
-
-	return descr;
-}
-
-D3DVERTEXELEMENT9 *vertex_traits<VERTEX_PNT>::get_descr()
-{
-	static D3DVERTEXELEMENT9 descr[] = {
-		{
-			0,
-			offsetof(VERTEX_PNT, position),
-			D3DDECLTYPE_FLOAT3,
-			D3DDECLMETHOD_DEFAULT,
-			D3DDECLUSAGE_POSITION,
-			0
-		},
-
-		{
-			0,
-			offsetof(VERTEX_PNT, normal),
-			D3DDECLTYPE_FLOAT3,
-			D3DDECLMETHOD_DEFAULT,
-			D3DDECLUSAGE_NORMAL,
-			0
-		},
-
-		{
-			0,
-			offsetof(VERTEX_PNT, texcoords),
-			D3DDECLTYPE_FLOAT2,
-			D3DDECLMETHOD_DEFAULT,
-			D3DDECLUSAGE_TEXCOORD,
-			0
-		},
-
-		D3DDECL_END()
-	};
-
-	return descr;
-}
-
-D3DVERTEXELEMENT9 *vertex_traits<VERTEX_PTBNT>::get_descr()
-{
-	static D3DVERTEXELEMENT9 descr[] = {
-		{
-			0,
-			offsetof(VERTEX_PTBNT, position),
-			D3DDECLTYPE_FLOAT3,
-			D3DDECLMETHOD_DEFAULT,
-			D3DDECLUSAGE_POSITION,
-			0
-		},
-
-		{
-			0,
-			offsetof(VERTEX_PTBNT, tangent),
-			D3DDECLTYPE_FLOAT3,
-			D3DDECLMETHOD_DEFAULT,
-			D3DDECLUSAGE_TANGENT,
-			0
-		},
-
-		{
-			0,
-			offsetof(VERTEX_PTBNT, normal),
-			D3DDECLTYPE_FLOAT3,
-			D3DDECLMETHOD_DEFAULT,
-			D3DDECLUSAGE_NORMAL,
-			0
-		},
-
-
-		{
-			0,
-			offsetof(VERTEX_PTBNT, binormal),
-			D3DDECLTYPE_FLOAT3,
-			D3DDECLMETHOD_DEFAULT,
-			D3DDECLUSAGE_BINORMAL,
-			0
-		},
-
-		{
-			0,
-			offsetof(VERTEX_PTBNT, texcoords),
-			D3DDECLTYPE_FLOAT2,
-			D3DDECLMETHOD_DEFAULT,
-			D3DDECLUSAGE_TEXCOORD,
-			0
-		},
-
-		D3DDECL_END()
-	};
-
-	return descr;
-}
-
-D3DVERTEXELEMENT9 *vertex_traits<VERTEX_PNJWT>::get_descr()
-{
-	static D3DVERTEXELEMENT9 descr[] = {
-		{
-			0,
-			offsetof(VERTEX_PNJWT, position),
-			D3DDECLTYPE_FLOAT3,
-			D3DDECLMETHOD_DEFAULT,
-			D3DDECLUSAGE_POSITION,
-			0
-		},
-
-		{
-			0,
-			offsetof(VERTEX_PNJWT, normal),
-			D3DDECLTYPE_FLOAT3,
-			D3DDECLMETHOD_DEFAULT,
-			D3DDECLUSAGE_NORMAL,
-			0
-		},
-
-		{
-			0,
-			offsetof(VERTEX_PNJWT, joints),
-			D3DDECLTYPE_UBYTE4,
-			D3DDECLMETHOD_DEFAULT,
-			D3DDECLUSAGE_BLENDINDICES,
-			0
-		},
-
-        {
-			0,
-			offsetof(VERTEX_PNJWT, joints) + 4,
-			D3DDECLTYPE_UBYTE4,
-			D3DDECLMETHOD_DEFAULT,
-			D3DDECLUSAGE_BLENDINDICES,
-			1
-		},
-
-		{
-			0,
-			offsetof(VERTEX_PNJWT, weights),
-			D3DDECLTYPE_FLOAT4,
-			D3DDECLMETHOD_DEFAULT,
-			D3DDECLUSAGE_BLENDWEIGHT,
-			0
-		},
-
-        {
-			0,
-			offsetof(VERTEX_PNJWT, weights) + 16,
-			D3DDECLTYPE_FLOAT4,
-			D3DDECLMETHOD_DEFAULT,
-			D3DDECLUSAGE_BLENDWEIGHT,
-			1
-		},
-
-		{
-			0,
-			offsetof(VERTEX_PNJWT, texcoords),
-			D3DDECLTYPE_FLOAT2,
-			D3DDECLMETHOD_DEFAULT,
-			D3DDECLUSAGE_TEXCOORD,
-			0
-		},
-
-		D3DDECL_END()
-	};
-
-	return descr;
-}
 
 void bind_vertex(lua_State *L)
 {
@@ -229,7 +37,17 @@ void bind_vertex(lua_State *L)
 		.def_readwrite("normal", &VERTEX_PNJWT::normal)
 		.def_readwrite("joints", &VERTEX_PNJWT::normal)
 		.def_readwrite("wegiths", &VERTEX_PNJWT::normal)
-		.def_readwrite("texcoords", &VERTEX_PNJWT::texcoords)
+		.def_readwrite("texcoords", &VERTEX_PNJWT::texcoords),
+
+		class_<VERTEX_PTBNJWT>("vertex_ptbnjwt")
+		.def(constructor<>())
+		.def_readwrite("position", &VERTEX_PTBNJWT::position)
+		.def_readwrite("tangent", &VERTEX_PTBNJWT::tangent)
+		.def_readwrite("binormal", &VERTEX_PTBNJWT::binormal)
+		.def_readwrite("normal", &VERTEX_PTBNJWT::normal)
+		.def_readwrite("joints", &VERTEX_PTBNJWT::normal)
+		.def_readwrite("wegiths", &VERTEX_PTBNJWT::normal)
+		.def_readwrite("texcoords", &VERTEX_PTBNJWT::texcoords)
 	 ];
 }
 

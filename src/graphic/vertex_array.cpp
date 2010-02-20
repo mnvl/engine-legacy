@@ -90,20 +90,22 @@ void VertexBuffer::handle_reset_device()
 }
 
 template<class T>
-IDirect3DVertexDeclaration9 *VertexArray<T>::get_vertex_decl() const
+VertexTraits const *VertexArray<T>::get_vertex_traits() const
 {
-	return renderer_->get_shared_resources()->get_vertex_decl<T>();
+	return VertexTraits::get<T>();
 }
 
 template<class T>
-size_t VertexArray<T>::get_vertex_size() const {
-	return sizeof(T);
+IDirect3DVertexDeclaration9 *VertexArray<T>::get_vertex_decl() const
+{
+	return renderer_->get_shared_resources()->get_vertex_decl<T>();
 }
 
 template class VertexArray<VERTEX_PT>;
 template class VertexArray<VERTEX_PNT>;
 template class VertexArray<VERTEX_PTBNT>;
 template class VertexArray<VERTEX_PNJWT>;
+template class VertexArray<VERTEX_PTBNJWT>;
 
 void bind_vertex_array(lua_State *L)
 {
@@ -126,7 +128,12 @@ void bind_vertex_array(lua_State *L)
 		class_<VertexArrayPNJWT, VertexBuffer, boost::shared_ptr<VertexArrayPNJWT> >("VertexArrayPNJWT")
 		.def("lock", (VERTEX_PNJWT *(VertexArrayPNJWT::*)(bool)) &VertexArrayPNJWT::lock)
 		.def("unlock", (void (VertexArrayPNJWT::*)()) &VertexArrayPNJWT::unlock)
-		.def("at", (VERTEX_PNJWT *(VertexArrayPNJWT::*)(size_t)) &VertexArrayPNJWT::at)
+		.def("at", (VERTEX_PNJWT *(VertexArrayPNJWT::*)(size_t)) &VertexArrayPNJWT::at),
+
+		class_<VertexArrayPTBNJWT, VertexBuffer, boost::shared_ptr<VertexArrayPTBNJWT> >("VertexArrayPTBNJWT")
+		.def("lock", (VERTEX_PTBNJWT *(VertexArrayPTBNJWT::*)(bool)) &VertexArrayPTBNJWT::lock)
+		.def("unlock", (void (VertexArrayPTBNJWT::*)()) &VertexArrayPTBNJWT::unlock)
+		.def("at", (VERTEX_PTBNJWT *(VertexArrayPTBNJWT::*)(size_t)) &VertexArrayPTBNJWT::at)
 	];
 }
 

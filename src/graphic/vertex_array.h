@@ -9,12 +9,14 @@
 // prior written consent of Manvel Avetisian.
 //-----------------------------------------------------------------------------
 
+#include <d3d9.h>
 #include <vector>
 #include <boost/shared_ptr.hpp>
 #include <boost/intrusive_ptr.hpp>
 #include <luabind/lua_include.hpp>
 #include <util/boost_com_intrusive_ptr.h>
 #include "vertex.h"
+#include "vertex_traits.h"
 #include "resource.h"
 
 namespace graphic
@@ -39,8 +41,8 @@ public:
 
 	IDirect3DVertexBuffer9 *get() const { return buffer_.get(); }
 
+	virtual VertexTraits const *get_vertex_traits() const = 0;
 	virtual IDirect3DVertexDeclaration9 *get_vertex_decl() const = 0;
-	virtual size_t get_vertex_size() const = 0;
 
 	virtual void handle_lost_device();
 	virtual void handle_reset_device();
@@ -75,8 +77,8 @@ public:
 	vertex_t *at(size_t index) { return &begin()[index]; }
 	vertex_t const *at(size_t index) const { return &begin()[index]; }
 
+	virtual VertexTraits const *get_vertex_traits() const;
 	virtual IDirect3DVertexDeclaration9 *get_vertex_decl() const;
-	virtual size_t get_vertex_size() const;
 
 protected:
 	VertexArray(boost::shared_ptr<Renderer> const &renderer, size_t count,
@@ -91,6 +93,7 @@ typedef VertexArray<VERTEX_PT> VertexArrayPT;
 typedef VertexArray<VERTEX_PNT> VertexArrayPNT;
 typedef VertexArray<VERTEX_PTBNT> VertexArrayPTBNT;
 typedef VertexArray<VERTEX_PNJWT> VertexArrayPNJWT;
+typedef VertexArray<VERTEX_PTBNJWT> VertexArrayPTBNJWT;
 
 void bind_vertex_array(lua_State *L);
 

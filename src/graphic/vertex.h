@@ -9,7 +9,6 @@
 // prior written consent of Manvel Avetisian.
 //-----------------------------------------------------------------------------
 
-#include <d3d9.h>
 #include <boost/cstdint.hpp>
 #include <math/vec.h>
 
@@ -59,33 +58,6 @@ struct VERTEX_PTBNJWT
 	math::vec<2> texcoords;
 };
 #pragma pack(pop)
-
-template <class T>
-struct vertex_traits;
-
-template<>
-struct vertex_traits<VERTEX_PT>
-{
-	static D3DVERTEXELEMENT9 *get_descr();
-};
-
-template<>
-struct vertex_traits<VERTEX_PNT>
-{
-	static D3DVERTEXELEMENT9 *get_descr();
-};
-
-template<>
-struct vertex_traits<VERTEX_PTBNT>
-{
-	static D3DVERTEXELEMENT9 *get_descr();
-};
-
-template<>
-struct vertex_traits<VERTEX_PNJWT>
-{
-	static D3DVERTEXELEMENT9 *get_descr();
-};
 
 void bind_vertex(lua_State *L);
 

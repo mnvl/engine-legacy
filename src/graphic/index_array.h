@@ -9,6 +9,7 @@
 // prior written consent of Manvel Avetisian.
 //-----------------------------------------------------------------------------
 
+#include <d3d9.h>
 #include <vector>
 #include <boost/shared_ptr.hpp>
 #include <boost/intrusive_ptr.hpp>

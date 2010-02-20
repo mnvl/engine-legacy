@@ -177,7 +177,7 @@ void Renderer::draw_triangles(VertexBuffer *buffer, size_t first_vertex, size_t 
 	hr = device_ptr_->SetVertexDeclaration(buffer->get_vertex_decl());
 	if (FAILED(hr)) throw exception::directx_error(hr);
 
-    hr = device_ptr_->SetStreamSource(0, buffer->get(), 0, buffer->get_vertex_size());
+	hr = device_ptr_->SetStreamSource(0, buffer->get(), 0, buffer->get_vertex_traits()->get_size());
 	if (FAILED(hr)) throw exception::directx_error(hr);
 
 	hr = device_ptr_->DrawPrimitive(D3DPT_TRIANGLELIST, first_vertex, triangles_count);
