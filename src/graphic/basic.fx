@@ -109,7 +109,7 @@ float4 PS_PNT(uniform const int point_lights_count, const VS_OUTPUT_PNT i) : COL
 
 VS_OUTPUT_PTBNT VS_PTBNT(const VS_INPUT_PTBNT i)
 {
-    VS_OUTPUT_NORMAL_MAP o;
+    VS_OUTPUT_PTBNT o;
 
     o.position_h = mul(float4(i.position, 1.0f), world_view_projection_matrix);
     o.texcoords  = i.texcoords;
@@ -152,7 +152,7 @@ float4 PS_PNJWT(uniform const int point_lights_count, const VS_OUTPUT_PNJWT i) :
 	return color * tex2D(DIFFUSE_TEXTURE_SAMPLER, i.texcoords);
 }
 
-VS_OUTPUT_PTBNJWT VS_PTBNJWT(uniform const int count, const VS_INPUT_PNJWT_NORMAL_MAP i)
+VS_OUTPUT_PTBNJWT VS_PTBNJWT(uniform const int count, const VS_INPUT_PTBNJWT i)
 {
     VS_OUTPUT_PTBNJWT o;
 
@@ -188,7 +188,7 @@ technique TECH_PNT
 {
     pass p0
     {
-        VertexShader = compile vs_2_0 VS_PNT(8);
+        VertexShader = compile vs_2_0 VS_PNT();
 		PixelShader = compile ps_2_0 PS_PNT(MAX_POINT_LIGHTS);
     }
 }
@@ -197,7 +197,7 @@ technique TECH_PTBNT
 {
     pass p0
     {
-        VertexShader = compile vs_2_0 VS_PTBNT(8);
+        VertexShader = compile vs_2_0 VS_PTBNT();
 		PixelShader = compile ps_2_0 PS_PTBNT(MAX_POINT_LIGHTS);
     }
 }

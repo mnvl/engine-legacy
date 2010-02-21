@@ -7,11 +7,11 @@ float4x4 joint_matrix_array[MAX_JOINT_MATRICES] : WORLDMATRIXARRAY;
 
 float3 ApplySkeletalAnimationToPosition(float3 p, uniform const int count, const int joints[8], const float weights[8])
 {
-	float3 o;
+	float3 o = { 0.0f, 0.0f, 0.0f };
 
 	for (int index = 0; index < count; index++)
 	{
-		o += mul(float4(p, 1.0), joint_matrix_array[joints[index]]) * weights[index];
+		o += (float3) mul(float4(p, 1.0), joint_matrix_array[joints[index]]) * weights[index];
 	}
 
 	return o;
@@ -19,11 +19,11 @@ float3 ApplySkeletalAnimationToPosition(float3 p, uniform const int count, const
 
 float3 ApplySkeletalAnimationToVector(float3 v, uniform const int count, const int joints[8], const float weights[8])
 {
-	float3 o;
+	float3 o = { 0.0f, 0.0f, 0.0f };
 
 	for (int index = 0; index < count; index++)
 	{
-		o += mul(v, joint_matrix_array[joints[index]]) * weights[index];
+		o += mul(v, (float3x3) joint_matrix_array[joints[index]]) * weights[index];
 	}
 
 	return o;

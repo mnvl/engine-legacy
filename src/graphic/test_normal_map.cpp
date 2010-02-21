@@ -73,7 +73,7 @@ BOOST_AUTO_TEST_CASE(basic)
 	}
 
 	boost::shared_ptr<graphic::Shader> shader(new graphic::Shader(renderer));
-	shader->load_from_file(src + "static_model.fx");
+	shader->load_from_file(src + "basic.fx");
 	graphic::shader_parameters::float4x4 world_view_projection_matrix(shader.get(), "world_view_projection_matrix");
 	graphic::shader_parameters::float4x4 world_matrix(shader.get(), "world_matrix");
 	graphic::shader_parameters::texture diffuse_texture(shader.get(), "diffuse_texture");
