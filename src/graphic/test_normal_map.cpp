@@ -79,7 +79,7 @@ BOOST_AUTO_TEST_CASE(basic)
 	graphic::shader_parameters::texture diffuse_texture(shader.get(), "diffuse_texture");
 	graphic::shader_parameters::texture normal_map_texture(shader.get(), "normal_map_texture");
 	graphic::shader_parameters::point_lights point_lights(shader.get(), "point_lights");
-	graphic::shader_parameters::Technique normal_map_tech(shader.get(), "NORMAL_MAP_TECH");
+	graphic::shader_parameters::Technique tech_ptbnt(shader.get(), "TECH_PTBNT");
 
 	graphic::Camera camera;
 	camera.set_orthographic_projection(2, 2 * math::scalar(renderer->get_screen_height()) / renderer->get_screen_width(), 0, 2);
@@ -98,7 +98,7 @@ BOOST_AUTO_TEST_CASE(basic)
 	world_matrix.set(renderer->get_world_matrix());
 	diffuse_texture.set(material->get_diffuse_texture());
 	normal_map_texture.set(material->get_normal_map_texture());
-	normal_map_tech.set();
+	tech_ptbnt.set();
 
 	graphic::shader_parameters::POINT_LIGHTS lights;
 	memset(&lights, 0, sizeof(lights));
