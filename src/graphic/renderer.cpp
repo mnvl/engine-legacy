@@ -168,7 +168,7 @@ void Renderer::draw_triangles(VertexBuffer *buffer, size_t triangles_count)
 	draw_triangles(buffer, 0, triangles_count);
 }
 
-void Renderer::draw_triangles(VertexBuffer *buffer, size_t first_vertex, size_t triangles_count)
+void Renderer::draw_triangles(VertexBuffer *buffer, size_t minimal_vertex_index, size_t triangles_count)
 {
 	if (triangles_count == 0) return;
 
@@ -180,7 +180,7 @@ void Renderer::draw_triangles(VertexBuffer *buffer, size_t first_vertex, size_t 
 	hr = device_ptr_->SetStreamSource(0, buffer->get(), 0, buffer->get_vertex_traits()->get_size());
 	if (FAILED(hr)) throw exception::directx_error(hr);
 
-	hr = device_ptr_->DrawPrimitive(D3DPT_TRIANGLELIST, first_vertex, triangles_count);
+	hr = device_ptr_->DrawPrimitive(D3DPT_TRIANGLELIST, minimal_vertex_index, triangles_count);
 	if (FAILED(hr)) throw exception::directx_error(hr);
 }
 

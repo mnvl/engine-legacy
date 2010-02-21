@@ -10,8 +10,10 @@
 // prior written consent of Manvel Avetisian.
 //-----------------------------------------------------------------------------
 
+#include <stdexcept>
 #include <boost/scoped_ptr.hpp>
 #include "vertex.h"
+#include "vertex_traits.h"
 #include "shader.h"
 #include "shader_parameters.h"
 
@@ -43,11 +45,14 @@ public:
 	boost::scoped_ptr<shader_parameters::Technique> tech_pnjwt;
 	boost::scoped_ptr<shader_parameters::Technique> tech_ptbnjwt;
 
-	template<class T> shader_parameters::Technique *get_technique_for_vertex();
-	template<> shader_parameters::Technique *get_technique_for_vertex<VERTEX_PNT>() { return tech_pnt.get(); }
-	template<> shader_parameters::Technique *get_technique_for_vertex<VERTEX_PTBNT>() { return tech_ptbnt.get(); }
-	template<> shader_parameters::Technique *get_technique_for_vertex<VERTEX_PNJWT>() { return tech_pnjwt.get(); }
-	template<> shader_parameters::Technique *get_technique_for_vertex<VERTEX_PTBNJWT>() { return tech_ptbnjwt.get(); }
+	shader_parameters::Technique *get_technique_for_vertex(VertexTraits const *vertex_traits)
+	{
+		if (vertex_traits == VertexTraits::get<VERTEX_PNT>()) return tech_pnt.get();
+		if (vertex_traits == VertexTraits::get<VERTEX_PTBNT>()) return tech_ptbnt.get();
+		if (vertex_traits == VertexTraits::get<VERTEX_PNJWT>()) return tech_pnjwt.get();
+		if (vertex_traits == VertexTraits::get<VERTEX_PTBNJWT>()) return tech_ptbnjwt.get();
+		throw std::logic_error("unknown vertex type");
+	}
 };
 
 }

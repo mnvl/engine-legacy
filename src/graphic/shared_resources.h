@@ -32,6 +32,11 @@ public:
 		return vertex_declarations_.get<V>();
 	}
 
+	IDirect3DVertexDeclaration9 *get_vertex_decl(VertexTraits const *vertex_traits)
+	{
+		return vertex_declarations_.get(vertex_traits);
+	}
+
 	boost::shared_ptr<Font> get_default_font();
 	boost::shared_ptr<Material> get_default_material();
 	boost::shared_ptr<MeshShader> get_mesh_shader();

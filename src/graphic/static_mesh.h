@@ -56,8 +56,6 @@ protected:
 
 	boost::shared_ptr<vertex_buffer_t> vertex_buffer_;
 	boost::shared_ptr<index_buffer_t> index_buffer_;
-
-    void draw_triangles_list();
 };
 
 typedef BasicStaticMesh<> StaticMesh;

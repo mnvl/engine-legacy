@@ -10,6 +10,7 @@
 
 #include <exception/directx_error.h>
 #include "mesh_shader.h"
+#include "mesh_draw_call.h"
 #include "static_model.h"
 #include "renderer.h"
 #include "static_mesh.h"
@@ -47,26 +48,21 @@ StaticModel *BasicStaticMesh<T>::get_model()
 template<class T>
 void BasicStaticMesh<T>::draw(Joint *joint_ptr)
 {
-	HRESULT hr;
+	for (triangles_list_type::const_iterator it = triangles_list.begin();
+		it != triangles_list.end(); it++)
+	{
+		boost::shared_ptr<MeshDrawCall> draw_call(new MeshDrawCall(get_model()->get_renderer(), shader_));
+		draw_call->set_vertex_buffer(vertex_buffer_);
+		draw_call->set_index_buffer(index_buffer_);
+		draw_call->set_material(it->material_ptr);
+		draw_call->set_minimal_vertex_index(it->minimal_vertex_index);
+		draw_call->set_vertices_count(it->vertices_count);
+		draw_call->set_first_index_offset(it->first_index_offset);
+		draw_call->set_triangles_count(it->triangles_count);
+		draw_call->set_world_matrix(joint_ptr->matrix);
 
-	boost::shared_ptr<Renderer> const renderer_ptr = get_model()->get_renderer();
-    SharedResources *shared_resources_ptr = renderer_ptr->get_shared_resources();
-	IDirect3DDevice9 *device_ptr = renderer_ptr->get_device();
-
-	math::matrix<4,4> world_matrix = joint_ptr->matrix * renderer_ptr->get_world_matrix();
-	shader_->world_view_projection_matrix->set(world_matrix * renderer_ptr->get_view_matrix() * renderer_ptr->get_projection_matrix());
-	shader_->world_matrix->set(world_matrix);
-
-	hr = device_ptr->SetVertexDeclaration(shared_resources_ptr->get_vertex_decl<vertex_t>());
-	if (FAILED(hr)) throw exception::directx_error(hr);
-
-    hr = device_ptr->SetStreamSource(0, vertex_buffer_->get(), 0, sizeof(vertex_t));
-	if (FAILED(hr)) throw exception::directx_error(hr);
-
-    hr = device_ptr->SetIndices(index_buffer_->get());
-	if (FAILED(hr)) throw exception::directx_error(hr);
-
-    draw_triangles_list();
+		draw_call->execute();
+	}
 }
 
 template<class T>
@@ -179,45 +175,6 @@ void BasicStaticMesh<T>::unlock()
 {
     vertex_buffer_->unlock();
     index_buffer_->unlock();
-}
-
-template<class T>
-void BasicStaticMesh<T>::draw_triangles_list()
-{
-	HRESULT hr;
-
-	boost::shared_ptr<Renderer> renderer_ptr = get_model()->get_renderer();
-    SharedResources *shared_resources_ptr = renderer_ptr->get_shared_resources();
-	IDirect3DDevice9 *device_ptr = renderer_ptr->get_device();
-
-	shader_->get_technique_for_vertex<T>()->set();
-
-	for (triangles_list_type::const_iterator it = triangles_list.begin();
-		it != triangles_list.end(); it++)
-	{
-		shader_->diffuse_texture->set(it->material_ptr ? it->material_ptr->get_diffuse_texture() : boost::shared_ptr<Texture>());
-		shader_->normal_map_texture->set(it->material_ptr ? it->material_ptr->get_normal_map_texture() : boost::shared_ptr<Texture>());
-
-	    UINT passes_count;
-	    hr = shader_->get()->Begin(&passes_count, 0);
-		if (FAILED(hr)) throw exception::directx_error(hr);
-
-		for(UINT pass = 0; pass < passes_count; pass++)
-		{
-			hr = shader_->get()->BeginPass(pass);
-			if (FAILED(hr)) throw exception::directx_error(hr);
-
-			hr = device_ptr->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, it->minimal_vertex_index, it->vertices_count,
-				it->first_index_offset, it->triangles_count);
-			if (FAILED(hr)) throw exception::directx_error(hr);
-
-		    hr = shader_->get()->EndPass();
-	        if (FAILED(hr)) throw exception::directx_error(hr);
-		}
-
-	    hr = shader_->get()->End();
-		if (FAILED(hr)) throw exception::directx_error(hr);
-    }
 }
 
 }

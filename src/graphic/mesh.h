@@ -31,10 +31,10 @@ public:
 	struct triangles
 	{
 		MaterialPtr material_ptr;
-		size_t first_index_offset;
-		size_t triangles_count;
 		size_t minimal_vertex_index;
 		size_t vertices_count;
+		size_t first_index_offset;
+		size_t triangles_count;
 	};
 
 	typedef std::vector<triangles> triangles_list_type;

@@ -95,7 +95,7 @@ public:
 	}
 
 	void draw_triangles(VertexBuffer *buffer, size_t triangles_count);
-	void draw_triangles(VertexBuffer *buffer, size_t first_vertex, size_t triangles_count);
+	void draw_triangles(VertexBuffer *buffer, size_t minimal_vertex_index, size_t triangles_count);
 
 	void disable_all_tests();
 	void set_texture_factor(math::vec<4> const &factor);

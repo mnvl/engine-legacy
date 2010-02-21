@@ -37,7 +37,7 @@ public:
 
 	virtual void postconstruct();
 
-private:
+protected:
 	boost::shared_ptr<Renderer> const renderer_ptr_;
     boost::intrusive_ptr<ID3DXEffect> effect_ptr_;
 

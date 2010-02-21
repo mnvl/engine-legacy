@@ -97,10 +97,10 @@ BOOST_AUTO_TEST_CASE(basic)
 	memset(&lights, 0, sizeof(lights));
 
 	lights.items[0].position = math::vec<3>(0, 0, 10);
-	lights.items[0].color = math::vec<4>(1, 1, 1, 1);
+	lights.items[0].color = math::vec<3>(1, 1, 1);
 	lights.items[0].inv_attenuation = 1.0f;
 
-	lights.items[1].color = math::vec<4>(1, 1, 1, 1);
+	lights.items[1].color = math::vec<3>(1, 1, 1);
 	lights.items[1].inv_attenuation = 0.90f;
 
 #pragma pack(push, 1)

@@ -85,7 +85,8 @@ void AnimatedMesh::draw(Joint *joint_ptr)
     hr = device_ptr->SetIndices(index_buffer_->get());
 	if (FAILED(hr)) throw exception::directx_error(hr);
 
-	draw_triangles_list();
+	// TODO:
+	//draw_triangles_list();
 }
 
 }
