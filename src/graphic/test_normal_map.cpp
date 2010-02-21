@@ -12,7 +12,7 @@
 #include <platform/window.h>
 #include <util/get_sources_path.h>
 #include "material.h"
-#include "shader.h"
+#include "basic_shader.h"
 #include "renderer.h"
 
 BOOST_AUTO_TEST_SUITE(normal_map)
@@ -72,14 +72,8 @@ BOOST_AUTO_TEST_CASE(basic)
 		vertex_array->unlock();
 	}
 
-	boost::shared_ptr<graphic::Shader> shader(new graphic::Shader(renderer));
+	boost::shared_ptr<graphic::BasicShader> shader(new graphic::BasicShader(renderer));
 	shader->load_from_file(src + "basic.fx");
-	graphic::shader_parameters::float4x4 world_view_projection_matrix(shader.get(), "world_view_projection_matrix");
-	graphic::shader_parameters::float4x4 world_matrix(shader.get(), "world_matrix");
-	graphic::shader_parameters::texture diffuse_texture(shader.get(), "diffuse_texture");
-	graphic::shader_parameters::texture normal_map_texture(shader.get(), "normal_map_texture");
-	graphic::shader_parameters::point_lights point_lights(shader.get(), "point_lights");
-	graphic::shader_parameters::Technique tech_ptbnt(shader.get(), "TECH_PTBNT");
 
 	graphic::Camera camera;
 	camera.set_orthographic_projection(2, 2 * math::scalar(renderer->get_screen_height()) / renderer->get_screen_width(), 0, 2);
@@ -92,13 +86,13 @@ BOOST_AUTO_TEST_CASE(basic)
 		renderer->set_world_matrix(tf);
 	}
 
-	world_view_projection_matrix.set(renderer->get_world_matrix()
+	shader->world_view_projection_matrix->set(renderer->get_world_matrix()
 		* renderer->get_view_matrix()
 		* renderer->get_projection_matrix());
-	world_matrix.set(renderer->get_world_matrix());
-	diffuse_texture.set(material->get_diffuse_texture());
-	normal_map_texture.set(material->get_normal_map_texture());
-	tech_ptbnt.set();
+	shader->world_matrix->set(renderer->get_world_matrix());
+	shader->diffuse_texture->set(material->get_diffuse_texture());
+	shader->normal_map_texture->set(material->get_normal_map_texture());
+	shader->tech_ptbnt->set();
 
 	graphic::shader_parameters::POINT_LIGHTS lights;
 	memset(&lights, 0, sizeof(lights));
@@ -127,7 +121,7 @@ BOOST_AUTO_TEST_CASE(basic)
 	{
 		point.position.set(cos(math::scalar(i) / 100) * 0.5f + 0.5f, 0.5f, sin(math::scalar(i) / 100) * 0.5f);
 		lights.items[1].position = point.position;
-		point_lights.set(lights);
+		shader->point_lights->set(lights);
 
 		renderer->begin_frame();
 		renderer->set_camera(camera);

@@ -41,6 +41,8 @@ void Shader::load_from_file(std::string const &filename)
 	if (FAILED(hr)) throw exception::directx_error(hr);
 
 	effect_ptr_.reset(effect_ptr);
+
+	postconstruct();
 }
 
 void Shader::load_from_buffer(char const *buffer, size_t len)
@@ -59,6 +61,8 @@ void Shader::load_from_buffer(char const *buffer, size_t len)
 	if (FAILED(hr)) throw exception::directx_error(hr);
 
 	effect_ptr_.reset(effect_ptr);
+
+	postconstruct();
 }
 
 void Shader::log_compilation_errors(ID3DXBuffer *compilation_errors_ptr)
@@ -69,6 +73,10 @@ void Shader::log_compilation_errors(ID3DXBuffer *compilation_errors_ptr)
 				compilation_errors_ptr->GetBufferSize()));
 		compilation_errors_ptr->Release();
 	}
+}
+
+void Shader::postconstruct()
+{
 }
 
 }
