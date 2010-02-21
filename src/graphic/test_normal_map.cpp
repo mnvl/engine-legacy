@@ -72,8 +72,7 @@ BOOST_AUTO_TEST_CASE(basic)
 		vertex_array->unlock();
 	}
 
-	boost::shared_ptr<graphic::BasicShader> shader(new graphic::BasicShader(renderer));
-	shader->load_from_file(src + "basic.fx");
+	boost::shared_ptr<graphic::BasicShader> shader = renderer->get_shared_resources()->get_basic_shader();
 
 	graphic::Camera camera;
 	camera.set_orthographic_projection(2, 2 * math::scalar(renderer->get_screen_height()) / renderer->get_screen_width(), 0, 2);

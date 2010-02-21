@@ -14,6 +14,7 @@
 namespace graphic
 {
 
+class BasicShader;
 class AnimatedModel;
 
 class AnimatedMesh: public PnjwtStaticMesh {
@@ -26,7 +27,7 @@ public:
     virtual void draw(Joint *joint_ptr);
 
 private:
-	boost::shared_ptr<Shader> shader_;
+	boost::shared_ptr<BasicShader> shader_;
 };
 
 }

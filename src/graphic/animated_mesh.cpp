@@ -10,7 +10,7 @@
 
 #include <d3d9.h>
 #include <vector>
-#include "shader.h"
+#include "basic_shader.h"
 #include "animated_model.h"
 #include "renderer.h"
 #include "animated_mesh.h"
@@ -20,7 +20,7 @@ namespace graphic
 
 AnimatedMesh::AnimatedMesh(Model *model_ptr):
     PnjwtStaticMesh(model_ptr),
-	shader_(get_model()->get_renderer()->get_shared_resources()->get_animated_model_shader())
+	shader_(get_model()->get_renderer()->get_shared_resources()->get_basic_shader())
 {
 }
 

@@ -9,9 +9,10 @@
 //-----------------------------------------------------------------------------
 
 #include <exception/directx_error.h>
+#include <util/get_sources_path.h>
 #include "font.h"
 #include "material.h"
-#include "shader.h"
+#include "basic_shader.h"
 #include "renderer.h"
 #include "shared_resources.h"
 
@@ -50,22 +51,22 @@ boost::shared_ptr<Material> SharedResources::get_default_material()
 	return material;
 }
 
-boost::shared_ptr<Shader> SharedResources::get_animated_model_shader()
+boost::shared_ptr<BasicShader> SharedResources::get_basic_shader()
 {
-	// TODO:
-#if 0
-	boost::shared_ptr<shader::Shader> shader = animated_model_shader_ptr_.lock();
+	boost::shared_ptr<BasicShader> shader = basic_shader_ptr_.lock();
 	if (shader) return shader;
 
-	shader.reset(new shader::Shader(renderer_ptr_->shared_from_this()));
-    shader->load_from_buffer(ANIMATED_MODEL_FX, sizeof(ANIMATED_MODEL_FX));
+	shader.reset(new BasicShader(renderer_ptr_->shared_from_this()));
 
-	animated_model_shader_ptr_ = shader;
-
-	return shader;
+#if defined(NDEBUG)
+	shader->load_from_buffer(ANIMATED_MODEL_FX, sizeof(ANIMATED_MODEL_FX));
+#else
+	shader->load_from_file(util::get_graphic_sources_path() + "basic.fx");
 #endif
 
-	return boost::shared_ptr<Shader>();
+	basic_shader_ptr_ = shader;
+
+	return shader;
 }
 
 }

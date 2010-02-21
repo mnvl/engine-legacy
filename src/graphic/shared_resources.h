@@ -12,14 +12,13 @@
 #include <boost/shared_ptr.hpp>
 #include <boost/weak_ptr.hpp>
 #include "vertex_declarations.h"
-#include "shader.h"
 
 namespace graphic
 {
 
 class Font;
-class Shader;
 class Material;
+class BasicShader;
 class Renderer;
 
 class SharedResources {
@@ -35,7 +34,7 @@ public:
 
 	boost::shared_ptr<Font> get_default_font();
 	boost::shared_ptr<Material> get_default_material();
-	boost::shared_ptr<Shader> get_animated_model_shader();
+	boost::shared_ptr<BasicShader> get_basic_shader();
 
 private:
 	Renderer * const renderer_ptr_;
@@ -44,7 +43,7 @@ private:
 
 	boost::weak_ptr<Font> default_font_;
 	boost::weak_ptr<Material> default_material_;
-	boost::weak_ptr<Shader> animated_model_shader_ptr_;
+	boost::weak_ptr<BasicShader> basic_shader_ptr_;
 };
 
 }
