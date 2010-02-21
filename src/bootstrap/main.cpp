@@ -16,6 +16,7 @@
 #include <luabind/detail/pcall.hpp>
 #include <log4cplus/configurator.h>
 #include <graphic/bind.h>
+#include <particle_system/bind.h>
 #include <platform/timer.h>
 #include <platform/window.h>
 #include <platform/input.h>
@@ -46,6 +47,7 @@ public:
 		luabind::open(L_);
 
 		graphic::bind(L_);
+		particle_system::bind(L_);
 
 		platform::Timer::bind(L_);
 		platform::Window::bind(L_);

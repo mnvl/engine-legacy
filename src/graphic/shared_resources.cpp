@@ -70,7 +70,12 @@ boost::shared_ptr<MeshShader> SharedResources::get_mesh_shader()
 	memset(&pl, 0, sizeof(pl));
 	pl.items[0].position.set(0, 3, 0);
 	pl.items[0].color.set(1, 1, 1);
-	pl.items[0].inv_attenuation = 1.0f;
+	pl.items[0].inv_attenuation = 0.99f;
+
+
+	pl.items[1].position.set(0, 100000000, 0);
+	pl.items[1].color.set(0.2, 0.2, 0.2);
+	pl.items[1].inv_attenuation = 1.0f;
 
 	shader->point_lights->set(pl);
 
