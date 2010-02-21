@@ -12,7 +12,7 @@
 #include <util/get_sources_path.h>
 #include "font.h"
 #include "material.h"
-#include "basic_shader.h"
+#include "mesh_shader.h"
 #include "renderer.h"
 #include "shared_resources.h"
 
@@ -51,20 +51,28 @@ boost::shared_ptr<Material> SharedResources::get_default_material()
 	return material;
 }
 
-boost::shared_ptr<BasicShader> SharedResources::get_basic_shader()
+boost::shared_ptr<MeshShader> SharedResources::get_mesh_shader()
 {
-	boost::shared_ptr<BasicShader> shader = basic_shader_ptr_.lock();
+	boost::shared_ptr<MeshShader> shader = mesh_shader_ptr_.lock();
 	if (shader) return shader;
 
-	shader.reset(new BasicShader(renderer_ptr_->shared_from_this()));
+	shader.reset(new MeshShader(renderer_ptr_->shared_from_this()));
 
 #if defined(NDEBUG)
 	shader->load_from_buffer(ANIMATED_MODEL_FX, sizeof(ANIMATED_MODEL_FX));
 #else
-	shader->load_from_file(util::get_graphic_sources_path() + "basic.fx");
+	shader->load_from_file(util::get_graphic_sources_path() + "mesh.fx");
 #endif
 
-	basic_shader_ptr_ = shader;
+	mesh_shader_ptr_ = shader;
+
+	shader_parameters::POINT_LIGHTS pl;
+	memset(&pl, 0, sizeof(pl));
+	pl.items[0].position.set(0, 3, 0);
+	pl.items[0].color.set(1, 1, 1);
+	pl.items[0].inv_attenuation = 1.0f;
+
+	shader->point_lights->set(pl);
 
 	return shader;
 }

@@ -13,13 +13,15 @@
 #include <boost/shared_ptr.hpp>
 #include <boost/weak_ptr.hpp>
 #include <math/matrix.h>
-#include <graphic/material.h>
+#include "material.h"
 
 namespace graphic {
 
 class Joint;
-class Mesh;
+class MeshShader;
 class Model;
+
+class Mesh;
 
 typedef boost::shared_ptr<Mesh> MeshPtr;
 typedef boost::weak_ptr<Mesh> MeshWeakPtr;
@@ -76,6 +78,7 @@ public:
 
 protected:
 	Model *model_ptr_;
+	boost::shared_ptr<MeshShader> shader_;
 };
 
 }

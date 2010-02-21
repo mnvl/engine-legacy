@@ -1,19 +1,19 @@
 
-#include "basic_shader.h"
+#include "mesh_shader.h"
 
 namespace graphic
 {
 
-BasicShader::BasicShader(boost::shared_ptr<Renderer> const &renderer_ptr):
+MeshShader::MeshShader(boost::shared_ptr<Renderer> const &renderer_ptr):
 	Shader(renderer_ptr)
 {
 }
 
-BasicShader::~BasicShader()
+MeshShader::~MeshShader()
 {
 }
 
-void BasicShader::postconstruct()
+void MeshShader::postconstruct()
 {
 	world_view_projection_matrix.reset(new shader_parameters::float4x4(this, "world_view_projection_matrix"));
 	world_matrix.reset(new shader_parameters::float4x4(this, "world_matrix"));

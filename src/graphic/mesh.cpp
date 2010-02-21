@@ -14,7 +14,8 @@
 namespace graphic {
 
 Mesh::Mesh(Model *model_ptr):
-model_ptr_(model_ptr)
+	model_ptr_(model_ptr),
+	shader_(model_ptr->get_renderer()->get_shared_resources()->get_mesh_shader())
 {
 }
 

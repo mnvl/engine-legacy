@@ -81,12 +81,12 @@ struct VS_INPUT_PTBNJWT
 
 struct VS_OUTPUT_PTBNJWT
 {
-  float4 position_h : POSITION;
-  float2 texcoords  : TEXCOORD0;
-  float3 position   : TEXCOORD1;
-  float3 tangent    : TEXCOORD2;
-  float3 binormal   : TEXCOORD3;
-  float3 normal     : TEXCOORD4;
+	float4 position_h : POSITION;
+	float2 texcoords  : TEXCOORD0;
+	float3 position   : TEXCOORD1;
+	float3 tangent    : TEXCOORD2;
+	float3 binormal   : TEXCOORD3;
+	float3 normal     : TEXCOORD4;
 };
 
 VS_OUTPUT_PNT VS_PNT(const VS_INPUT_PNT i)
@@ -96,15 +96,15 @@ VS_OUTPUT_PNT VS_PNT(const VS_INPUT_PNT i)
     o.position_h = mul(float4(i.position, 1.0f), world_view_projection_matrix);
     o.texcoords  = i.texcoords;
 	o.position   = mul(float4(i.position, 1.0f), world_matrix);
-    o.normal     = mul(i.normal, world_matrix);
+	o.normal     = normalize(mul(i.normal, (float3x3) world_matrix));
 
     return o;
 }
 
 float4 PS_PNT(uniform const int point_lights_count, const VS_OUTPUT_PNT i) : COLOR
 {
-	float4 color = GetPointLightsTotalIlluminationAtPosition(point_lights_count, i.position, i.normal);
-	return color * tex2D(DIFFUSE_TEXTURE_SAMPLER, i.texcoords);
+    float3 color = float4(GetPointLightsTotalIlluminationAtPosition(point_lights_count, i.position, i.normal), 1.0f);
+	return float4(color, 1.0f) * tex2D(DIFFUSE_TEXTURE_SAMPLER, i.texcoords);
 }
 
 VS_OUTPUT_PTBNT VS_PTBNT(const VS_INPUT_PTBNT i)
@@ -114,9 +114,9 @@ VS_OUTPUT_PTBNT VS_PTBNT(const VS_INPUT_PTBNT i)
     o.position_h = mul(float4(i.position, 1.0f), world_view_projection_matrix);
     o.texcoords  = i.texcoords;
 	o.position   = mul(float4(i.position, 1.0f), world_matrix);
-    o.tangent    = mul(i.tangent,  world_matrix);
-    o.binormal   = mul(i.binormal, world_matrix);
-    o.normal     = mul(i.normal,   world_matrix);
+	o.tangent    = normalize(mul(i.tangent, (float3x3) world_matrix));
+	o.binormal   = normalize(mul(i.binormal, (float3x3) world_matrix));
+	o.normal     = normalize(mul(i.normal, (float3x3) world_matrix));
 
     return o;
 }
@@ -124,8 +124,8 @@ VS_OUTPUT_PTBNT VS_PTBNT(const VS_INPUT_PTBNT i)
 float4 PS_PTBNT(uniform const int point_lights_count, const VS_OUTPUT_PTBNT i) : COLOR
 {
 	float3 normal = GetNormalMapNormal(i.position, i.tangent, i.binormal, i.normal);
-	float4 color = GetPointLightsTotalIlluminationAtPosition(point_lights_count, i.position, normal);
-	return color * tex2D(DIFFUSE_TEXTURE_SAMPLER, i.texcoords);
+	float3 color = GetPointLightsTotalIlluminationAtPosition(point_lights_count, i.position, normal);
+	return float4(color, 1.0f) * tex2D(DIFFUSE_TEXTURE_SAMPLER, i.texcoords);
 }
 
 VS_OUTPUT_PNJWT VS_PNJWT(uniform const int count, const VS_INPUT_PNJWT i)
@@ -140,16 +140,16 @@ VS_OUTPUT_PNJWT VS_PNJWT(uniform const int count, const VS_INPUT_PNJWT i)
 
     o.position_h = mul(float4(position, 1.0f), world_view_projection_matrix);
     o.texcoords  = i.texcoords;
-	o.position   = position;
-    o.normal     = mul(normal, world_matrix);
+	o.position   = mul(float4(position, 1.0f), world_matrix);
+	o.normal     = normalize(mul(i.normal, (float3x3) world_matrix));
 
     return o;
 }
 
 float4 PS_PNJWT(uniform const int point_lights_count, const VS_OUTPUT_PNJWT i) : COLOR
 {
-	float4 color = GetPointLightsTotalIlluminationAtPosition(point_lights_count, i.position, i.normal);
-	return color * tex2D(DIFFUSE_TEXTURE_SAMPLER, i.texcoords);
+    float3 color = GetPointLightsTotalIlluminationAtPosition(point_lights_count, i.position, i.normal);
+	return float4(color, 1.0f) * tex2D(DIFFUSE_TEXTURE_SAMPLER, i.texcoords);
 }
 
 VS_OUTPUT_PTBNJWT VS_PTBNJWT(uniform const int count, const VS_INPUT_PTBNJWT i)
@@ -166,13 +166,13 @@ VS_OUTPUT_PTBNJWT VS_PTBNJWT(uniform const int count, const VS_INPUT_PTBNJWT i)
 	o.position = position;
 
 	float3 binormal = ApplySkeletalAnimationToVector(i.binormal, count, joints, weights);
-    o.binormal = mul(binormal, world_matrix);
+	o.binormal = normalize(mul(binormal, (float3x3) world_matrix));
 
-	float3 tangent = ApplySkeletalAnimationToVector(i.tangent,  count, joints, weights);
-    o.tangent = mul(tangent, world_matrix);
+	float3 tangent = ApplySkeletalAnimationToVector(i.tangent, count, joints, weights);
+	o.tangent = normalize(mul(tangent, (float3x3) world_matrix));
 
-	float3 normal = ApplySkeletalAnimationToVector(i.normal,   count, joints, weights);
-    o.normal = mul(normal, world_matrix);
+	float3 normal = ApplySkeletalAnimationToVector(i.normal, count, joints, weights);
+	o.normal = normalize(mul(normal, (float3x3) world_matrix));
 
     return o;
 }
@@ -180,8 +180,8 @@ VS_OUTPUT_PTBNJWT VS_PTBNJWT(uniform const int count, const VS_INPUT_PTBNJWT i)
 float4 PS_PTBNJWT(uniform const int point_lights_count, const VS_OUTPUT_PTBNJWT i) : COLOR
 {
 	float3 normal = GetNormalMapNormal(i.position, i.tangent, i.binormal, i.normal);
-	float4 color = GetPointLightsTotalIlluminationAtPosition(point_lights_count, i.position, normal);
-	return color * tex2D(DIFFUSE_TEXTURE_SAMPLER, i.texcoords);
+	float3 color = GetPointLightsTotalIlluminationAtPosition(point_lights_count, i.position, normal);
+	return float4(color, 1.0f) * tex2D(DIFFUSE_TEXTURE_SAMPLER, i.texcoords);
 }
 
 technique TECH_PNT

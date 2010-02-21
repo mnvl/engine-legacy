@@ -11,7 +11,7 @@ float3 ApplySkeletalAnimationToPosition(float3 p, uniform const int count, const
 
 	for (int index = 0; index < count; index++)
 	{
-		o += (float3) mul(float4(p, 1.0), joint_matrix_array[joints[index]]) * weights[index];
+		o += (float3) mul(float4(p, 1.0f), joint_matrix_array[joints[index]]) * weights[index];
 	}
 
 	return o;

@@ -11,17 +11,18 @@
 //-----------------------------------------------------------------------------
 
 #include <boost/scoped_ptr.hpp>
+#include "vertex.h"
 #include "shader.h"
 #include "shader_parameters.h"
 
 namespace graphic
 {
 
-class BasicShader: public Shader
+class MeshShader: public Shader
 {
 public:
-	BasicShader(boost::shared_ptr<Renderer> const &renderer_ptr);
-	~BasicShader();
+	MeshShader(boost::shared_ptr<Renderer> const &renderer_ptr);
+	~MeshShader();
 
 	virtual void postconstruct();
 
@@ -41,6 +42,12 @@ public:
 	boost::scoped_ptr<shader_parameters::Technique> tech_ptbnt;
 	boost::scoped_ptr<shader_parameters::Technique> tech_pnjwt;
 	boost::scoped_ptr<shader_parameters::Technique> tech_ptbnjwt;
+
+	template<class T> shader_parameters::Technique *get_technique_for_vertex();
+	template<> shader_parameters::Technique *get_technique_for_vertex<VERTEX_PNT>() { return tech_pnt.get(); }
+	template<> shader_parameters::Technique *get_technique_for_vertex<VERTEX_PTBNT>() { return tech_ptbnt.get(); }
+	template<> shader_parameters::Technique *get_technique_for_vertex<VERTEX_PNJWT>() { return tech_pnjwt.get(); }
+	template<> shader_parameters::Technique *get_technique_for_vertex<VERTEX_PTBNJWT>() { return tech_ptbnjwt.get(); }
 };
 
 }

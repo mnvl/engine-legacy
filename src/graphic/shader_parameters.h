@@ -25,7 +25,7 @@ static size_t const MAX_POINT_LIGHTS = 5;
 struct POINT_LIGHT
 {
 	math::vec<3> position;
-	math::vec<4> color;
+	math::vec<3> color;
 	math::scalar inv_attenuation;
 };
 
@@ -81,7 +81,7 @@ void Parameter<math::matrix<4,4> >::set(math::matrix<4,4> const &value)
 
 void Parameter<boost::shared_ptr<Texture> >::set(boost::shared_ptr<Texture> const &texture)
 {
-	HRESULT hr = shader_->get()->SetTexture(handle_, texture->get());
+	HRESULT hr = shader_->get()->SetTexture(handle_, texture ? texture->get() : 0);
 	if (FAILED(hr)) throw exception::directx_error(hr);
 }
 

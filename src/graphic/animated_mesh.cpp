@@ -10,7 +10,7 @@
 
 #include <d3d9.h>
 #include <vector>
-#include "basic_shader.h"
+#include "mesh_shader.h"
 #include "animated_model.h"
 #include "renderer.h"
 #include "animated_mesh.h"
@@ -19,8 +19,7 @@ namespace graphic
 {
 
 AnimatedMesh::AnimatedMesh(Model *model_ptr):
-    PnjwtStaticMesh(model_ptr),
-	shader_(get_model()->get_renderer()->get_shared_resources()->get_basic_shader())
+    PnjwtStaticMesh(model_ptr)
 {
 }
 
@@ -42,14 +41,16 @@ void AnimatedMesh::draw(Joint *joint_ptr)
 	SharedResources * const shared_resources_ptr = renderer_ptr->get_shared_resources();
 	IDirect3DDevice9 * const device_ptr = renderer_ptr->get_device();
 
-	math::matrix<4,4> view_projection_matrix =
-		joint_ptr->matrix *
-        renderer_ptr->get_world_matrix() *
+	math::matrix<4,4> world_matrix = joint_ptr->matrix *
+        renderer_ptr->get_world_matrix();
+
+	math::matrix<4,4> world_view_projection_matrix =
+		world_matrix *
         renderer_ptr->get_view_matrix() *
         renderer_ptr->get_projection_matrix();
 
-	hr = shader_->get()->SetMatrix("view_projection_matrix", (D3DXMATRIX const *) &view_projection_matrix);
-	if (FAILED(hr)) throw exception::directx_error(hr);
+	shader_->world_view_projection_matrix->set(world_view_projection_matrix);
+	shader_->world_matrix->set(world_matrix);
 
     std::vector<math::matrix<4,4> > joint_matrix_array;
     joint_matrix_array.reserve(joint_index_transform.size());
@@ -84,23 +85,7 @@ void AnimatedMesh::draw(Joint *joint_ptr)
     hr = device_ptr->SetIndices(index_buffer_->get());
 	if (FAILED(hr)) throw exception::directx_error(hr);
 
-    UINT passes_count;
-    hr = shader_->get()->Begin(&passes_count, D3DXFX_DONOTSAVESTATE);
-    if (FAILED(hr)) throw exception::directx_error(hr);
-
-    for(UINT pass = 0; pass < passes_count; pass++)
-    {
-        hr = shader_->get()->BeginPass(pass);
-        if (FAILED(hr)) throw exception::directx_error(hr);
-
-        draw_triangles_list();
-
-        hr = shader_->get()->EndPass();
-        if (FAILED(hr)) throw exception::directx_error(hr);
-    }
-
-    hr = shader_->get()->End();
-    if (FAILED(hr)) throw exception::directx_error(hr);
+	draw_triangles_list();
 }
 
 }
