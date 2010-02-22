@@ -10,13 +10,13 @@
 
 #include <boost/lambda/lambda.hpp>
 #include <exception/directx_error.h>
-#include <graphic/static_model.h>
+#include "static_model.h"
 
 namespace graphic
 {
 
-StaticModel::StaticModel(boost::shared_ptr<Renderer> const &renderer_ptr):
-Model(renderer_ptr)
+StaticModel::StaticModel(boost::shared_ptr<Renderer> const &renderer_ptr, boost::shared_ptr<Scheduler> const &scheduler_ptr):
+	Model(renderer_ptr, scheduler_ptr)
 {
 }
 

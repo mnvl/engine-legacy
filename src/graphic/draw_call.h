@@ -10,6 +10,7 @@
 //-----------------------------------------------------------------------------
 
 #include <boost/noncopyable.hpp>
+#include <boost/shared_ptr.hpp>
 #include <math/obb.h>
 
 namespace graphic
@@ -20,6 +21,7 @@ class VertexBuffer;
 class IndexBuffer;
 class Material;
 class Camera;
+class Renderer;
 
 class DrawCall: public boost::noncopyable {
 public:

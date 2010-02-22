@@ -8,14 +8,18 @@
 // prior written consent of Manvel Avetisian.
 //-----------------------------------------------------------------------------
 
-#include <graphic/renderer.h>
-#include <graphic/memory_model.h>
+#include "renderer.h"
+#include "memory_model.h"
 
 namespace graphic
 {
 
-MemoryModel::MemoryModel(boost::shared_ptr<Renderer> const &renderer_ptr):
-	Model(renderer_ptr)
+MemoryModel::MemoryModel(boost::shared_ptr<Renderer> const &renderer_ptr, boost::shared_ptr<Scheduler> const &scheduler_ptr):
+	Model(renderer_ptr, scheduler_ptr)
+{
+}
+
+MemoryModel::~MemoryModel()
 {
 }
 

@@ -14,6 +14,7 @@
 #include "mesh_draw_call.h"
 #include "animated_model.h"
 #include "renderer.h"
+#include "scheduler.h"
 #include "animated_mesh.h"
 
 namespace graphic
@@ -64,7 +65,7 @@ void AnimatedMesh::draw(Joint *joint_ptr)
 		draw_call->set_world_matrix(world_matrix);
 		draw_call->set_joint_matrix_array(joint_matrix_array);
 
-		draw_call->execute();
+		get_model()->get_scheduler()->add(draw_call);
 	}
 }
 

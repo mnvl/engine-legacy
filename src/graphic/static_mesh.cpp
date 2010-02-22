@@ -13,6 +13,7 @@
 #include "mesh_draw_call.h"
 #include "static_model.h"
 #include "renderer.h"
+#include "scheduler.h"
 #include "static_mesh.h"
 
 namespace graphic
@@ -60,7 +61,7 @@ void BasicStaticMesh<T>::draw(Joint *joint_ptr)
 		draw_call->set_triangles_count(it->triangles_count);
 		draw_call->set_world_matrix(joint_ptr->matrix);
 
-		draw_call->execute();
+		get_model()->get_scheduler()->add(draw_call);
 	}
 }
 

@@ -22,6 +22,7 @@
 #include "camera.h"
 #include "font.h"
 #include "renderer.h"
+#include "scheduler.h"
 #include "bind.h"
 
 namespace graphic
@@ -43,6 +44,7 @@ void bind(lua_State *L)
 	Camera::bind(L);
 	Font::bind(L);
     Renderer::bind(L);
+	Scheduler::bind(L);
 }
 
 }

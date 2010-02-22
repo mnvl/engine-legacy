@@ -20,6 +20,9 @@
 namespace graphic
 {
 
+class Renderer;
+class Scheduler;
+
 class Model {
 public:
 	typedef std::vector<JointPtr> joints_type;
@@ -32,14 +35,12 @@ public:
 	animations_type animations;
 	materials_type materials;
 
-	Model(boost::shared_ptr<Renderer> const &renderer_ptr = boost::shared_ptr<Renderer>());
+	Model(boost::shared_ptr<Renderer> const &renderer_ptr, boost::shared_ptr<Scheduler> const &scheduler_ptr);
 	Model(Model const &model); // makes shallow copy of meshes and materials, and full copy of joints and animations
 	virtual ~Model();
 
-	boost::shared_ptr<Renderer> const &get_renderer() const
-	{
-		return renderer_ptr_;
-	}
+	boost::shared_ptr<Renderer> const &get_renderer() const { return renderer_ptr_; }
+	boost::shared_ptr<Scheduler> const &get_scheduler() const { return scheduler_ptr_; }
 
 	JointPtr get_joint_by_id(std::string const &name);
 	JointPtr get_joint_by_name(std::string const &name);
@@ -67,6 +68,7 @@ public:
 
 protected:
 	boost::shared_ptr<Renderer> const renderer_ptr_;
+	boost::shared_ptr<Scheduler> const scheduler_ptr_;
 };
 
 }

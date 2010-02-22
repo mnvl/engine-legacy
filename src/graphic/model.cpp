@@ -15,14 +15,16 @@
 
 namespace graphic {
 
-Model::Model(boost::shared_ptr<Renderer> const &renderer_ptr):
-	renderer_ptr_(renderer_ptr)
+Model::Model(boost::shared_ptr<Renderer> const &renderer_ptr, boost::shared_ptr<Scheduler> const &scheduler_ptr):
+	renderer_ptr_(renderer_ptr),
+	scheduler_ptr_(scheduler_ptr)
 {
 }
 
 Model::Model(Model const &model):
 	materials(model.materials),
-	renderer_ptr_(model.renderer_ptr_)
+	renderer_ptr_(model.renderer_ptr_),
+	scheduler_ptr_(model.scheduler_ptr_)
 {
 	boost::unordered_map<JointPtr, JointPtr> joints_tt;
 	boost::unordered_map<MeshPtr, MeshPtr> meshes_tt;
