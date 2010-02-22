@@ -48,8 +48,7 @@ StaticModel *BasicStaticMesh<T>::get_model()
 template<class T>
 void BasicStaticMesh<T>::draw(Joint *joint_ptr)
 {
-	for (triangles_list_type::const_iterator it = triangles_list.begin();
-		it != triangles_list.end(); it++)
+	for (triangles_list_type::const_iterator it = triangles_list.begin(); it != triangles_list.end(); it++)
 	{
 		boost::shared_ptr<MeshDrawCall> draw_call(new MeshDrawCall(get_model()->get_renderer(), shader_));
 		draw_call->set_vertex_buffer(vertex_buffer_);

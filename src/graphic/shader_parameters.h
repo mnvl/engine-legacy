@@ -9,6 +9,7 @@
 // prior written consent of Manvel Avetisian.
 //-----------------------------------------------------------------------------
 
+#include <vector>
 #include <math/vec.h>
 #include <math/matrix.h>
 #include "texture.h"
@@ -79,6 +80,12 @@ void Parameter<math::matrix<4,4> >::set(math::matrix<4,4> const &value)
 	if (FAILED(hr)) throw exception::directx_error(hr);
 }
 
+void Parameter<std::vector<math::matrix<4,4> > >::set(std::vector<math::matrix<4,4> > const &value)
+{
+	HRESULT hr = shader_->get()->SetMatrixArray(handle_, (D3DXMATRIX const *) &value[0], value.size());
+	if (FAILED(hr)) throw exception::directx_error(hr);
+}
+
 void Parameter<boost::shared_ptr<Texture> >::set(boost::shared_ptr<Texture> const &texture)
 {
 	HRESULT hr = shader_->get()->SetTexture(handle_, texture ? texture->get() : 0);
@@ -115,8 +122,10 @@ protected:
 
 typedef Parameter<math::vec<3> > float3;
 typedef Parameter<math::matrix<4, 4> > float4x4;
+typedef Parameter<std::vector<math::matrix<4, 4> > > float4x4_array;
 typedef Parameter<boost::shared_ptr<Texture> > texture;
 typedef Parameter<POINT_LIGHTS> point_lights;
+typedef Parameter<math::matrix<4, 4> > float4x4;
 
 }
 }

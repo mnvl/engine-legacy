@@ -29,6 +29,16 @@ MeshDrawCall::~MeshDrawCall()
 {
 }
 
+void MeshDrawCall::swap_joint_matrix_array(std::vector<math::matrix<4,4> > &joint_matrix_array)
+{
+	joint_matrix_array_.swap(joint_matrix_array);
+}
+
+void MeshDrawCall::set_joint_matrix_array(std::vector<math::matrix<4,4> > &joint_matrix_array)
+{
+	joint_matrix_array_ = joint_matrix_array;
+}
+
 void MeshDrawCall::execute()
 {
 	HRESULT hr;
@@ -54,6 +64,8 @@ void MeshDrawCall::execute()
 
 	shader_->world_matrix->set(world_matrix_);
 	shader_->world_view_projection_matrix->set(world_matrix_ * view_matrix_ * projection_matrix_);
+
+	if (joint_matrix_array_.size()) shader_->joint_matrix_array->set(joint_matrix_array_);
 
 	UINT passes_count;
 	hr = shader_->get()->Begin(&passes_count, 0);

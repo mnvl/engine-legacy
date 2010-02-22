@@ -11,6 +11,7 @@
 #include <d3d9.h>
 #include <vector>
 #include "mesh_shader.h"
+#include "mesh_draw_call.h"
 #include "animated_model.h"
 #include "renderer.h"
 #include "animated_mesh.h"
@@ -35,22 +36,7 @@ AnimatedModel *AnimatedMesh::get_model()
 
 void AnimatedMesh::draw(Joint *joint_ptr)
 {
-    HRESULT hr;
-
-	boost::shared_ptr<Renderer> const renderer_ptr = get_model()->get_renderer();
-	SharedResources * const shared_resources_ptr = renderer_ptr->get_shared_resources();
-	IDirect3DDevice9 * const device_ptr = renderer_ptr->get_device();
-
-	math::matrix<4,4> world_matrix = joint_ptr->matrix *
-        renderer_ptr->get_world_matrix();
-
-	math::matrix<4,4> world_view_projection_matrix =
-		world_matrix *
-        renderer_ptr->get_view_matrix() *
-        renderer_ptr->get_projection_matrix();
-
-	shader_->world_view_projection_matrix->set(world_view_projection_matrix);
-	shader_->world_matrix->set(world_matrix);
+	math::matrix<4,4> world_matrix = joint_ptr->matrix * get_model()->get_renderer()->get_world_matrix();
 
     std::vector<math::matrix<4,4> > joint_matrix_array;
     joint_matrix_array.reserve(joint_index_transform.size());
@@ -65,28 +51,21 @@ void AnimatedMesh::draw(Joint *joint_ptr)
         joint_matrix_array.push_back(t);
     }
 
-	if (joint_matrix_array.empty())
+	for (triangles_list_type::const_iterator it = triangles_list.begin(); it != triangles_list.end(); it++)
 	{
-	    hr = shader_->get()->SetMatrixArray("joint_matrix_array", (D3DXMATRIX const *) 0, 0);
+		boost::shared_ptr<MeshDrawCall> draw_call(new MeshDrawCall(get_model()->get_renderer(), shader_));
+		draw_call->set_vertex_buffer(vertex_buffer_);
+		draw_call->set_index_buffer(index_buffer_);
+		draw_call->set_material(it->material_ptr);
+		draw_call->set_minimal_vertex_index(it->minimal_vertex_index);
+		draw_call->set_vertices_count(it->vertices_count);
+		draw_call->set_first_index_offset(it->first_index_offset);
+		draw_call->set_triangles_count(it->triangles_count);
+		draw_call->set_world_matrix(world_matrix);
+		draw_call->set_joint_matrix_array(joint_matrix_array);
+
+		draw_call->execute();
 	}
-	else
-	{
-	    hr = shader_->get()->SetMatrixArray("joint_matrix_array", (D3DXMATRIX const *) &joint_matrix_array[0], joint_matrix_array.size());
-	}
-
-	if (FAILED(hr)) throw exception::directx_error(hr);
-
-	hr = device_ptr->SetVertexDeclaration(shared_resources_ptr->get_vertex_decl<vertex_t>());
-	if (FAILED(hr)) throw exception::directx_error(hr);
-
-    hr = device_ptr->SetStreamSource(0, vertex_buffer_->get(), 0, sizeof(vertex_t));
-	if (FAILED(hr)) throw exception::directx_error(hr);
-
-    hr = device_ptr->SetIndices(index_buffer_->get());
-	if (FAILED(hr)) throw exception::directx_error(hr);
-
-	// TODO:
-	//draw_triangles_list();
 }
 
 }

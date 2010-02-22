@@ -141,7 +141,7 @@ VS_OUTPUT_PNJWT VS_PNJWT(uniform const int count, const VS_INPUT_PNJWT i)
     o.position_h = mul(float4(position, 1.0f), world_view_projection_matrix);
     o.texcoords  = i.texcoords;
 	o.position   = mul(float4(position, 1.0f), world_matrix);
-	o.normal     = normalize(mul(i.normal, (float3x3) world_matrix));
+	o.normal     = normalize(mul(normal, (float3x3) world_matrix));
 
     return o;
 }

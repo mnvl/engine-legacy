@@ -45,6 +45,9 @@ public:
 	boost::scoped_ptr<shader_parameters::Technique> tech_pnjwt;
 	boost::scoped_ptr<shader_parameters::Technique> tech_ptbnjwt;
 
+	// from skeletal_animation.fx
+	boost::scoped_ptr<shader_parameters::float4x4_array> joint_matrix_array;
+
 	shader_parameters::Technique *get_technique_for_vertex(VertexTraits const *vertex_traits)
 	{
 		if (vertex_traits == VertexTraits::get<VERTEX_PNT>()) return tech_pnt.get();
