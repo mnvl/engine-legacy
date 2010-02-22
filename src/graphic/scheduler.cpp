@@ -8,6 +8,7 @@
 // prior written consent of Manvel Avetisian.
 //-----------------------------------------------------------------------------
 
+#include <algorithm>
 #include "draw_call.h"
 #include "renderer.h"
 #include "scheduler.h"
@@ -32,6 +33,16 @@ void Scheduler::add(boost::shared_ptr<DrawCall> const &draw_call)
 
 void Scheduler::flush()
 {
+	struct Comparator
+	{
+		bool operator()(boost::shared_ptr<DrawCall> const &lhs, boost::shared_ptr<DrawCall> const &rhs)
+		{
+			return lhs->get_material() < rhs->get_material();
+		}
+	};
+
+	std::sort(draw_calls_.begin(), draw_calls_.end(), Comparator());
+
 	for(draw_calls_t::const_iterator it = draw_calls_.begin(); it != draw_calls_.end(); ++it)
 	{
 		(*it)->execute();
