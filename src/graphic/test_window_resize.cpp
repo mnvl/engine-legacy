@@ -149,7 +149,7 @@ BOOST_AUTO_TEST_CASE(with_postconstruct_and_font)
 	{
 		if (i == 5)
 		{
-			font = renderer->get_shared_resources()->get_default_font();
+			font = renderer->create_font("Courier New");
 		}
 
 		if (i == 15)

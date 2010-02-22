@@ -9,9 +9,10 @@
 //-----------------------------------------------------------------------------
 
 #include <boost/numeric/conversion/cast.hpp>
-#include <graphic/renderer.h>
-#include <graphic/memory_model.h>
-#include <graphic/memory_mesh.h>
+#include "vertex_declarations.h"
+#include "renderer.h"
+#include "memory_model.h"
+#include "memory_mesh.h"
 
 namespace graphic {
 
@@ -144,22 +145,15 @@ void MemoryMesh::transform_vertices(Joint const *joint_ptr, std::vector<vertex_t
 void MemoryMesh::draw_static(Joint *joint_ptr) const
 {
 	boost::shared_ptr<Renderer> const renderer_ptr = get_model()->get_renderer();
-    SharedResources *shared_resources_ptr = renderer_ptr->get_shared_resources();
+    ShadersLibrary *shaders_library_ptr = renderer_ptr->get_shaders_library();
 	IDirect3DDevice9 *device_ptr = renderer_ptr->get_device();
 
-    device_ptr->SetVertexDeclaration(shared_resources_ptr->get_vertex_decl<vertex_t>());
+    device_ptr->SetVertexDeclaration(renderer_ptr->get_vertex_declarations()->get<vertex_t>());
 
 	for (triangles_list_type::const_iterator it = triangles_list.begin();
 		it != triangles_list.end(); it++)
 	{
-		if (it->material_ptr)
-		{
-			it->material_ptr->select();
-		}
-		else
-		{
-			shared_resources_ptr->get_default_material()->select();
-		}
+		it->material_ptr->select();
 
 		{
 			math::matrix<4,4> tf = joint_ptr->matrix * renderer_ptr->get_world_matrix();
@@ -174,25 +168,18 @@ void MemoryMesh::draw_static(Joint *joint_ptr) const
 void MemoryMesh::draw_animated(Joint *joint_ptr) const
 {
 	boost::shared_ptr<Renderer> const renderer_ptr = get_model()->get_renderer();
-    SharedResources *shared_resources_ptr = renderer_ptr->get_shared_resources();
+    ShadersLibrary *shaders_library_ptr = renderer_ptr->get_shaders_library();
 	IDirect3DDevice9 *device_ptr = renderer_ptr->get_device();
 
 	std::vector<vertex_t> transformed_vertices;
 	transform_vertices(joint_ptr, transformed_vertices);
 
-	device_ptr->SetVertexDeclaration(shared_resources_ptr->get_vertex_decl<vertex_t>());
+	device_ptr->SetVertexDeclaration(renderer_ptr->get_vertex_declarations()->get<vertex_t>());
 
 	for (triangles_list_type::const_iterator it = triangles_list.begin();
 		it != triangles_list.end(); it++)
 	{
-		if (it->material_ptr)
-		{
-			it->material_ptr->select();
-		}
-		else
-		{
-			shared_resources_ptr->get_default_material()->select();
-		}
+		it->material_ptr->select();
 
 		{
 			math::matrix<4,4> tf = joint_ptr->matrix * renderer_ptr->get_world_matrix();

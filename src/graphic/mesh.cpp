@@ -8,14 +8,16 @@
 // prior written consent of Manvel Avetisian.
 //-----------------------------------------------------------------------------
 
-#include <graphic/model.h>
-#include <graphic/mesh.h>
+#include "model.h"
+#include "shaders_library.h"
+#include "renderer.h"
+#include "mesh.h"
 
 namespace graphic {
 
 Mesh::Mesh(Model *model_ptr):
 	model_ptr_(model_ptr),
-	shader_(model_ptr->get_renderer()->get_shared_resources()->get_mesh_shader())
+	shader_(model_ptr->get_renderer()->get_shaders_library()->get_mesh_shader())
 {
 }
 

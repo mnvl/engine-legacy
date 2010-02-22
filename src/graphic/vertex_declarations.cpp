@@ -9,6 +9,7 @@
 //-----------------------------------------------------------------------------
 
 #include "renderer.h"
+#include "vertex_declarations.h"
 
 namespace graphic
 {

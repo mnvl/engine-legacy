@@ -11,6 +11,7 @@
 #include <luabind/luabind.hpp>
 #include <exception/directx_error.h>
 #include "renderer.h"
+#include "vertex_declarations.h"
 #include "vertex_array.h"
 
 namespace graphic
@@ -98,7 +99,7 @@ VertexTraits const *VertexArray<T>::get_vertex_traits() const
 template<class T>
 IDirect3DVertexDeclaration9 *VertexArray<T>::get_vertex_decl() const
 {
-	return renderer_->get_shared_resources()->get_vertex_decl<T>();
+	return renderer_->get_vertex_declarations()->get<T>();
 }
 
 template class VertexArray<VERTEX_PT>;

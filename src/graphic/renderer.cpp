@@ -13,10 +13,9 @@
 #include <exception/directx_error.h>
 #include <platform/timer.h>
 #include <util/logger.h>
-#include "camera.h"
-#include "font.h"
 #include "material.h"
-#include "vertex_array.h"
+#include "vertex_declarations.h"
+#include "shaders_library.h"
 #include "renderer.h"
 
 namespace graphic
@@ -88,9 +87,12 @@ Renderer::~Renderer() {
 
 void Renderer::postconstruct()
 {
-    shared_resources_.reset(new SharedResources(this));
+    shaders_library_.reset(new ShadersLibrary(this));
+	vertex_declarations_.reset(new VertexDeclarations(this));
 	resources_directory_.reset(new ResourcesDirectory());
+
 	window_ptr_->signal_resize.connect(boost::bind(&Renderer::thunk_resize, boost::weak_ptr<Renderer>(shared_from_this())));
+
 	reset_state();
 }
 

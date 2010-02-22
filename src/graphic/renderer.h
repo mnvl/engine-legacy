@@ -22,7 +22,6 @@
 #include <platform/window.h>
 #include "camera.h"
 #include "resource.h"
-#include "shared_resources.h"
 #include "vertex_array.h"
 #include "index_array.h"
 #include "texture.h"
@@ -31,11 +30,9 @@
 namespace graphic
 {
 
-class Camera;
-class Font;
+class ShadersLibrary;
+class VertexDeclarations;
 class Material;
-class Texture;
-class IndexBuffer;
 
 class Renderer: public boost::enable_shared_from_this<Renderer>, public boost::noncopyable {
 public:
@@ -53,7 +50,8 @@ public:
 	void finish_frame();
 
 	IDirect3DDevice9 *get_device() const { return device_ptr_.get(); }
-    SharedResources *get_shared_resources() const { return shared_resources_.get(); }
+	VertexDeclarations *get_vertex_declarations() const { return vertex_declarations_.get(); }
+	ShadersLibrary *get_shaders_library() const { return shaders_library_.get(); }
 
     void set_world_matrix(math::matrix<4,4> const &tf);
 	void set_camera(Camera const &camera); // stores copy of camera
@@ -115,7 +113,8 @@ private:
 	boost::intrusive_ptr<IDirect3D9> direct3d_ptr_;
 	boost::intrusive_ptr<IDirect3DDevice9> device_ptr_;
 
-    boost::scoped_ptr<SharedResources> shared_resources_;
+    boost::scoped_ptr<ShadersLibrary> shaders_library_;
+	boost::scoped_ptr<VertexDeclarations> vertex_declarations_;
 	boost::scoped_ptr<ResourcesDirectory> resources_directory_;
 
 	void handle_resize();

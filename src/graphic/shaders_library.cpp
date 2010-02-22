@@ -14,44 +14,21 @@
 #include "material.h"
 #include "mesh_shader.h"
 #include "renderer.h"
-#include "shared_resources.h"
+#include "shaders_library.h"
 
 namespace graphic
 {
 
-SharedResources::SharedResources(Renderer * const renderer_ptr):
-    renderer_ptr_(renderer_ptr),
-	vertex_declarations_(renderer_ptr)
+ShadersLibrary::ShadersLibrary(Renderer * const renderer_ptr):
+    renderer_ptr_(renderer_ptr)
 {
 }
 
-SharedResources::~SharedResources()
+ShadersLibrary::~ShadersLibrary()
 {
 }
 
-boost::shared_ptr<Font> SharedResources::get_default_font()
-{
-	boost::shared_ptr<Font> font = default_font_.lock();
-	if (font) return font;
-
-    font = renderer_ptr_->create_font("Courier New");
-	default_font_ = font;
-
-	return font;
-}
-
-boost::shared_ptr<Material> SharedResources::get_default_material()
-{
-	boost::shared_ptr<Material> material = default_material_.lock();
-	if (material) return material;
-
-	material.reset(new graphic::Material(renderer_ptr_->shared_from_this()));
-	default_material_ = material;
-
-	return material;
-}
-
-boost::shared_ptr<MeshShader> SharedResources::get_mesh_shader()
+boost::shared_ptr<MeshShader> ShadersLibrary::get_mesh_shader()
 {
 	boost::shared_ptr<MeshShader> shader = mesh_shader_ptr_.lock();
 	if (shader) return shader;
@@ -72,10 +49,9 @@ boost::shared_ptr<MeshShader> SharedResources::get_mesh_shader()
 	pl.items[0].color.set(1, 1, 1);
 	pl.items[0].inv_attenuation = 0.95f;
 
-
-//	pl.items[1].position.set(0, 100000000, 0);
-//	pl.items[1].color.set(0.1f, 0.1f, 0.1f);
-//	pl.items[1].inv_attenuation = 1.0f;
+	pl.items[1].position.set(0, 100000000, 0);
+	pl.items[1].color.set(0.3f, 0.3f, 0.3f);
+	pl.items[1].inv_attenuation = 1.0f;
 
 	shader->point_lights->set(pl);
 

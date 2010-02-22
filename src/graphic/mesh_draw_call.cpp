@@ -12,7 +12,8 @@
 #include "index_array.h"
 #include "material.h"
 #include "mesh_shader.h"
-#include "shared_resources.h"
+#include "shaders_library.h"
+#include "vertex_declarations.h"
 #include "renderer.h"
 #include "mesh_draw_call.h"
 
@@ -43,12 +44,12 @@ void MeshDrawCall::execute()
 {
 	HRESULT hr;
 
-    SharedResources *shared_resources_ptr = renderer_->get_shared_resources();
+    ShadersLibrary *shaders_library_ptr = renderer_->get_shaders_library();
 	IDirect3DDevice9 *device_ptr = renderer_->get_device();
 
 	VertexTraits const *vertex_traits = vertex_buffer_->get_vertex_traits();
 
-	hr = device_ptr->SetVertexDeclaration(shared_resources_ptr->get_vertex_decl(vertex_traits));
+	hr = device_ptr->SetVertexDeclaration(renderer_->get_vertex_declarations()->get(vertex_traits));
 	if (FAILED(hr)) throw exception::directx_error(hr);
 
     hr = device_ptr->SetStreamSource(0, vertex_buffer_->get(), 0, vertex_traits->get_size());
