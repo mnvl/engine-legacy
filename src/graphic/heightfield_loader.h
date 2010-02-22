@@ -42,8 +42,8 @@ public:
 
 private:
 	std::string filename_;
-	Model *model_ptr_;
-	boost::shared_ptr<Renderer> const renderer_ptr_;
+	Model *model_;
+	boost::shared_ptr<Renderer> const renderer_;
 };
 
 }

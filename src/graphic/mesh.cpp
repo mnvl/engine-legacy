@@ -16,7 +16,7 @@
 namespace graphic {
 
 Mesh::Mesh(Model *model_ptr):
-	model_ptr_(model_ptr),
+	model_(model_ptr),
 	shader_(model_ptr->get_renderer()->get_shaders_library()->get_mesh_shader())
 {
 }
@@ -27,12 +27,12 @@ Mesh::~Mesh()
 
 void Mesh::set_model(Model *model)
 {
-	model_ptr_ = model;
+	model_ = model;
 }
 
 Model *Mesh::get_model() const
 {
-	return model_ptr_;
+	return model_;
 }
 
 void Mesh::draw(Joint *joint_ptr)

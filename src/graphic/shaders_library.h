@@ -28,9 +28,9 @@ public:
 	boost::shared_ptr<MeshShader> get_mesh_shader();
 
 private:
-	Renderer * const renderer_ptr_;
+	Renderer * const renderer_;
 
-	boost::weak_ptr<MeshShader> mesh_shader_ptr_;
+	boost::weak_ptr<MeshShader> mesh_shader_;
 };
 
 }

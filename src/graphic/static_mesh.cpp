@@ -43,7 +43,7 @@ MeshPtr BasicStaticMesh<T>::shallow_copy() const
 template<class T>
 StaticModel *BasicStaticMesh<T>::get_model()
 {
-	return (StaticModel *) model_ptr_;
+	return (StaticModel *) model_;
 }
 
 template<class T>

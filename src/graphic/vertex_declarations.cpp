@@ -8,6 +8,7 @@
 // prior written consent of Manvel Avetisian.
 //-----------------------------------------------------------------------------
 
+#include <exception/directx_error.h>
 #include "renderer.h"
 #include "vertex_declarations.h"
 
@@ -15,7 +16,7 @@ namespace graphic
 {
 
 VertexDeclarations::VertexDeclarations(Renderer * const renderer_ptr):
-	renderer_ptr_(renderer_ptr)
+	renderer_(renderer_ptr)
 {
 }
 
@@ -31,7 +32,7 @@ IDirect3DVertexDeclaration9 *VertexDeclarations::get(VertexTraits const *vertex_
 	{
 		IDirect3DVertexDeclaration9 *decl_ptr;
 
-		HRESULT hr = renderer_ptr_->get_device()->CreateVertexDeclaration(vertex_traits->get_descr(), &decl_ptr);
+		HRESULT hr = renderer_->get_device()->CreateVertexDeclaration(vertex_traits->get_descr(), &decl_ptr);
 		if (FAILED(hr)) throw exception::directx_error(hr);
 
 		traits_to_declarations_.insert(std::make_pair(vertex_traits, VertexDeclarationPtr(decl_ptr)));

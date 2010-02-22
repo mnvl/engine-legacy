@@ -56,6 +56,8 @@ void *VertexBuffer::lock(bool discard)
 
 void VertexBuffer::unlock()
 {
+	if (!buffer_) return;
+
 	void *ptr = 0;
 
 	HRESULT hr = buffer_->Lock(0, 0, (void **) &ptr, D3DLOCK_DISCARD);

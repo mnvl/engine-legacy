@@ -11,6 +11,8 @@
 #include <boost/shared_ptr.hpp>
 #include <luabind/luabind.hpp>
 #include <platform/window.h>
+#include "texture.h"
+#include "font.h"
 #include "renderer.h"
 
 void graphic::Renderer::bind(lua_State *L)

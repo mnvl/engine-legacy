@@ -31,7 +31,7 @@ class Font: public Resource
 public:
 	~Font();
 
-	ID3DXFont *get() const { return font_ptr_.get(); }
+	ID3DXFont *get() const { return font_.get(); }
 
 	static DWORD const FLAG_ALIGN_LEFT = DT_LEFT;
 	static DWORD const FLAG_ALIGN_HCENTER = DT_CENTER;
@@ -49,7 +49,7 @@ public:
 	static void bind(lua_State *L);
 
 private:
-	boost::intrusive_ptr<ID3DXFont> font_ptr_;
+	boost::intrusive_ptr<ID3DXFont> font_;
 
 	Font(boost::shared_ptr<Renderer> const &renderer, std::string const &face_name, int height = 16);
 };

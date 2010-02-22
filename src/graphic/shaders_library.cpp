@@ -20,7 +20,7 @@ namespace graphic
 {
 
 ShadersLibrary::ShadersLibrary(Renderer * const renderer_ptr):
-    renderer_ptr_(renderer_ptr)
+    renderer_(renderer_ptr)
 {
 }
 
@@ -30,18 +30,19 @@ ShadersLibrary::~ShadersLibrary()
 
 boost::shared_ptr<MeshShader> ShadersLibrary::get_mesh_shader()
 {
-	boost::shared_ptr<MeshShader> shader = mesh_shader_ptr_.lock();
+	boost::shared_ptr<MeshShader> shader = mesh_shader_.lock();
 	if (shader) return shader;
 
-	shader.reset(new MeshShader(renderer_ptr_->shared_from_this()));
+	shader.reset(new MeshShader(renderer_->shared_from_this()));
+	renderer_->register_resource(boost::static_pointer_cast<Resource>(shader));
 
 #if defined(NDEBUG)
-	shader->load_from_buffer(ANIMATED_MODEL_FX, sizeof(ANIMATED_MODEL_FX));
+	shader->load_from_buffer(MESH_FX, sizeof(MESH_FX));
 #else
 	shader->load_from_file(util::get_graphic_sources_path() + "mesh.fx");
 #endif
 
-	mesh_shader_ptr_ = shader;
+	mesh_shader_ = shader;
 
 	shader_parameters::POINT_LIGHTS pl;
 	memset(&pl, 0, sizeof(pl));

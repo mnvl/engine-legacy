@@ -77,7 +77,7 @@ public:
 	virtual void draw(Joint *joint_ptr);
 
 protected:
-	Model *model_ptr_;
+	Model *model_;
 	boost::shared_ptr<MeshShader> shader_;
 };
 

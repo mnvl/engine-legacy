@@ -18,7 +18,7 @@ namespace graphic
 {
 
 Texture::Texture(boost::shared_ptr<Renderer> const &renderer_ptr, std::string const &filename):
-	renderer_ptr_(renderer_ptr)
+	renderer_(renderer_ptr)
 {
 	load_from_file(filename);
 }
@@ -54,20 +54,20 @@ void Texture::load_from_file(std::string const &filename)
 
 	LOG_INFO("loading texture from file " << filename_);
 
-	if (renderer_ptr_)
+	if (renderer_)
 	{
 		IDirect3DTexture9 *texture_ptr;
-		HRESULT hr = D3DXCreateTextureFromFile(renderer_ptr_->get_device(), filename_.c_str(), &texture_ptr);
+		HRESULT hr = D3DXCreateTextureFromFile(renderer_->get_device(), filename_.c_str(), &texture_ptr);
 		if (FAILED(hr)) throw exception::directx_error(hr);
-		texture_ptr_.reset(texture_ptr);
+		texture_.reset(texture_ptr);
 		texture_ptr->Release();
 	}
 
 #if defined(_DEBUG)
-	if (texture_ptr_)
+	if (texture_)
 	{
 		D3DSURFACE_DESC ddsd;
-		HRESULT hr = texture_ptr_->GetLevelDesc(0, &ddsd);
+		HRESULT hr = texture_->GetLevelDesc(0, &ddsd);
 		if (FAILED(hr)) throw exception::directx_error(hr);
 
 		typedef unsigned char uchar;
@@ -80,23 +80,23 @@ void Texture::load_from_file(std::string const &filename)
 
 void Texture::select()
 {
-	HRESULT hr = renderer_ptr_->get_device()->SetTexture(0, texture_ptr_.get());
+	HRESULT hr = renderer_->get_device()->SetTexture(0, texture_.get());
 	if (FAILED(hr)) throw exception::directx_error(hr);
 }
 
 void Texture::handle_lost_device()
 {
-	texture_ptr_.reset();
+	texture_.reset();
 }
 
 void Texture::handle_reset_device()
 {
-	if (renderer_ptr_)
+	if (renderer_)
 	{
 		IDirect3DTexture9 *texture_ptr;
-		HRESULT hr = D3DXCreateTextureFromFile(renderer_ptr_->get_device(), filename_.c_str(), &texture_ptr);
+		HRESULT hr = D3DXCreateTextureFromFile(renderer_->get_device(), filename_.c_str(), &texture_ptr);
 		if (FAILED(hr)) throw exception::directx_error(hr);
-		texture_ptr_.reset(texture_ptr);
+		texture_.reset(texture_ptr);
 		texture_ptr->Release();
 	}
 }

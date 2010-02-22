@@ -39,8 +39,8 @@ public:
 	Model(Model const &model); // makes shallow copy of meshes and materials, and full copy of joints and animations
 	virtual ~Model();
 
-	boost::shared_ptr<Renderer> const &get_renderer() const { return renderer_ptr_; }
-	boost::shared_ptr<Scheduler> const &get_scheduler() const { return scheduler_ptr_; }
+	boost::shared_ptr<Renderer> const &get_renderer() const { return renderer_; }
+	boost::shared_ptr<Scheduler> const &get_scheduler() const { return scheduler_; }
 
 	JointPtr get_joint_by_id(std::string const &name);
 	JointPtr get_joint_by_name(std::string const &name);
@@ -67,8 +67,8 @@ public:
     static void bind(lua_State *L);
 
 protected:
-	boost::shared_ptr<Renderer> const renderer_ptr_;
-	boost::shared_ptr<Scheduler> const scheduler_ptr_;
+	boost::shared_ptr<Renderer> const renderer_;
+	boost::shared_ptr<Scheduler> const scheduler_;
 };
 
 }
