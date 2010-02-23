@@ -30,6 +30,8 @@ Renderer::Renderer(boost::shared_ptr<platform::Window> const &window, int width,
 	screen_height_(height),
 	fullscreen_(fullscreen)
 {
+	HRESULT hr;
+
 	if (!screen_width_ || !screen_height_)
 	{
 		RECT rc;
@@ -49,6 +51,29 @@ Renderer::Renderer(boost::shared_ptr<platform::Window> const &window, int width,
 	}
 
 	{
+		UINT adapter = D3DADAPTER_DEFAULT;
+		D3DDEVTYPE device_type = D3DDEVTYPE_HAL;
+
+		LOG_INFO("looking for PerfHUD adapter...");
+
+		for (UINT i = 0, n = direct3d_->GetAdapterCount(); i < n; ++i)
+		{
+			D3DADAPTER_IDENTIFIER9 id;
+			hr = direct3d_->GetAdapterIdentifier(i, 0, &id);
+
+			LOG_INFO("*** " << id.Description);
+
+			if (strstr(id.Description,"PerfHUD") != 0)
+			{
+				LOG_INFO("PerfHUD adapter found!");
+
+				adapter = i;
+				device_type = D3DDEVTYPE_REF;
+
+				break;
+			}
+		}
+
 		IDirect3DDevice9 *device_ptr;
 
 		pp_.BackBufferWidth = screen_width_;
@@ -66,16 +91,16 @@ Renderer::Renderer(boost::shared_ptr<platform::Window> const &window, int width,
 		pp_.FullScreen_RefreshRateInHz = 0;
 		pp_.PresentationInterval = D3DPRESENT_INTERVAL_DEFAULT;
 
-		HRESULT hr = direct3d_->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL,
-			window_->get_handle(), D3DCREATE_HARDWARE_VERTEXPROCESSING, &pp_, &device_ptr);
+		hr = direct3d_->CreateDevice(adapter, device_type, window_->get_handle(),
+			D3DCREATE_HARDWARE_VERTEXPROCESSING, &pp_, &device_ptr);
 
 		if (FAILED(hr))
 		{
 			LOG_ERROR("failed to create direct3d device with hr = " << std::hex << hr
 				<< ", trying sw vertex processing");
 
-			hr = direct3d_->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL,
-				window_->get_handle(), D3DCREATE_SOFTWARE_VERTEXPROCESSING, &pp_, &device_ptr);
+			hr = direct3d_->CreateDevice(adapter, device_type, window_->get_handle(),
+				D3DCREATE_SOFTWARE_VERTEXPROCESSING, &pp_, &device_ptr);
 		}
 
 		if (FAILED(hr)) throw exception::directx_error(hr);
