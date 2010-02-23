@@ -16,6 +16,8 @@
 
 namespace math {
 
+template<int N, class T> class aabb;
+
 template<class T = scalar>
 class plane {
 public:
@@ -24,7 +26,12 @@ public:
 	static const size_t ARITY=3;
 	typedef vec<ARITY,scalar_t> vec_t;
 	typedef ray<ARITY,scalar_t> ray_t;
-	typedef plane<scalar_t> plane_t;
+
+	enum classification_t {
+		POSITIVE = 1,
+		INTERSECTS,
+		NEGATIVE
+	};
 
 	// данные
 	scalar_t A, B, C, D;
@@ -45,7 +52,7 @@ public:
 	}
 
 	// расположение точки
-	scalar_t classify_point(const vec_t &v) const {
+	scalar_t apply(const vec_t &v) const {
 		return A*v.x + B*v.y + C*v.z + D;
 	}
 
@@ -89,54 +96,14 @@ public:
 		return true;
 	}
 
-	// найти пересечение с плоскостью pl
-	// pl -- плоскость
+	// найти пересечение с плоскостью p
+	// p -- плоскость
 	// result -- искомая прямая пересечения
 	// если плоскости параллельны -- возвращает false
-	bool query_intersection(const plane_t &pl, ray_t &r) const {
-		r.a = vec_t(A,B,C) ^ vec_t(pl.A, pl.B, pl.C);
-		vec_t dir2 = r.a * r.a;
+	bool query_intersection(const plane &p, ray_t &r) const;
 
-		scalar_t invdet;
-		if(dir2.z > dir2.y && dir2.z > dir2.x && dir2.z > EPSILON)
-		{
-			/* then get a point on the XY plane */
-			invdet = scalar_t(1) / r.a.z;
-			/* solve < pl1.x * xpt.x + pl1.y * xpt.y = - pl1.w >
-			< pl2.x * xpt.x + pl2.y * xpt.y = - pl2.w > */
-			r.r0.x = B * pl.D - pl.B *D;
-			r.r0.y = pl.A * D - A * pl.D;
-			r.r0.z = 0;
-		}
-		else if (dir2.y > dir2.x && dir2.y > EPSILON)
-		{
-			/* then get a point on the XZ plane */
-			invdet = scalar_t(1) / r.a.y;
-			/* solve < pl1.x * xpt.x + pl1.z * xpt.z = -pl1.w >
-			< pl2.x * xpt.x + pl2.z * xpt.z = -pl2.w > */
-			r.r0.x = C * pl.D - pl.C * D;
-			r.r0.y = 0;
-			r.r0.z = pl.A * D -A * pl.D;
-		}
-		else if (dir2.x > EPSILON)
-		{
-			/* then get a point on the YZ plane */
-			invdet = scalar_t(1) / r.a.x;
-			/* solve < pl1.y * xpt.y + pl1.z * xpt.z = - pl1.w >
-			< pl2.y * xpt.y + pl2.z * xpt.z = - pl2.w > */
-			r.r0.x = 0;
-			r.r0.y = C * pl.D - pl.C * D;
-			r.r0.z = pl.B * D -B * pl.D;
-		}
-		else return false;
-
-		r.r0 *= invdet;
-
-		invdet = scalar_t(1) / sqrt(dir2.x + dir2.y + dir2.z);
-		r.a *= invdet;
-
-		return true;
-	}
+	classification_t classify(vec_t const &point) const;
+	classification_t classify(aabb<ARITY, scalar_t> const &bounds) const;
 };
 
 void bind_plane(lua_State *L);

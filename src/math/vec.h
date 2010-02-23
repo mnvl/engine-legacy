@@ -367,6 +367,16 @@ public:
 		return vec(x - rhs.x, y - rhs.y, z - rhs.z);
 	}
 
+	vec operator *(vec const &rhs) const
+	{
+		return vec(x * rhs.x, y * rhs.y, z * rhs.z);
+	}
+
+	vec operator /(vec const &rhs) const
+	{
+		return vec(x / rhs.x, y / rhs.y, z / rhs.z);
+	}
+
 	vec operator *(scalar_t const k) const
 	{
 		return vec(x * k, y * k, z * k);
