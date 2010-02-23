@@ -9,7 +9,7 @@
 // prior written consent of Manvel Avetisian.
 //-----------------------------------------------------------------------------
 
-#include <graphic/model.h>
+#include "model.h"
 
 namespace graphic
 {
@@ -19,7 +19,7 @@ class Renderer;
 
 class AnimatedModel: public Model {
 public:
-	AnimatedModel(boost::shared_ptr<Renderer> const &renderer_ptr = boost::shared_ptr<Renderer>());
+	AnimatedModel(boost::shared_ptr<Renderer> const &renderer_ptr, boost::shared_ptr<Scheduler> const &scheduler_ptr);
 	~AnimatedModel();
 
 	virtual MeshPtr add_mesh();

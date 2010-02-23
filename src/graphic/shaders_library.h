@@ -11,7 +11,6 @@
 
 #include <boost/shared_ptr.hpp>
 #include <boost/weak_ptr.hpp>
-#include "vertex_declarations.h"
 
 namespace graphic
 {
@@ -21,29 +20,17 @@ class Material;
 class MeshShader;
 class Renderer;
 
-class SharedResources {
+class ShadersLibrary {
 public:
-    SharedResources(Renderer * const renderer_ptr);
-    ~SharedResources();
+    ShadersLibrary(Renderer * const renderer_ptr);
+    ~ShadersLibrary();
 
-    template<class V>
-    IDirect3DVertexDeclaration9 *get_vertex_decl()
-	{
-		return vertex_declarations_.get<V>();
-	}
-
-	boost::shared_ptr<Font> get_default_font();
-	boost::shared_ptr<Material> get_default_material();
 	boost::shared_ptr<MeshShader> get_mesh_shader();
 
 private:
-	Renderer * const renderer_ptr_;
+	Renderer * const renderer_;
 
-	VertexDeclarations vertex_declarations_;
-
-	boost::weak_ptr<Font> default_font_;
-	boost::weak_ptr<Material> default_material_;
-	boost::weak_ptr<MeshShader> mesh_shader_ptr_;
+	boost::weak_ptr<MeshShader> mesh_shader_;
 };
 
 }

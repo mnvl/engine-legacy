@@ -419,13 +419,13 @@ namespace collada_elements
 
 	class bind_material_e: public element {
 	private:
-		std::auto_ptr<technique_common_e> technique_common_ptr_;
+		std::auto_ptr<technique_common_e> technique_common_;
 
 		void process_child(std::string const &child_name, std::string const &child_id, xercesc::DOMElement const *child_ptr)
 		{
 			if (child_name == "technique_common")
 			{
-				technique_common_ptr_ = construct<technique_common_e>(child_ptr);
+				technique_common_ = construct<technique_common_e>(child_ptr);
 			}
 		}
 
@@ -434,7 +434,7 @@ namespace collada_elements
 
 		technique_common_e const *get_technique_common() const
 		{
-			return technique_common_ptr_.get();
+			return technique_common_.get();
 		}
 	};
 
@@ -442,7 +442,7 @@ namespace collada_elements
 	private:
 		std::string url_;
 		std::string skeleton_;
-		std::auto_ptr<bind_material_e> bind_material_ptr_;
+		std::auto_ptr<bind_material_e> bind_material_;
 
 		void process_child(std::string const &child_name, std::string const &child_id, xercesc::DOMElement const *child_ptr)
 		{
@@ -452,7 +452,7 @@ namespace collada_elements
 			}
 			else if (child_name == "bind_material")
 			{
-				bind_material_ptr_ = construct<bind_material_e>(child_ptr);
+				bind_material_ = construct<bind_material_e>(child_ptr);
 			}
 		}
 
@@ -462,7 +462,7 @@ namespace collada_elements
 
 		bind_material_e const *get_bind_material() const
 		{
-			return bind_material_ptr_.get();
+			return bind_material_.get();
 		}
 
 		void init(xercesc::DOMElement const *element_ptr)
@@ -474,13 +474,13 @@ namespace collada_elements
 	class instance_geometry_e: public element {
 	private:
 		std::string url_;
-		std::auto_ptr<bind_material_e> bind_material_ptr_;
+		std::auto_ptr<bind_material_e> bind_material_;
 
 		void process_child(std::string const &child_name, std::string const &child_id, xercesc::DOMElement const *child_ptr)
 		{
 			if (child_name == "bind_material")
 			{
-				bind_material_ptr_ = construct<bind_material_e>(child_ptr);
+				bind_material_ = construct<bind_material_e>(child_ptr);
 			}
 		}
 
@@ -492,7 +492,7 @@ namespace collada_elements
 
 		bind_material_e const *get_bind_material() const
 		{
-			return bind_material_ptr_.get();
+			return bind_material_.get();
 		}
 
 		void init(xercesc::DOMElement const *element_ptr)
@@ -664,11 +664,18 @@ namespace collada_elements
 			return 1 + max_offset;
 		}
 
-		input_e const *get_input(std::string const &semantic) const
+		input_e const *get_input_nothrow(std::string const &semantic) const
 		{
 			inputs_type::const_iterator it = inputs_.find(semantic);
-			if (it == inputs_.end()) throw std::logic_error("input with semantic = " + semantic + " not found");
+			if (it == inputs_.end()) return 0;
 			return it->second;
+		}
+
+		input_e const *get_input(std::string const &semantic) const
+		{
+			input_e const *input_ptr = get_input_nothrow(semantic);
+			if (!input_ptr) throw std::logic_error("input with semantic = " + semantic + " not found");
+			return input_ptr;
 		}
 	};
 
@@ -798,12 +805,12 @@ namespace collada_elements
 	class geometry_e: public element {
 	private:
 		std::string id_, name_;
-		std::auto_ptr<mesh_e> mesh_ptr_;
+		std::auto_ptr<mesh_e> mesh_;
 
 		void process_child(std::string const &child_name, std::string const &child_id, xercesc::DOMElement const *child_ptr) {
 			if (child_name == "mesh")
 			{
-				mesh_ptr_ = construct<mesh_e>(child_ptr);
+				mesh_ = construct<mesh_e>(child_ptr);
 			}
 		}
 
@@ -819,12 +826,12 @@ namespace collada_elements
 
 		void check()
 		{
-			if (!mesh_ptr_.get()) throw std::logic_error("<mesh> not found in <geometry>");
+			if (!mesh_.get()) throw std::logic_error("<mesh> not found in <geometry>");
 		}
 
 		mesh_e *get_mesh() const
 		{
-			return mesh_ptr_.get();
+			return mesh_.get();
 		}
 	};
 
@@ -1339,35 +1346,35 @@ namespace collada_elements
 
 	class newparam_e: public element {
 	private:
-		std::auto_ptr<surface_e> surface_ptr_;
-		std::auto_ptr<sampler2d_e> sampler2d_ptr_;
+		std::auto_ptr<surface_e> surface_;
+		std::auto_ptr<sampler2d_e> sampler2d_;
 
 		void process_child(std::string const &child_name, std::string const &child_id, xercesc::DOMElement const *child_ptr)
 		{
 			if (child_name == "surface")
 			{
-				surface_ptr_ = construct<surface_e>(child_ptr);
+				surface_ = construct<surface_e>(child_ptr);
 			}
 			else if (child_name == "sampler2D")
 			{
-				sampler2d_ptr_ = construct<sampler2d_e>(child_ptr);
+				sampler2d_ = construct<sampler2d_e>(child_ptr);
 			}
 		}
 
 	public:
 		surface_e const *get_surface() const
 		{
-			return surface_ptr_.get();
+			return surface_.get();
 		}
 
 		sampler2d_e const *get_sampler() const
 		{
-			return sampler2d_ptr_.get();
+			return sampler2d_.get();
 		}
 
 		void check()
 		{
-			if (surface_ptr_.get() && sampler2d_ptr_.get())
+			if (surface_.get() && sampler2d_.get())
 			{
 				throw std::logic_error("only one of <surface> or <sampler2D> may be defined in <newparam>");
 			}
@@ -1398,34 +1405,34 @@ namespace collada_elements
 
 	class technique_e: public element {
 	private:
-		std::auto_ptr<phong_lambert_blinn_e> shader_ptr_;
+		std::auto_ptr<phong_lambert_blinn_e> shader_;
 
 		void process_child(std::string const &child_name, std::string const &child_id, xercesc::DOMElement const *child_ptr)
 		{
 			if (child_name == "phong" || child_name == "lambert" || child_name == "blinn")
 			{
-				if (shader_ptr_.get()) throw std::logic_error("shader for <technique> defined more than one time");
+				if (shader_.get()) throw std::logic_error("shader for <technique> defined more than one time");
 
-				shader_ptr_ = construct<phong_lambert_blinn_e>(child_ptr);
+				shader_ = construct<phong_lambert_blinn_e>(child_ptr);
 			}
 		}
 
 	public:
 		void check()
 		{
-			if (!shader_ptr_.get()) throw std::logic_error("material not found in <technique> or unknown material type");
+			if (!shader_.get()) throw std::logic_error("material not found in <technique> or unknown material type");
 		}
 
 		phong_lambert_blinn_e const *get_shader() const
 		{
-			return shader_ptr_.get();
+			return shader_.get();
 		}
 	};
 
 	class profile_common_e: public element {
 	private:
 		boost::ptr_map<std::string, newparam_e> newparams_;
-		std::auto_ptr<technique_e> technique_ptr_;
+		std::auto_ptr<technique_e> technique_;
 
 		void process_child(std::string const &child_name, std::string const &child_id, xercesc::DOMElement const *child_ptr)
 		{
@@ -1436,9 +1443,9 @@ namespace collada_elements
 			}
 			else if (child_name == "technique")
 			{
-				if (technique_ptr_.get()) throw std::logic_error("<technique> in <profile_common> defined more than one time");
+				if (technique_.get()) throw std::logic_error("<technique> in <profile_common> defined more than one time");
 
-				technique_ptr_ = construct<technique_e>(child_ptr);
+				technique_ = construct<technique_e>(child_ptr);
 			}
 		}
 
@@ -1479,20 +1486,20 @@ namespace collada_elements
 
 	class effect_e: public element {
 	private:
-		std::auto_ptr<profile_common_e> profile_common_ptr_;
+		std::auto_ptr<profile_common_e> profile_common_;
 
 		void process_child(std::string const &child_name, std::string const &child_id, xercesc::DOMElement const *child_ptr)
 		{
 			if (child_name == "profile_COMMON")
 			{
-				profile_common_ptr_ = construct<profile_common_e>(child_ptr);
+				profile_common_ = construct<profile_common_e>(child_ptr);
 			}
 		}
 
 	public:
 		MaterialPtr build_material() const
 		{
-			return profile_common_ptr_->build_material();
+			return profile_common_->build_material();
 		}
 	};
 
@@ -1602,9 +1609,8 @@ namespace collada_elements
 		{
 			triangles_e const *triangles_ptr = &*it;
 
-			input_e const *normals_input = 0;
-			try	{ normals_input = vertices_->get_input("NORMAL"); }
-			catch(...) { normals_input = triangles_ptr->get_input("NORMAL"); }
+			input_e const *normals_input = vertices_->get_input_nothrow("NORMAL");
+			if (!normals_input) normals_input = triangles_ptr->get_input("NORMAL");
 
 			source_e const *normals_source = get_source(normals_input->get_source().substr(1));
 
@@ -1739,7 +1745,7 @@ namespace collada_elements
 
 	std::string profile_common_e::get_surface_filename(std::string const &component_name) const
 	{
-		std::string const &sampler_name = technique_ptr_->get_shader()->get_sampler_name(component_name);
+		std::string const &sampler_name = technique_->get_shader()->get_sampler_name(component_name);
 		if (sampler_name.empty()) return sampler_name;
 
 		newparam_e const *sampler_ptr = get_newparam(sampler_name);
@@ -1756,7 +1762,7 @@ namespace collada_elements
 
 	class collada_e: public element, public root_element {
 	private:
-		Model *current_model_ptr_;
+		Model *current_model_;
 		std::auto_ptr<library_visual_scenes_e> visual_scenes_;
 		std::auto_ptr<library_geometries_e> geometries_;
 		std::auto_ptr<library_controllers_e> controllers_;
@@ -1800,14 +1806,14 @@ namespace collada_elements
 
 	public:
 		collada_e():
-			current_model_ptr_(0)
+			current_model_(0)
 		{
 			set_root(this);
 		}
 
 		Model *get_model() const
 		{
-			return current_model_ptr_;
+			return current_model_;
 		}
 
 		library_visual_scenes_e *get_visual_scenes() const
@@ -1858,7 +1864,7 @@ namespace collada_elements
 
 		void build_model(Model *model_ptr)
 		{
-			current_model_ptr_ = model_ptr;
+			current_model_ = model_ptr;
 
 			try
 			{
@@ -1870,11 +1876,11 @@ namespace collada_elements
 			}
 			catch(...)
 			{
-				current_model_ptr_ = 0;
+				current_model_ = 0;
 				throw;
 			}
 
-			current_model_ptr_ = 0;
+			current_model_ = 0;
 		}
 	};
 }
@@ -1895,7 +1901,7 @@ private:
 };
 
 ColladaLoader::ColladaLoader(Model *model_ptr):
-model_ptr_(model_ptr),
+model_(model_ptr),
 impl_(new Impl())
 {
 }
@@ -1941,7 +1947,7 @@ void ColladaLoader::load(std::string const &filename)
 
 void ColladaLoader::build_model()
 {
-	impl_->get_root()->build_model(model_ptr_);
+	impl_->get_root()->build_model(model_);
 }
 
 }

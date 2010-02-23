@@ -37,7 +37,7 @@ public:
 
 	IDirect3DTexture9 *get() const
 	{
-		return texture_ptr_.get();
+		return texture_.get();
 	}
 
 	void select();
@@ -48,9 +48,9 @@ public:
 	static void bind(lua_State *L);
 
 private:
-	boost::shared_ptr<Renderer> renderer_ptr_;
+	boost::shared_ptr<Renderer> renderer_;
 	std::string filename_;
-	boost::intrusive_ptr<IDirect3DTexture9> texture_ptr_;
+	boost::intrusive_ptr<IDirect3DTexture9> texture_;
 
 	void load_from_file(std::string const &filename);
 };

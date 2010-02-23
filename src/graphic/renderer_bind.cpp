@@ -11,6 +11,8 @@
 #include <boost/shared_ptr.hpp>
 #include <luabind/luabind.hpp>
 #include <platform/window.h>
+#include "texture.h"
+#include "font.h"
 #include "renderer.h"
 
 void graphic::Renderer::bind(lua_State *L)
@@ -37,8 +39,6 @@ void graphic::Renderer::bind(lua_State *L)
         .def("draw_triangles", (void (Renderer::*)(VertexBuffer *, size_t))&Renderer::draw_triangles)
         .def("draw_triangles", (void (Renderer::*)(VertexBuffer *, size_t, size_t))&Renderer::draw_triangles)
 		.def("disable_all_tests", &Renderer::disable_all_tests)
-		.def("set_texture_factor", &Renderer::set_texture_factor)
-		.def("disable_texture_factor", &Renderer::disable_texture_factor)
     ];
 }
 

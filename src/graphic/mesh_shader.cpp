@@ -23,11 +23,12 @@ void MeshShader::postconstruct()
 
 	normal_map_texture.reset(new shader_parameters::texture(this, "normal_map_texture"));
 
-	// from basic.fx
 	tech_pnt.reset(new shader_parameters::Technique(this, "TECH_PNT"));
 	tech_ptbnt.reset(new shader_parameters::Technique(this, "TECH_PTBNT"));
 	tech_pnjwt.reset(new shader_parameters::Technique(this, "TECH_PNJWT"));
 	tech_ptbnjwt.reset(new shader_parameters::Technique(this, "TECH_PTBNJWT"));
+
+	joint_matrix_array.reset(new shader_parameters::float4x4_array(this, "joint_matrix_array"));
 }
 
 }

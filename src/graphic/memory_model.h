@@ -18,7 +18,8 @@ namespace graphic {
 
 class MemoryModel: public Model {
 public:
-	MemoryModel(boost::shared_ptr<Renderer> const &renderer_ptr = boost::shared_ptr<Renderer>());
+	MemoryModel(boost::shared_ptr<Renderer> const &renderer_ptr, boost::shared_ptr<Scheduler> const &scheduler_ptr);
+	~MemoryModel();
 
 	MemoryMeshPtr get_mesh_by_id(std::string const &id) {
 		return boost::static_pointer_cast<MemoryMesh>(Model::get_mesh_by_id(id));

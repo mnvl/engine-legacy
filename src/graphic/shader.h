@@ -15,6 +15,7 @@
 #include <boost/intrusive_ptr.hpp>
 #include <boost/shared_ptr.hpp>
 #include <util/boost_com_intrusive_ptr.h>
+#include "resource.h"
 
 namespace graphic
 {
@@ -22,7 +23,7 @@ namespace graphic
 class Shader;
 class Renderer;
 
-class Shader {
+class Shader: public Resource {
 public:
     Shader(boost::shared_ptr<Renderer> const &renderer_ptr);
 	virtual ~Shader();
@@ -32,16 +33,19 @@ public:
 
     ID3DXEffect *get() const
     {
-        return effect_ptr_.get();
+        return effect_.get();
     }
 
 	virtual void postconstruct();
 
-private:
-	boost::shared_ptr<Renderer> const renderer_ptr_;
-    boost::intrusive_ptr<ID3DXEffect> effect_ptr_;
+protected:
+	boost::shared_ptr<Renderer> const renderer_;
+    boost::intrusive_ptr<ID3DXEffect> effect_;
 
 	static void log_compilation_errors(ID3DXBuffer *compilation_errors_ptr);
+
+	virtual void handle_lost_device();
+	virtual void handle_reset_device();
 };
 
 }

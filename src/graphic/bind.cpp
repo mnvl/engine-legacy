@@ -10,7 +10,10 @@
 
 #include "resource.h"
 #include "vertex.h"
+#include "vertex_buffer.h"
 #include "vertex_array.h"
+#include "index_buffer.h"
+#include "index_array.h"
 #include "material.h"
 #include "texture.h"
 #include "joint.h"
@@ -22,6 +25,7 @@
 #include "camera.h"
 #include "font.h"
 #include "renderer.h"
+#include "scheduler.h"
 #include "bind.h"
 
 namespace graphic
@@ -31,7 +35,10 @@ void bind(lua_State *L)
 {
 	Resource::bind(L);
 	bind_vertex(L);
+	VertexBuffer::bind(L);
 	bind_vertex_array(L);
+	IndexBuffer::bind(L);
+	bind_index_array(L);
 	Material::bind(L);
 	Texture::bind(L);
 	Joint::bind(L);
@@ -43,6 +50,7 @@ void bind(lua_State *L)
 	Camera::bind(L);
 	Font::bind(L);
     Renderer::bind(L);
+	Scheduler::bind(L);
 }
 
 }

@@ -37,12 +37,12 @@ public:
 
 	boost::shared_ptr<Texture> get_diffuse_texture() const
 	{
-		return diffuse_texture_ptr_;
+		return diffuse_texture_;
 	}
 
 	boost::shared_ptr<Texture> get_normal_map_texture() const
 	{
-		return normal_map_texture_ptr_;
+		return normal_map_texture_;
 	}
 
 	void set_diffuse_texture(std::string const &filename);
@@ -55,9 +55,9 @@ public:
 private:
 	std::string name_;
 
-	boost::shared_ptr<Renderer> renderer_ptr_;
-	boost::shared_ptr<Texture> diffuse_texture_ptr_;
-	boost::shared_ptr<Texture> normal_map_texture_ptr_;
+	boost::shared_ptr<Renderer> renderer_;
+	boost::shared_ptr<Texture> diffuse_texture_;
+	boost::shared_ptr<Texture> normal_map_texture_;
 };
 
 }

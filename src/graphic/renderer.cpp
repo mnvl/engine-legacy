@@ -13,21 +13,25 @@
 #include <exception/directx_error.h>
 #include <platform/timer.h>
 #include <util/logger.h>
-#include "camera.h"
+#include "texture.h"
 #include "font.h"
+#include "shader.h"
 #include "material.h"
-#include "vertex_array.h"
+#include "vertex_declarations.h"
+#include "shaders_library.h"
 #include "renderer.h"
 
 namespace graphic
 {
 
 Renderer::Renderer(boost::shared_ptr<platform::Window> const &window, int width, int height, bool fullscreen):
-	window_ptr_(window),
+	window_(window),
 	screen_width_(width),
 	screen_height_(height),
 	fullscreen_(fullscreen)
 {
+	HRESULT hr;
+
 	if (!screen_width_ || !screen_height_)
 	{
 		RECT rc;
@@ -42,11 +46,34 @@ Renderer::Renderer(boost::shared_ptr<platform::Window> const &window, int width,
 
 	{
 		IDirect3D9 *direct3d_ptr = Direct3DCreate9(D3D_SDK_VERSION);
-		direct3d_ptr_.reset(direct3d_ptr);
+		direct3d_.reset(direct3d_ptr);
 		direct3d_ptr->Release();
 	}
 
 	{
+		UINT adapter = D3DADAPTER_DEFAULT;
+		D3DDEVTYPE device_type = D3DDEVTYPE_HAL;
+
+		LOG_INFO("looking for PerfHUD adapter...");
+
+		for (UINT i = 0, n = direct3d_->GetAdapterCount(); i < n; ++i)
+		{
+			D3DADAPTER_IDENTIFIER9 id;
+			hr = direct3d_->GetAdapterIdentifier(i, 0, &id);
+
+			LOG_INFO("*** " << id.Description);
+
+			if (strstr(id.Description,"PerfHUD") != 0)
+			{
+				LOG_INFO("PerfHUD adapter found!");
+
+				adapter = i;
+				device_type = D3DDEVTYPE_REF;
+
+				break;
+			}
+		}
+
 		IDirect3DDevice9 *device_ptr;
 
 		pp_.BackBufferWidth = screen_width_;
@@ -56,7 +83,7 @@ Renderer::Renderer(boost::shared_ptr<platform::Window> const &window, int width,
 		pp_.MultiSampleType = D3DMULTISAMPLE_NONE;
 		pp_.MultiSampleQuality = 0;
 		pp_.SwapEffect = D3DSWAPEFFECT_FLIP;
-		pp_.hDeviceWindow = window_ptr_->get_handle();
+		pp_.hDeviceWindow = window_->get_handle();
 		pp_.Windowed = !fullscreen_;
 		pp_.EnableAutoDepthStencil = TRUE;
 		pp_.AutoDepthStencilFormat = D3DFMT_D24S8;
@@ -64,21 +91,21 @@ Renderer::Renderer(boost::shared_ptr<platform::Window> const &window, int width,
 		pp_.FullScreen_RefreshRateInHz = 0;
 		pp_.PresentationInterval = D3DPRESENT_INTERVAL_DEFAULT;
 
-		HRESULT hr = direct3d_ptr_->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL,
-			window_ptr_->get_handle(), D3DCREATE_HARDWARE_VERTEXPROCESSING, &pp_, &device_ptr);
+		hr = direct3d_->CreateDevice(adapter, device_type, window_->get_handle(),
+			D3DCREATE_HARDWARE_VERTEXPROCESSING, &pp_, &device_ptr);
 
 		if (FAILED(hr))
 		{
 			LOG_ERROR("failed to create direct3d device with hr = " << std::hex << hr
 				<< ", trying sw vertex processing");
 
-			hr = direct3d_ptr_->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL,
-				window_ptr_->get_handle(), D3DCREATE_SOFTWARE_VERTEXPROCESSING, &pp_, &device_ptr);
+			hr = direct3d_->CreateDevice(adapter, device_type, window_->get_handle(),
+				D3DCREATE_SOFTWARE_VERTEXPROCESSING, &pp_, &device_ptr);
 		}
 
 		if (FAILED(hr)) throw exception::directx_error(hr);
 
-		device_ptr_.reset(device_ptr);
+		device_.reset(device_ptr);
 		device_ptr->Release();
 	}
 }
@@ -88,9 +115,12 @@ Renderer::~Renderer() {
 
 void Renderer::postconstruct()
 {
-    shared_resources_.reset(new SharedResources(this));
-	resources_directory_.reset(new ResourcesDirectory());
-	window_ptr_->signal_resize.connect(boost::bind(&Renderer::thunk_resize, boost::weak_ptr<Renderer>(shared_from_this())));
+    shaders_library_.reset(new ShadersLibrary(this));
+	vertex_declarations_.reset(new VertexDeclarations(this));
+
+	window_->signal_resize.connect
+		(boost::signals2::signal0<void>::slot_type(&Renderer::handle_resize, this).track(shared_from_this()));
+
 	reset_state();
 }
 
@@ -98,13 +128,13 @@ void Renderer::reset_state()
 {
 	HRESULT hr;
 
-	hr = device_ptr_->SetRenderState(D3DRS_ALPHAREF, 1u);
+	hr = device_->SetRenderState(D3DRS_ALPHAREF, 1u);
 	if (FAILED(hr)) throw exception::directx_error(hr);
 
-	hr = device_ptr_->SetRenderState(D3DRS_ALPHATESTENABLE, TRUE);
+	hr = device_->SetRenderState(D3DRS_ALPHATESTENABLE, TRUE);
 	if (FAILED(hr)) throw exception::directx_error(hr);
 
-	hr = device_ptr_->SetRenderState(D3DRS_ALPHAFUNC, D3DCMP_GREATEREQUAL);
+	hr = device_->SetRenderState(D3DRS_ALPHAFUNC, D3DCMP_GREATEREQUAL);
 	if (FAILED(hr)) throw exception::directx_error(hr);
 
 	{
@@ -115,19 +145,53 @@ void Renderer::reset_state()
 		material.Emissive = material.Ambient;
 		material.Power = 1.0f;
 
-		hr = device_ptr_->SetMaterial(&material);
+		hr = device_->SetMaterial(&material);
 		if (FAILED(hr)) throw exception::directx_error(hr);
 	}
+}
+
+void Renderer::reset_device()
+{
+	LOG_INFO("preparing all resources to device reset...");
+	signal_lost_device_();
+
+	LOG_INFO("resetting device...");
+	HRESULT hr = get_device()->Reset(&pp_);
+	if (FAILED(hr)) throw exception::directx_error(hr);
+
+	LOG_INFO("restoring all resources...");
+	signal_reset_device_();
+
+	LOG_INFO("resetting render state...");
+	reset_state();
+
+	LOG_INFO("device reset completed successfully...");
 }
 
 void Renderer::begin_frame()
 {
 	HRESULT hr;
 
-	hr = device_ptr_->Clear(0, 0, D3DCLEAR_STENCIL | D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, D3DCOLOR_XRGB(0, 0, 0), 1.0f, 0);
+	hr = device_->TestCooperativeLevel();
+
+	while (hr == D3DERR_DEVICELOST)
+	{
+		LOG_INFO("device lost");
+		Sleep(1);
+		hr = device_->TestCooperativeLevel();
+	}
+
+	while (hr == D3DERR_DEVICENOTRESET)
+	{
+		LOG_INFO("device not reset");
+		reset_device();
+		hr = device_->TestCooperativeLevel();
+	}
+
+	hr = device_->Clear(0, 0, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER | D3DCLEAR_STENCIL, D3DCOLOR_ARGB(0, 0, 0, 0), 1.0f, 0);
 	if (FAILED(hr)) throw exception::directx_error(hr);
 
-	hr = device_ptr_->BeginScene();
+	hr = device_->BeginScene();
 	if (FAILED(hr)) throw exception::directx_error(hr);
 }
 
@@ -135,10 +199,18 @@ void Renderer::finish_frame()
 {
 	HRESULT hr;
 
-	hr = device_ptr_->EndScene();
+	hr = device_->EndScene();
 	if (FAILED(hr)) throw exception::directx_error(hr);
 
-	hr = device_ptr_->Present(0, 0, 0, 0);
+	hr = device_->Present(0, 0, 0, 0);
+	if (FAILED(hr)) throw exception::directx_error(hr);
+}
+
+void Renderer::set_world_matrix(math::matrix<4,4> const &tf)
+{
+	world_matrix_ = tf;
+
+    HRESULT hr = device_->SetTransform(D3DTS_WORLD, (D3DMATRIX const *) &tf);
 	if (FAILED(hr)) throw exception::directx_error(hr);
 }
 
@@ -146,21 +218,36 @@ void Renderer::set_camera(Camera const &camera)
 {
     HRESULT hr;
 
-	hr = device_ptr_->SetTransform(D3DTS_VIEW, (D3DMATRIX const *) &camera.get_view_matrix());
+	hr = device_->SetTransform(D3DTS_VIEW, (D3DMATRIX const *) &camera.get_view_matrix());
 	if (FAILED(hr)) throw exception::directx_error(hr);
 
-	hr = device_ptr_->SetTransform(D3DTS_PROJECTION, (D3DMATRIX const *) &camera.get_projection_matrix());
+	hr = device_->SetTransform(D3DTS_PROJECTION, (D3DMATRIX const *) &camera.get_projection_matrix());
 	if (FAILED(hr)) throw exception::directx_error(hr);
 
 	camera_ = camera;
 }
 
-void Renderer::set_world_matrix(math::matrix<4,4> const &tf)
+boost::shared_ptr<Texture> Renderer::create_texture(std::string const &filename)
 {
-	world_matrix_ = tf;
+	boost::shared_ptr<Texture> texture(new Texture(shared_from_this(), filename));
+	register_resource(boost::static_pointer_cast<Resource>(texture));
+	return texture;
+}
 
-    HRESULT hr = device_ptr_->SetTransform(D3DTS_WORLD, (D3DMATRIX const *) &tf);
-	if (FAILED(hr)) throw exception::directx_error(hr);
+boost::shared_ptr<Font> Renderer::create_font(std::string const &face_name, int height)
+{
+	boost::shared_ptr<Font> font(new Font(shared_from_this(), face_name, height));
+	register_resource(boost::static_pointer_cast<Resource>(font));
+	return font;
+}
+
+void Renderer::register_resource(boost::shared_ptr<Resource> const &resource)
+{
+	signal_lost_device_.connect
+		(boost::signals2::signal0<void>::slot_type(&Resource::handle_lost_device, resource.get()).track(resource));
+
+	signal_reset_device_.connect
+		(boost::signals2::signal0<void>::slot_type(&Resource::handle_reset_device, resource.get()).track(resource));
 }
 
 void Renderer::draw_triangles(VertexBuffer *buffer, size_t triangles_count)
@@ -168,19 +255,19 @@ void Renderer::draw_triangles(VertexBuffer *buffer, size_t triangles_count)
 	draw_triangles(buffer, 0, triangles_count);
 }
 
-void Renderer::draw_triangles(VertexBuffer *buffer, size_t first_vertex, size_t triangles_count)
+void Renderer::draw_triangles(VertexBuffer *buffer, size_t minimal_vertex_index, size_t triangles_count)
 {
 	if (triangles_count == 0) return;
 
 	HRESULT hr;
 
-	hr = device_ptr_->SetVertexDeclaration(buffer->get_vertex_decl());
+	hr = device_->SetVertexDeclaration(buffer->get_vertex_decl());
 	if (FAILED(hr)) throw exception::directx_error(hr);
 
-	hr = device_ptr_->SetStreamSource(0, buffer->get(), 0, buffer->get_vertex_traits()->get_size());
+	hr = device_->SetStreamSource(0, buffer->get(), 0, buffer->get_vertex_traits()->get_size());
 	if (FAILED(hr)) throw exception::directx_error(hr);
 
-	hr = device_ptr_->DrawPrimitive(D3DPT_TRIANGLELIST, first_vertex, triangles_count);
+	hr = device_->DrawPrimitive(D3DPT_TRIANGLELIST, minimal_vertex_index, triangles_count);
 	if (FAILED(hr)) throw exception::directx_error(hr);
 }
 
@@ -188,33 +275,10 @@ void Renderer::disable_all_tests()
 {
 	HRESULT hr;
 
-	hr = device_ptr_->SetRenderState(D3DRS_ZENABLE, D3DZB_FALSE);
+	hr = device_->SetRenderState(D3DRS_ZENABLE, D3DZB_FALSE);
 	if (FAILED(hr)) throw exception::directx_error(hr);
 
-	hr = device_ptr_->SetRenderState(D3DRS_LIGHTING, FALSE);
-	if (FAILED(hr)) throw exception::directx_error(hr);
-
-	hr = device_ptr_->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
-	if (FAILED(hr)) throw exception::directx_error(hr);
-}
-
-void Renderer::set_texture_factor(math::vec<4> const &factor)
-{
-	HRESULT hr;
-
-	hr = device_ptr_->SetRenderState(D3DRS_TEXTUREFACTOR,
-		D3DCOLOR_ARGB(unsigned(factor.a * 255), unsigned(factor.r * 255), unsigned(factor.g * 255), unsigned(factor.b * 255)));
-	if (FAILED(hr)) throw exception::directx_error(hr);
-
-	hr = device_ptr_->SetTextureStageState(0, D3DTSS_COLORARG2, D3DTA_TFACTOR);
-	if (FAILED(hr)) throw exception::directx_error(hr);
-}
-
-void Renderer::disable_texture_factor()
-{
-	HRESULT hr;
-
-	hr = device_ptr_->SetTextureStageState(0, D3DTSS_COLORARG2, D3DTA_CURRENT);
+	hr = device_->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
 	if (FAILED(hr)) throw exception::directx_error(hr);
 }
 
@@ -224,7 +288,7 @@ void Renderer::handle_resize()
 	{
 		{
 			RECT rc;
-			GetClientRect(window_ptr_->get_handle(), &rc);
+			GetClientRect(window_->get_handle(), &rc);
 
 			screen_width_ = rc.right - rc.left;
 			screen_height_ = rc.bottom - rc.top;
@@ -233,30 +297,9 @@ void Renderer::handle_resize()
 
 			pp_.BackBufferWidth = screen_width_;
 			pp_.BackBufferHeight = screen_height_;
+
+			reset_device();
 		}
-
-		LOG_INFO("preparing all resources to Direct3D device reset...");
-		resources_directory_->handle_lost_device();
-
-		LOG_INFO("resetting Direct3D device...");
-		HRESULT hr = get_device()->Reset(&pp_);
-		if (FAILED(hr)) throw exception::directx_error(hr);
-
-		LOG_INFO("restoring all resources...");
-		resources_directory_->handle_reset_device();
-
-		LOG_INFO("resetting render state...");
-		reset_state();
-
-		LOG_INFO("Direct3D device reset completed successfully...");
-	}
-}
-
-void Renderer::thunk_resize(boost::weak_ptr<Renderer> renderer)
-{
-	if (boost::shared_ptr<Renderer> self = renderer.lock())
-	{
-		self->handle_resize();
 	}
 }
 

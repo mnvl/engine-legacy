@@ -25,7 +25,7 @@ Font::Font(boost::shared_ptr<Renderer> const &renderer, std::string const &face_
 		OUT_DEFAULT_PRECIS, DEFAULT_QUALITY, DEFAULT_PITCH | FF_DONTCARE, face_name.c_str(), &font_ptr);
 	if (FAILED(hr)) throw exception::directx_error(hr);
 
-	font_ptr_.reset(font_ptr);
+	font_.reset(font_ptr);
 	font_ptr->Release();
 }
 

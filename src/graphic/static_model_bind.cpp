@@ -19,6 +19,6 @@ void graphic::StaticModel::bind(lua_State *L)
     [
         class_<StaticModel, Model, boost::shared_ptr<StaticModel> >("StaticModel")
 		.def(constructor<StaticModel const &>())
-        .def(constructor<boost::shared_ptr<Renderer> const &>())
+        .def(constructor<boost::shared_ptr<Renderer> const &, boost::shared_ptr<Scheduler> const &>())
     ];
 }

@@ -37,7 +37,7 @@ BOOST_AUTO_TEST_CASE(plane)
 {
 	Fixture fixture;
 
-    std::auto_ptr<graphic::MemoryModel> model_ptr(new graphic::MemoryModel());
+	std::auto_ptr<graphic::MemoryModel> model_ptr(new graphic::MemoryModel(boost::shared_ptr<graphic::Renderer>(), boost::shared_ptr<graphic::Scheduler>()));
 
     graphic::ColladaLoader loader(model_ptr.get());
 	loader.load(util::get_graphic_sources_path() + "test_collada_loader_plane.xml");
@@ -70,7 +70,7 @@ BOOST_AUTO_TEST_CASE(joint)
 {
 	Fixture fixture;
 
-    std::auto_ptr<graphic::MemoryModel> model_ptr(new graphic::MemoryModel());
+    std::auto_ptr<graphic::MemoryModel> model_ptr(new graphic::MemoryModel(boost::shared_ptr<graphic::Renderer>(), boost::shared_ptr<graphic::Scheduler>()));
 
     graphic::ColladaLoader loader(model_ptr.get());
 	loader.load(util::get_graphic_sources_path() + "test_collada_loader_joint.xml");
@@ -106,7 +106,7 @@ BOOST_AUTO_TEST_CASE(animation)
 {
 	Fixture fixture;
 
-    std::auto_ptr<graphic::MemoryModel> model_ptr(new graphic::MemoryModel());
+    std::auto_ptr<graphic::MemoryModel> model_ptr(new graphic::MemoryModel(boost::shared_ptr<graphic::Renderer>(), boost::shared_ptr<graphic::Scheduler>()));
     graphic::ColladaLoader loader(model_ptr.get());
 	loader.load(util::get_graphic_sources_path() + "test_collada_loader_animation.xml");
 	loader.build_model();
@@ -152,7 +152,7 @@ BOOST_AUTO_TEST_CASE(materials)
 {
 	Fixture fixture;
 
-    std::auto_ptr<graphic::MemoryModel> model_ptr(new graphic::MemoryModel());
+    std::auto_ptr<graphic::MemoryModel> model_ptr(new graphic::MemoryModel(boost::shared_ptr<graphic::Renderer>(), boost::shared_ptr<graphic::Scheduler>()));
 
     graphic::ColladaLoader loader(model_ptr.get());
 	loader.load(util::get_graphic_sources_path() + "test_collada_loader_materials.xml");

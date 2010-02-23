@@ -20,7 +20,7 @@ namespace graphic {
 
 class StaticModel: public Model {
 public:
-	StaticModel(boost::shared_ptr<Renderer> const &renderer_ptr = boost::shared_ptr<Renderer>());
+	StaticModel(boost::shared_ptr<Renderer> const &renderer_ptr, boost::shared_ptr<Scheduler> const &scheduler_ptr);
 	~StaticModel();
 
 	MeshPtr add_mesh();

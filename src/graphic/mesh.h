@@ -31,10 +31,10 @@ public:
 	struct triangles
 	{
 		MaterialPtr material_ptr;
-		size_t first_index_offset;
-		size_t triangles_count;
 		size_t minimal_vertex_index;
 		size_t vertices_count;
+		size_t first_index_offset;
+		size_t triangles_count;
 	};
 
 	typedef std::vector<triangles> triangles_list_type;
@@ -64,12 +64,8 @@ public:
 	virtual void lock() = 0;
 	virtual void set_positions(math::vec<3> const *buffer) = 0;
 	virtual void set_normals(math::vec<3> const *buffer) = 0;
-
-    // every element of buffer contains indices of elements from joint_index_transform,
-    // which points further to model's joint
-	virtual void set_joint_indices(math::vec<8, unsigned> const *buffer) = 0;
+	virtual void set_joint_indices(math::vec<8, unsigned> const *buffer) = 0; // indices of elements from joint_index_transform
 	virtual void set_joint_weights(math::vec<8> const *buffer) = 0;
-
 	virtual void set_texcoords(math::vec<2> const *buffer) = 0;
 	virtual void set_face_indices(unsigned *buffer) = 0;
 	virtual void unlock() = 0;
@@ -77,7 +73,7 @@ public:
 	virtual void draw(Joint *joint_ptr);
 
 protected:
-	Model *model_ptr_;
+	Model *model_;
 	boost::shared_ptr<MeshShader> shader_;
 };
 

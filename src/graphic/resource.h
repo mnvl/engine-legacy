@@ -29,25 +29,4 @@ public:
 	static void bind(lua_State *L);
 };
 
-typedef boost::shared_ptr<Resource> ResourcePtr;
-typedef boost::weak_ptr<Resource> ResourceWeakPtr;
-
-class ResourcesDirectory
-{
-public:
-	ResourcesDirectory();
-
-	void add_resource(ResourcePtr const &resource);
-	void handle_lost_device();
-	void handle_reset_device();
-	void cleanup();
-
-private:
-	typedef std::deque<ResourceWeakPtr> storage_t;
-	storage_t storage_;
-
-	static size_t const RESOURCES_ADDED_AFTER_LAST_CLEANUP_THRESHOLD = 4096;
-	size_t resources_added_after_last_cleanup_;
-};
-
 }

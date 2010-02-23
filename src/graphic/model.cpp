@@ -15,14 +15,16 @@
 
 namespace graphic {
 
-Model::Model(boost::shared_ptr<Renderer> const &renderer_ptr):
-	renderer_ptr_(renderer_ptr)
+Model::Model(boost::shared_ptr<Renderer> const &renderer_ptr, boost::shared_ptr<Scheduler> const &scheduler_ptr):
+	renderer_(renderer_ptr),
+	scheduler_(scheduler_ptr)
 {
 }
 
 Model::Model(Model const &model):
 	materials(model.materials),
-	renderer_ptr_(model.renderer_ptr_)
+	renderer_(model.renderer_),
+	scheduler_(model.scheduler_)
 {
 	boost::unordered_map<JointPtr, JointPtr> joints_tt;
 	boost::unordered_map<MeshPtr, MeshPtr> meshes_tt;
@@ -107,13 +109,13 @@ void Model::load_from_collada(std::string const &filename)
 void Model::load_from_raw_i16_heightfield(std::string const &filename, math::matrix<4,4> const &tf,
 	size_t nrows, size_t ncols, math::vec<3> const &scale, std::string const &texture_name)
 {
-    HeightfieldLoader(filename, this, renderer_ptr_).load_from_raw<boost::int16_t>(tf, nrows, ncols, scale, texture_name);
+    HeightfieldLoader(filename, this, renderer_).load_from_raw<boost::int16_t>(tf, nrows, ncols, scale, texture_name);
 }
 
 void Model::load_from_raw_u16_heightfield(std::string const &filename, math::matrix<4,4> const &tf,
 	size_t nrows, size_t ncols, math::vec<3> const &scale, std::string const &texture_name)
 {
-    HeightfieldLoader(filename, this, renderer_ptr_).load_from_raw<boost::uint16_t>(tf, nrows, ncols, scale, texture_name);
+    HeightfieldLoader(filename, this, renderer_).load_from_raw<boost::uint16_t>(tf, nrows, ncols, scale, texture_name);
 }
 
 JointPtr Model::get_joint_by_id(std::string const &id)

@@ -8,14 +8,14 @@
 // prior written consent of Manvel Avetisian.
 //-----------------------------------------------------------------------------
 
-#include <graphic/animated_mesh.h>
-#include <graphic/animated_model.h>
+#include "animated_mesh.h"
+#include "animated_model.h"
 
 namespace graphic
 {
 
-AnimatedModel::AnimatedModel(boost::shared_ptr<Renderer> const &renderer_ptr):
-	Model(renderer_ptr)
+AnimatedModel::AnimatedModel(boost::shared_ptr<Renderer> const &renderer_ptr, boost::shared_ptr<Scheduler> const &scheduler_ptr):
+	Model(renderer_ptr, scheduler_ptr)
 {
 }
 

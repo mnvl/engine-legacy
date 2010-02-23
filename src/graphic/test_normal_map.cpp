@@ -13,6 +13,7 @@
 #include <util/get_sources_path.h>
 #include "material.h"
 #include "mesh_shader.h"
+#include "shaders_library.h"
 #include "renderer.h"
 
 BOOST_AUTO_TEST_SUITE(normal_map)
@@ -72,7 +73,7 @@ BOOST_AUTO_TEST_CASE(basic)
 		vertex_array->unlock();
 	}
 
-	boost::shared_ptr<graphic::MeshShader> shader = renderer->get_shared_resources()->get_mesh_shader();
+	boost::shared_ptr<graphic::MeshShader> shader = renderer->get_shaders_library()->get_mesh_shader();
 
 	graphic::Camera camera;
 	camera.set_orthographic_projection(2, 2 * math::scalar(renderer->get_screen_height()) / renderer->get_screen_width(), 0, 2);
@@ -97,10 +98,10 @@ BOOST_AUTO_TEST_CASE(basic)
 	memset(&lights, 0, sizeof(lights));
 
 	lights.items[0].position = math::vec<3>(0, 0, 10);
-	lights.items[0].color = math::vec<4>(1, 1, 1, 1);
+	lights.items[0].color = math::vec<3>(1, 1, 1);
 	lights.items[0].inv_attenuation = 1.0f;
 
-	lights.items[1].color = math::vec<4>(1, 1, 1, 1);
+	lights.items[1].color = math::vec<3>(1, 1, 1);
 	lights.items[1].inv_attenuation = 0.90f;
 
 #pragma pack(push, 1)

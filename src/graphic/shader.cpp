@@ -13,11 +13,17 @@
 #include <graphic/renderer.h>
 #include "shader.h"
 
+#if defined(NDEBUG)
+static DWORD const ENGINE_SHADER_FLAGS = D3DXSHADER_OPTIMIZATION_LEVEL3;
+#else
+static DWORD const ENGINE_SHADER_FLAGS = D3DXSHADER_DEBUG | D3DXSHADER_OPTIMIZATION_LEVEL0;
+#endif
+
 namespace graphic
 {
 
 Shader::Shader(boost::shared_ptr<Renderer> const &renderer_ptr):
-	renderer_ptr_(renderer_ptr)
+	renderer_(renderer_ptr)
 {
 }
 
@@ -33,14 +39,14 @@ void Shader::load_from_file(std::string const &filename)
 
 	ID3DXEffect *effect_ptr;
 	ID3DXBuffer *compilation_errors_ptr;
-	hr = D3DXCreateEffectFromFile(renderer_ptr_->get_device(), filename.c_str(), 0, 0, D3DXSHADER_DEBUG, 0,
+	hr = D3DXCreateEffectFromFile(renderer_->get_device(), filename.c_str(), 0, 0, ENGINE_SHADER_FLAGS, 0,
 		&effect_ptr, &compilation_errors_ptr);
 
 	log_compilation_errors(compilation_errors_ptr);
 
 	if (FAILED(hr)) throw exception::directx_error(hr);
 
-	effect_ptr_.reset(effect_ptr);
+	effect_.reset(effect_ptr);
 
 	postconstruct();
 }
@@ -53,14 +59,14 @@ void Shader::load_from_buffer(char const *buffer, size_t len)
 
 	ID3DXEffect *effect_ptr;
 	ID3DXBuffer *compilation_errors_ptr;
-	hr = D3DXCreateEffect(renderer_ptr_->get_device(), buffer, len, 0, 0, D3DXSHADER_OPTIMIZATION_LEVEL3, 0,
+	hr = D3DXCreateEffect(renderer_->get_device(), buffer, len, 0, 0, ENGINE_SHADER_FLAGS, 0,
 		&effect_ptr, &compilation_errors_ptr);
 
 	log_compilation_errors(compilation_errors_ptr);
 
 	if (FAILED(hr)) throw exception::directx_error(hr);
 
-	effect_ptr_.reset(effect_ptr);
+	effect_.reset(effect_ptr);
 
 	postconstruct();
 }
@@ -77,6 +83,18 @@ void Shader::log_compilation_errors(ID3DXBuffer *compilation_errors_ptr)
 
 void Shader::postconstruct()
 {
+}
+
+void Shader::handle_lost_device()
+{
+	HRESULT hr = effect_->OnLostDevice();
+	if (FAILED(hr)) throw exception::directx_error(hr);
+}
+
+void Shader::handle_reset_device()
+{
+	HRESULT hr = effect_->OnResetDevice();
+	if (FAILED(hr)) throw exception::directx_error(hr);
 }
 
 }

@@ -22,20 +22,18 @@
 #include <platform/window.h>
 #include "camera.h"
 #include "resource.h"
-#include "shared_resources.h"
 #include "vertex_array.h"
 #include "index_array.h"
-#include "texture.h"
-#include "font.h"
 
 namespace graphic
 {
 
-class Camera;
-class Font;
-class Material;
+class ShadersLibrary;
+class VertexDeclarations;
 class Texture;
-class IndexBuffer;
+class Material;
+class Font;
+class Shader;
 
 class Renderer: public boost::enable_shared_from_this<Renderer>, public boost::noncopyable {
 public:
@@ -48,12 +46,14 @@ public:
 
 	void postconstruct();
 	void reset_state();
+	void reset_device();
 
 	void begin_frame();
 	void finish_frame();
 
-	IDirect3DDevice9 *get_device() const { return device_ptr_.get(); }
-    SharedResources *get_shared_resources() const { return shared_resources_.get(); }
+	IDirect3DDevice9 *get_device() const { return device_.get(); }
+	VertexDeclarations *get_vertex_declarations() const { return vertex_declarations_.get(); }
+	ShadersLibrary *get_shaders_library() const { return shaders_library_.get(); }
 
     void set_world_matrix(math::matrix<4,4> const &tf);
 	void set_camera(Camera const &camera); // stores copy of camera
@@ -63,18 +63,11 @@ public:
 	math::matrix<4,4> const &get_view_matrix() const { return camera_.get_view_matrix(); }
 	math::matrix<4,4> const &get_projection_matrix() const { return camera_.get_projection_matrix(); }
 
-	boost::shared_ptr<Texture> create_texture(std::string const &filename)
-	{
-		boost::shared_ptr<Texture> texture(new Texture(shared_from_this(), filename));
-		resources_directory_->add_resource(boost::static_pointer_cast<Resource>(texture));
-		return texture;
-	}
-
 	template <class V> boost::shared_ptr<VertexArray<V> >
 	create_vertex_array(size_t count, bool dynamic = false, bool writeonly = false)
 	{
 		boost::shared_ptr<VertexArray<V> > vertex_array(new VertexArray<V>(shared_from_this(), count, dynamic, writeonly));
-		resources_directory_->add_resource(boost::static_pointer_cast<Resource>(vertex_array));
+		register_resource(boost::static_pointer_cast<Resource>(vertex_array));
 		return vertex_array;
 	}
 
@@ -82,29 +75,24 @@ public:
 	create_index_array(size_t count, bool dynamic = false, bool writeonly = false)
 	{
 		boost::shared_ptr<IndexArray<I> > index_array(new IndexArray<I>(shared_from_this(), count, dynamic, writeonly));
-		resources_directory_->add_resource(boost::static_pointer_cast<Resource>(index_array));
+		register_resource(boost::static_pointer_cast<Resource>(index_array));
 		return index_array;
 	}
 
-	boost::shared_ptr<Font>
-	create_font(std::string const &face_name, int height = 16)
-	{
-		boost::shared_ptr<Font> font(new Font(shared_from_this(), face_name, height));
-		resources_directory_->add_resource(boost::static_pointer_cast<Resource>(font));
-		return font;
-	}
+	boost::shared_ptr<Texture> create_texture(std::string const &filename);
+	boost::shared_ptr<Font> create_font(std::string const &face_name, int height = 16);
+
+	void register_resource(boost::shared_ptr<Resource> const &resource);
 
 	void draw_triangles(VertexBuffer *buffer, size_t triangles_count);
-	void draw_triangles(VertexBuffer *buffer, size_t first_vertex, size_t triangles_count);
+	void draw_triangles(VertexBuffer *buffer, size_t minimal_vertex_index, size_t triangles_count);
 
 	void disable_all_tests();
-	void set_texture_factor(math::vec<4> const &factor);
-	void disable_texture_factor();
 
     static void bind(lua_State *L);
 
 private:
-	boost::shared_ptr<platform::Window> const window_ptr_;
+	boost::shared_ptr<platform::Window> const window_;
 	int screen_width_, screen_height_;
 	bool fullscreen_;
 	D3DPRESENT_PARAMETERS pp_;
@@ -112,14 +100,16 @@ private:
 	Camera camera_;
     math::matrix<4,4> world_matrix_;
 
-	boost::intrusive_ptr<IDirect3D9> direct3d_ptr_;
-	boost::intrusive_ptr<IDirect3DDevice9> device_ptr_;
+	boost::intrusive_ptr<IDirect3D9> direct3d_;
+	boost::intrusive_ptr<IDirect3DDevice9> device_;
 
-    boost::scoped_ptr<SharedResources> shared_resources_;
-	boost::scoped_ptr<ResourcesDirectory> resources_directory_;
+	boost::signals2::signal0<void> signal_lost_device_;
+	boost::signals2::signal0<void> signal_reset_device_;
+
+    boost::scoped_ptr<ShadersLibrary> shaders_library_;
+	boost::scoped_ptr<VertexDeclarations> vertex_declarations_;
 
 	void handle_resize();
-	static void thunk_resize(boost::weak_ptr<Renderer> renderer);
 };
 
 }

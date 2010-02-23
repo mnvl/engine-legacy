@@ -42,7 +42,7 @@ public:
 	static void bind(lua_State *L);
 
 private:
-	Model *model_ptr_;
+	Model *model_;
 
 	class Impl;
 	boost::scoped_ptr<Impl> impl_;
