@@ -128,6 +128,9 @@ void Renderer::reset_state()
 {
 	HRESULT hr;
 
+	hr = device_->SetRenderState(D3DRS_LIGHTING, FALSE);
+	if (FAILED(hr)) throw exception::directx_error(hr);
+
 	hr = device_->SetRenderState(D3DRS_ALPHAREF, 1u);
 	if (FAILED(hr)) throw exception::directx_error(hr);
 
@@ -260,6 +263,12 @@ void Renderer::draw_triangles(VertexBuffer *buffer, size_t minimal_vertex_index,
 	if (triangles_count == 0) return;
 
 	HRESULT hr;
+
+	hr = device_->SetVertexShader(0);
+	if (FAILED(hr)) throw exception::directx_error(hr);
+
+	hr = device_->SetPixelShader(0);
+	if (FAILED(hr)) throw exception::directx_error(hr);
 
 	hr = device_->SetVertexDeclaration(buffer->get_vertex_decl());
 	if (FAILED(hr)) throw exception::directx_error(hr);

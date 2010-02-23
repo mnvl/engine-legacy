@@ -104,6 +104,12 @@ void DrawCall::execute()
 
 	VertexTraits const *vertex_traits = vertex_buffer_->get_vertex_traits();
 
+	hr = device_ptr->SetVertexShader(0);
+	if (FAILED(hr)) throw exception::directx_error(hr);
+
+	hr = device_ptr->SetPixelShader(0);
+	if (FAILED(hr)) throw exception::directx_error(hr);
+
 	hr = device_ptr->SetVertexDeclaration(renderer_->get_vertex_declarations()->get(vertex_traits));
 	if (FAILED(hr)) throw exception::directx_error(hr);
 
