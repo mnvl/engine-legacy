@@ -9,85 +9,27 @@
 // prior written consent of Manvel Avetisian.
 //-----------------------------------------------------------------------------
 
-#include <math/vec.h>
-#include <math/matrix.h>
-#include <math/aabb.h>
-#include <math/triangle.h>
+#include "vec.h"
+#include "plane.h"
+#include "matrix.h"
 
-namespace math {
-	template<class T=float>
-	class frustum;
-}
+namespace math
+{
 
-template<class T>
-class math::frustum {
+template<class T = scalar>
+class frustum {
 public:
-	// типы и константы
 	typedef T scalar_t;
-	typedef size_t size_t;
-	static const size_t ARITY=3;
-	typedef vec<ARITY,scalar_t> vec_t;
-	typedef matrix<ARITY,ARITY,scalar_t> matrix_t;
-	typedef line<ARITY,scalar_t> edge_t;
-	typedef aabb<ARITY,scalar_t> aabb_t;
-	typedef triangle<ARITY,scalar_t> triangle_t;
-	typedef frustum<scalar_t> frustum_t;
+	static size_t const ARITY = 3;
+	static size_t const PLANES_COUNT = 6;
+	typedef plane<scalar_t> plane_t;
 
-	// данные
-	vec_t origin,bisector;
-	scalar_t bisector_length;
-	triangle_t top,bottom,left,right;
+	frustum(math::matrix<4,4> const &tf);
+	~frustum();
 
-	// конструкторы
-	void construct(const vec_t &o,const vec_t &b,scalar_t fovx,scalar_t fovy) {
-		origin=o;
-		bisector=b;
+	plane_t planes[PLANES_COUNT];
 
-		fovx/=2;
-		fovy/=2;
-
-		vec_t A,B,C,D;
-		rotate(A,bisector,origin,-fovx,-fovy,(scalar_t)0);
-		rotate(B,bisector,origin, fovx,-fovy,(scalar_t)0);
-		rotate(C,bisector,origin, fovx, fovy,(scalar_t)0);
-		rotate(D,bisector,origin,-fovx, fovy,(scalar_t)0);
-
-		bisector-=origin;
-		bisector_length=bisector.length();
-
-		A*=bisector_length/A.z;
-		B*=bisector_length/B.z;
-		C*=bisector_length/C.z;
-		D*=bisector_length/D.z;
-
-		top.construct(origin,A,B);
-		bottom.construct(origin,D,C);
-		left.construct(origin,B,C);
-		right.construct(origin,C,A);
-	}
-
-	// пересечение с aabb
-	bool contains(const vec_t &v) const {
-		return top.position(v)>=0 && bottom.position(v)>=0
-			&& left.position(v)>=0 && right.position(v)>=0;
-	}
-
-	bool contains(const aabb_t &b) const {
-		return contains(b.lo) || contains(b.hi);
-	}
-
-	bool test_intersection(const aabb_t &b) const {
-		if(contains(b)) return true;
-
-		vec_t v;
-		edge_t e;
-		for(int i=0; i<aabb_t::edges_count; i++) {
-			b.get_edge(i,e);
-			if(top.query_intersection(e,v) || bottom.query_intersection(e,v)
-				|| left.query_intersection(e,v) || right.query_intersection(e,v)) return true;
-		}
-
-		return true;
-	}
+	bool contains(math::vec<3> const &point) const;
 };
 
+}

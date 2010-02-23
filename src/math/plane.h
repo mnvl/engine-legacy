@@ -45,14 +45,13 @@ public:
 	}
 
 	// расположение точки
-	scalar_t position(const vec_t &v) const {
+	scalar_t classify_point(const vec_t &v) const {
 		return A*v.x + B*v.y + C*v.z + D;
 	}
 
 	// пересечение с прямой
 	bool test_intersection(const ray_t &r) const {
-		return abs(A*r.a.x + B*r.a.y + C*r.a.z)>EPSILON
-			|| contains(r);
+		return abs(A*r.a.x + B*r.a.y + C*r.a.z) > EPSILON || contains(r);
 	}
 
 	bool contains(vec_t const &p) const {

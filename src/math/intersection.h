@@ -18,6 +18,7 @@
 #include "matrix.h"
 #include "aabb.h"
 #include "obb.h"
+#include "frustum.h"
 
 namespace math
 {
@@ -147,6 +148,13 @@ template<int N, class T> bool inline
 test_intersection(sphere<N,T> const &s, capsule<N, T> const &c)
 {
 	return c.distance(s.centre) <= s.radius;
+}
+
+template<class T> bool inline
+test_intersection(frustum<T> const &f, obb<3, T> const &b)
+{
+	// TODO
+	return true;
 }
 
 }
