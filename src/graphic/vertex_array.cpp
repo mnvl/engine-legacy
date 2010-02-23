@@ -17,81 +17,6 @@
 namespace graphic
 {
 
-VertexBuffer::VertexBuffer(boost::shared_ptr<Renderer> const &renderer, size_t size,
-	bool dynamic, bool writeonly)
-:
-	renderer_(renderer),
-	clone_(size),
-	usage_(0),
-	pool_(dynamic ? D3DPOOL_DEFAULT : D3DPOOL_MANAGED)
-{
-	if(dynamic) usage_ |= D3DUSAGE_DYNAMIC;
-	if(writeonly) usage_ |= D3DUSAGE_WRITEONLY;
-
-	IDirect3DVertexBuffer9 *buffer;
-	HRESULT hr = renderer_->get_device()->CreateVertexBuffer(size, usage_, 0, pool_, &buffer, 0);
-	if(FAILED(hr)) throw exception::directx_error(hr);
-
-	buffer_.reset(buffer);
-	buffer->Release();
-}
-
-VertexBuffer::~VertexBuffer()
-{
-}
-
-const void *VertexBuffer::lock() const
-{
-	return &clone_[0];
-}
-
-void VertexBuffer::unlock() const
-{
-}
-
-void *VertexBuffer::lock(bool discard)
-{
-	return &clone_[0];
-}
-
-void VertexBuffer::unlock()
-{
-	if (!buffer_) return;
-
-	void *ptr = 0;
-
-	HRESULT hr = buffer_->Lock(0, 0, (void **) &ptr, D3DLOCK_DISCARD);
-	if(FAILED(hr)) throw exception::directx_error(hr);
-
-	memcpy(ptr, &clone_[0], clone_.size());
-
-	hr = buffer_->Unlock();
-	if(FAILED(hr)) throw exception::directx_error(hr);
-}
-
-void VertexBuffer::handle_lost_device()
-{
-	if (pool_ == D3DPOOL_MANAGED) return;
-
-	buffer_.reset();
-}
-
-void VertexBuffer::handle_reset_device()
-{
-	if (pool_ == D3DPOOL_MANAGED) return;
-
-	IDirect3DVertexBuffer9 *buffer;
-	HRESULT hr = renderer_->get_device()->CreateVertexBuffer(clone_.size(), usage_, 0, pool_, &buffer, 0);
-	if(FAILED(hr)) throw exception::directx_error(hr);
-
-	buffer_.reset(buffer);
-	buffer->Release();
-
-	// unlock will restore contents of buffer
-	lock();
-	unlock();
-}
-
 template<class T>
 VertexTraits const *VertexArray<T>::get_vertex_traits() const
 {
@@ -116,8 +41,6 @@ void bind_vertex_array(lua_State *L)
 
 	module_(L, "graphic")
 	[
-		class_<VertexBuffer, Resource, boost::shared_ptr<VertexBuffer> >("VertexBuffer"),
-
 		class_<VertexArrayPT, VertexBuffer, boost::shared_ptr<VertexArrayPT> >("VertexArrayPT")
 		.def("lock", (VERTEX_PT *(VertexArrayPT::*)(bool)) &VertexArrayPT::lock)
 		.def("unlock", (void (VertexArrayPT::*)()) &VertexArrayPT::unlock)

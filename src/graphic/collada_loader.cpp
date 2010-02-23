@@ -664,11 +664,18 @@ namespace collada_elements
 			return 1 + max_offset;
 		}
 
-		input_e const *get_input(std::string const &semantic) const
+		input_e const *get_input_nothrow(std::string const &semantic) const
 		{
 			inputs_type::const_iterator it = inputs_.find(semantic);
-			if (it == inputs_.end()) throw std::logic_error("input with semantic = " + semantic + " not found");
+			if (it == inputs_.end()) return 0;
 			return it->second;
+		}
+
+		input_e const *get_input(std::string const &semantic) const
+		{
+			input_e const *input_ptr = get_input_nothrow(semantic);
+			if (!input_ptr) throw std::logic_error("input with semantic = " + semantic + " not found");
+			return input_ptr;
 		}
 	};
 
@@ -1602,9 +1609,8 @@ namespace collada_elements
 		{
 			triangles_e const *triangles_ptr = &*it;
 
-			input_e const *normals_input = 0;
-			try	{ normals_input = vertices_->get_input("NORMAL"); }
-			catch(...) { normals_input = triangles_ptr->get_input("NORMAL"); }
+			input_e const *normals_input = vertices_->get_input_nothrow("NORMAL");
+			if (!normals_input) normals_input = triangles_ptr->get_input("NORMAL");
 
 			source_e const *normals_source = get_source(normals_input->get_source().substr(1));
 
