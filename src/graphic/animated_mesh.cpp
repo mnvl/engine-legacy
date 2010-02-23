@@ -55,6 +55,13 @@ void AnimatedMesh::draw(Joint *joint_ptr)
 	for (triangles_list_type::const_iterator it = triangles_list.begin(); it != triangles_list.end(); it++)
 	{
 		boost::shared_ptr<MeshDrawCall> draw_call(new MeshDrawCall(get_model()->get_renderer(), shader_));
+
+		{
+			math::obb<3> bounds(bounds_);
+			bounds.transform(joint_ptr->matrix);
+			draw_call->set_obb(bounds);
+		}
+
 		draw_call->set_vertex_buffer(vertex_buffer_);
 		draw_call->set_index_buffer(index_buffer_);
 		draw_call->set_material(it->material_ptr);

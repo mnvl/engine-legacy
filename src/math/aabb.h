@@ -194,5 +194,5 @@ void bind_aabb(lua_State *L);
 template<int N, class T>
 std::ostream &operator <<(std::ostream &lhs, math::aabb<N,T> &rhs)
 {
-	return lhs << rhs.lo << " x " << rhs.hi;
+	return lhs << rhs.lo << " - " << rhs.hi;
 }

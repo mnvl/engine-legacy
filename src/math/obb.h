@@ -72,7 +72,7 @@ public:
 		forward_point(v, v0);
 		return v;
 	}
-	
+
 	bool contains(const vec_t &v) const {
 		vec_t v1;
 		forward_point(v1, v);

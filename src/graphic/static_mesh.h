@@ -11,6 +11,7 @@
 
 #include <d3d9.h>
 #include <util/boost_com_intrusive_ptr.h>
+#include <math/aabb.h>
 #include "vertex.h"
 #include "vertex_array.h"
 #include "index.h"
@@ -50,6 +51,9 @@ public:
 protected:
 	typedef VertexArray<V> vertex_buffer_t;
 	typedef IndexArray16 index_buffer_t;
+
+	// AABB over positions of all vertices before applyed transform
+	math::aabb<3> bounds_;
 
     size_t vertices_count_;
     size_t indices_count_;

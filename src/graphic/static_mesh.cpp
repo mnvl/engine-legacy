@@ -9,6 +9,7 @@
 //-----------------------------------------------------------------------------
 
 #include <exception/directx_error.h>
+#include <util/logger.h>
 #include "mesh_shader.h"
 #include "mesh_draw_call.h"
 #include "static_model.h"
@@ -52,6 +53,13 @@ void BasicStaticMesh<T>::draw(Joint *joint_ptr)
 	for (triangles_list_type::const_iterator it = triangles_list.begin(); it != triangles_list.end(); it++)
 	{
 		boost::shared_ptr<MeshDrawCall> draw_call(new MeshDrawCall(get_model()->get_renderer(), shader_));
+
+		{
+			math::obb<3> bounds(bounds_);
+			bounds.transform(joint_ptr->matrix);
+			draw_call->set_obb(bounds);
+		}
+
 		draw_call->set_vertex_buffer(vertex_buffer_);
 		draw_call->set_index_buffer(index_buffer_);
 		draw_call->set_material(it->material_ptr);
@@ -97,10 +105,15 @@ void BasicStaticMesh<T>::set_positions(math::vec<3> const *buffer)
 {
     vertex_t *p = (T *) vertex_buffer_->begin();
 
+	bounds_.lo = bounds_.hi = *buffer;
+
     for (size_t i = 0; i < vertices_count_; i++, p++, buffer++)
     {
         p->position = *buffer;
+		bounds_.extend(*buffer);
     }
+
+	LOG_DEBUG("bounds = " << bounds_);
 }
 
 template<class T>
