@@ -80,7 +80,7 @@ public:
 	}
 
 	boost::shared_ptr<Texture> create_texture(std::string const &filename);
-	boost::shared_ptr<Font> create_font(std::string const &face_name, int height);
+	boost::shared_ptr<Font> create_font(std::string const &face_name, int height = 16);
 
 	void register_resource(boost::shared_ptr<Resource> const &resource);
 
@@ -88,8 +88,6 @@ public:
 	void draw_triangles(VertexBuffer *buffer, size_t minimal_vertex_index, size_t triangles_count);
 
 	void disable_all_tests();
-	void set_texture_factor(math::vec<4> const &factor);
-	void disable_texture_factor();
 
     static void bind(lua_State *L);
 
@@ -105,12 +103,13 @@ private:
 	boost::intrusive_ptr<IDirect3D9> direct3d_;
 	boost::intrusive_ptr<IDirect3DDevice9> device_;
 
+	boost::signals2::signal0<void> signal_lost_device_;
+	boost::signals2::signal0<void> signal_reset_device_;
+
     boost::scoped_ptr<ShadersLibrary> shaders_library_;
 	boost::scoped_ptr<VertexDeclarations> vertex_declarations_;
-	boost::scoped_ptr<ResourcesDirectory> resources_directory_;
 
 	void handle_resize();
-	static void thunk_resize(boost::weak_ptr<Renderer> renderer);
 };
 
 }

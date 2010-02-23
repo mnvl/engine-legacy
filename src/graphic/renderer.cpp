@@ -92,9 +92,9 @@ void Renderer::postconstruct()
 {
     shaders_library_.reset(new ShadersLibrary(this));
 	vertex_declarations_.reset(new VertexDeclarations(this));
-	resources_directory_.reset(new ResourcesDirectory());
 
-	window_->signal_resize.connect(boost::bind(&Renderer::thunk_resize, boost::weak_ptr<Renderer>(shared_from_this())));
+	window_->signal_resize.connect
+		(boost::signals2::signal0<void>::slot_type(&Renderer::handle_resize, this).track(shared_from_this()));
 
 	reset_state();
 }
@@ -128,14 +128,14 @@ void Renderer::reset_state()
 void Renderer::reset_device()
 {
 	LOG_INFO("preparing all resources to device reset...");
-	resources_directory_->handle_lost_device();
+	signal_lost_device_();
 
-	LOG_INFO("resetting Direct3D device...");
+	LOG_INFO("resetting device...");
 	HRESULT hr = get_device()->Reset(&pp_);
 	if (FAILED(hr)) throw exception::directx_error(hr);
 
 	LOG_INFO("restoring all resources...");
-	resources_directory_->handle_reset_device();
+	signal_reset_device_();
 
 	LOG_INFO("resetting render state...");
 	reset_state();
@@ -218,7 +218,11 @@ boost::shared_ptr<Font> Renderer::create_font(std::string const &face_name, int 
 
 void Renderer::register_resource(boost::shared_ptr<Resource> const &resource)
 {
-	resources_directory_->add_resource(resource);
+	signal_lost_device_.connect
+		(boost::signals2::signal0<void>::slot_type(&Resource::handle_lost_device, resource.get()).track(resource));
+
+	signal_reset_device_.connect
+		(boost::signals2::signal0<void>::slot_type(&Resource::handle_reset_device, resource.get()).track(resource));
 }
 
 void Renderer::draw_triangles(VertexBuffer *buffer, size_t triangles_count)
@@ -249,30 +253,7 @@ void Renderer::disable_all_tests()
 	hr = device_->SetRenderState(D3DRS_ZENABLE, D3DZB_FALSE);
 	if (FAILED(hr)) throw exception::directx_error(hr);
 
-	hr = device_->SetRenderState(D3DRS_LIGHTING, FALSE);
-	if (FAILED(hr)) throw exception::directx_error(hr);
-
 	hr = device_->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
-	if (FAILED(hr)) throw exception::directx_error(hr);
-}
-
-void Renderer::set_texture_factor(math::vec<4> const &factor)
-{
-	HRESULT hr;
-
-	hr = device_->SetRenderState(D3DRS_TEXTUREFACTOR,
-		D3DCOLOR_ARGB(unsigned(factor.a * 255), unsigned(factor.r * 255), unsigned(factor.g * 255), unsigned(factor.b * 255)));
-	if (FAILED(hr)) throw exception::directx_error(hr);
-
-	hr = device_->SetTextureStageState(0, D3DTSS_COLORARG2, D3DTA_TFACTOR);
-	if (FAILED(hr)) throw exception::directx_error(hr);
-}
-
-void Renderer::disable_texture_factor()
-{
-	HRESULT hr;
-
-	hr = device_->SetTextureStageState(0, D3DTSS_COLORARG2, D3DTA_CURRENT);
 	if (FAILED(hr)) throw exception::directx_error(hr);
 }
 
@@ -294,14 +275,6 @@ void Renderer::handle_resize()
 
 			reset_device();
 		}
-	}
-}
-
-void Renderer::thunk_resize(boost::weak_ptr<Renderer> renderer)
-{
-	if (boost::shared_ptr<Renderer> self = renderer.lock())
-	{
-		self->handle_resize();
 	}
 }
 
