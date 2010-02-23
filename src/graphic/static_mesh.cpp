@@ -68,6 +68,7 @@ void BasicStaticMesh<T>::draw(Joint *joint_ptr)
 		draw_call->set_first_index_offset(it->first_index_offset);
 		draw_call->set_triangles_count(it->triangles_count);
 		draw_call->set_world_matrix(joint_ptr->matrix);
+		draw_call->commit();
 
 		get_model()->get_scheduler()->add(draw_call);
 	}

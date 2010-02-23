@@ -8,6 +8,7 @@
 // prior written consent of Manvel Avetisian.
 //-----------------------------------------------------------------------------
 
+#include <math/frustum.h>
 #include "vertex_traits.h"
 #include "vertex_array.h"
 #include "index_array.h"
@@ -93,6 +94,13 @@ void DrawCall::commit()
 {
 	if (!vertex_buffer_) throw std::logic_error("vertex buffer not set");
 	if (!material_) throw std::logic_error("material not set");
+
+	world_view_projection_matrix_ = world_matrix_ * view_matrix_ * projection_matrix_;
+}
+
+bool DrawCall::is_visible() const
+{
+	return math::frustum<>(world_view_projection_matrix_).test_intersection(bounds_);
 }
 
 void DrawCall::execute()

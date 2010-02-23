@@ -150,19 +150,5 @@ test_intersection(sphere<N,T> const &s, capsule<N, T> const &c)
 	return c.distance(s.centre) <= s.radius;
 }
 
-template<class T> inline bool
-test_intersection(frustum<T> const &f, aabb<3, T> const &b)
-{
-	// TODO
-	return true;
-}
-
-template<class T> inline bool
-test_intersection(frustum<T> const &f, obb<3, T> const &b)
-{
-	// TODO
-	return true;
-}
-
 }
 

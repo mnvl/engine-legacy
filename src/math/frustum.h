@@ -16,6 +16,9 @@
 namespace math
 {
 
+template<int N, class T> class aabb;
+template<int N, class T> class obb;
+
 template<class T = scalar>
 class frustum {
 public:
@@ -24,12 +27,15 @@ public:
 	static size_t const PLANES_COUNT = 6;
 	typedef plane<scalar_t> plane_t;
 
+	frustum();
 	frustum(math::matrix<4,4> const &tf);
 	~frustum();
 
 	plane_t planes[PLANES_COUNT];
 
 	bool contains(math::vec<3> const &point) const;
+	bool test_intersection(aabb<3,T> const &bounds) const;
+	bool test_intersection(obb<3,T> const &bounds) const;
 };
 
 }

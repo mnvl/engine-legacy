@@ -24,6 +24,8 @@ void Scheduler::bind(lua_State *L)
 		.def(constructor<boost::shared_ptr<Renderer> const &>())
 		.def("add", &Scheduler::add)
 		.def("flush", &Scheduler::flush)
+		.def("get_visible_calls_count", &Scheduler::get_visible_calls_count)
+		.def("get_invisible_calls_count", &Scheduler::get_invisible_calls_count)
 	];
 }
 

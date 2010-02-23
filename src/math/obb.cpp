@@ -13,7 +13,13 @@
 namespace math
 {
 
-template class obb<3>;
+template<class T> void
+obb<3,T>::forward_plane(plane<scalar_t> &p, plane<scalar_t> const &p0) const
+{
+	vec_t n;
+	forward_vector(n, vec_t(p0.A, p0.B, p0.C));
+	p.A = n.x;	p.B = n.y;	p.C = n.z;	p.D = p0.D;
+}
 
 template<class T> bool
 obb<3,T>::trace(const ray_t &r,scalar_t t_min, scalar_t t_max) const {
@@ -266,5 +272,7 @@ obb<3,T>::test_noncollision(const obb_t &box, const vec_t &vel, scalar_t t_min,
 	    || (v1_0.z>1 && v1_0.z>1 && v2_0.z>1 && v3_0.z>1 && v4_0.z>1 && v5_0.z>1 && v6_0.z>1 && v7_0.z>1
 	    &&  v1_1.z>1 && v1_1.z>1 && v2_1.z>1 && v3_1.z>1 && v4_1.z>1 && v5_1.z>1 && v6_1.z>1 && v7_1.z>1);
 }
+
+template class obb<3>;
 
 }

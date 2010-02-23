@@ -8,8 +8,6 @@
 // prior written consent of Manvel Avetisian.
 //-----------------------------------------------------------------------------
 
-#include <math/frustum.h>
-#include <math/intersection.h>
 #include "vertex_array.h"
 #include "index_array.h"
 #include "material.h"
@@ -46,10 +44,6 @@ void MeshDrawCall::execute()
 {
 	HRESULT hr;
 
-	math::matrix<4,4> world_view_projection_matrix = world_matrix_ * view_matrix_ * projection_matrix_;
-
-	if (!math::test_intersection(math::frustum<>(world_view_projection_matrix), bounds_)) return;
-
     ShadersLibrary *shaders_library_ptr = renderer_->get_shaders_library();
 	IDirect3DDevice9 *device_ptr = renderer_->get_device();
 
@@ -70,7 +64,7 @@ void MeshDrawCall::execute()
 	shader_->normal_map_texture->set(material_ ? material_->get_normal_map_texture() : boost::shared_ptr<Texture>());
 
 	shader_->world_matrix->set(world_matrix_);
-	shader_->world_view_projection_matrix->set(world_view_projection_matrix);
+	shader_->world_view_projection_matrix->set(world_view_projection_matrix_);
 
 	if (joint_matrix_array_.size()) shader_->joint_matrix_array->set(joint_matrix_array_);
 

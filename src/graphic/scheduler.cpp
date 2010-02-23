@@ -32,9 +32,19 @@ void Scheduler::add(boost::shared_ptr<DrawCall> const &draw_call)
 
 void Scheduler::flush()
 {
+	visible_calls_count_ = invisible_calls_count_ = 0;
+
 	for(draw_calls_t::const_iterator it = draw_calls_.begin(); it != draw_calls_.end(); ++it)
 	{
-		(*it)->execute();
+		if ((*it)->is_visible())
+		{
+			++visible_calls_count_;
+			(*it)->execute();
+		}
+		else
+		{
+			++invisible_calls_count_;
+		}
 	}
 
 	draw_calls_.clear();

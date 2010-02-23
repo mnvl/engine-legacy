@@ -71,6 +71,7 @@ void AnimatedMesh::draw(Joint *joint_ptr)
 		draw_call->set_triangles_count(it->triangles_count);
 		draw_call->set_world_matrix(world_matrix);
 		draw_call->set_joint_matrix_array(joint_matrix_array);
+		draw_call->commit();
 
 		get_model()->get_scheduler()->add(draw_call);
 	}

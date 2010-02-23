@@ -8,10 +8,17 @@
 // prior written consent of Manvel Avetisian.
 //-----------------------------------------------------------------------------
 
+#include "aabb.h"
+#include "obb.h"
 #include "frustum.h"
 
 namespace math
 {
+
+template<class T>
+frustum<T>::frustum()
+{
+}
 
 template<class T>
 frustum<T>::frustum(matrix<4,4> const &tf)
@@ -67,6 +74,30 @@ bool frustum<T>::contains(math::vec<3> const &point) const
 	}
 
 	return true;
+}
+
+template<class T>
+bool frustum<T>::test_intersection(aabb<3,T> const &bounds) const
+{
+	for (size_t i = 0; i < PLANES_COUNT; ++i)
+	{
+		if (planes[i].classify(bounds) == plane_t::NEGATIVE) return false;
+	}
+
+	return true;
+}
+
+template<class T>
+bool frustum<T>::test_intersection(obb<3,T> const &bounds) const
+{
+	frustum<T> local;
+
+	for (size_t i = 0; i < PLANES_COUNT; ++i)
+	{
+		bounds.forward_plane(local.planes[i], planes[i]);
+	}
+
+	return test_intersection(aabb<3>(vec<3>(0, 0, 0), vec<3>(1, 1, 1)));
 }
 
 template class frustum<>;

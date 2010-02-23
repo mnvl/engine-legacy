@@ -22,8 +22,10 @@
 namespace math
 {
 
-template<int N,class T=scalar> class obb;
+template<class T> class plane;
 template<int N,class T> class triangle;
+
+template<int N,class T=scalar> class obb;
 
 template<class T>
 class obb<2, T> {
@@ -237,6 +239,8 @@ public:
 		forward_point(r.r0,r0.r0);
 		forward_vector(r.a,r0.a);
 	}
+
+	void forward_plane(plane<scalar_t> &p, plane<scalar_t> const &p0) const;
 
 	// проверить принадлежность точки
 	bool contains(const vec_t &v) const {

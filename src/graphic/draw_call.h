@@ -40,6 +40,8 @@ public:
 	void set_camera(boost::shared_ptr<Camera> const &camera);
 	void commit();
 
+	bool is_visible() const;
+
 	virtual void execute();
 
 protected:
@@ -49,7 +51,7 @@ protected:
 	boost::shared_ptr<IndexBuffer> index_buffer_;
 	boost::shared_ptr<Material> material_;
 	size_t minimal_vertex_index_, vertices_count_, first_index_offset_, triangles_count_;
-	math::matrix<4,4> world_matrix_, view_matrix_, projection_matrix_;
+	math::matrix<4,4> world_matrix_, view_matrix_, projection_matrix_, world_view_projection_matrix_;
 };
 
 }
