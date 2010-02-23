@@ -69,7 +69,7 @@ void MeshDrawCall::execute()
 	if (joint_matrix_array_.size()) shader_->joint_matrix_array->set(joint_matrix_array_);
 
 	UINT passes_count;
-	hr = shader_->get()->Begin(&passes_count, 0);
+	hr = shader_->get()->Begin(&passes_count, D3DXFX_DONOTSAVESTATE);
 	if (FAILED(hr)) throw exception::directx_error(hr);
 
 	for(UINT pass = 0; pass < passes_count; pass++)
