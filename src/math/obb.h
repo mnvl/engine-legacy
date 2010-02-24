@@ -152,6 +152,14 @@ public:
 		operator =(a);
 	}
 
+	obb(vec_t const &o, vec_t const &i, vec_t const &j, vec_t const &k):
+		origin(o),
+		tangent(i),
+		normal(j),
+		binormal(k)
+	{
+	}
+
 	// сконструировать obb из aabb
 	obb_t &operator =(const aabb_t &a) {
 		origin = a.lo;

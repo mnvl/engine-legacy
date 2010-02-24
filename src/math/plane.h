@@ -17,6 +17,7 @@
 namespace math {
 
 template<int N, class T> class aabb;
+template<int N, class T> class obb;
 
 template<class T = scalar>
 class plane {
@@ -40,19 +41,24 @@ public:
 	plane() {
 	}
 
-	plane(const vec_t &o,const vec_t &n) {
-		construct(o,n);
+	plane(vec_t const &o, vec_t const &n) {
+		set(o, n);
 	}
 
-	void construct(const vec_t &o,const vec_t &n) {
-		A = n.x;
-		B = n.y;
-		C = n.z;
-		D = -(o & n);
+	plane(scalar_t d, vec_t const &normal) {
+		set(d, normal);
+	}
+
+	void set(vec_t const &o, vec_t const &n) {
+		A = n.x;	B = n.y;	C = n.z;	D = -(o & n);
+	}
+
+	void set(scalar_t d, vec_t const &normal) {
+		A = normal.x;	B = normal.y;	C = normal.z;	D = d;
 	}
 
 	// расположение точки
-	scalar_t apply(const vec_t &v) const {
+	scalar_t apply(vec_t const &v) const {
 		return A*v.x + B*v.y + C*v.z + D;
 	}
 
@@ -96,6 +102,9 @@ public:
 		return true;
 	}
 
+	vec_t get_origin() const;
+	vec_t get_normal() const { return vec_t(A, B, C); }
+
 	// найти пересечение с плоскостью p
 	// p -- плоскость
 	// result -- искомая прямая пересечения
@@ -104,6 +113,7 @@ public:
 
 	classification_t classify(vec_t const &point) const;
 	classification_t classify(aabb<ARITY, scalar_t> const &bounds) const;
+	classification_t classify(obb<ARITY, scalar_t> const &bounds) const;
 };
 
 void bind_plane(lua_State *L);

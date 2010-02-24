@@ -16,9 +16,10 @@ namespace math
 template<class T> void
 obb<3,T>::forward_plane(plane<scalar_t> &p, plane<scalar_t> const &p0) const
 {
-	vec_t n;
-	forward_vector(n, vec_t(p0.A, p0.B, p0.C));
-	p.A = n.x;	p.B = n.y;	p.C = n.z;	p.D = p0.D;
+	vec_t origin, normal;
+	forward_point(origin, p0.get_origin());
+	forward_vector(normal, p0.get_normal());
+	p.set(origin, normal);
 }
 
 template<class T> bool

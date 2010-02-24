@@ -9,7 +9,9 @@
 //-----------------------------------------------------------------------------
 
 #include <boost/test/unit_test.hpp>
+#include "aabb.h"
 #include "obb.h"
+#include "plane.h"
 
 BOOST_AUTO_TEST_SUITE(plane)
 
@@ -58,6 +60,35 @@ BOOST_AUTO_TEST_CASE(classify_aabb_3)
 	BOOST_ASSERT(pl.classify(math::aabb<3>(math::vec<3>(-1, -5, -1), math::vec<3>(0, -4, 0))) == math::plane<>::POSITIVE);
 	BOOST_ASSERT(pl.classify(math::aabb<3>(math::vec<3>(-2, -2, -2), math::vec<3>(0, 0, 0))) == math::plane<>::INTERSECTS);
 	BOOST_ASSERT(pl.classify(math::aabb<3>(math::vec<3>(-1, -1, -1), math::vec<3>(1, 1, 1))) == math::plane<>::INTERSECTS);
+}
+
+BOOST_AUTO_TEST_CASE(classify_aabb_4)
+{
+	math::plane<> pl(math::vec<3>(0, 2, 0), math::vec<3>(1, 1, 1));
+
+	BOOST_ASSERT(pl.classify(math::aabb<3>(math::vec<3>(-1, -1, -1), math::vec<3>(0, 0, 0))) == math::plane<>::NEGATIVE);
+}
+
+BOOST_AUTO_TEST_CASE(classify_obb_1)
+{
+	math::plane<> pl(math::vec<3>(0, 0, 0), math::vec<3>(1, 1, 1));
+
+	BOOST_ASSERT(pl.classify(
+			math::obb<3>(math::vec<3>(0, 1, 0), math::vec<3>(1, 0, 0), math::vec<3>(0, 1, 0), math::vec<3>(0, 0, 1)))
+		== math::plane<>::POSITIVE);
+
+	BOOST_ASSERT(pl.classify(
+			math::obb<3>(math::vec<3>(-1, -2, -1), math::vec<3>(1, 0, 0), math::vec<3>(0, 1, 0), math::vec<3>(0, 0, 1)))
+		== math::plane<>::NEGATIVE);
+}
+
+BOOST_AUTO_TEST_CASE(classify_obb_2)
+{
+	math::plane<> pl(math::vec<3>(0, 0, 0), math::vec<3>(1, 1, 1));
+
+	BOOST_ASSERT(pl.classify(
+			math::obb<3>(math::vec<3>(-1, -1, -1), math::vec<3>(11, 10, 10), math::vec<3>(10, 11, 10), math::vec<3>(10, 10, 11)))
+		== math::plane<>::INTERSECTS);
 }
 
 BOOST_AUTO_TEST_SUITE_END()

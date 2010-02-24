@@ -8,12 +8,28 @@
 // prior written consent of Manvel Avetisian.
 //-----------------------------------------------------------------------------
 
+#include <assert.h>
 #include <luabind/luabind.hpp>
 #include "aabb.h"
+#include "obb.h"
 #include "plane.h"
 
 namespace math
 {
+
+template<class T> typename plane<T>::vec_t
+plane<T>::get_origin() const
+{
+	// Ax + By + Cz + D = 0 => A(x - D/A) + By + Cz = 0 etc.
+
+	if (abs(A) > EPSILON) return vec_t(D / A, 0, 0);
+	if (abs(B) > EPSILON) return vec_t(0, D / B, 0);
+	if (abs(C) > EPSILON) return vec_t(0, 0, D / C);
+
+	// does not define plane
+	assert(0);
+	return vec_t(0, 0, 0);
+}
 
 template<class T> bool
 plane<T>::query_intersection(const plane &p, ray_t &r) const {
@@ -66,8 +82,7 @@ plane<T>::classify(vec_t const &point) const
 {
 	scalar_t value = apply(point);
 	if (abs(value) < EPSILON) return INTERSECTS;
-	if (value > 0) return POSITIVE;
-	if (value < 0) return NEGATIVE;
+	return value > 0 ? POSITIVE : NEGATIVE;
 }
 
 template<class T> typename plane<T>::classification_t
@@ -81,6 +96,14 @@ plane<T>::classify(aabb<ARITY, scalar_t> const &bounds) const
 	classification_t pc = classify(p_point), nc = classify(n_point);
 
 	return pc == nc ? pc : INTERSECTS;
+}
+
+template<class T> typename plane<T>::classification_t
+plane<T>::classify(obb<ARITY, scalar_t> const &bounds) const
+{
+	plane p;
+	bounds.forward_plane(p, *this);
+	return p.classify(aabb<ARITY, scalar_t>(vec_t(0, 0, 0), vec_t(1, 1, 1)));
 }
 
 template plane<>;
