@@ -23,6 +23,8 @@ frustum<T>::frustum()
 template<class T>
 frustum<T>::frustum(matrix<4,4> const &tf)
 {
+	// http://zach.in.tu-clausthal.de/teaching/cg_literatur/lighthouse3d_view_frustum_culling/index.html
+
 	// left clipping plane
 	planes[0].A = tf._14 + tf._11;
 	planes[0].B = tf._24 + tf._21;
