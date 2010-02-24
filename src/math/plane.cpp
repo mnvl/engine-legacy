@@ -20,7 +20,7 @@ namespace math
 template<class T> typename plane<T>::vec_t
 plane<T>::get_origin() const
 {
-	// Ax + By + Cz + D = 0 => A(x - D/A) + By + Cz = 0 etc.
+	// Ax + By + Cz + D = 0 => A(x + D/A) + By + Cz = 0 etc.
 
 	if (abs(A) > EPSILON) return vec_t(D / A, 0, 0);
 	if (abs(B) > EPSILON) return vec_t(0, D / B, 0);
