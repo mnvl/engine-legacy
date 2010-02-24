@@ -1,0 +1,56 @@
+//-----------------------------------------------------------------------------
+// Copyright (c) 2004 - 2010 Manvel Avetisian.
+// All Rights Reserved.
+//
+// This source code contains unpublished, confidential and proprietary
+// information of Manvel Avetisian and may not be disclosed to third parties
+// or copied or duplicated in any form, in whole or in part, without the
+// prior written consent of Manvel Avetisian.
+//-----------------------------------------------------------------------------
+
+#include <boost/test/unit_test.hpp>
+#include "obb.h"
+
+BOOST_AUTO_TEST_SUITE(plane)
+
+BOOST_AUTO_TEST_CASE(classify_point)
+{
+	math::plane<> pl(math::vec<3>(0, -1, 0), math::vec<3>(1, 1, 1));
+
+	BOOST_ASSERT(pl.classify(math::vec<3>(0, -2, 0)) == math::plane<>::NEGATIVE);
+	BOOST_ASSERT(pl.classify(math::vec<3>(0, 0, 0)) == math::plane<>::POSITIVE);
+	BOOST_ASSERT(pl.classify(math::vec<3>(0, -1, 0)) == math::plane<>::INTERSECTS);
+}
+
+BOOST_AUTO_TEST_CASE(classify_aabb_1)
+{
+	math::plane<> pl(math::vec<3>(-1, -1, -1), math::vec<3>(1, 1, 1));
+
+	BOOST_ASSERT(pl.classify(math::aabb<3>(math::vec<3>(-2, -2, -2), math::vec<3>(-1, -1.5, -1))) == math::plane<>::NEGATIVE);
+	BOOST_ASSERT(pl.classify(math::aabb<3>(math::vec<3>(-2, -2, -2), math::vec<3>(-1, -1, -1))) == math::plane<>::INTERSECTS);
+	BOOST_ASSERT(pl.classify(math::aabb<3>(math::vec<3>(0, 0, 0), math::vec<3>(1, 1, 1))) == math::plane<>::POSITIVE);
+	BOOST_ASSERT(pl.classify(math::aabb<3>(math::vec<3>(-1, -1, -1), math::vec<3>(1, 1, 1))) == math::plane<>::INTERSECTS);
+}
+
+BOOST_AUTO_TEST_CASE(classify_aabb_2)
+{
+	math::plane<> pl(math::vec<3>(-1, -1, -1), math::vec<3>(-1, -1, -1));
+
+	BOOST_ASSERT(pl.classify(math::aabb<3>(math::vec<3>(-2, -2, -2), math::vec<3>(-1, -1.5, -1))) == math::plane<>::POSITIVE);
+	BOOST_ASSERT(pl.classify(math::aabb<3>(math::vec<3>(-2, -2, -2), math::vec<3>(-1, -1, -1))) == math::plane<>::INTERSECTS);
+	BOOST_ASSERT(pl.classify(math::aabb<3>(math::vec<3>(0, 0, 0), math::vec<3>(1, 1, 1))) == math::plane<>::NEGATIVE);
+	BOOST_ASSERT(pl.classify(math::aabb<3>(math::vec<3>(-1, -1, -1), math::vec<3>(1, 1, 1))) == math::plane<>::INTERSECTS);
+}
+
+BOOST_AUTO_TEST_CASE(classify_aabb_3)
+{
+	math::plane<> pl(math::vec<3>(0, 0, 0), math::vec<3>(1, -1, 1));
+
+	BOOST_ASSERT(pl.classify(math::aabb<3>(math::vec<3>(-2, -2, -2), math::vec<3>(-1, -1.5, -1))) == math::plane<>::POSITIVE);
+	BOOST_ASSERT(pl.classify(math::aabb<3>(math::vec<3>(-2, -2, -2), math::vec<3>(0, 0, 0))) == math::plane<>::INTERSECTS);
+	BOOST_ASSERT(pl.classify(math::aabb<3>(math::vec<3>(0, 0, 0), math::vec<3>(1, 1, 1))) == math::plane<>::NEGATIVE);
+	BOOST_ASSERT(pl.classify(math::aabb<3>(math::vec<3>(-1, -1, -1), math::vec<3>(1, 1, 1))) == math::plane<>::INTERSECTS);
+}
+
+BOOST_AUTO_TEST_SUITE_END()
+

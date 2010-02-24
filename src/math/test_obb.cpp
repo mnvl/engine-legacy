@@ -11,9 +11,9 @@
 #include <boost/test/unit_test.hpp>
 #include "obb.h"
 
-BOOST_AUTO_TEST_SUITE (obb)
+BOOST_AUTO_TEST_SUITE(obb)
 
-BOOST_AUTO_TEST_CASE (forward_point)
+BOOST_AUTO_TEST_CASE(forward_point)
 {
 	math::obb<3> bounds;
 	bounds.origin.set(0, 0, 0);

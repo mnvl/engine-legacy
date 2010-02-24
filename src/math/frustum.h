@@ -19,6 +19,7 @@ namespace math
 template<int N, class T> class aabb;
 template<int N, class T> class obb;
 
+// this class is specialized for frustum culling
 template<class T = scalar>
 class frustum {
 public:
