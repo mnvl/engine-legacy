@@ -103,9 +103,18 @@ plane<T>::classify(aabb<ARITY, scalar_t> const &bounds) const
 template<class T> typename plane<T>::classification_t
 plane<T>::classify(obb<ARITY, scalar_t> const &bounds) const
 {
-	plane p;
-	bounds.forward_plane(p, *this);
-	return p.classify(aabb<ARITY, scalar_t>(vec_t(0, 0, 0), vec_t(1, 1, 1)));
+	if (bounds.is_basis_linearly_independent())
+	{
+		plane p;
+		bounds.forward_plane(p, *this);
+		return p.classify(aabb<ARITY, scalar_t>(vec_t(0, 0, 0), vec_t(1, 1, 1)));
+	}
+	else
+	{
+		aabb<3> b;
+		bounds.get_aabb(b);
+		return classify(b);
+	}
 }
 
 template plane<>;

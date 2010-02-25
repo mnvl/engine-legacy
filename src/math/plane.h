@@ -105,14 +105,13 @@ public:
 	vec_t get_origin() const;
 	vec_t get_normal() const { return vec_t(A, B, C); }
 
-	// найти пересечение с плоскостью p
-	// p -- плоскость
-	// result -- искомая прямая пересечения
-	// если плоскости параллельны -- возвращает false
+	// returns false if planes are parallel
 	bool query_intersection(const plane &p, ray_t &r) const;
 
 	classification_t classify(vec_t const &point) const;
 	classification_t classify(aabb<ARITY, scalar_t> const &bounds) const;
+
+	// results may be inaccurate in case of non-linearly-independent components of OBB's basis
 	classification_t classify(obb<ARITY, scalar_t> const &bounds) const;
 };
 

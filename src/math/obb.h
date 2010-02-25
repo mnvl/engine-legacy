@@ -296,6 +296,8 @@ public:
 		    && !box.test_noncollision(*this, -vel, t_min, t_max);
 	}
 
+	bool is_basis_linearly_independent() const;
+
 private:
 	// проверить на не-пересечение с треугольником
 	bool test_nonintersection(const triangle_t &r) const;
