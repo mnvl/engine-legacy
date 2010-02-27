@@ -1931,7 +1931,7 @@ void ColladaLoader::load(std::string const &filename)
 		assert (node_list->getLength() == 1);
 
 		xercesc::DOMNode *root_node = node_list->item(0);
-		if (util::xerces_lcp_transcode(root_node->getLocalName()) != "COLLADA")
+		if (xercesc::XMLString::compareString(root_node->getLocalName(), L"COLLADA") != 0)
 			throw load_error("root element is not <COLLADA />");
 
 		impl_->get_root()->set_filename(filename);
