@@ -82,14 +82,14 @@ Renderer::Renderer(boost::shared_ptr<platform::Window> const &window, int width,
 		pp_.BackBufferFormat = fullscreen_ ? D3DFMT_A8R8G8B8 : D3DFMT_UNKNOWN;
 		pp_.MultiSampleType = D3DMULTISAMPLE_NONE;
 		pp_.MultiSampleQuality = 0;
-		pp_.SwapEffect = D3DSWAPEFFECT_FLIP;
+		pp_.SwapEffect = D3DSWAPEFFECT_DISCARD;
 		pp_.hDeviceWindow = window_->get_handle();
 		pp_.Windowed = !fullscreen_;
 		pp_.EnableAutoDepthStencil = TRUE;
 		pp_.AutoDepthStencilFormat = D3DFMT_D24S8;
-		pp_.Flags = D3DPRESENTFLAG_DEVICECLIP;
+		pp_.Flags = 0;
 		pp_.FullScreen_RefreshRateInHz = 0;
-		pp_.PresentationInterval = D3DPRESENT_INTERVAL_DEFAULT;
+		pp_.PresentationInterval = D3DPRESENT_INTERVAL_IMMEDIATE;
 
 		hr = direct3d_->CreateDevice(adapter, device_type, window_->get_handle(),
 			D3DCREATE_HARDWARE_VERTEXPROCESSING, &pp_, &device_ptr);
