@@ -1930,7 +1930,7 @@ void ColladaLoader::load(std::string const &filename)
 {
 	try
 	{
-		LOG_INFO(L"parsing collada file " << filename);
+		LOG_INFO("parsing collada file " << filename);
 
 		std::auto_ptr<xercesc::XercesDOMParser> parser(new xercesc::XercesDOMParser());
 		parser->setValidationScheme(xercesc::XercesDOMParser::Val_Always);
