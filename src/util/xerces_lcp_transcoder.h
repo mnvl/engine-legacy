@@ -26,25 +26,33 @@ inline std::string xerces_lcp_transcode(XMLCh const *str) {
 	return result;
 }
 
-inline std::basic_string<XMLCh> xerces_lcp_transcode(char const *str) {
+inline std::string xerces_lcp_transcode(std::wstring const &str) {
+	return xerces_lcp_transcode(str.c_str());
+}
+
+inline std::wstring
+xerces_lcp_transcode(char const *str) {
 	XMLCh *buffer = xercesc::XMLString::transcode(str);
-	std::basic_string<XMLCh> result(buffer);
+	std::wstring result(buffer);
 	xercesc::XMLString::release(&buffer);
 	return result;
 }
 
-inline std::basic_string<XMLCh> xerces_lcp_transcode(std::string const &str) {
+inline std::wstring
+xerces_lcp_transcode(std::string const &str) {
 	return xerces_lcp_transcode(str.c_str());
 }
 
-template<class T>
-inline T xerces_get_attribute(xercesc::DOMNode const *node_ptr, std::string const &attribute_name, T const &default_value = T()) {
-	xercesc::DOMNode *attibute_ptr = node_ptr->getAttributes()->getNamedItem(xerces_lcp_transcode(attribute_name).c_str());
-	return attibute_ptr ? boost::lexical_cast<T>(xerces_lcp_transcode(attibute_ptr->getTextContent())) : default_value;
+template<class T> inline T
+xerces_get_attribute(xercesc::DOMNode const *node_ptr, std::wstring const &attribute_name, T const &default_value = T())
+{
+	xercesc::DOMNode *attibute_ptr = node_ptr->getAttributes()->getNamedItem(attribute_name.c_str());
+	return attibute_ptr ? boost::lexical_cast<T>(attibute_ptr->getTextContent()) : default_value;
 }
 
-inline std::string xerces_get_text(xercesc::DOMNode const *node_ptr) {
-	return xerces_lcp_transcode(node_ptr->getTextContent());
+inline std::wstring
+xerces_get_text(xercesc::DOMNode const *node_ptr) {
+	return node_ptr->getTextContent();
 }
 
 }
