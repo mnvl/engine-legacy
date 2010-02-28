@@ -22,7 +22,7 @@ float3 GetPointLightIlluminationAtPosition(const int n, float3 position, float3 
 
 float3 GetPointLightsTotalIlluminationAtPosition(uniform const int count, float3 position, float3 normal)
 {
-	float3 color = { 0.0f, 0.0f, 0.0f };
+	float3 color = 0.0f;
 
 	for (int n = 0; n < count; n++)
 	{

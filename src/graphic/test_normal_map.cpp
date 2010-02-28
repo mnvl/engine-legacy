@@ -86,13 +86,14 @@ BOOST_AUTO_TEST_CASE(basic)
 		renderer->set_world_matrix(tf);
 	}
 
+	shader->tech_ptbnt->set();
+
 	shader->world_view_projection_matrix->set(renderer->get_world_matrix()
 		* renderer->get_view_matrix()
 		* renderer->get_projection_matrix());
 	shader->world_matrix->set(renderer->get_world_matrix());
 	shader->diffuse_texture->set(material->get_diffuse_texture());
 	shader->normal_map_texture->set(material->get_normal_map_texture());
-	shader->tech_ptbnt->set();
 
 	graphic::shader_parameters::POINT_LIGHTS lights;
 	memset(&lights, 0, sizeof(lights));
@@ -125,8 +126,6 @@ BOOST_AUTO_TEST_CASE(basic)
 
 		renderer->begin_frame();
 		renderer->set_camera(camera);
-
-		material->select();
 
 		UINT passes_count;
 		hr = shader->get()->Begin(&passes_count, 0);

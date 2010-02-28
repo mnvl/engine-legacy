@@ -17,7 +17,7 @@ namespace graphic {
 
 Mesh::Mesh(Model *model_ptr):
 	model_(model_ptr),
-	shader_(model_ptr->get_renderer()->get_shaders_library()->get_mesh_shader())
+		shader_(model_ptr->get_renderer() ? model_ptr->get_renderer()->get_shaders_library()->get_mesh_shader() : boost::shared_ptr<MeshShader>())
 {
 }
 
