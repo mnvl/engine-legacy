@@ -16,7 +16,7 @@
 
 namespace math {
 
-template<const int N,class T=scalar>
+template<int N,class T=scalar>
 class ray {
 public:
     static const int ARITY = N;

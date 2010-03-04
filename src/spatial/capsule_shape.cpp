@@ -52,12 +52,14 @@ bool CapsuleShape::test_intersection(Shape const *shape) const
 
 bool CapsuleShape::test_intersection(SphereShape const *shape) const
 {
-	return math::test_intersection(*shape, *this);
+	return shape->sphere::test_intersection(*shape);
 }
 
 bool CapsuleShape::test_intersection(LineShape const *shape) const
 {
-	return math::test_intersection((math::sphere<3> const &) *this, (math::line<3> const &) *shape);
+	// NOT IMPLEMENTED
+	assert(0);
+	return false;
 }
 
 bool CapsuleShape::test_intersection(CapsuleShape const *shape) const

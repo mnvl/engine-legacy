@@ -50,17 +50,17 @@ bool SphereShape::test_intersection(Shape const *shape) const
 
 bool SphereShape::test_intersection(SphereShape const *shape) const
 {
-	return math::test_intersection(*this, *shape);
+	return sphere::test_intersection(*shape);
 }
 
 bool SphereShape::test_intersection(LineShape const *shape) const
 {
-	return math::test_intersection((math::sphere<3> const &) *this, (math::line<3> const &) *shape);
+	return sphere::test_intersection((math::line<3> const &) *shape);
 }
 
 bool SphereShape::test_intersection(CapsuleShape const *shape) const
 {
-	return math::test_intersection(*this, *shape);
+	return sphere::test_intersection(*shape);
 }
 
 void SphereShape::bind(lua_State *L)

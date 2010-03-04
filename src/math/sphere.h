@@ -17,15 +17,17 @@
 namespace math
 {
 
-template<int N,class T=scalar>
+template<int N, class T> class ray;
+template<int N, class T> class line;
+template<int N, class T> class capsule;
+
+template<int N, class T = scalar>
 class sphere {
 public:
 	static const size_t ARITY = N;
 	typedef T scalar_t;
 	typedef std::numeric_limits<scalar_t> limits_t;
 	typedef vec<ARITY,scalar_t> vec_t;
-	typedef aabb<ARITY,scalar_t> aabb_t;
-	typedef sphere<ARITY,scalar_t> sphere_t;
 
 	vec_t centre;
 	scalar_t radius;
@@ -34,42 +36,53 @@ public:
 	{
 	}
 
-	sphere(const aabb_t &a)
+	sphere(aabb<N, T> const &a)
 	{
-		set(a);
+		construct(a);
 	}
 
-	sphere(const vec_t &c, scalar_t r):
+	sphere(vec_t const &c, scalar_t r):
 		centre(c),
 		radius(r)
 	{
 	}
 
-	void construct(const aabb_t &a)
+	void construct(aabb<N, T> const &a)
 	{
 		centre = (a.lo + a.hi) / 2;
 		radius = (a.hi - centre).length();
 	}
 
-	void set(const vec_t &c, scalar_t r)
+	void set(vec_t const &c, scalar_t r)
 	{
 		centre = c;
 		radius = r;
 	}
 
-	aabb_t get_aabb() const
+	aabb<N, T> get_aabb() const
 	{
 		assert(radius >= 0);
 
 		vec_t r;
 		r.set_all(radius);
-		return aabb_t(centre - r, centre + r);
+		return aabb<N, T>(centre - r, centre + r);
 	}
 
-	bool contains(const vec_t &v) const
+	bool contains(vec_t const &v) const
 	{
 		return (v - centre).length_sq() < radius * radius;
 	}
+
+	bool test_intersection(sphere<N, T> const &s) const
+	{
+		return (centre - s.centre).length_sq() <= square(radius + s.radius);
+	}
+
+	bool test_intersection(ray<N, T> const &r) const;
+	int query_intersection(ray<N, T> const &r, vec_t &p1, vec_t &p2) const;
+	bool test_intersection(line<N, T> const &l) const;
+	int query_intersection(line<N, T> const &l, vec_t &p1, vec_t &p2) const;
+	bool test_intersection(capsule<N, T> const &c) const;
 };
 
 void bind_sphere(lua_State *L);

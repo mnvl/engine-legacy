@@ -49,7 +49,7 @@ bool LineShape::test_intersection(Shape const *shape) const
 
 bool LineShape::test_intersection(SphereShape const *shape) const
 {
-	return math::test_intersection(*shape, *this);
+	return shape->sphere::test_intersection(*this);
 }
 
 bool LineShape::test_intersection(LineShape const *shape) const
