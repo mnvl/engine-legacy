@@ -40,6 +40,8 @@ public:
 	void set_camera(boost::shared_ptr<Camera> const &camera);
 	void commit();
 
+	boost::shared_ptr<Material> get_material() const { return material_; }
+
 	virtual void execute();
 
 protected:
