@@ -1,3 +1,13 @@
+# - Find Maya SDK
+# Find Maya SDK includes and libraries
+#
+# Usage: FIND_PACKAGE(Maya COMPONENTS component1 component2 ...)
+# e.g. FIND_PACKAGE(Maya COMPONENTS Foundation OpenMaya)
+#
+# Defines following variables:
+#  MAYA_INCLUDE_DIR - Where to find xercesc include sub-directory.
+#  MAYA_LIBRARIES   - List of libraries when using Xerces-C.
+#  MAYA_FOUND       - True if Xerces-C found.
 
 IF(MAYA_INCLUDE_DIR AND MAYA_LIBRARIES)
   SET(MAYA_FOUND TRUE)

@@ -8,7 +8,6 @@
 #
 # Based on original FindXercesC.cmake by Aleksandar Samardzic taken
 # from http://www.cmake.org/pipermail/cmake/2008-October/024383.html
-#
 
 FIND_PATH(XERCESC3_INCLUDE_DIR xercesc/util/XercesVersion.hpp
 
