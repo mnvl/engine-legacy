@@ -44,9 +44,9 @@ public:
         return r0 + a * t;
     }
 
-	bool contains(vec_t const &point)
+	bool contains(vec_t const &point, scalar_t epsilon = EPSILON)
 	{
-		return (point - r0).is_collinear(a);
+		return (point - r0).is_collinear(a, epsilon);
 	}
 
 	scalar_t distance_sq(vec_t const &point)
@@ -67,6 +67,9 @@ public:
 	{
 		return distance(r) < EPSILON;
 	}
+
+	// intersection point is apply(t)
+	bool query_intersection(ray const &r, scalar_t &t) const;
 };
 
 void bind_ray(lua_State *L);

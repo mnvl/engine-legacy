@@ -224,9 +224,9 @@ public:
 		y = -y;
 	}
 
-	bool is_collinear(vec const &v) const
+	bool is_collinear(vec const &v, scalar_t epsilon = EPSILON) const
 	{
-		return abs(x*v.y - y*v.x) < EPSILON;
+		return abs(x*v.y - y*v.x) < epsilon;
 	}
 
 	void to_polar(scalar_t &modulus, scalar_t &angle) const;
@@ -237,6 +237,8 @@ public:
 		sprintf(buf, "%f %f", x, y);
 		return buf;
 	}
+
+	vec perpendicular() const { return vec(y, -x); }
 };
 #pragma pack(pop)
 
@@ -432,15 +434,13 @@ public:
 	{
 		x = -x;
 		y = -y;
-		z = -z;
 	}
 
 	void to_axis_angle(vec &axis, scalar_t &angle) const;
 
-	bool is_collinear(vec const &v) const
+	bool is_collinear(vec const &v, scalar_t epsilon = EPSILON) const
 	{
-		scalar_t k = length() / v.length();
-		return v * k == *this;
+		// TODO
 	}
 
 	std::string to_string() const

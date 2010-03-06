@@ -54,7 +54,9 @@ bool LineShape::test_intersection(SphereShape const *shape) const
 
 bool LineShape::test_intersection(LineShape const *shape) const
 {
-	return math::test_intersection(*this, *shape);
+	// NOT IMPLEMENTED
+	assert(0);
+	return false;
 }
 
 bool LineShape::test_intersection(CapsuleShape const *shape) const
