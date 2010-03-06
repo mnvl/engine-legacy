@@ -14,6 +14,45 @@
 namespace math
 {
 
+namespace
+{
+
+template<class T> T distance(ray<2,T> const &r1, ray<2,T> const &r2)
+{
+	if (!r1.a.is_collinear(r2.a)) return 0;
+	return (r1.r0 - r2.r0).length();
+}
+
+template<class T> T distance(ray<3, T> const &r1, ray<3, T> const &r2)
+{
+	// http://softsurfer.com/Archive/algorithm_0106/algorithm_0106.htm
+	vec<3,T> w0 = r1.r0 - r2.r0;
+	T a = r1.a & r1.a;
+	T b = r1.a & r2.a;
+	T c = r2.a & r2.a;
+	T d = r1.a & w0;
+	T e = r2.a & w0;
+
+	T denom = a * c - square(b); // non-negative
+	if (denom < EPSILON) return 0;
+
+	T s = (b * e - c * d) / denom;
+	T t = (a * e - b * d) / denom;
+
+	return (r1.apply(s) - r2.apply(t)).length();
+}
+
+}
+
+template<int N, class T> T
+ray<N, T>::distance(ray const &r) const
+{
+	return math::distance(*this, r);
+}
+
+template class ray<2>;
+template class ray<3>;
+
 void bind_ray(lua_State *L)
 {
 	using namespace luabind;

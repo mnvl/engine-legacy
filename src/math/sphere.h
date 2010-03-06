@@ -26,7 +26,6 @@ class sphere {
 public:
 	static const size_t ARITY = N;
 	typedef T scalar_t;
-	typedef std::numeric_limits<scalar_t> limits_t;
 	typedef vec<ARITY,scalar_t> vec_t;
 
 	vec_t centre;

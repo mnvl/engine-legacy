@@ -24,12 +24,6 @@ namespace math
 {
 
 template<class T> inline bool
-test_intersection(ray<3, T> const &r1, ray<3, T> const &r2)
-{
-	return r1.distance(r2) < EPSILON;
-}
-
-template<class T> inline bool
 query_intersection(ray<3, T> const &ray1, ray<3, T> const &ray2, T &t)
 {
 	vec<3,T> a1_x_a2 = ray1.a ^ ray2.a;

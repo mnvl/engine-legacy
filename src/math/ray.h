@@ -22,8 +22,6 @@ public:
     static const int ARITY = N;
     typedef T scalar_t;
     typedef vec<ARITY,scalar_t> vec_t;
-    typedef ray<ARITY,scalar_t> ray_t;
-    typedef std::numeric_limits<scalar_t> limits_t;
 
     vec_t r0, a;
 
@@ -63,12 +61,11 @@ public:
 		return sqrt(distance_sq(point));
 	}
 
-	scalar_t distance(ray_t const &ray)
+	scalar_t distance(ray const &r) const;
+
+	bool test_intersection(ray const &r) const
 	{
-		vec_t aa = a ^ ray.a;
-		scalar_t aa_len = aa.length();
-		if (aa_len < EPSILON) return -1;
-		return abs(((r0 - ray.r0) & aa) / aa_len);
+		return distance(r) < EPSILON;
 	}
 };
 
