@@ -5,4 +5,4 @@ ADD_LIBRARY(util STATIC ${UTIL_SOURCES})
 
 ADD_EXECUTABLE(test_util ${UTIL_TEST_SOURCES})
 TARGET_LINK_LIBRARIES(test_util util ${ENGINE_LIBRARIES})
-ADD_TEST(test_util ${EXECUTABLE_OUTPUT_PATH}/test_util --log_level=test_suite)
+ADD_TEST(util ${EXECUTABLE_OUTPUT_PATH}/test_util --log_level=test_suite)
