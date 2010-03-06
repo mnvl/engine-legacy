@@ -24,43 +24,32 @@ template<class T> T distance(ray<2,T> const &r1, ray<2,T> const &r2)
 	return (r1.r0 - r2.r0).length();
 }
 
+template<class T> bool closest_aproach(ray<3, T> const &r1, T &t1, ray<3, T> const &r2, T &t2)
+{
+	vec<3, T> p2_p1 = r2.r0 - r1.r0;
+	vec<3, T> a1_x_a2 = r1.a ^ r2.a;
+
+	T k = a1_x_a2.length_sq();
+	if (k < EPSILON) return false;
+
+	t1 = ((p2_p1 ^ r2.a) & a1_x_a2) / k;
+	t2 = ((p2_p1 ^ r1.a) & a1_x_a2) / k;
+
+	return true;
+}
+
 template<class T> T distance(ray<3, T> const &r1, ray<3, T> const &r2)
 {
-	// http://softsurfer.com/Archive/algorithm_0106/algorithm_0106.htm
-	vec<3,T> w0 = r1.r0 - r2.r0;
-	T a = r1.a & r1.a;
-	T b = r1.a & r2.a;
-	T c = r2.a & r2.a;
-	T d = r1.a & w0;
-	T e = r2.a & w0;
-
-	T denom = a * c - square(b); // non-negative
-	if (denom < EPSILON) return 0;
-
-	T s = (b * e - c * d) / denom;
-	T t = (a * e - b * d) / denom;
-
-	return (r1.apply(s) - r2.apply(t)).length();
+	T t1, t2;
+	if (!closest_aproach(r1, t1, r2, t2)) return 0;
+	return (r1.apply(t1) - r2.apply(t2)).length();
 }
 
 template<class T> bool query_intersection(ray<3, T> const &r1, ray<3, T> const &r2, T &t)
 {
-	T k1 = r1.a.length();
-	T k2 = r2.a.length();
-
-	vec<3,T> a1 = r1.a / k1;
-	vec<3,T> a2 = r2.a / k2;
-
-	vec<3,T> a1_x_a2 = a1 ^ a2;
-	T a1_x_a2_len_sq = a1_x_a2.length_sq();
-
-	if (a1_x_a2_len_sq < EPSILON) return false;
-
-	matrix<3,3> m;
-	m.assign(r2.r0 - r1.r0, a2, a1_x_a2);
-	t = m.determinant() / (a1_x_a2_len_sq * k1);
-
-	return true;
+	T t2;
+	if (!closest_aproach(r1, t, r2, t2)) return 0;
+	return (r1.apply(t) - r2.apply(t2)).length_sq() < EPSILON; 
 }
 
 template<class T> bool query_intersection(ray<2, T> const &r1, ray<2, T> const &r2, T &s)

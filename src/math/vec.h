@@ -440,7 +440,7 @@ public:
 
 	bool is_collinear(vec const &v, scalar_t epsilon = EPSILON) const
 	{
-		// TODO
+		return (*this ^ v).length_sq() < epsilon;
 	}
 
 	std::string to_string() const

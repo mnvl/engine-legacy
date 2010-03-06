@@ -37,7 +37,7 @@ BOOST_AUTO_TEST_CASE (ray_ray_distance_2)
 	BOOST_ASSERT(r1.distance(r2) == 0);
 }
 
-BOOST_AUTO_TEST_CASE (ray_ray_intersection_1)
+BOOST_AUTO_TEST_CASE (ray_ray_intersection_1a)
 {
 	math::ray<2> r1, r2;
 	math::scalar s;

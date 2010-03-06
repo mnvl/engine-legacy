@@ -9,7 +9,6 @@
 //-----------------------------------------------------------------------------
 
 #include <luabind/luabind.hpp>
-#include <math/intersection.h>
 #include "sphere_shape.h"
 #include "line_shape.h"
 
