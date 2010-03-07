@@ -26,7 +26,7 @@ BOOST_AUTO_TEST_CASE(basic)
 
 	double t = platform::Timer::get_current_time();
 
-	while (platform::Timer::get_current_time() - t < 10.0)
+	while (platform::Timer::get_current_time() - t < 1.0)
 	{
 		double t0 = platform::Timer::get_current_time();
 		window->run_message_loop();
@@ -36,8 +36,7 @@ BOOST_AUTO_TEST_CASE(basic)
 		renderer->finish_frame();
 		double t3 = platform::Timer::get_current_time();
 
-		LOG_DEBUG("message_loop = " << t1 - t0 <<", begin_frame = " << t2 - t1
-			<<", finish_frame = " << t3 - t2);
+		LOG_DEBUG("message_loop = " << t1 - t0 <<", begin_frame = " << t2 - t1 <<", finish_frame = " << t3 - t2);
 	}
 }
 
