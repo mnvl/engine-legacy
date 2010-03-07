@@ -1953,7 +1953,7 @@ void ColladaLoader::load(std::string const &filename)
 		impl_->get_root()->set_filename(util::xerces_lcp_transcode(filename));
 		impl_->get_root()->go((xercesc::DOMElement *) root_node);
 
-		LOG_INFO(L"finished parsing " << filename);
+		LOG_INFO("finished parsing " << filename);
 	}
 	catch (collada_elements::error const &error)
 	{

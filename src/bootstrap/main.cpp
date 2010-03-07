@@ -124,7 +124,6 @@ private:
 	boost::shared_ptr<util::ArchiveReader> archive_reader_;
 };
 
-
 INT WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpstrCmdLine, INT nShowCmd)
 {
     try
