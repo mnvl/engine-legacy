@@ -89,6 +89,10 @@ public:
 	{
 		if (nparticles_)
 		{
+			math::matrix<4,4> tf;
+			tf.identity();
+			renderer_->set_world_matrix(tf);
+
 			material_->select();
 			renderer_->get_device()->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
 			renderer_->get_device()->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_ONE);
