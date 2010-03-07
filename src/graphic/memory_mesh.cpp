@@ -58,6 +58,22 @@ void MemoryMesh::set_positions(math::vec<3> const *buffer)
 	}
 }
 
+void MemoryMesh::set_tangents(math::vec<3> const *buffer)
+{
+	for (std::vector<vertex_t>::iterator it = vertices_.begin(); it != vertices_.end(); it++)
+	{
+		it->tangent = *buffer++;
+	}
+}
+
+void MemoryMesh::set_binormals(math::vec<3> const *buffer)
+{
+	for (std::vector<vertex_t>::iterator it = vertices_.begin(); it != vertices_.end(); it++)
+	{
+		it->binormal = *buffer++;
+	}
+}
+
 void MemoryMesh::set_normals(math::vec<3> const *buffer)
 {
 	for (std::vector<vertex_t>::iterator it = vertices_.begin(); it != vertices_.end(); it++)

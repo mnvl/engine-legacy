@@ -129,9 +129,39 @@ void BasicStaticMesh<T>::set_normals(math::vec<3> const *buffer)
 }
 
 template<>
+void BasicStaticMesh<VERTEX_PNT>::set_tangents(math::vec<3> const *buffer)
+{
+	// not supported
+}
+
+template<>
+void BasicStaticMesh<VERTEX_PNT>::set_binormals(math::vec<3> const *buffer)
+{
+	// not supported
+}
+
+template<>
 void BasicStaticMesh<VERTEX_PNT>::set_joint_indices(math::vec<8, unsigned> const *buffer)
 {
     // not supported
+}
+
+template<>
+void BasicStaticMesh<VERTEX_PNT>::set_joint_weights(math::vec<8> const *buffer)
+{
+    // not supported
+}
+
+template<>
+void BasicStaticMesh<VERTEX_PNJWT>::set_tangents(math::vec<3> const *buffer)
+{
+	// not supported
+}
+
+template<>
+void BasicStaticMesh<VERTEX_PNJWT>::set_binormals(math::vec<3> const *buffer)
+{
+	// not supported
 }
 
 template<>
@@ -143,12 +173,6 @@ void BasicStaticMesh<VERTEX_PNJWT>::set_joint_indices(math::vec<8, unsigned> con
     {
         p->joints = *buffer;
     }
-}
-
-template<>
-void BasicStaticMesh<VERTEX_PNT>::set_joint_weights(math::vec<8> const *buffer)
-{
-    // not supported
 }
 
 template<>

@@ -41,6 +41,8 @@ public:
 	virtual void set_indices_count(size_t count);
 	virtual void lock();
 	virtual void set_positions(math::vec<3> const *buffer);
+	virtual void set_tangents(math::vec<3> const *buffer);
+	virtual void set_binormals(math::vec<3> const *buffer);
 	virtual void set_normals(math::vec<3> const *buffer);
 	virtual void set_joint_indices(math::vec<8, unsigned> const *buffer);
 	virtual void set_joint_weights(math::vec<8> const *buffer);

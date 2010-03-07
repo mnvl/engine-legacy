@@ -732,6 +732,8 @@ namespace collada_elements
 		struct vertex_t
 		{
 			math::vec<3> position;
+			math::vec<3> tangent;
+			math::vec<3> binormal;
 			math::vec<3> normal;
 			math::vec<2> texcoords;
 		};
@@ -754,6 +756,18 @@ namespace collada_elements
 				{
 					if (math::lexicographical_less(lhs.position, rhs.position)) return true;
 					if (math::lexicographical_greater(lhs.position, rhs.position)) return false;
+				}
+
+				if ((lhs.tangent - rhs.tangent).length_sq() > math::EPSILON)
+				{
+					if (math::lexicographical_less(lhs.tangent, rhs.tangent)) return true;
+					if (math::lexicographical_greater(lhs.tangent, rhs.tangent)) return false;
+				}
+
+				if ((lhs.binormal - rhs.binormal).length_sq() > math::EPSILON)
+				{
+					if (math::lexicographical_less(lhs.binormal, rhs.binormal)) return true;
+					if (math::lexicographical_greater(lhs.binormal, rhs.binormal)) return false;
 				}
 
 				if ((lhs.normal - rhs.normal).length_sq() > math::EPSILON)
@@ -1613,6 +1627,8 @@ namespace collada_elements
 		source_e const *position_source = get_source(position_input->get_source().substr(1));
 
 		std::vector<math::vec<3> > positions_buffer;
+		std::vector<math::vec<3> > tangents_buffer;
+		std::vector<math::vec<3> > binormals_buffer;
 		std::vector<math::vec<3> > normals_buffer;
 		std::vector<math::vec<2> > texcoords_buffer;
 		std::vector<unsigned> index_buffer;
@@ -1624,9 +1640,17 @@ namespace collada_elements
 		{
 			triangles_e const *triangles_ptr = &*it;
 
+			input_e const *tangents_input = vertices_->get_input_nothrow(L"TANGENT");
+			if (!tangents_input) tangents_input = triangles_ptr->get_input_nothrow(L"TANGENT");
+
+			input_e const *binormals_input = vertices_->get_input_nothrow(L"BINORMAL");
+			if (!binormals_input) binormals_input = triangles_ptr->get_input_nothrow(L"BINORMAL");
+
 			input_e const *normals_input = vertices_->get_input_nothrow(L"NORMAL");
 			if (!normals_input) normals_input = triangles_ptr->get_input(L"NORMAL");
 
+			source_e const *tangents_source = tangents_input ? get_source(tangents_input->get_source().substr(1)) : 0;
+			source_e const *binormals_source = binormals_input ? get_source(binormals_input->get_source().substr(1)) : 0;
 			source_e const *normals_source = get_source(normals_input->get_source().substr(1));
 
 			input_e const *texcoords_input = triangles_ptr->get_input(L"TEXCOORD");
@@ -1647,10 +1671,21 @@ namespace collada_elements
 				size_t position_index;
 				vertex_indexer::vertex_t v;
 
+				v.tangent.set_all(0);
+				v.binormal.set_all(0);
+
 				for (size_t j = 0; j < stride; j++) {
 					if (j == position_input->get_offset()) {
 						position_index = *indices_get;
 						position_source->get(position_index, v.position);
+					}
+
+					if (tangents_input && j == tangents_input->get_offset()) {
+						tangents_source->get(*indices_get, v.tangent);
+					}
+
+					if (binormals_input && j == binormals_input->get_offset()) {
+						binormals_source->get(*indices_get, v.binormal);
 					}
 
 					if (j == normals_input->get_offset()) {
@@ -1660,7 +1695,7 @@ namespace collada_elements
 					if (j == texcoords_input->get_offset()) {
 						texcoords_source->get(*indices_get, v.texcoords);
 
-						// For texture coordinates, COLLADA’s right-handed coordinate system applies; therefore, an ST texture
+						// For texture coordinates, COLLADA's right-handed coordinate system applies; therefore, an ST texture
 						// coordinate of [0,0] maps to the lower-left texel of a texture image, when loaded in a professional 2-D
 						// texture viewer/editor. [COLLADA 1.4 Specification http://www.khronos.org/files/collada_spec_1_4.pdf]
 						v.texcoords.y = 1 - v.texcoords.y;
@@ -1676,6 +1711,8 @@ namespace collada_elements
 					position_index_to_vertex_index_.insert(std::make_pair(position_index, vertex_index.first));
 
 					positions_buffer.push_back(v.position);
+					if (tangents_input) tangents_buffer.push_back(v.tangent);
+					if (binormals_input) binormals_buffer.push_back(v.binormal);
 					normals_buffer.push_back(v.normal);
 					texcoords_buffer.push_back(v.texcoords);
 
@@ -1699,6 +1736,8 @@ namespace collada_elements
 		mesh_ptr->set_indices_count(index_buffer.size());
 		mesh_ptr->lock();
 		mesh_ptr->set_positions(&positions_buffer[0]);
+		if (tangents_buffer.size()) mesh_ptr->set_tangents(&tangents_buffer[0]);
+		if (binormals_buffer.size()) mesh_ptr->set_binormals(&binormals_buffer[0]);
 		mesh_ptr->set_normals(&normals_buffer[0]);
 		mesh_ptr->set_texcoords(&texcoords_buffer[0]);
 		mesh_ptr->set_face_indices(&index_buffer[0]);

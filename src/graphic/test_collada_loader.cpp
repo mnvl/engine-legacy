@@ -240,4 +240,44 @@ BOOST_AUTO_TEST_CASE(materials)
     }
 }
 
+BOOST_AUTO_TEST_CASE(tbn)
+{
+	Fixture fixture;
+
+    std::auto_ptr<graphic::MemoryModel> model_ptr(new graphic::MemoryModel(boost::shared_ptr<graphic::Renderer>(), boost::shared_ptr<graphic::Scheduler>()));
+
+    graphic::ColladaLoader loader(model_ptr.get());
+	loader.load(util::get_graphic_sources_path() + "test_collada_loader_tbn.xml");
+	loader.build_model();
+
+	BOOST_ASSERT (model_ptr->meshes.size() == 1);
+	
+	graphic::MemoryMesh const *mesh_ptr = (graphic::MemoryMesh const *) model_ptr->meshes[0].get();
+    BOOST_ASSERT (mesh_ptr->get_vertex_buffer().size() == 3);
+    BOOST_ASSERT (mesh_ptr->get_index_buffer().size() == 3);
+
+	std::vector<graphic::MemoryMesh::vertex_t> const &vertex_buffer = mesh_ptr->get_vertex_buffer();
+
+	BOOST_ASSERT ((vertex_buffer[0].position - math::vec<3>(-0.5f, 0.0f, -0.5f)).length_sq() < math::EPSILON);
+	BOOST_ASSERT ((vertex_buffer[0].normal   - math::vec<3>(0.0f, 1.0f, 0.0f)).length_sq() < math::EPSILON);
+	BOOST_ASSERT ((vertex_buffer[0].tangent  - math::vec<3>(0, 0, 1)).length_sq() < math::EPSILON);
+	BOOST_ASSERT ((vertex_buffer[0].binormal - math::vec<3>(1, 0, 0)).length_sq() < math::EPSILON);
+
+	BOOST_ASSERT ((vertex_buffer[1].position - math::vec<3>(0.5f, 0.0f, 0.5f)).length_sq() < math::EPSILON);
+	BOOST_ASSERT ((vertex_buffer[1].normal   - math::vec<3>(0.0f, 1.0f, 0.0f)).length_sq() < math::EPSILON);
+	BOOST_ASSERT ((vertex_buffer[1].tangent  - math::vec<3>( 0.7071068f, 0, -0.7071068f)).length_sq() < math::EPSILON);
+	BOOST_ASSERT ((vertex_buffer[1].binormal - math::vec<3>(-0.7071068f, 0, -0.7071068f)).length_sq() < math::EPSILON);
+
+	BOOST_ASSERT ((vertex_buffer[2].position - math::vec<3>(0.5f, 0.0f, -0.5f)).length_sq() < math::EPSILON);
+	BOOST_ASSERT ((vertex_buffer[2].normal   - math::vec<3>(0.0f, 1.0f, 0.0f)).length_sq() < math::EPSILON);
+	BOOST_ASSERT ((vertex_buffer[2].tangent  - math::vec<3>(-1, 0, 0)).length_sq() < math::EPSILON);
+	BOOST_ASSERT ((vertex_buffer[2].binormal - math::vec<3>(0, 0, 1)).length_sq() < math::EPSILON);
+
+	std::vector<graphic::index_t> const &index_buffer = mesh_ptr->get_index_buffer();
+
+	BOOST_ASSERT (index_buffer[0] == 0);
+	BOOST_ASSERT (index_buffer[1] == 1);
+	BOOST_ASSERT (index_buffer[2] == 2);
+}
+
 BOOST_AUTO_TEST_SUITE_END()

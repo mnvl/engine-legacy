@@ -63,6 +63,8 @@ public:
 	virtual void set_indices_count(size_t count) = 0;
 	virtual void lock() = 0;
 	virtual void set_positions(math::vec<3> const *buffer) = 0;
+	virtual void set_tangents(math::vec<3> const *buffer) = 0;
+	virtual void set_binormals(math::vec<3> const *buffer) = 0;
 	virtual void set_normals(math::vec<3> const *buffer) = 0;
 	virtual void set_joint_indices(math::vec<8, unsigned> const *buffer) = 0; // indices of elements from joint_index_transform
 	virtual void set_joint_weights(math::vec<8> const *buffer) = 0;
