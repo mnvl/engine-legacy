@@ -28,7 +28,7 @@ typedef boost::weak_ptr<Mesh> MeshWeakPtr;
 
 class Mesh {
 public:
-	struct triangles
+	struct Triangles
 	{
 		MaterialPtr material_ptr;
 		size_t minimal_vertex_index;
@@ -37,7 +37,7 @@ public:
 		size_t triangles_count;
 	};
 
-	typedef std::vector<triangles> triangles_list_type;
+	typedef std::vector<Triangles> triangles_list_type;
 	typedef std::vector<math::matrix<4,4> > inverted_bind_matrices_type;
     typedef std::vector<size_t> joint_index_transform_type;
 
@@ -73,6 +73,8 @@ public:
 	virtual void unlock() = 0;
 
 	virtual void draw(Joint *joint_ptr);
+
+	static void bind(lua_State *L);
 
 protected:
 	Model *model_;

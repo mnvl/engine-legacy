@@ -190,21 +190,21 @@ BOOST_AUTO_TEST_CASE(materials)
         BOOST_ASSERT (mesh1_ptr->get_vertex_buffer().size() == 9);
         BOOST_ASSERT (mesh1_ptr->get_index_buffer().size() == 9);
 
-        graphic::Mesh::triangles const &t0 = mesh1_ptr->triangles_list[0];
+        graphic::Mesh::Triangles const &t0 = mesh1_ptr->triangles_list[0];
         BOOST_ASSERT (t0.material_ptr->get_name() == "lambert1");
         BOOST_ASSERT (t0.triangles_count == 1);
         BOOST_ASSERT (t0.first_index_offset == 0);
         BOOST_ASSERT (t0.minimal_vertex_index == 0);
         BOOST_ASSERT (t0.vertices_count == 3);
 
-        graphic::Mesh::triangles const &t1 = mesh1_ptr->triangles_list[1];
+        graphic::Mesh::Triangles const &t1 = mesh1_ptr->triangles_list[1];
         BOOST_ASSERT (t1.material_ptr->get_name() == "phong1");
         BOOST_ASSERT (t1.triangles_count == 1);
         BOOST_ASSERT (t1.first_index_offset == 3);
         BOOST_ASSERT (t1.minimal_vertex_index == 3);
         BOOST_ASSERT (t1.vertices_count == 3);
 
-        graphic::Mesh::triangles const &t2 = mesh1_ptr->triangles_list[2];
+        graphic::Mesh::Triangles const &t2 = mesh1_ptr->triangles_list[2];
         BOOST_ASSERT (t2.material_ptr->get_name() == "blinn1");
         BOOST_ASSERT (t2.triangles_count == 1);
         BOOST_ASSERT (t2.first_index_offset == 6);
@@ -217,21 +217,21 @@ BOOST_AUTO_TEST_CASE(materials)
         BOOST_ASSERT (mesh2_ptr->get_vertex_buffer().size() == 9);
         BOOST_ASSERT (mesh2_ptr->get_index_buffer().size() == 9);
 
-        graphic::Mesh::triangles const &t0 = mesh2_ptr->triangles_list[0];
+        graphic::Mesh::Triangles const &t0 = mesh2_ptr->triangles_list[0];
         BOOST_ASSERT (t0.material_ptr->get_name() == "phong2");
         BOOST_ASSERT (t0.triangles_count == 1);
         BOOST_ASSERT (t0.first_index_offset == 0);
         BOOST_ASSERT (t0.minimal_vertex_index == 0);
         BOOST_ASSERT (t0.vertices_count == 3);
 
-        graphic::Mesh::triangles const &t1 = mesh2_ptr->triangles_list[1];
+        graphic::Mesh::Triangles const &t1 = mesh2_ptr->triangles_list[1];
         BOOST_ASSERT (t1.material_ptr->get_name() == "blinn2");
         BOOST_ASSERT (t1.triangles_count == 1);
         BOOST_ASSERT (t1.first_index_offset == 3);
         BOOST_ASSERT (t1.minimal_vertex_index == 3);
         BOOST_ASSERT (t1.vertices_count == 3);
 
-        graphic::Mesh::triangles const &t2 = mesh2_ptr->triangles_list[2];
+        graphic::Mesh::Triangles const &t2 = mesh2_ptr->triangles_list[2];
         BOOST_ASSERT (t2.material_ptr->get_name() == "lambert1");
         BOOST_ASSERT (t2.triangles_count == 1);
         BOOST_ASSERT (t2.first_index_offset == 6);

@@ -60,7 +60,7 @@ public:
             float _21, _22, _23;
             float _31, _32, _33;
         };
-		
+
 		scalar_t ij[WIDTH][HEIGHT];
 	};
 

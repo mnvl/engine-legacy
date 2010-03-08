@@ -47,7 +47,7 @@ public:
 	boost::weak_ptr<Mesh> mesh_ptr;
 
 	Joint(size_t i):
-	index(i)
+		index(i)
 	{
 	}
 

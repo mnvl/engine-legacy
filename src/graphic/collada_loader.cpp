@@ -1661,7 +1661,7 @@ namespace collada_elements
 
 			size_t stride = triangles_ptr->get_stride();
 
-			Mesh::triangles dummy;
+			Mesh::Triangles dummy;
 			dummy.triangles_count = triangles_ptr->get_count();
 			dummy.first_index_offset = first_index_offset;
 			dummy.minimal_vertex_index = size_t(-1);

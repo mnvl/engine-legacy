@@ -102,7 +102,7 @@ void HeightfieldLoader::load_from_raw(math::matrix<4,4> const &tf, size_t nrows,
     model_->materials.push_back(material_ptr);
 
 	LOG_DEBUG("adding triangle lists and joints...");
-    Mesh::triangles t;
+    Mesh::Triangles t;
     t.material_ptr = model_->materials.back();
     t.first_index_offset = 0;
     t.triangles_count = indices.size() / 3;
