@@ -84,7 +84,7 @@ void MemoryMesh::set_normals(math::vec<3> const *buffer)
 
 void MemoryMesh::set_joint_indices(math::vec<8, unsigned> const *buffer)
 {
-	for (std::vector<vertex_weights>::iterator it = weights_.begin(); it != weights_.end(); it++)
+	for (std::vector<JointWeights>::iterator it = weights_.begin(); it != weights_.end(); it++)
 	{
 		it->joints = *buffer++;
 	}
@@ -92,9 +92,9 @@ void MemoryMesh::set_joint_indices(math::vec<8, unsigned> const *buffer)
 
 void MemoryMesh::set_joint_weights(math::vec<8> const *buffer)
 {
-	for (std::vector<vertex_weights>::iterator it = weights_.begin(); it != weights_.end(); it++)
+	for (std::vector<JointWeights>::iterator it = weights_.begin(); it != weights_.end(); it++)
 	{
-		it->factors = *buffer++;
+		it->weights = *buffer++;
 	}
 }
 
@@ -140,13 +140,13 @@ void MemoryMesh::transform_vertices(Joint const *joint_ptr, std::vector<vertex_t
 		math::vec<3> pos(0, 0, 0);
 
 		math::vec<8, unsigned> const &indices = weights_[i].joints;
-		math::vec<8> const &factors = weights_[i].factors;
+		math::vec<8> const &weights = weights_[i].weights;
 
 		for (size_t j = 0; j < 8; j++)
 		{
-			if (factors.i[j] > math::EPSILON)
+			if (weights.i[j] > math::EPSILON)
 			{
-				pos += (vertices_[i].position * joint_matrix_array.at(indices.i[j])) * factors.i[j];
+				pos += (vertices_[i].position * joint_matrix_array.at(indices.i[j])) * weights.i[j];
 			}
 		}
 

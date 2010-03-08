@@ -27,20 +27,23 @@ class MemoryMesh: public Mesh {
 public:
     typedef VERTEX_PTBNT vertex_t;
 
+	#pragma pack(push, 1)
+	struct JointWeights
+	{
+		math::vec<8, unsigned> joints;
+		math::vec<8> weights;
+	};
+	#pragma pack(pop)
+
+
 	MemoryMesh(MemoryModel *m);
 	virtual ~MemoryMesh();
 
 	virtual MeshPtr shallow_copy() const;
 
-	std::vector<vertex_t> const &get_vertex_buffer() const
-	{
-		return vertices_;
-	}
-
-	std::vector<index_t> const &get_index_buffer() const
-	{
-		return indices_;
-	}
+	std::vector<vertex_t> const &get_vertex_buffer() const { return vertices_; }
+	std::vector<index_t> const &get_index_buffer() const { return indices_; }
+	std::vector<JointWeights> const &get_vertex_weights() const { return weights_; }
 
 	virtual void set_vertices_count(size_t count);
 	virtual size_t get_vertices_count();
@@ -61,18 +64,12 @@ public:
 	void draw_static(Joint *joint_ptr) const;
 	void draw_animated(Joint *joint_ptr) const;
 
-private:
-	#pragma pack(push, 1)
-	struct vertex_weights
-	{
-		math::vec<8, unsigned> joints;
-		math::vec<8> factors;
-	};
-	#pragma pack(pop)
+	static void bind(lua_State *L);
 
+private:
 	std::vector<vertex_t> vertices_;
 	std::vector<index_t> indices_;
-	std::vector<vertex_weights> weights_;
+	std::vector<JointWeights> weights_;
 };
 
 }

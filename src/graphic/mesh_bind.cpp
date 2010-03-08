@@ -31,7 +31,7 @@ void Mesh::bind(lua_State *L)
 			.def_readwrite("first_index_offset", &Triangles::first_index_offset)
 			.def_readwrite("triangles_count", &Triangles::triangles_count)
 		]
-		.def_readwrite("triangles_list", &Mesh::triangles_list, return_stl_iterator)
+		.def_readonly("triangles_list", &Mesh::triangles_list, return_stl_iterator)
 	];
 }
 

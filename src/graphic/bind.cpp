@@ -18,6 +18,7 @@
 #include "texture.h"
 #include "joint.h"
 #include "mesh.h"
+#include "memory_mesh.h"
 #include "model.h"
 #include "static_model.h"
 #include "animated_model.h"
@@ -44,6 +45,7 @@ void bind(lua_State *L)
 	Texture::bind(L);
 	Joint::bind(L);
     Mesh::bind(L);
+	MemoryMesh::bind(L);
     Model::bind(L);
     StaticModel::bind(L);
 	AnimatedModel::bind(L);

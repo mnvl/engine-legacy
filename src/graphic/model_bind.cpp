@@ -10,6 +10,7 @@
 
 #include <boost/shared_ptr.hpp>
 #include <luabind/luabind.hpp>
+#include <luabind/iterator_policy.hpp>
 #include "model.h"
 
 void graphic::Model::bind(lua_State *L)
@@ -24,6 +25,7 @@ void graphic::Model::bind(lua_State *L)
 		.def("draw", &Model::draw)
 		.def("get_joint_by_id", &Model::get_joint_by_id)
 		.def("get_joint_by_name", &Model::get_joint_by_name)
+		.def_readonly("meshes", &Model::meshes, return_stl_iterator)
     ];
 }
 
