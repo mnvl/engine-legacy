@@ -15,5 +15,5 @@ float3 GetNormalMapNormal(const float2 texcoords, const float3 tangent, const fl
 {
 	float3 normal_tangent = normalize(2.0f * tex2D(NORMAL_MAP_SAMPLER, texcoords) - 1.0f);
     float3 normal_world = mul(normal_tangent, float3x3(tangent, binormal, normal));
-	return normal_world;
+	return normalize(normal_world);
 }
