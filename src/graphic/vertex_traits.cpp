@@ -109,20 +109,19 @@ get_vertex_descr<VERTEX_PTBNT>()
 
 		{
 			0,
-			offsetof(VERTEX_PTBNT, normal),
-			D3DDECLTYPE_FLOAT3,
-			D3DDECLMETHOD_DEFAULT,
-			D3DDECLUSAGE_NORMAL,
-			0
-		},
-
-
-		{
-			0,
 			offsetof(VERTEX_PTBNT, binormal),
 			D3DDECLTYPE_FLOAT3,
 			D3DDECLMETHOD_DEFAULT,
 			D3DDECLUSAGE_BINORMAL,
+			0
+		},
+
+		{
+			0,
+			offsetof(VERTEX_PTBNT, normal),
+			D3DDECLTYPE_FLOAT3,
+			D3DDECLMETHOD_DEFAULT,
+			D3DDECLUSAGE_NORMAL,
 			0
 		},
 
@@ -232,7 +231,7 @@ get_vertex_descr<VERTEX_PTBNJWT>()
 			offsetof(VERTEX_PTBNJWT, tangent),
 			D3DDECLTYPE_FLOAT3,
 			D3DDECLMETHOD_DEFAULT,
-			D3DDECLUSAGE_NORMAL,
+			D3DDECLUSAGE_TANGENT,
 			0
 		},
 
@@ -241,7 +240,7 @@ get_vertex_descr<VERTEX_PTBNJWT>()
 			offsetof(VERTEX_PTBNJWT, binormal),
 			D3DDECLTYPE_FLOAT3,
 			D3DDECLMETHOD_DEFAULT,
-			D3DDECLUSAGE_NORMAL,
+			D3DDECLUSAGE_BINORMAL,
 			0
 		},
 
