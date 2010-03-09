@@ -20,22 +20,31 @@
 namespace graphic
 {
 
-AnimatedMesh::AnimatedMesh(Model *model_ptr):
-    PnjwtStaticMesh(model_ptr)
+template<class V>
+BasicAnimatedMesh<V>::BasicAnimatedMesh(Model *model_ptr):
+    BasicStaticMesh<V>(model_ptr)
 {
 }
 
-MeshPtr AnimatedMesh::shallow_copy() const
+template<class V>
+BasicAnimatedMesh<V>::~BasicAnimatedMesh()
 {
-	return MeshPtr(new AnimatedMesh(*this));
 }
 
-AnimatedModel *AnimatedMesh::get_model()
+template<class V>
+MeshPtr BasicAnimatedMesh<V>::shallow_copy() const
 {
-    return (AnimatedModel *) Mesh::get_model();
+	return MeshPtr(new BasicAnimatedMesh(*this));
 }
 
-void AnimatedMesh::draw(Joint *joint_ptr)
+template<class V>
+BasicAnimatedModel<V> *BasicAnimatedMesh<V>::get_model()
+{
+    return (BasicAnimatedModel<V> *) Mesh::get_model();
+}
+
+template<class V>
+void BasicAnimatedMesh<V>::draw(Joint *joint_ptr)
 {
 	math::matrix<4,4> world_matrix = joint_ptr->matrix * get_model()->get_renderer()->get_world_matrix();
 
@@ -76,5 +85,8 @@ void AnimatedMesh::draw(Joint *joint_ptr)
 		get_model()->get_scheduler()->add(draw_call);
 	}
 }
+
+template AnimatedMeshPNJWT;
+template AnimatedMeshPTBNJWT;
 
 }

@@ -47,8 +47,8 @@ void bind(lua_State *L)
     Mesh::bind(L);
 	MemoryMesh::bind(L);
     Model::bind(L);
-    StaticModel::bind(L);
-	AnimatedModel::bind(L);
+    bind_static_model(L);
+	bind_animated_model(L);
 	MemoryModel::bind(L);
 	ColladaLoader::bind(L);
 	Camera::bind(L);

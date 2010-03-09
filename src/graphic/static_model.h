@@ -18,15 +18,21 @@
 
 namespace graphic {
 
-class StaticModel: public Model {
+template<class V = VERTEX_PNT>
+class BasicStaticModel: public Model {
 public:
-	StaticModel(boost::shared_ptr<Renderer> const &renderer_ptr, boost::shared_ptr<Scheduler> const &scheduler_ptr);
-	~StaticModel();
+	BasicStaticModel(boost::shared_ptr<Renderer> const &renderer_ptr, boost::shared_ptr<Scheduler> const &scheduler_ptr);
+	~BasicStaticModel();
 
 	MeshPtr add_mesh();
 
-    static void bind(lua_State *L);
+	static inline void bind(lua_State *L, char const *classname);
 };
+
+typedef BasicStaticModel<VERTEX_PNT> StaticModelPNT;
+typedef BasicStaticModel<VERTEX_PTBNT> StaticModelPTBNT;
+
+void bind_static_model(lua_State *L);
 
 }
 

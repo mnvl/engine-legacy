@@ -20,10 +20,6 @@
 namespace graphic
 {
 
-template StaticMesh;
-
-template PnjwtStaticMesh;
-
 template<class T>
 BasicStaticMesh<T>::BasicStaticMesh(Model *model_ptr):
     Mesh(model_ptr)
@@ -42,9 +38,9 @@ MeshPtr BasicStaticMesh<T>::shallow_copy() const
 }
 
 template<class T>
-StaticModel *BasicStaticMesh<T>::get_model()
+BasicStaticModel<T> *BasicStaticMesh<T>::get_model()
 {
-	return (StaticModel *) model_;
+	return (BasicStaticModel<T> *) model_;
 }
 
 template<class T>
@@ -153,6 +149,40 @@ void BasicStaticMesh<VERTEX_PNT>::set_joint_weights(math::vec<8> const *buffer)
 }
 
 template<>
+void BasicStaticMesh<VERTEX_PTBNT>::set_tangents(math::vec<3> const *buffer)
+{
+    vertex_t *p = vertex_buffer_->begin();
+
+    for (size_t i = 0; i < vertices_count_; i++, p++, buffer++)
+    {
+        p->tangent = *buffer;
+    }
+}
+
+template<>
+void BasicStaticMesh<VERTEX_PTBNT>::set_binormals(math::vec<3> const *buffer)
+{
+    vertex_t *p = vertex_buffer_->begin();
+
+    for (size_t i = 0; i < vertices_count_; i++, p++, buffer++)
+    {
+        p->binormal = *buffer;
+    }
+}
+
+template<>
+void BasicStaticMesh<VERTEX_PTBNT>::set_joint_indices(math::vec<8, unsigned> const *buffer)
+{
+    // not supported
+}
+
+template<>
+void BasicStaticMesh<VERTEX_PTBNT>::set_joint_weights(math::vec<8> const *buffer)
+{
+    // not supported
+}
+
+template<>
 void BasicStaticMesh<VERTEX_PNJWT>::set_tangents(math::vec<3> const *buffer)
 {
 	// not supported
@@ -177,6 +207,50 @@ void BasicStaticMesh<VERTEX_PNJWT>::set_joint_indices(math::vec<8, unsigned> con
 
 template<>
 void BasicStaticMesh<VERTEX_PNJWT>::set_joint_weights(math::vec<8> const *buffer)
+{
+    vertex_t *p = vertex_buffer_->begin();
+
+    for (size_t i = 0; i < vertices_count_; i++, p++, buffer++)
+    {
+        p->weights = *buffer;
+    }
+}
+
+template<>
+void BasicStaticMesh<VERTEX_PTBNJWT>::set_tangents(math::vec<3> const *buffer)
+{
+    vertex_t *p = vertex_buffer_->begin();
+
+    for (size_t i = 0; i < vertices_count_; i++, p++, buffer++)
+    {
+        p->tangent = *buffer;
+    }
+}
+
+template<>
+void BasicStaticMesh<VERTEX_PTBNJWT>::set_binormals(math::vec<3> const *buffer)
+{
+    vertex_t *p = vertex_buffer_->begin();
+
+    for (size_t i = 0; i < vertices_count_; i++, p++, buffer++)
+    {
+        p->tangent = *buffer;
+    }
+}
+
+template<>
+void BasicStaticMesh<VERTEX_PTBNJWT>::set_joint_indices(math::vec<8, unsigned> const *buffer)
+{
+    vertex_t *p = vertex_buffer_->begin();
+
+    for (size_t i = 0; i < vertices_count_; i++, p++, buffer++)
+    {
+        p->joints = *buffer;
+    }
+}
+
+template<>
+void BasicStaticMesh<VERTEX_PTBNJWT>::set_joint_weights(math::vec<8> const *buffer)
 {
     vertex_t *p = vertex_buffer_->begin();
 
@@ -214,5 +288,10 @@ void BasicStaticMesh<T>::unlock()
     vertex_buffer_->unlock();
     index_buffer_->unlock();
 }
+
+template StaticMeshPNT;
+template StaticMeshPTBNT;
+template StaticMeshPNJWT;
+template StaticMeshPTBNJWT;
 
 }

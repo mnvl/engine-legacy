@@ -21,7 +21,7 @@
 namespace graphic
 {
 
-class StaticModel;
+template<class T> class BasicStaticModel;
 
 template<class V = VERTEX_PNT>
 class BasicStaticMesh: public Mesh {
@@ -33,7 +33,7 @@ public:
 
 	virtual MeshPtr shallow_copy() const;
 
-	StaticModel *get_model();
+	BasicStaticModel<V> *get_model();
 	virtual void draw(Joint *joint_ptr);
 
 	virtual void set_vertices_count(size_t count);
@@ -64,7 +64,9 @@ protected:
 	boost::shared_ptr<index_buffer_t> index_buffer_;
 };
 
-typedef BasicStaticMesh<> StaticMesh;
-typedef BasicStaticMesh<VERTEX_PNJWT> PnjwtStaticMesh;
+typedef BasicStaticMesh<VERTEX_PNT> StaticMeshPNT;
+typedef BasicStaticMesh<VERTEX_PTBNT> StaticMeshPTBNT;
+typedef BasicStaticMesh<VERTEX_PNJWT> StaticMeshPNJWT;
+typedef BasicStaticMesh<VERTEX_PTBNJWT> StaticMeshPTBNJWT;
 
 }

@@ -12,14 +12,26 @@
 #include <luabind/luabind.hpp>
 #include "animated_model.h"
 
-void graphic::AnimatedModel::bind(lua_State *L)
+namespace graphic
+{
+
+template<class V>
+void BasicAnimatedModel<V>::bind(lua_State *L, char const *classname)
 {
     using namespace luabind;
 
     module_(L, "graphic")
     [
-        class_<AnimatedModel, Model, boost::shared_ptr<AnimatedModel> >("AnimatedModel")
-		.def(constructor<AnimatedModel const &>())
+        class_<BasicAnimatedModel, Model, boost::shared_ptr<BasicAnimatedModel> >(classname)
+		.def(constructor<BasicAnimatedModel const &>())
         .def(constructor<boost::shared_ptr<Renderer> const &, boost::shared_ptr<Scheduler> const &>())
 	];
+}
+
+void bind_animated_model(lua_State *L)
+{
+	AnimatedModelPNJWT::bind(L, "AnimatedModelPNJWT");
+	AnimatedModelPTBNJWT::bind(L, "AnimatedModelPTBNJWT");
+}
+
 }

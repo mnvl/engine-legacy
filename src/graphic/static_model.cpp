@@ -15,19 +15,25 @@
 namespace graphic
 {
 
-StaticModel::StaticModel(boost::shared_ptr<Renderer> const &renderer_ptr, boost::shared_ptr<Scheduler> const &scheduler_ptr):
+template<class V>
+BasicStaticModel<V>::BasicStaticModel(boost::shared_ptr<Renderer> const &renderer_ptr, boost::shared_ptr<Scheduler> const &scheduler_ptr):
 	Model(renderer_ptr, scheduler_ptr)
 {
 }
 
-StaticModel::~StaticModel()
+template<class V>
+BasicStaticModel<V>::~BasicStaticModel()
 {
 }
 
-MeshPtr StaticModel::add_mesh()
+template<class V>
+MeshPtr BasicStaticModel<V>::add_mesh()
 {
-	meshes.push_back(MeshPtr(new StaticMesh(this)));
+	meshes.push_back(MeshPtr(new BasicStaticMesh<V>(this)));
 	return meshes.back();
 }
+
+template StaticModelPNT;
+template StaticModelPTBNT;
 
 }

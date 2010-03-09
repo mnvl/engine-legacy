@@ -17,15 +17,20 @@ namespace graphic
 class Mesh;
 class Renderer;
 
-class AnimatedModel: public Model {
+template<class V = VERTEX_PNJWT>
+class BasicAnimatedModel: public Model {
 public:
-	AnimatedModel(boost::shared_ptr<Renderer> const &renderer_ptr, boost::shared_ptr<Scheduler> const &scheduler_ptr);
-	~AnimatedModel();
+	BasicAnimatedModel(boost::shared_ptr<Renderer> const &renderer_ptr, boost::shared_ptr<Scheduler> const &scheduler_ptr);
+	~BasicAnimatedModel();
 
 	virtual MeshPtr add_mesh();
 
-    static void bind(lua_State *L);
+    static inline void bind(lua_State *L, char const *classname);
 };
 
+typedef BasicAnimatedModel<VERTEX_PNJWT> AnimatedModelPNJWT;
+typedef BasicAnimatedModel<VERTEX_PTBNJWT> AnimatedModelPTBNJWT;
+
+void bind_animated_model(lua_State *L);
 
 }

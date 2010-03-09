@@ -14,19 +14,25 @@
 namespace graphic
 {
 
-AnimatedModel::AnimatedModel(boost::shared_ptr<Renderer> const &renderer_ptr, boost::shared_ptr<Scheduler> const &scheduler_ptr):
+template<class V>
+BasicAnimatedModel<V>::BasicAnimatedModel(boost::shared_ptr<Renderer> const &renderer_ptr, boost::shared_ptr<Scheduler> const &scheduler_ptr):
 	Model(renderer_ptr, scheduler_ptr)
 {
 }
 
-AnimatedModel::~AnimatedModel()
+template<class V>
+BasicAnimatedModel<V>::~BasicAnimatedModel()
 {
 }
 
-MeshPtr AnimatedModel::add_mesh()
+template<class V>
+MeshPtr BasicAnimatedModel<V>::add_mesh()
 {
-	meshes.push_back(MeshPtr(new AnimatedMesh(this)));
+	meshes.push_back(MeshPtr(new BasicAnimatedMesh<V>(this)));
 	return meshes.back();
 }
+
+template AnimatedModelPNJWT;
+template AnimatedModelPTBNJWT;
 
 }

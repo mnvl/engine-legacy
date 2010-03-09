@@ -15,16 +15,21 @@ namespace graphic
 {
 
 class MeshShader;
-class AnimatedModel;
+template<class V> class BasicAnimatedModel;
 
-class AnimatedMesh: public PnjwtStaticMesh {
+template<class V = VERTEX_PNJWT>
+class BasicAnimatedMesh: public BasicStaticMesh<V> {
 public:
-    AnimatedMesh(Model *model_ptr);
+    BasicAnimatedMesh(Model *model_ptr);
+	~BasicAnimatedMesh();
 
 	virtual MeshPtr shallow_copy() const;
 
-    AnimatedModel *get_model();
+    BasicAnimatedModel<V> *get_model();
     virtual void draw(Joint *joint_ptr);
 };
+
+typedef BasicAnimatedMesh<VERTEX_PNJWT> AnimatedMeshPNJWT;
+typedef BasicAnimatedMesh<VERTEX_PTBNJWT> AnimatedMeshPTBNJWT;
 
 }
