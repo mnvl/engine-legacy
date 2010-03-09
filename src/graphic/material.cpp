@@ -62,19 +62,5 @@ void Material::select()
 	if (FAILED(hr)) throw exception::directx_error(hr);
 }
 
-void Material::bind(lua_State *L)
-{
-	using namespace luabind;
-
-	module(L, "graphic")
-	[
-		class_<Material, boost::shared_ptr<Material> >("Material")
-		.def(constructor<boost::shared_ptr<Renderer> const &>())
-		.def("set_diffuse_texture", &Material::set_diffuse_texture)
-		.def("set_normal_map_texture", &Material::set_normal_map_texture)
-		.def("select", &Material::select)
-	];
-}
-
 }
 

@@ -25,7 +25,13 @@ void graphic::Model::bind(lua_State *L)
 		.def("draw", &Model::draw)
 		.def("get_joint_by_id", &Model::get_joint_by_id)
 		.def("get_joint_by_name", &Model::get_joint_by_name)
-		.def_readonly("meshes", &Model::meshes, return_stl_iterator)
+		.scope
+		[
+			class_<materials_type>("materials_type")
+			.def("size", &materials_type::size)
+			.def("at", (MaterialPtr &(materials_type::*)(size_t)) &materials_type::at)
+		]
+		.def_readwrite("materials", &Model::materials)
     ];
 }
 
