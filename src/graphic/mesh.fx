@@ -160,10 +160,9 @@ VS_OUTPUT_PTBNJWT VS_PTBNJWT(uniform const int count, const VS_INPUT_PTBNJWT i)
 	const float weights[8] = { i.weights1, i.weights2 };
 
 	float3 position = ApplySkeletalAnimationToPosition(i.position, count, joints, weights);
-    o.position_h = mul(float4(position, 1.0f), world_view_projection_matrix);
 
-    o.texcoords  = i.texcoords;
-	o.position = position;
+    o.position_h = mul(float4(position, 1.0f), world_view_projection_matrix);
+	o.position = mul(position, world_matrix);
 
 	float3 tangent = ApplySkeletalAnimationToVector(i.tangent, count, joints, weights);
 	o.tangent = normalize(mul(tangent, (float3x3) world_matrix));
@@ -173,6 +172,8 @@ VS_OUTPUT_PTBNJWT VS_PTBNJWT(uniform const int count, const VS_INPUT_PTBNJWT i)
 
 	float3 normal = ApplySkeletalAnimationToVector(i.normal, count, joints, weights);
 	o.normal = normalize(mul(normal, (float3x3) world_matrix));
+
+    o.texcoords  = i.texcoords;
 
     return o;
 }

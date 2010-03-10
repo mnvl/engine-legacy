@@ -15,8 +15,7 @@ uniform extern POINT_LIGHT point_lights[MAX_POINT_LIGHTS];
 float3 GetPointLightIlluminationAtPosition(const int n, float3 position, float3 normal)
 {
 	float3 delta = point_lights[n].position - position;
-	float factor = pow(point_lights[n].inv_attenuation, length(delta));
-	float power = saturate(dot(normalize(delta), normal) * factor);
+	float power = saturate(point_lights[n].inv_attenuation * dot(delta, normal) / dot(delta, delta));
 	return point_lights[n].color * power;
 }
 
