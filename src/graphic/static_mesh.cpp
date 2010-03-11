@@ -234,7 +234,7 @@ void BasicStaticMesh<VERTEX_PTBNJWT>::set_binormals(math::vec<3> const *buffer)
 
     for (size_t i = 0; i < vertices_count_; i++, p++, buffer++)
     {
-        p->tangent = *buffer;
+        p->binormal = *buffer;
     }
 }
 
