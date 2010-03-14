@@ -24,7 +24,7 @@
 #include <util/xerces_lcp_transcoder.h>
 #include <util/logger.h>
 #include <math/matrix.h>
-#include "general_vertex.h"
+#include "generic_vertex.h"
 #include "collada_loader.h"
 
 #if defined(max)
@@ -728,7 +728,7 @@ namespace collada_elements
 
 	class vertex_indexer {
 	public:
-		typedef GeneralVertex vertex_t;
+		typedef GenericVertex vertex_t;
 
 		std::pair<size_t, bool> choose_index(vertex_t const &v)
 		{
@@ -741,14 +741,18 @@ namespace collada_elements
 		}
 
 	private:
-
-		typedef std::map<vertex_t, size_t, GeneralVertex::Less> vertex_x_index_type;
+		typedef std::map<vertex_t, size_t> vertex_x_index_type;
 		vertex_x_index_type vertex_x_index_;
 	};
 
 	class mesh_e: public sources_list_e {
 	public:
 		typedef std::set<std::pair<size_t, size_t> > position_index_to_vertex_index_type;
+
+		mesh_e():
+			vertex_format_(0)
+		{
+		}
 
 		void check() {
 			if (!vertices_.get()) throw error(L"no <vertices> found");
@@ -767,12 +771,26 @@ namespace collada_elements
 			return position_index_to_vertex_index_;
 		}
 
+		void set_vertex_format_flag(GenericVertex::format_t flag)
+		{
+			vertex_format_ |= flag;
+		}
+
+		std::vector<GenericVertex> &get_vertex_array()
+		{
+			return vertex_array_;
+		}
+
 	private:
 		std::auto_ptr<vertices_e> vertices_;
 		boost::ptr_vector<triangles_e> triangles_;
 
 		vertex_indexer vertex_indexer_;
 		position_index_to_vertex_index_type position_index_to_vertex_index_;
+
+		GenericVertex::format_t vertex_format_;
+		std::vector<GenericVertex> vertex_array_;
+		std::vector<unsigned> index_array_;
 
 		void process_child(std::wstring const &child_name, std::wstring const &child_id, xercesc::DOMElement const *child_ptr) {
 			sources_list_e::process_child(child_name, child_id, child_ptr);
@@ -939,6 +957,10 @@ namespace collada_elements
 		void build_joint_weights(MeshPtr mesh_ptr)
 		{
 			mesh_e *mesh_element_ptr = get_root()->get_geometries()->get_geometry_by_id(xerces_lcp_transcode(mesh_ptr->id))->get_mesh();
+
+			mesh_element_ptr->set_vertex_format_flag(GenericVertex::FORMAT_JOINT_INDICES);
+			mesh_element_ptr->set_vertex_format_flag(GenericVertex::FORMAT_JOINT_WEIGHTS);
+
 			mesh_e::position_index_to_vertex_index_type const &position_index_to_vertex_index = mesh_element_ptr->get_position_index_to_vertex_index_mapping();
 
 			input_e const *joints_input = vertex_weights_->get_input(L"JOINT");
@@ -953,12 +975,6 @@ namespace collada_elements
 			std::vector<size_t> const &v = vertex_weights_->get_v();
 
 			std::vector<size_t>::const_iterator v_get = v.begin();
-
-			std::vector<math::vec<8, unsigned> > joint_indices_buffer;
-			std::vector<math::vec<8> > joint_weights_buffer;
-
-			joint_indices_buffer.resize(mesh_ptr->get_vertices_count());
-			joint_weights_buffer.resize(mesh_ptr->get_vertices_count());
 
 			size_t position_index = 0;
 
@@ -1050,19 +1066,14 @@ namespace collada_elements
 
 				while (it != position_index_to_vertex_index.end() && it->first == position_index)
 				{
-					joint_indices_buffer[it->second] = joint_indices;
-					joint_weights_buffer[it->second] = joint_weights;
+					mesh_element_ptr->get_vertex_array().at(it->second).joints = joint_indices;
+					mesh_element_ptr->get_vertex_array().at(it->second).weights = joint_weights;
 
 					it++;
 				}
 
 				position_index++;
 			}
-
-			mesh_ptr->lock();
-			mesh_ptr->set_joint_indices(&joint_indices_buffer[0]);
-			mesh_ptr->set_joint_weights(&joint_weights_buffer[0]);
-			mesh_ptr->unlock();
 		}
 	};
 
@@ -1584,12 +1595,9 @@ namespace collada_elements
 		input_e const *position_input = vertices_->get_input(L"POSITION");
 		source_e const *position_source = get_source(position_input->get_source().substr(1));
 
-		std::vector<math::vec<3> > positions_buffer;
-		std::vector<math::vec<3> > tangents_buffer;
-		std::vector<math::vec<3> > binormals_buffer;
-		std::vector<math::vec<3> > normals_buffer;
-		std::vector<math::vec<2> > texcoords_buffer;
-		std::vector<unsigned> index_buffer;
+		set_vertex_format_flag(GenericVertex::FORMAT_POSITION);
+		set_vertex_format_flag(GenericVertex::FORMAT_NORMAL);
+		set_vertex_format_flag(GenericVertex::FORMAT_TEXCOORDS);
 
 		size_t first_index_offset = 0;
 
@@ -1600,9 +1608,11 @@ namespace collada_elements
 
 			input_e const *tangents_input = vertices_->get_input_nothrow(L"TANGENT");
 			if (!tangents_input) tangents_input = triangles_ptr->get_input_nothrow(L"TANGENT");
+			if (tangents_input) set_vertex_format_flag(GenericVertex::FORMAT_TANGENT);
 
 			input_e const *binormals_input = vertices_->get_input_nothrow(L"BINORMAL");
 			if (!binormals_input) binormals_input = triangles_ptr->get_input_nothrow(L"BINORMAL");
+			if (binormals_input) set_vertex_format_flag(GenericVertex::FORMAT_BINORMAL);
 
 			input_e const *normals_input = vertices_->get_input_nothrow(L"NORMAL");
 			if (!normals_input) normals_input = triangles_ptr->get_input(L"NORMAL");
@@ -1627,8 +1637,8 @@ namespace collada_elements
 
 			for (size_t i = 0, n = triangles_ptr->get_count() * 3; i < n; i++) {
 				size_t position_index;
-				vertex_indexer::vertex_t v;
 
+				GenericVertex v;
 				v.tangent.set_all(0);
 				v.binormal.set_all(0);
 
@@ -1667,13 +1677,7 @@ namespace collada_elements
 				if (vertex_index.second)
 				{
 					position_index_to_vertex_index_.insert(std::make_pair(position_index, vertex_index.first));
-
-					positions_buffer.push_back(v.position);
-					if (tangents_input) tangents_buffer.push_back(v.tangent);
-					if (binormals_input) binormals_buffer.push_back(v.binormal);
-					normals_buffer.push_back(v.normal);
-					texcoords_buffer.push_back(v.texcoords);
-
+					vertex_array_.push_back(v);
 					dummy.vertices_count++;
 				}
 
@@ -1682,24 +1686,13 @@ namespace collada_elements
 					dummy.minimal_vertex_index = vertex_index.first;
 				}
 
-				index_buffer.push_back(vertex_index.first);
+				index_array_.push_back(vertex_index.first);
 			}
 
 			mesh_ptr->triangles_list.push_back(dummy);
 
 			first_index_offset += triangles_ptr->get_count() * 3;
 		}
-
-		mesh_ptr->set_vertices_count(positions_buffer.size());
-		mesh_ptr->set_indices_count(index_buffer.size());
-		mesh_ptr->lock();
-		mesh_ptr->set_positions(&positions_buffer[0]);
-		if (tangents_buffer.size()) mesh_ptr->set_tangents(&tangents_buffer[0]);
-		if (binormals_buffer.size()) mesh_ptr->set_binormals(&binormals_buffer[0]);
-		mesh_ptr->set_normals(&normals_buffer[0]);
-		mesh_ptr->set_texcoords(&texcoords_buffer[0]);
-		mesh_ptr->set_face_indices(&index_buffer[0]);
-		mesh_ptr->unlock();
 	}
 
 	void node_e::build_hierarchy(JointPtr parent_ptr)
