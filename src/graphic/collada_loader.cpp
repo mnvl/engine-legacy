@@ -24,6 +24,7 @@
 #include <util/xerces_lcp_transcoder.h>
 #include <util/logger.h>
 #include <math/matrix.h>
+#include "general_vertex.h"
 #include "collada_loader.h"
 
 #if defined(max)
@@ -55,8 +56,6 @@ namespace collada_elements
 	private:
 		std::wstring message_;
 	};
-
-#define TRACE(expression)
 
 	class root_element {
 	public:
@@ -719,7 +718,7 @@ namespace collada_elements
 			count_ = xerces_get_attribute<size_t>(element_ptr, L"count");
 			material_ = xerces_get_attribute<std::wstring>(element_ptr, L"material");
 
-			TRACE(L"triangles count = " << count_ << L", material = " << material_);
+			LOG_DEBUG("triangles count = " << count_ << ", material = " << xerces_lcp_transcode(material_));
 		}
 
 		size_t get_count() const { return count_; }
@@ -729,14 +728,7 @@ namespace collada_elements
 
 	class vertex_indexer {
 	public:
-		struct vertex_t
-		{
-			math::vec<3> position;
-			math::vec<3> tangent;
-			math::vec<3> binormal;
-			math::vec<3> normal;
-			math::vec<2> texcoords;
-		};
+		typedef GeneralVertex vertex_t;
 
 		std::pair<size_t, bool> choose_index(vertex_t const &v)
 		{
@@ -749,43 +741,8 @@ namespace collada_elements
 		}
 
 	private:
-		struct vertex_less {
-			bool operator ()(vertex_t const &lhs, vertex_t const &rhs) const
-            {
-				if ((lhs.position - rhs.position).length_sq() > math::EPSILON)
-				{
-					if (math::lexicographical_less(lhs.position, rhs.position)) return true;
-					if (math::lexicographical_greater(lhs.position, rhs.position)) return false;
-				}
 
-				if ((lhs.tangent - rhs.tangent).length_sq() > math::EPSILON)
-				{
-					if (math::lexicographical_less(lhs.tangent, rhs.tangent)) return true;
-					if (math::lexicographical_greater(lhs.tangent, rhs.tangent)) return false;
-				}
-
-				if ((lhs.binormal - rhs.binormal).length_sq() > math::EPSILON)
-				{
-					if (math::lexicographical_less(lhs.binormal, rhs.binormal)) return true;
-					if (math::lexicographical_greater(lhs.binormal, rhs.binormal)) return false;
-				}
-
-				if ((lhs.normal - rhs.normal).length_sq() > math::EPSILON)
-				{
-					if (math::lexicographical_less(lhs.normal, rhs.normal)) return true;
-					if (math::lexicographical_greater(lhs.normal, rhs.normal)) return false;
-				}
-
-				if ((lhs.texcoords - rhs.texcoords).length_sq() > math::EPSILON)
-				{
-					if (math::lexicographical_less(lhs.texcoords, rhs.texcoords)) return true;
-				}
-
-				return false;
-			}
-		};
-
-		typedef std::map<vertex_t, size_t, vertex_less> vertex_x_index_type;
+		typedef std::map<vertex_t, size_t, GeneralVertex::Less> vertex_x_index_type;
 		vertex_x_index_type vertex_x_index_;
 	};
 
@@ -880,12 +837,12 @@ namespace collada_elements
 		{
 			for (boost::ptr_vector<geometry_e>::iterator it = geometries_.begin(); it != geometries_.end(); it++)
 			{
-				TRACE(L"building mesh id = " << it->get_id() << L", name = " << it->get_name());
-
 				MeshPtr mesh_ptr = get_model()->add_mesh();
 
 				mesh_ptr->id = xerces_lcp_transcode(it->get_id());
 				mesh_ptr->name = xerces_lcp_transcode(it->get_name());
+
+				LOG_DEBUG("building mesh id = " << mesh_ptr->id << ", name = " << mesh_ptr->name);
 
 				it->get_mesh()->build_mesh(mesh_ptr);
 			}
@@ -1325,7 +1282,7 @@ namespace collada_elements
 
 		void library_materials_e::build_materials() const
 		{
-			TRACE(L"building materials...");
+			LOG_DEBUG("building materials...");
 
 			for (boost::ptr_map<std::wstring, material_e>::const_iterator it = materials_.begin();
 				it != materials_.end(); it++)
@@ -1498,14 +1455,14 @@ namespace collada_elements
 
 				if (diffuse_texture.size())
 				{
-					std::wstring const &filename = (get_root()->get_basepath() / diffuse_texture).native_file_string();
+					std::string filename = xerces_lcp_transcode((get_root()->get_basepath() / diffuse_texture).native_file_string());
 
-					TRACE(L"diffuse texture = " << diffuse_texture << L", filename = " << filename);
-					material_ptr->set_diffuse_texture(xerces_lcp_transcode(filename));
+					LOG_DEBUG("diffuse texture = " << filename);
+					material_ptr->set_diffuse_texture(filename);
 				}
 				else
 				{
-					TRACE(L"no diffuse texture");
+					LOG_DEBUG("diffuse texture = null");
 				}
 			}
 
@@ -1607,7 +1564,8 @@ namespace collada_elements
 			std::wstring const &material_symbol = triangles_it->get_material();
 			std::wstring const &material_name = get_technique_common()->get_material_by_symbol(material_symbol);
 
-			TRACE(L"material_symbol = " << material_symbol << L", material_name = " << material_name);
+			LOG_DEBUG("material_symbol = " << xerces_lcp_transcode(material_symbol) << ", material_name = "
+				<< xerces_lcp_transcode(material_name));
 
 			mesh_triangles_it->material_ptr = mesh_ptr->get_model()->get_material_by_name(xerces_lcp_transcode(material_name));
 
@@ -1786,7 +1744,7 @@ namespace collada_elements
 
 	MaterialPtr material_e::build_material() const
 	{
-		TRACE(L"material " << name_);
+		LOG_DEBUG("material " << xerces_lcp_transcode(name_));
 
 		MaterialPtr material_ptr(get_root()->
 			get_effects()->
