@@ -73,7 +73,7 @@ void BasicStaticMesh<T>::draw(Joint *joint_ptr)
 template<class T>
 void BasicStaticMesh<T>::set_vertices(GenericVertex *vertices, GenericVertex::format_t format, size_t count)
 {
-	LOG_DEBUG("vertices: count = " << count << ", format = " << format);
+	LOG_DEBUG("vertices: count = " << count << ", format = " << std::hex << format);
 
 	if ((format & T::FORMAT) != T::FORMAT)
 	{
@@ -102,6 +102,8 @@ void BasicStaticMesh<T>::set_vertices(GenericVertex *vertices, GenericVertex::fo
 template<class T>
 void BasicStaticMesh<T>::set_indices(unsigned *buffer, size_t count)
 {
+	LOG_DEBUG("indices: count = " << count);
+
 	index_buffer_ = get_model()->get_renderer()->create_index_array<index_t>(count, false, true);
 
     index_buffer_->lock(false);
