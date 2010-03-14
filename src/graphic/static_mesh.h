@@ -46,9 +46,7 @@ protected:
 	// AABB over positions of all vertices before applyed transform
 	math::aabb<3> bounds_;
 
-    size_t vertices_count_;
-    size_t indices_count_;
-
+	GenericVertex::format_t initialized_vertex_components_;
 	boost::shared_ptr<vertex_buffer_t> vertex_buffer_;
 	boost::shared_ptr<index_buffer_t> index_buffer_;
 };

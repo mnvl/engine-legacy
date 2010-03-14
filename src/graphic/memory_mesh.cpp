@@ -38,9 +38,19 @@ void MemoryMesh::set_vertices(GenericVertex *vertices, GenericVertex::format_t f
 	{
 		GenericVertex *vertex = vertices;
 
-		for (std::vector<vertex_t>::iterator it = vertices_.begin(); it != vertices_.end(); it++)
+		if (initialized_vertex_components_ == 0 || format == vertex_t::FORMAT)
 		{
-			*it = *vertex++;
+			for (std::vector<vertex_t>::iterator it = vertices_.begin(); it != vertices_.end(); it++)
+			{
+				*it = *vertex++;
+			}
+		}
+		else
+		{
+			for (std::vector<vertex_t>::iterator it = vertices_.begin(); it != vertices_.end(); it++)
+			{
+				it->assign(*vertex++, format);
+			}
 		}
 	}
 
@@ -49,12 +59,14 @@ void MemoryMesh::set_vertices(GenericVertex *vertices, GenericVertex::format_t f
 
 		for (std::vector<JointWeights>::iterator it = weights_.begin(); it != weights_.end(); it++)
 		{
-			it->joints = vertex->joints;
-			it->weights = vertex->weights;
+			if (format & GenericVertex::FORMAT_JOINT_INDICES) it->joints = vertex->joints;
+			if (format & GenericVertex::FORMAT_JOINT_WEIGHTS) it->weights = vertex->weights;
 
 			++vertex;
 		}
 	}
+
+	initialized_vertex_components_ |= format;
 }
 
 void MemoryMesh::set_indices(unsigned *indices, size_t count)

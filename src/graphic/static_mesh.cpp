@@ -22,7 +22,8 @@ namespace graphic
 
 template<class T>
 BasicStaticMesh<T>::BasicStaticMesh(Model *model_ptr):
-    Mesh(model_ptr)
+    Mesh(model_ptr),
+	initialized_vertex_components_(0)
 {
 }
 
@@ -75,28 +76,48 @@ void BasicStaticMesh<T>::set_vertices(GenericVertex *vertices, GenericVertex::fo
 {
 	LOG_DEBUG("vertices: count = " << count << ", format = " << std::hex << format);
 
-	if ((format & T::FORMAT) != T::FORMAT)
-	{
-		throw std::runtime_error("insufficient data");
-	}
-
 	vertex_buffer_ = get_model()->get_renderer()->create_vertex_array<vertex_t>(count, false, true);
-
-	bounds_.lo = bounds_.hi = vertices->position;
 
     vertex_buffer_->lock(false);
 
-    vertex_t *p = vertex_buffer_->begin();
+	if (initialized_vertex_components_ == 0 || T::FORMAT == format)
+	{
+		vertex_t *p = vertex_buffer_->begin();
+		GenericVertex *vertex = vertices;
 
-    for (size_t i = 0; i < count; i++, p++, vertices++)
-    {
-		*p = *vertices;
-		bounds_.extend(vertices->position);
-    }
+		for (size_t i = 0; i < count; i++, p++, vertex++)
+		{
+			*p = *vertex;
+		}
+	}
+	else
+	{
+		vertex_t *p = vertex_buffer_->begin();
+		GenericVertex *vertex = vertices;
 
-    vertex_buffer_->unlock();
+		for (size_t i = 0; i < count; i++, p++, vertex++)
+		{
+			p->assign(*vertex, format);
+		}
+	}
 
-	LOG_DEBUG("bounds = " << bounds_);
+	if (format & GenericVertex::FORMAT_POSITION)
+	{
+		GenericVertex *vertex = vertices;
+
+		bounds_.lo = bounds_.hi = vertex->position;
+
+		for (size_t i = 0; i < count; i++, vertex++)
+		{
+			bounds_.extend(vertex->position);
+		}
+
+		LOG_DEBUG("bounds = " << bounds_);
+	}
+
+	initialized_vertex_components_ |= format;
+
+	vertex_buffer_->unlock();
 }
 
 template<class T>

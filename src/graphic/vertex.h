@@ -31,6 +31,12 @@ struct VERTEX_PT
 		texcoords = rhs.texcoords;
 		return *this;
 	}
+
+	void assign(GenericVertex const &v, GenericVertex::format_t format)
+	{
+		if (format & GenericVertex::FORMAT_POSITION) position = v.position;
+		if (format & GenericVertex::FORMAT_TEXCOORDS) texcoords = v.texcoords;
+	}
 };
 
 struct VERTEX_PNT
@@ -49,6 +55,13 @@ struct VERTEX_PNT
 		normal    = rhs.normal;
 		texcoords = rhs.texcoords;
 		return *this;
+	}
+
+	void assign(GenericVertex const &v, GenericVertex::format_t format)
+	{
+		if (format & GenericVertex::FORMAT_POSITION) position = v.position;
+		if (format & GenericVertex::FORMAT_NORMAL) normal = v.normal;
+		if (format & GenericVertex::FORMAT_TEXCOORDS) texcoords = v.texcoords;
 	}
 };
 
@@ -75,6 +88,15 @@ struct VERTEX_PTBNT
 		texcoords = rhs.texcoords;
 		return *this;
 	}
+
+	void assign(GenericVertex const &v, GenericVertex::format_t format)
+	{
+		if (format & GenericVertex::FORMAT_POSITION) position = v.position;
+		if (format & GenericVertex::FORMAT_TANGENT) tangent = v.tangent;
+		if (format & GenericVertex::FORMAT_BINORMAL) binormal = v.binormal;
+		if (format & GenericVertex::FORMAT_NORMAL) normal = v.normal;
+		if (format & GenericVertex::FORMAT_TEXCOORDS) texcoords = v.texcoords;
+	}
 };
 
 struct VERTEX_PNJWT
@@ -100,6 +122,15 @@ struct VERTEX_PNJWT
 		texcoords = rhs.texcoords;
 		return *this;
 	}
+
+	void assign(GenericVertex const &v, GenericVertex::format_t format)
+	{
+		if (format & GenericVertex::FORMAT_POSITION) position = v.position;
+		if (format & GenericVertex::FORMAT_NORMAL) normal = v.normal;
+		if (format & GenericVertex::FORMAT_JOINT_INDICES) joints = v.joints;
+		if (format & GenericVertex::FORMAT_JOINT_WEIGHTS) weights = v.weights;
+		if (format & GenericVertex::FORMAT_TEXCOORDS) texcoords = v.texcoords;
+	}
 };
 
 struct VERTEX_PTBNJWT
@@ -120,16 +151,27 @@ struct VERTEX_PTBNJWT
 	math::vec<8> weights;
 	math::vec<2> texcoords;
 
-	VERTEX_PTBNJWT &operator =(GenericVertex const &rhs)
+	VERTEX_PTBNJWT &operator =(GenericVertex const &v)
 	{
-		position  = rhs.position;
-		tangent   = rhs.tangent;
-		binormal  = rhs.binormal;
-		normal    = rhs.normal;
-		joints    = rhs.joints;
-		weights   = rhs.weights;
-		texcoords = rhs.texcoords;
+		position  = v.position;
+		tangent   = v.tangent;
+		binormal  = v.binormal;
+		normal    = v.normal;
+		joints    = v.joints;
+		weights   = v.weights;
+		texcoords = v.texcoords;
 		return *this;
+	}
+
+	void assign(GenericVertex const &v, GenericVertex::format_t format)
+	{
+		if (format & GenericVertex::FORMAT_POSITION) position = v.position;
+		if (format & GenericVertex::FORMAT_TANGENT) tangent = v.tangent;
+		if (format & GenericVertex::FORMAT_BINORMAL) binormal = v.binormal;
+		if (format & GenericVertex::FORMAT_NORMAL) normal = v.normal;
+		if (format & GenericVertex::FORMAT_JOINT_INDICES) joints = v.joints;
+		if (format & GenericVertex::FORMAT_JOINT_WEIGHTS) weights = v.weights;
+		if (format & GenericVertex::FORMAT_TEXCOORDS) texcoords = v.texcoords;
 	}
 };
 #pragma pack(pop)

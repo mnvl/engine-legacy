@@ -35,7 +35,6 @@ public:
 	};
 	#pragma pack(pop)
 
-
 	MemoryMesh(MemoryModel *m);
 	virtual ~MemoryMesh();
 
@@ -56,6 +55,7 @@ public:
 	static void bind(lua_State *L);
 
 private:
+	GenericVertex::format_t initialized_vertex_components_;
 	std::vector<vertex_t> vertices_;
 	std::vector<index_t> indices_;
 	std::vector<JointWeights> weights_;
