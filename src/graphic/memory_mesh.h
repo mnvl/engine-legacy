@@ -25,7 +25,7 @@ typedef boost::shared_ptr<class MemoryMesh> MemoryMeshPtr;
 
 class MemoryMesh: public Mesh {
 public:
-    typedef VERTEX_PTBNT vertex_t;
+    typedef VERTEX_PNT vertex_t;
 
 	#pragma pack(push, 1)
 	struct JointWeights
