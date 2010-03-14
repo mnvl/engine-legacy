@@ -771,15 +771,7 @@ namespace collada_elements
 			return position_index_to_vertex_index_;
 		}
 
-		void set_vertex_format_flag(GenericVertex::format_t flag)
-		{
-			vertex_format_ |= flag;
-		}
-
-		std::vector<GenericVertex> &get_vertex_array()
-		{
-			return vertex_array_;
-		}
+		size_t get_vertices_count() const { return vertex_array_.size(); }
 
 	private:
 		std::auto_ptr<vertices_e> vertices_;
@@ -957,9 +949,7 @@ namespace collada_elements
 		void build_joint_weights(MeshPtr mesh_ptr)
 		{
 			mesh_e *mesh_element_ptr = get_root()->get_geometries()->get_geometry_by_id(xerces_lcp_transcode(mesh_ptr->id))->get_mesh();
-
-			mesh_element_ptr->set_vertex_format_flag(GenericVertex::FORMAT_JOINT_INDICES);
-			mesh_element_ptr->set_vertex_format_flag(GenericVertex::FORMAT_JOINT_WEIGHTS);
+			std::vector<GenericVertex> vertices(mesh_element_ptr->get_vertices_count());
 
 			mesh_e::position_index_to_vertex_index_type const &position_index_to_vertex_index = mesh_element_ptr->get_position_index_to_vertex_index_mapping();
 
@@ -1033,18 +1023,18 @@ namespace collada_elements
 
 							if (ligtest_index == size_t(-1))
 							{
-								LOG_WARN(L"vertex with more than 8 joint weights found in mesh " << mesh_ptr->id
-									<< L" and last one is lightest with weight = " << weight
-									<< L", index = " << index << L" -- ignoring it");
+								LOG_WARN("vertex with more than 8 joint weights found in mesh " << mesh_ptr->id
+									<< " and last one is lightest with weight = " << weight
+									<< ", index = " << index << " -- ignoring it");
 							}
 							else
 							{
-								LOG_WARN(L"vertex with more than 8 joint weights found in mesh " << mesh_ptr->id
-									<< L" and lightest weight index = " << ligtest_index
-									<< L", weight = " << ligtest_weight
-									<< L", joint = " << joint_indices.i[ligtest_index]
-									<< L" will be replaced with joint = " << index
-									<< L", weight = " << weight);
+								LOG_WARN("vertex with more than 8 joint weights found in mesh " << mesh_ptr->id
+									<< " and lightest weight index = " << ligtest_index
+									<< ", weight = " << ligtest_weight
+									<< ", joint = " << joint_indices.i[ligtest_index]
+									<< " will be replaced with joint = " << index
+									<< ", weight = " << weight);
 
 								joint_indices.i[ligtest_index] = index;
 								joint_weights.i[ligtest_index] = weight;
@@ -1066,14 +1056,17 @@ namespace collada_elements
 
 				while (it != position_index_to_vertex_index.end() && it->first == position_index)
 				{
-					mesh_element_ptr->get_vertex_array().at(it->second).joints = joint_indices;
-					mesh_element_ptr->get_vertex_array().at(it->second).weights = joint_weights;
+					vertices.at(it->second).joints = joint_indices;
+					vertices.at(it->second).weights = joint_weights;
 
 					it++;
 				}
 
 				position_index++;
 			}
+
+			mesh_ptr->set_vertices(&vertices[0], GenericVertex::FORMAT_JOINT_INDICES | GenericVertex::FORMAT_JOINT_WEIGHTS,
+				vertices.size());
 		}
 	};
 
@@ -1595,9 +1588,9 @@ namespace collada_elements
 		input_e const *position_input = vertices_->get_input(L"POSITION");
 		source_e const *position_source = get_source(position_input->get_source().substr(1));
 
-		set_vertex_format_flag(GenericVertex::FORMAT_POSITION);
-		set_vertex_format_flag(GenericVertex::FORMAT_NORMAL);
-		set_vertex_format_flag(GenericVertex::FORMAT_TEXCOORDS);
+		vertex_format_ |= GenericVertex::FORMAT_POSITION;
+		vertex_format_ |= GenericVertex::FORMAT_NORMAL;
+		vertex_format_ |= GenericVertex::FORMAT_TEXCOORDS;
 
 		size_t first_index_offset = 0;
 
@@ -1608,11 +1601,11 @@ namespace collada_elements
 
 			input_e const *tangents_input = vertices_->get_input_nothrow(L"TANGENT");
 			if (!tangents_input) tangents_input = triangles_ptr->get_input_nothrow(L"TANGENT");
-			if (tangents_input) set_vertex_format_flag(GenericVertex::FORMAT_TANGENT);
+			if (tangents_input) vertex_format_ |= GenericVertex::FORMAT_TANGENT;
 
 			input_e const *binormals_input = vertices_->get_input_nothrow(L"BINORMAL");
 			if (!binormals_input) binormals_input = triangles_ptr->get_input_nothrow(L"BINORMAL");
-			if (binormals_input) set_vertex_format_flag(GenericVertex::FORMAT_BINORMAL);
+			if (binormals_input) vertex_format_ |= GenericVertex::FORMAT_BINORMAL;
 
 			input_e const *normals_input = vertices_->get_input_nothrow(L"NORMAL");
 			if (!normals_input) normals_input = triangles_ptr->get_input(L"NORMAL");
@@ -1693,6 +1686,9 @@ namespace collada_elements
 
 			first_index_offset += triangles_ptr->get_count() * 3;
 		}
+
+		mesh_ptr->set_vertices(&vertex_array_[0], vertex_format_, vertex_array_.size());
+		mesh_ptr->set_indices(&index_array_[0], index_array_.size());
 	}
 
 	void node_e::build_hierarchy(JointPtr parent_ptr)

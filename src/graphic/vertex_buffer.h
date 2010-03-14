@@ -36,6 +36,8 @@ public:
 	void *lock(bool discard);
 	void unlock();
 
+	size_t get_size() const { return clone_.size(); }
+
 	void *begin() { return &clone_[0]; }
 	void const *begin() const { return &clone_[0]; }
 
@@ -51,15 +53,13 @@ public:
 
 protected:
 	boost::shared_ptr<Renderer> renderer_;
-
-	VertexBuffer(boost::shared_ptr<Renderer> const &renderer, size_t size,
-		bool dynamic = false, bool writeonly = false);
-
-private:
 	boost::intrusive_ptr<IDirect3DVertexBuffer9> buffer_;
 	std::vector<char> clone_;
 	DWORD usage_;
 	D3DPOOL pool_;
+
+	VertexBuffer(boost::shared_ptr<Renderer> const &renderer, size_t size,
+		bool dynamic = false, bool writeonly = false);
 };
 
 }

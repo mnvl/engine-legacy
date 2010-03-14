@@ -60,7 +60,7 @@ void BasicStaticMesh<T>::draw(Joint *joint_ptr)
 		draw_call->set_index_buffer(index_buffer_);
 		draw_call->set_material(it->material_ptr);
 		draw_call->set_minimal_vertex_index(it->minimal_vertex_index);
-		draw_call->set_vertices_count(it->vertices_count);
+		draw_call->set_vertices_count(vertex_buffer_->get_count());
 		draw_call->set_first_index_offset(it->first_index_offset);
 		draw_call->set_triangles_count(it->triangles_count);
 		draw_call->set_world_matrix(joint_ptr->matrix * get_model()->get_renderer()->get_world_matrix());
@@ -71,221 +71,48 @@ void BasicStaticMesh<T>::draw(Joint *joint_ptr)
 }
 
 template<class T>
-void BasicStaticMesh<T>::set_vertices_count(size_t count)
+void BasicStaticMesh<T>::set_vertices(GenericVertex *vertices, GenericVertex::format_t format, size_t count)
 {
+	LOG_DEBUG("vertices: count = " << count << ", format = " << format);
+
+	if ((format & T::FORMAT) != T::FORMAT)
+	{
+		throw std::runtime_error("insufficient data");
+	}
+
 	vertex_buffer_ = get_model()->get_renderer()->create_vertex_array<vertex_t>(count, false, true);
-    vertices_count_ = count;
-}
 
-template<class T>
-size_t BasicStaticMesh<T>::get_vertices_count()
-{
-	return vertices_count_;
-}
+	bounds_.lo = bounds_.hi = vertices->position;
 
-template<class T>
-void BasicStaticMesh<T>::set_indices_count(size_t count)
-{
-	index_buffer_ = get_model()->get_renderer()->create_index_array<index_t>(count, false, true);
-    indices_count_ = count;
-}
-
-template<class T>
-void BasicStaticMesh<T>::lock()
-{
     vertex_buffer_->lock(false);
-    index_buffer_->lock(false);
-}
 
-template<class T>
-void BasicStaticMesh<T>::set_positions(math::vec<3> const *buffer)
-{
-    vertex_t *p = (T *) vertex_buffer_->begin();
+    vertex_t *p = vertex_buffer_->begin();
 
-	bounds_.lo = bounds_.hi = *buffer;
-
-    for (size_t i = 0; i < vertices_count_; i++, p++, buffer++)
+    for (size_t i = 0; i < count; i++, p++, vertices++)
     {
-        p->position = *buffer;
-		bounds_.extend(*buffer);
+		*p = *vertices;
+		bounds_.extend(vertices->position);
     }
+
+    vertex_buffer_->unlock();
 
 	LOG_DEBUG("bounds = " << bounds_);
 }
 
 template<class T>
-void BasicStaticMesh<T>::set_normals(math::vec<3> const *buffer)
+void BasicStaticMesh<T>::set_indices(unsigned *buffer, size_t count)
 {
-    vertex_t *p = (T *) vertex_buffer_->begin();
+	index_buffer_ = get_model()->get_renderer()->create_index_array<index_t>(count, false, true);
 
-    for (size_t i = 0; i < vertices_count_; i++, p++, buffer++)
-    {
-        p->normal = *buffer;
-    }
-}
+    index_buffer_->lock(false);
 
-template<>
-void BasicStaticMesh<VERTEX_PNT>::set_tangents(math::vec<3> const *buffer)
-{
-	// not supported
-}
-
-template<>
-void BasicStaticMesh<VERTEX_PNT>::set_binormals(math::vec<3> const *buffer)
-{
-	// not supported
-}
-
-template<>
-void BasicStaticMesh<VERTEX_PNT>::set_joint_indices(math::vec<8, unsigned> const *buffer)
-{
-    // not supported
-}
-
-template<>
-void BasicStaticMesh<VERTEX_PNT>::set_joint_weights(math::vec<8> const *buffer)
-{
-    // not supported
-}
-
-template<>
-void BasicStaticMesh<VERTEX_PTBNT>::set_tangents(math::vec<3> const *buffer)
-{
-    vertex_t *p = vertex_buffer_->begin();
-
-    for (size_t i = 0; i < vertices_count_; i++, p++, buffer++)
-    {
-        p->tangent = *buffer;
-    }
-}
-
-template<>
-void BasicStaticMesh<VERTEX_PTBNT>::set_binormals(math::vec<3> const *buffer)
-{
-    vertex_t *p = vertex_buffer_->begin();
-
-    for (size_t i = 0; i < vertices_count_; i++, p++, buffer++)
-    {
-        p->binormal = *buffer;
-    }
-}
-
-template<>
-void BasicStaticMesh<VERTEX_PTBNT>::set_joint_indices(math::vec<8, unsigned> const *buffer)
-{
-    // not supported
-}
-
-template<>
-void BasicStaticMesh<VERTEX_PTBNT>::set_joint_weights(math::vec<8> const *buffer)
-{
-    // not supported
-}
-
-template<>
-void BasicStaticMesh<VERTEX_PNJWT>::set_tangents(math::vec<3> const *buffer)
-{
-	// not supported
-}
-
-template<>
-void BasicStaticMesh<VERTEX_PNJWT>::set_binormals(math::vec<3> const *buffer)
-{
-	// not supported
-}
-
-template<>
-void BasicStaticMesh<VERTEX_PNJWT>::set_joint_indices(math::vec<8, unsigned> const *buffer)
-{
-    vertex_t *p = vertex_buffer_->begin();
-
-    for (size_t i = 0; i < vertices_count_; i++, p++, buffer++)
-    {
-        p->joints = *buffer;
-    }
-}
-
-template<>
-void BasicStaticMesh<VERTEX_PNJWT>::set_joint_weights(math::vec<8> const *buffer)
-{
-    vertex_t *p = vertex_buffer_->begin();
-
-    for (size_t i = 0; i < vertices_count_; i++, p++, buffer++)
-    {
-        p->weights = *buffer;
-    }
-}
-
-template<>
-void BasicStaticMesh<VERTEX_PTBNJWT>::set_tangents(math::vec<3> const *buffer)
-{
-    vertex_t *p = vertex_buffer_->begin();
-
-    for (size_t i = 0; i < vertices_count_; i++, p++, buffer++)
-    {
-        p->tangent = *buffer;
-    }
-}
-
-template<>
-void BasicStaticMesh<VERTEX_PTBNJWT>::set_binormals(math::vec<3> const *buffer)
-{
-    vertex_t *p = vertex_buffer_->begin();
-
-    for (size_t i = 0; i < vertices_count_; i++, p++, buffer++)
-    {
-        p->binormal = *buffer;
-    }
-}
-
-template<>
-void BasicStaticMesh<VERTEX_PTBNJWT>::set_joint_indices(math::vec<8, unsigned> const *buffer)
-{
-    vertex_t *p = vertex_buffer_->begin();
-
-    for (size_t i = 0; i < vertices_count_; i++, p++, buffer++)
-    {
-        p->joints = *buffer;
-    }
-}
-
-template<>
-void BasicStaticMesh<VERTEX_PTBNJWT>::set_joint_weights(math::vec<8> const *buffer)
-{
-    vertex_t *p = vertex_buffer_->begin();
-
-    for (size_t i = 0; i < vertices_count_; i++, p++, buffer++)
-    {
-        p->weights = *buffer;
-    }
-}
-
-template<class T>
-void BasicStaticMesh<T>::set_texcoords(math::vec<2> const *buffer)
-{
-    vertex_t *p = (T *) vertex_buffer_->begin();
-
-    for (size_t i = 0; i < vertices_count_; i++, p++, buffer++)
-    {
-        p->texcoords = *buffer;
-    }
-}
-
-template<class T>
-void BasicStaticMesh<T>::set_face_indices(unsigned *buffer)
-{
     index_t *p = index_buffer_->begin();
 
-    for (size_t i = 0; i < indices_count_; i++, p++, buffer++)
+    for (size_t i = 0; i < count; i++, p++, buffer++)
     {
         *p = *buffer;
     }
-}
 
-template<class T>
-void BasicStaticMesh<T>::unlock()
-{
-    vertex_buffer_->unlock();
     index_buffer_->unlock();
 }
 

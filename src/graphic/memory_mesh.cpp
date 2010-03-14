@@ -30,92 +30,41 @@ MeshPtr MemoryMesh::shallow_copy() const
 	return MeshPtr(new MemoryMesh(*this));
 }
 
-void MemoryMesh::set_vertices_count(size_t count)
+void MemoryMesh::set_vertices(GenericVertex *vertices, GenericVertex::format_t format, size_t count)
 {
 	vertices_.resize(count);
 	weights_.resize(count);
+
+	{
+		GenericVertex *vertex = vertices;
+
+		for (std::vector<vertex_t>::iterator it = vertices_.begin(); it != vertices_.end(); it++)
+		{
+			*it = *vertex++;
+		}
+	}
+
+	{
+		GenericVertex *vertex = vertices;
+
+		for (std::vector<JointWeights>::iterator it = weights_.begin(); it != weights_.end(); it++)
+		{
+			it->joints = vertex->joints;
+			it->weights = vertex->weights;
+
+			++vertex;
+		}
+	}
 }
 
-size_t MemoryMesh::get_vertices_count()
-{
-	return vertices_.size();
-}
-
-void MemoryMesh::set_indices_count(size_t count)
+void MemoryMesh::set_indices(unsigned *indices, size_t count)
 {
 	indices_.resize(count);
-}
 
-void MemoryMesh::lock()
-{
-}
-
-void MemoryMesh::set_positions(math::vec<3> const *buffer)
-{
-	for (std::vector<vertex_t>::iterator it = vertices_.begin(); it != vertices_.end(); it++)
+	for (size_t i = 0; i < count; ++i)
 	{
-		it->position = *buffer++;
+		indices_[i] = index_t(*indices++);
 	}
-}
-
-void MemoryMesh::set_tangents(math::vec<3> const *buffer)
-{
-	for (std::vector<vertex_t>::iterator it = vertices_.begin(); it != vertices_.end(); it++)
-	{
-		it->tangent = *buffer++;
-	}
-}
-
-void MemoryMesh::set_binormals(math::vec<3> const *buffer)
-{
-	for (std::vector<vertex_t>::iterator it = vertices_.begin(); it != vertices_.end(); it++)
-	{
-		it->binormal = *buffer++;
-	}
-}
-
-void MemoryMesh::set_normals(math::vec<3> const *buffer)
-{
-	for (std::vector<vertex_t>::iterator it = vertices_.begin(); it != vertices_.end(); it++)
-	{
-		it->normal = *buffer++;
-	}
-}
-
-void MemoryMesh::set_joint_indices(math::vec<8, unsigned> const *buffer)
-{
-	for (std::vector<JointWeights>::iterator it = weights_.begin(); it != weights_.end(); it++)
-	{
-		it->joints = *buffer++;
-	}
-}
-
-void MemoryMesh::set_joint_weights(math::vec<8> const *buffer)
-{
-	for (std::vector<JointWeights>::iterator it = weights_.begin(); it != weights_.end(); it++)
-	{
-		it->weights = *buffer++;
-	}
-}
-
-void MemoryMesh::set_texcoords(math::vec<2> const *buffer)
-{
-	for (std::vector<vertex_t>::iterator it = vertices_.begin(); it != vertices_.end(); it++)
-	{
-		it->texcoords = *buffer++;
-	}
-}
-
-void MemoryMesh::set_face_indices(unsigned *buffer)
-{
-	for (std::vector<index_t>::iterator it = indices_.begin(); it != indices_.end(); it++)
-	{
-		*it = boost::numeric_cast<index_t>(*buffer++);
-	}
-}
-
-void MemoryMesh::unlock()
-{
 }
 
 void MemoryMesh::transform_vertices(Joint const *joint_ptr, std::vector<vertex_t> &result) const

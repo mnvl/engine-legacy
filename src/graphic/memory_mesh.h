@@ -45,19 +45,8 @@ public:
 	std::vector<index_t> const &get_index_buffer() const { return indices_; }
 	std::vector<JointWeights> const &get_vertex_weights() const { return weights_; }
 
-	virtual void set_vertices_count(size_t count);
-	virtual size_t get_vertices_count();
-	virtual void set_indices_count(size_t count);
-	virtual void lock();
-	virtual void set_positions(math::vec<3> const *buffer);
-	virtual void set_tangents(math::vec<3> const *buffer);
-	virtual void set_binormals(math::vec<3> const *buffer);
-	virtual void set_normals(math::vec<3> const *buffer);
-	virtual void set_joint_indices(math::vec<8, unsigned> const *buffer);
-	virtual void set_joint_weights(math::vec<8> const *buffer);
-	virtual void set_texcoords(math::vec<2> const *buffer);
-	virtual void set_face_indices(unsigned *buffer);
-	virtual void unlock();
+	virtual void set_vertices(GenericVertex *vertices, GenericVertex::format_t format, size_t count);
+	virtual void set_indices(unsigned *indices, size_t count);
 
 	void transform_vertices(Joint const *joint_ptr, std::vector<vertex_t> &result) const;
 

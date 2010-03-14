@@ -36,10 +36,10 @@ public:
 	virtual VertexTraits const *get_vertex_traits() const;
 	virtual IDirect3DVertexDeclaration9 *get_vertex_decl() const;
 
+	size_t get_count() const { return get_size() / sizeof(T); }
+
 protected:
-	VertexArray(boost::shared_ptr<Renderer> const &renderer, size_t count,
-		bool dynamic = false, bool writeonly = false)
-	:
+	VertexArray(boost::shared_ptr<Renderer> const &renderer, size_t count, bool dynamic = false, bool writeonly = false):
 		VertexBuffer(renderer, count * sizeof(vertex_t), dynamic, writeonly)
 	{
 	}

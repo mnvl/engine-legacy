@@ -17,7 +17,6 @@ namespace graphic
 struct GenericVertex {
 	typedef unsigned format_t;
 
-	std::vector<unsigned> index_array_;
 	static format_t const FORMAT_POSITION      = 0x0001u;
 	static format_t const FORMAT_TANGENT       = 0x0002u;
 	static format_t const FORMAT_BINORMAL      = 0x0004u;

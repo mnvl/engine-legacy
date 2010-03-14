@@ -44,13 +44,10 @@ void HeightfieldLoader::load_from_raw(math::matrix<4,4> const &tf, size_t nrows,
 
     T *get = (T *) &buffer[0];
 
-    std::vector<math::vec<3> > positions;
-    std::vector<math::vec<3> > normals;
-    std::vector<math::vec<2> > texcoords;
+    std::vector<GenericVertex> vertices;
     std::vector<unsigned> indices;
 
-    positions.resize(nrows * ncols);
-    texcoords.resize(positions.size());
+    vertices.resize(nrows * ncols);
     indices.reserve((nrows - 1) * (ncols - 1) * 2 * 3);
 
 	LOG_DEBUG("building vertex buffer...");
@@ -58,11 +55,9 @@ void HeightfieldLoader::load_from_raw(math::matrix<4,4> const &tf, size_t nrows,
     {
         for (size_t col = 0; col < ncols; col++, i++, get++)
         {
-            positions[i] = math::vec<3>(col * scale.x / ncols,
-                *get * scale.y, row * scale.z / nrows);
-
-            texcoords[i] = math::vec<2>(math::scalar(col) / math::scalar(ncols),
-                math::scalar(row) / math::scalar(nrows));
+			GenericVertex *vertex = &vertices[i];
+            vertex->position.set(col * scale.x / ncols, *get * scale.y, row * scale.z / nrows);
+            vertex->texcoords.set(math::scalar(col) / math::scalar(ncols), math::scalar(row) / math::scalar(nrows));
         }
     }
 
@@ -82,18 +77,12 @@ void HeightfieldLoader::load_from_raw(math::matrix<4,4> const &tf, size_t nrows,
     }
 
 	LOG_DEBUG("building smooth normals...");
-    build_smooth_normals(positions, indices, &normals);
+    build_smooth_normals(vertices, indices);
 
 	LOG_DEBUG("building mesh...");
-
-    mesh_ptr->set_vertices_count(positions.size());
-    mesh_ptr->set_indices_count(indices.size());
-    mesh_ptr->lock();
-    mesh_ptr->set_positions(&positions[0]);
-	mesh_ptr->set_normals(&normals[0]);
-    mesh_ptr->set_texcoords(&texcoords[0]);
-    mesh_ptr->set_face_indices(&indices[0]);
-    mesh_ptr->unlock();
+	mesh_ptr->set_vertices(&vertices[0], GenericVertex::FORMAT_POSITION | GenericVertex::FORMAT_NORMAL |
+		GenericVertex::FORMAT_TEXCOORDS, vertices.size());
+    mesh_ptr->set_indices(&indices[0], indices.size());
 
 	LOG_DEBUG("setting material and texture (" << texture_name << ")...");
     MaterialPtr material_ptr(new Material(renderer_));
@@ -107,7 +96,7 @@ void HeightfieldLoader::load_from_raw(math::matrix<4,4> const &tf, size_t nrows,
     t.first_index_offset = 0;
     t.triangles_count = indices.size() / 3;
     t.minimal_vertex_index = 0;
-    t.vertices_count = positions.size();
+    t.vertices_count = vertices.size();
     mesh_ptr->triangles_list.push_back(t);
 
 	JointPtr joint_ptr = model_->add_joint();
