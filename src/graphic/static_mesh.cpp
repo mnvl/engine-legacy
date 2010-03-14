@@ -76,7 +76,10 @@ void BasicStaticMesh<T>::set_vertices(GenericVertex *vertices, GenericVertex::fo
 {
 	LOG_DEBUG("vertices: count = " << count << ", format = " << std::hex << format);
 
-	vertex_buffer_ = get_model()->get_renderer()->create_vertex_array<vertex_t>(count, false, true);
+	if (!vertex_buffer_)
+	{
+		vertex_buffer_ = get_model()->get_renderer()->create_vertex_array<vertex_t>(count, false, true);
+	}
 
     vertex_buffer_->lock(false);
 
