@@ -66,6 +66,7 @@ public:
 
 	// конструкторы
 	void assign(vec_t const &l1, vec_t const &l2, vec_t const &l3);
+	void zero();
 	void identity();
 	void translation(scalar_t x,scalar_t y);
 	void translation(const point_t &p);
@@ -191,6 +192,7 @@ public:
 	}
 
 	void identity();
+	void zero();
 	void translation(scalar_t x,scalar_t y,scalar_t z);
 	void translation(const point_t &p);
 	void translate(scalar_t x,scalar_t y,scalar_t z);

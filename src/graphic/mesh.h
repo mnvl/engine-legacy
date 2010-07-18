@@ -62,6 +62,8 @@ public:
 	virtual void set_vertices(GenericVertex *vertices, GenericVertex::format_t format, size_t count) = 0;
 	virtual void set_indices(unsigned *indices, size_t count) = 0;
 
+	virtual void check();
+
 	virtual void draw(Joint *joint_ptr);
 
 	static void bind(lua_State *L);

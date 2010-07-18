@@ -57,6 +57,9 @@ public:
     void load_from_raw_u16_heightfield(std::string const &filename, math::matrix<4,4> const &tf,
 		size_t nrows, size_t ncols, math::vec<3> const &scale, std::string const &texture_name);
 
+	// checks that model have been loaded correctly
+	virtual void check();
+
 	// animations blending could be easily implemented adding another function that will clear
 	// all Joint::matrix variables to null matrix (all elements == zero) and specifying animation
 	// and blend factor in this function

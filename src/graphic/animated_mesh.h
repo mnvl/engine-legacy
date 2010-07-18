@@ -26,6 +26,9 @@ public:
 	virtual MeshPtr shallow_copy() const;
 
     BasicAnimatedModel<V> *get_model();
+
+	virtual void check();
+
     virtual void draw(Joint *joint_ptr);
 };
 

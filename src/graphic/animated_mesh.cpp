@@ -44,6 +44,15 @@ BasicAnimatedModel<V> *BasicAnimatedMesh<V>::get_model()
 }
 
 template<class V>
+void BasicAnimatedMesh<V>::check()
+{
+	BasicStaticMesh<V>::check();
+
+   	if (vertex_buffer_->get_size() && math::abs(bind_shape_matrix.determinant()) < math::EPSILON)
+		throw std::runtime_error("bind shape matrix is zero for mesh id = " + id + ", name = " + name);
+}
+
+template<class V>
 void BasicAnimatedMesh<V>::draw(Joint *joint_ptr)
 {
 	math::matrix<4,4> world_matrix = joint_ptr->matrix * get_model()->get_renderer()->get_world_matrix();

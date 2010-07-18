@@ -1950,6 +1950,9 @@ void ColladaLoader::load(std::string const &filename)
 void ColladaLoader::build_model()
 {
 	impl_->get_root()->build_model(model_);
+
+	LOG_INFO("starting model self-check...");
+	model_->check();
 }
 
 }

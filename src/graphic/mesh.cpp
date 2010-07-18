@@ -19,6 +19,7 @@ Mesh::Mesh(Model *model_ptr):
 	model_(model_ptr),
 	shader_(model_ptr->get_renderer() ? model_ptr->get_renderer()->get_shaders_library()->get_mesh_shader() : boost::shared_ptr<MeshShader>())
 {
+	bind_shape_matrix.zero();
 }
 
 Mesh::~Mesh()
@@ -33,6 +34,10 @@ void Mesh::set_model(Model *model)
 Model *Mesh::get_model() const
 {
 	return model_;
+}
+
+void Mesh::check()
+{
 }
 
 void Mesh::draw(Joint *joint_ptr)

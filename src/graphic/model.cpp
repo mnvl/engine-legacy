@@ -118,6 +118,14 @@ void Model::load_from_raw_u16_heightfield(std::string const &filename, math::mat
     HeightfieldLoader(filename, this, renderer_).load_from_raw<boost::uint16_t>(tf, nrows, ncols, scale, texture_name);
 }
 
+void Model::check()
+{
+	for (meshes_type::const_iterator it = meshes.begin(); it != meshes.end(); ++it)
+	{
+		(*it)->check();
+	}
+}
+
 JointPtr Model::get_joint_by_id(std::string const &id)
 {
 	for (joints_type::iterator it = joints.begin(); it != joints.end(); it++) {
