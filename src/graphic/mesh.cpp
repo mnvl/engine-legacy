@@ -8,6 +8,7 @@
 // prior written consent of Manvel Avetisian.
 //-----------------------------------------------------------------------------
 
+#include <util/logger.h>
 #include "model.h"
 #include "shaders_library.h"
 #include "renderer.h"
@@ -38,6 +39,7 @@ Model *Mesh::get_model() const
 
 void Mesh::check()
 {
+	LOG_INFO("checking mesh id = " << id << ", name = " << name << "...");
 }
 
 void Mesh::draw(Joint *joint_ptr)

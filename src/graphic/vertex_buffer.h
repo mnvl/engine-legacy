@@ -40,6 +40,8 @@ public:
 
 	void *begin() { return &clone_[0]; }
 	void const *begin() const { return &clone_[0]; }
+	void *end() { return &clone_[0] + get_size(); }
+	void const *end() const { return &clone_[0] + get_size(); }
 
 	IDirect3DVertexBuffer9 *get() const { return buffer_.get(); }
 

@@ -10,6 +10,7 @@
 
 #include <d3d9.h>
 #include <vector>
+#include <util/logger.h>
 #include "mesh_shader.h"
 #include "mesh_draw_call.h"
 #include "animated_model.h"
@@ -48,8 +49,33 @@ void BasicAnimatedMesh<V>::check()
 {
 	BasicStaticMesh<V>::check();
 
-   	if (vertex_buffer_->get_size() && math::abs(bind_shape_matrix.determinant()) < math::EPSILON)
-		throw std::runtime_error("bind shape matrix is zero for mesh id = " + id + ", name = " + name);
+   	if (vertex_buffer_->get_size())
+	{
+		if (math::abs(bind_shape_matrix.determinant()) < math::EPSILON)
+		{
+			LOG_WARN("bind shape matrix is zero");
+		}
+
+		static unsigned const MAXIMAL_MESSAGES_OF_SAME_KIND_TO_ISSUE = 10;
+
+		unsigned vertex_weights_are_zero_issued = 0;
+		unsigned vertex_joints_are_zero_issued = 0;
+
+		for (vertex_t const *vertex = vertex_buffer_->begin(); vertex != vertex_buffer_->end(); vertex++)
+		{
+			if (vertex->joints.is_zero() && vertex_joints_are_zero_issued < MAXIMAL_MESSAGES_OF_SAME_KIND_TO_ISSUE)
+			{
+				LOG_WARN("vertex joints are zero for vertex with index = " << vertex - vertex_buffer_->begin());
+				if (++vertex_joints_are_zero_issued == MAXIMAL_MESSAGES_OF_SAME_KIND_TO_ISSUE) LOG_WARN("(following messages of same kind will be skipped...)");
+			}
+
+			if (vertex->weights.is_zero() && vertex_weights_are_zero_issued < MAXIMAL_MESSAGES_OF_SAME_KIND_TO_ISSUE)
+			{
+				LOG_WARN("vertex weights are zero for vertex index = " << vertex - vertex_buffer_->begin());
+				if (++vertex_weights_are_zero_issued == MAXIMAL_MESSAGES_OF_SAME_KIND_TO_ISSUE) LOG_WARN("(following messages of same kind will be skipped...)");
+			}
+		}
+	}
 }
 
 template<class V>

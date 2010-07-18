@@ -34,6 +34,9 @@ public:
 	virtual MeshPtr shallow_copy() const;
 
 	BasicStaticModel<V> *get_model();
+
+	virtual void check();
+
 	virtual void draw(Joint *joint_ptr);
 
 	virtual void set_vertices(GenericVertex *vertices, GenericVertex::format_t format, size_t count);

@@ -734,6 +734,13 @@ public:
 		return true;
 	}
 
+	bool is_zero() const
+	{
+		for (size_t n = 0; n < ARITY; n++)
+			if (abs(i[n]) < EPSILON) return true;
+		return false;
+	}
+
 	scalar_t length_sq() const
 	{
 		scalar_t l = i[0] * i[0];
@@ -745,6 +752,14 @@ public:
 	scalar_t length() const
 	{
 		return sqrt(length_sq());
+	}
+
+	scalar_t manhattan_length() const
+	{
+		scalar_t l = 0;
+		for (size_t n = 1; n < ARITY; n++)
+			l += abs(i[n] - i[n - 1]);
+		return l;
 	}
 
 	void normalize()

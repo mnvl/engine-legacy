@@ -45,6 +45,18 @@ BasicStaticModel<T> *BasicStaticMesh<T>::get_model()
 }
 
 template<class T>
+void BasicStaticMesh<T>::check()
+{
+	Mesh::check();
+
+	if (initialized_vertex_components_ != vertex_t::FORMAT)
+	{
+		LOG_WARN("some vertex components are not initialized, format = " << vertex_t::FORMAT
+			<< ", initialized components = " << initialized_vertex_components_);
+	}
+}
+
+template<class T>
 void BasicStaticMesh<T>::draw(Joint *joint_ptr)
 {
 	for (triangles_list_type::const_iterator it = triangles_list.begin(); it != triangles_list.end(); it++)
@@ -79,9 +91,14 @@ void BasicStaticMesh<T>::set_vertices(GenericVertex *vertices, GenericVertex::fo
 	if (!vertex_buffer_)
 	{
 		vertex_buffer_ = get_model()->get_renderer()->create_vertex_array<vertex_t>(count, false, true);
-	}
 
-    vertex_buffer_->lock(false);
+		vertex_buffer_->lock(true);
+		memset(vertex_buffer_->begin(), 0, vertex_buffer_->get_size());
+	}
+	else
+	{
+		vertex_buffer_->lock(false);
+	}
 
 	if (initialized_vertex_components_ == 0 || T::FORMAT == format)
 	{

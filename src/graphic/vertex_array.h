@@ -30,6 +30,9 @@ public:
 	vertex_t *begin() { return (vertex_t *) VertexBuffer::begin(); }
 	vertex_t const *begin() const { return (vertex_t const *) VertexBuffer::begin(); }
 
+	vertex_t *end() { return (vertex_t *) VertexBuffer::end(); }
+	vertex_t const *end() const { return (vertex_t const *) VertexBuffer::end(); }
+
 	vertex_t *at(size_t index) { return &begin()[index]; }
 	vertex_t const *at(size_t index) const { return &begin()[index]; }
 
