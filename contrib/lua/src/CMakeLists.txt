@@ -7,8 +7,6 @@ set(LUA_CORE_SRCS lapi.c lcode.c ldebug.c ldo.c ldump.c
 set(LUA_LIB_SRCS lauxlib.c lbaselib.c ldblib.c liolib.c
      lmathlib.c loslib.c ltablib.c lstrlib.c loadlib.c linit.c)
 
-file(GLOB LUA_SOURCES *.c)
-
 add_library(lua STATIC ${LUA_LIB_SRCS} ${LUA_CORE_SRCS})
 
 add_executable(luai lua.c)
