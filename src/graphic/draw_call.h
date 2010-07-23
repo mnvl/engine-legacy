@@ -28,6 +28,7 @@ public:
 	DrawCall(boost::shared_ptr<Renderer> const &renderer);
 	virtual ~DrawCall();
 
+	void set_always_visible(bool always_visible);
 	void set_obb(math::obb<3> const &bounds);
 	void set_vertex_buffer(boost::shared_ptr<VertexBuffer> const &vertex_buffer);
 	void set_index_buffer(boost::shared_ptr<IndexBuffer> const &index_buffer);
@@ -46,8 +47,11 @@ public:
 
 	virtual void execute();
 
+	static void bind(lua_State *L);
+
 protected:
 	boost::shared_ptr<Renderer> const renderer_;
+	bool always_visible_;
 	math::obb<3> bounds_;
 	boost::shared_ptr<VertexBuffer> vertex_buffer_;
 	boost::shared_ptr<IndexBuffer> index_buffer_;

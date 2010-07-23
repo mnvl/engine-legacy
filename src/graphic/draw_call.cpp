@@ -25,6 +25,7 @@ namespace graphic
 
 DrawCall::DrawCall(boost::shared_ptr<Renderer> const &renderer):
 	renderer_(renderer),
+	always_visible_(false),
 	minimal_vertex_index_(0),
 	vertices_count_(0),
 	first_index_offset_(0),
@@ -37,6 +38,11 @@ DrawCall::DrawCall(boost::shared_ptr<Renderer> const &renderer):
 
 DrawCall::~DrawCall()
 {
+}
+
+void DrawCall::set_always_visible(bool always_visible)
+{
+	always_visible_ = always_visible;
 }
 
 void DrawCall::set_obb(math::obb<3> const &bounds)
@@ -100,11 +106,13 @@ void DrawCall::commit()
 
 bool DrawCall::is_visible() const
 {
-	return math::frustum<>(world_view_projection_matrix_).test_intersection(bounds_);
+	return always_visible_ || math::frustum<>(world_view_projection_matrix_).test_intersection(bounds_);
 }
 
 void DrawCall::execute()
 {
+	if (!triangles_count_) return;
+
 	HRESULT hr;
 
     ShadersLibrary *shaders_library_ptr = renderer_->get_shaders_library();
@@ -124,11 +132,26 @@ void DrawCall::execute()
     hr = device_ptr->SetStreamSource(0, vertex_buffer_->get(), 0, vertex_traits->get_size());
 	if (FAILED(hr)) throw exception::directx_error(hr);
 
-    hr = device_ptr->SetIndices(index_buffer_->get());
-	if (FAILED(hr)) throw exception::directx_error(hr);
+	if (index_buffer_)
+	{
+		hr = device_ptr->SetIndices(index_buffer_->get());
+		if (FAILED(hr)) throw exception::directx_error(hr);
+	}
 
 	hr = device_ptr->SetTexture(0, material_ ? material_->get_diffuse_texture()->get() : 0);
 	if (FAILED(hr)) throw exception::directx_error(hr);
+
+	if (index_buffer_)
+	{
+		hr = device_ptr->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, minimal_vertex_index_, vertices_count_,
+			first_index_offset_, triangles_count_);
+		if (FAILED(hr)) throw exception::directx_error(hr);
+	}
+	else
+	{
+		hr = device_ptr->DrawPrimitive(D3DPT_TRIANGLELIST, minimal_vertex_index_, triangles_count_);
+		if (FAILED(hr)) throw exception::directx_error(hr);
+	}
 }
 
 }

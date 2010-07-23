@@ -35,6 +35,17 @@ template class VertexArray<VERTEX_PTBNT>;
 template class VertexArray<VERTEX_PNJWT>;
 template class VertexArray<VERTEX_PTBNJWT>;
 
+namespace
+{
+
+template<class T>
+boost::shared_ptr<VertexBuffer> downcast_to_vertex_buffer(boost::shared_ptr< VertexArray<T> > const &vertex_array_ptr)
+{
+	return boost::static_pointer_cast<VertexBuffer>(vertex_array_ptr);
+}
+
+}
+
 void bind_vertex_array(lua_State *L)
 {
 	using namespace luabind;
@@ -46,20 +57,28 @@ void bind_vertex_array(lua_State *L)
 		.def("unlock", (void (VertexArrayPT::*)()) &VertexArrayPT::unlock)
 		.def("at", (VERTEX_PT *(VertexArrayPT::*)(size_t)) &VertexArrayPT::at),
 
+		def("downcast_to_vertex_buffer", &downcast_to_vertex_buffer<VERTEX_PT>),
+
 		class_<VertexArrayPNT, VertexBuffer, boost::shared_ptr<VertexArrayPNT> >("VertexArrayPNT")
 		.def("lock", (VERTEX_PNT *(VertexArrayPNT::*)(bool)) &VertexArrayPNT::lock)
 		.def("unlock", (void (VertexArrayPNT::*)()) &VertexArrayPNT::unlock)
 		.def("at", (VERTEX_PNT *(VertexArrayPNT::*)(size_t)) &VertexArrayPNT::at),
+
+		def("downcast_to_vertex_buffer", &downcast_to_vertex_buffer<VERTEX_PNT>),
 
 		class_<VertexArrayPNJWT, VertexBuffer, boost::shared_ptr<VertexArrayPNJWT> >("VertexArrayPNJWT")
 		.def("lock", (VERTEX_PNJWT *(VertexArrayPNJWT::*)(bool)) &VertexArrayPNJWT::lock)
 		.def("unlock", (void (VertexArrayPNJWT::*)()) &VertexArrayPNJWT::unlock)
 		.def("at", (VERTEX_PNJWT *(VertexArrayPNJWT::*)(size_t)) &VertexArrayPNJWT::at),
 
+		def("downcast_to_vertex_buffer", &downcast_to_vertex_buffer<VERTEX_PNJWT>),
+
 		class_<VertexArrayPTBNJWT, VertexBuffer, boost::shared_ptr<VertexArrayPTBNJWT> >("VertexArrayPTBNJWT")
 		.def("lock", (VERTEX_PTBNJWT *(VertexArrayPTBNJWT::*)(bool)) &VertexArrayPTBNJWT::lock)
 		.def("unlock", (void (VertexArrayPTBNJWT::*)()) &VertexArrayPTBNJWT::unlock)
-		.def("at", (VERTEX_PTBNJWT *(VertexArrayPTBNJWT::*)(size_t)) &VertexArrayPTBNJWT::at)
+		.def("at", (VERTEX_PTBNJWT *(VertexArrayPTBNJWT::*)(size_t)) &VertexArrayPTBNJWT::at),
+
+		def("downcast_to_vertex_buffer", &downcast_to_vertex_buffer<VERTEX_PTBNJWT>)
 	];
 }
 

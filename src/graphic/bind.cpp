@@ -16,6 +16,7 @@
 #include "index_array.h"
 #include "material.h"
 #include "texture.h"
+#include "draw_call.h"
 #include "joint.h"
 #include "mesh.h"
 #include "memory_mesh.h"
@@ -43,6 +44,7 @@ void bind(lua_State *L)
 	bind_index_array(L);
 	Material::bind(L);
 	Texture::bind(L);
+	DrawCall::bind(L);
 	Joint::bind(L);
     Mesh::bind(L);
 	MemoryMesh::bind(L);
