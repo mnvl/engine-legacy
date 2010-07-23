@@ -136,7 +136,7 @@ BOOST_AUTO_TEST_CASE(basic)
 			hr = shader->get()->BeginPass(pass);
 			if (FAILED(hr)) throw exception::directx_error(hr);
 
-			renderer->draw_triangles(vertex_array.get(), 6);
+			renderer->draw_triangles(vertex_array.get(), 2);
 
 			hr = shader->get()->EndPass();
 			if (FAILED(hr)) throw exception::directx_error(hr);
