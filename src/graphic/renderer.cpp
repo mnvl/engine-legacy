@@ -264,6 +264,12 @@ void Renderer::draw_triangles(VertexBuffer *buffer, size_t minimal_vertex_index,
 
 	HRESULT hr;
 
+	hr = device_->SetVertexShader(0);
+	if (FAILED(hr)) throw exception::directx_error(hr);
+
+	hr = device_->SetPixelShader(0);
+	if (FAILED(hr)) throw exception::directx_error(hr);
+
 	hr = device_->SetVertexDeclaration(buffer->get_vertex_decl());
 	if (FAILED(hr)) throw exception::directx_error(hr);
 
