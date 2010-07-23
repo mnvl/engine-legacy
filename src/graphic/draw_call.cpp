@@ -126,6 +126,15 @@ void DrawCall::execute()
 	hr = device_ptr->SetPixelShader(0);
 	if (FAILED(hr)) throw exception::directx_error(hr);
 
+	hr = device_ptr->SetTransform(D3DTS_PROJECTION, (D3DMATRIX const *) &projection_matrix_);
+	if (FAILED(hr)) throw exception::directx_error(hr);
+
+	hr = device_ptr->SetTransform(D3DTS_VIEW, (D3DMATRIX const *) &view_matrix_);
+	if (FAILED(hr)) throw exception::directx_error(hr);
+
+    hr = device_ptr->SetTransform(D3DTS_WORLD, (D3DMATRIX const *) &world_matrix_);
+	if (FAILED(hr)) throw exception::directx_error(hr);
+
 	hr = device_ptr->SetVertexDeclaration(renderer_->get_vertex_declarations()->get(vertex_traits));
 	if (FAILED(hr)) throw exception::directx_error(hr);
 
