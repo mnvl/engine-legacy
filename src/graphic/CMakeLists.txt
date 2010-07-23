@@ -6,5 +6,3 @@ ADD_LIBRARY(graphic STATIC ${GRAPHIC_SOURCES} ${DUMPED_FILES})
 ADD_EXECUTABLE(test_graphic ${GRAPHIC_TEST_SOURCES})
 TARGET_LINK_LIBRARIES(test_graphic ${ENGINE_LIBRARIES} graphic platform util math d3d9 d3dx9 dxerr)
 ADD_TEST(graphic ${EXECUTABLE_OUTPUT_PATH}/test_graphic --log_level=test_suite)
-SET_PROPERTY(TEST graphic PROPERTY ENVIRONMENT "ENGINE_ROOT=${ENGINE_ROOT}")
-

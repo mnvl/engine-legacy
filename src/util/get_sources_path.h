@@ -17,13 +17,10 @@ namespace util
 
 inline std::string get_sources_path()
 {
-	char const *ENGINE_ROOT = getenv("ENGINE_ROOT");
-
-	if (ENGINE_ROOT)
-	{
+	#if defined(ENGINE_ROOT)
 		LOG_DEBUG("ENGINE_ROOT = " << ENGINE_ROOT);
 		return std::string(ENGINE_ROOT) + "/src/";
-	}
+	#endif
 
 	LOG_WARN("ENGINE_ROOT is not defined, defaulting to current directory");
 	return std::string();
