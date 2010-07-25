@@ -41,8 +41,8 @@ public:
 		bool fullscreen = false);
 	~Renderer();
 
-	int const get_screen_width() const { return screen_width_; }
-	int const get_screen_height() const { return screen_height_; }
+	int get_screen_width() const { return screen_width_; }
+	int get_screen_height() const { return screen_height_; }
 
 	void postconstruct();
 	void reset_state();
