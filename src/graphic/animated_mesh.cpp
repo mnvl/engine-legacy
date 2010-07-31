@@ -49,7 +49,7 @@ void BasicAnimatedMesh<V>::check()
 {
 	BasicStaticMesh<V>::check();
 
-   	if (vertex_buffer_->get_size())
+   	if (vertex_array_->get_size())
 	{
 		if (math::abs(bind_shape_matrix.determinant()) < math::EPSILON)
 		{
@@ -61,17 +61,17 @@ void BasicAnimatedMesh<V>::check()
 		unsigned vertex_weights_are_zero_issued = 0;
 		unsigned vertex_joints_are_zero_issued = 0;
 
-		for (vertex_t const *vertex = vertex_buffer_->begin(); vertex != vertex_buffer_->end(); vertex++)
+		for (vertex_t const *vertex = vertex_array_->begin(); vertex != vertex_array_->end(); vertex++)
 		{
 			if (vertex->joints.is_zero() && vertex_joints_are_zero_issued < MAXIMAL_MESSAGES_OF_SAME_KIND_TO_ISSUE)
 			{
-				LOG_WARN("vertex joints are zero for vertex with index = " << vertex - vertex_buffer_->begin());
+				LOG_WARN("vertex joints are zero for vertex with index = " << vertex - vertex_array_->begin());
 				if (++vertex_joints_are_zero_issued == MAXIMAL_MESSAGES_OF_SAME_KIND_TO_ISSUE) LOG_WARN("(following messages of same kind will be skipped...)");
 			}
 
 			if (vertex->weights.is_zero() && vertex_weights_are_zero_issued < MAXIMAL_MESSAGES_OF_SAME_KIND_TO_ISSUE)
 			{
-				LOG_WARN("vertex weights are zero for vertex index = " << vertex - vertex_buffer_->begin());
+				LOG_WARN("vertex weights are zero for vertex index = " << vertex - vertex_array_->begin());
 				if (++vertex_weights_are_zero_issued == MAXIMAL_MESSAGES_OF_SAME_KIND_TO_ISSUE) LOG_WARN("(following messages of same kind will be skipped...)");
 			}
 		}
@@ -107,7 +107,7 @@ void BasicAnimatedMesh<V>::draw(Joint *joint_ptr, boost::shared_ptr<Camera> cons
 			draw_call->set_obb(bounds);
 		}
 
-		draw_call->set_vertex_buffer(vertex_buffer_);
+		draw_call->set_vertex_buffer(vertex_array_->get_vertex_buffer());
 		draw_call->set_index_buffer(index_buffer_);
 		draw_call->set_material(it->material_ptr);
 		draw_call->set_minimal_vertex_index(it->minimal_vertex_index);

@@ -71,11 +71,11 @@ void BasicStaticMesh<T>::draw(Joint *joint_ptr, boost::shared_ptr<Camera> const 
 			draw_call->set_obb(bounds);
 		}
 
-		draw_call->set_vertex_buffer(vertex_buffer_);
+		draw_call->set_vertex_buffer(vertex_array_->get_vertex_buffer());
 		draw_call->set_index_buffer(index_buffer_);
 		draw_call->set_material(it->material_ptr);
 		draw_call->set_minimal_vertex_index(it->minimal_vertex_index);
-		draw_call->set_vertices_count(vertex_buffer_->get_count());
+		draw_call->set_vertices_count(vertex_array_->get_count());
 		draw_call->set_first_index_offset(it->first_index_offset);
 		draw_call->set_triangles_count(it->triangles_count);
 		draw_call->set_world_matrix(transform);
@@ -91,21 +91,21 @@ void BasicStaticMesh<T>::set_vertices(GenericVertex *vertices, GenericVertex::fo
 {
 	LOG_DEBUG("vertices: count = " << count << ", format = " << std::hex << format);
 
-	if (!vertex_buffer_)
+	if (!vertex_array_)
 	{
-		vertex_buffer_ = get_model()->get_renderer()->create_vertex_array<vertex_t>(count, false, true);
+		vertex_array_ = get_model()->get_renderer()->create_vertex_array<vertex_t>(count, false, true);
 
-		vertex_buffer_->lock(true);
-		memset(vertex_buffer_->begin(), 0, vertex_buffer_->get_size());
+		vertex_array_->lock(true);
+		memset(vertex_array_->begin(), 0, vertex_array_->get_size());
 	}
 	else
 	{
-		vertex_buffer_->lock(false);
+		vertex_array_->lock(false);
 	}
 
 	if (initialized_vertex_components_ == 0 || T::FORMAT == format)
 	{
-		vertex_t *p = vertex_buffer_->begin();
+		vertex_t *p = vertex_array_->begin();
 		GenericVertex *vertex = vertices;
 
 		for (size_t i = 0; i < count; i++, p++, vertex++)
@@ -115,7 +115,7 @@ void BasicStaticMesh<T>::set_vertices(GenericVertex *vertices, GenericVertex::fo
 	}
 	else
 	{
-		vertex_t *p = vertex_buffer_->begin();
+		vertex_t *p = vertex_array_->begin();
 		GenericVertex *vertex = vertices;
 
 		for (size_t i = 0; i < count; i++, p++, vertex++)
@@ -140,7 +140,7 @@ void BasicStaticMesh<T>::set_vertices(GenericVertex *vertices, GenericVertex::fo
 
 	initialized_vertex_components_ |= format;
 
-	vertex_buffer_->unlock();
+	vertex_array_->unlock();
 }
 
 template<class T>

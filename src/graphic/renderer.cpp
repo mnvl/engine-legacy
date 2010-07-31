@@ -13,6 +13,7 @@
 #include <exception/directx_error.h>
 #include <platform/timer.h>
 #include <util/logger.h>
+#include "d3d9_vertex_buffer.h"
 #include "texture.h"
 #include "font.h"
 #include "shader.h"
@@ -207,6 +208,35 @@ void Renderer::finish_frame()
 
 	hr = device_->Present(0, 0, 0, 0);
 	if (FAILED(hr)) throw exception::directx_error(hr);
+}
+
+void Renderer::set_world_matrix(math::matrix<4,4> const &tf)
+{
+	world_matrix_ = tf;
+
+    HRESULT hr = device_->SetTransform(D3DTS_WORLD, (D3DMATRIX const *) &tf);
+	if (FAILED(hr)) throw exception::directx_error(hr);
+}
+
+void Renderer::set_camera(Camera const &camera)
+{
+    HRESULT hr;
+
+	hr = device_->SetTransform(D3DTS_VIEW, (D3DMATRIX const *) &camera.get_view_matrix());
+	if (FAILED(hr)) throw exception::directx_error(hr);
+
+	hr = device_->SetTransform(D3DTS_PROJECTION, (D3DMATRIX const *) &camera.get_projection_matrix());
+	if (FAILED(hr)) throw exception::directx_error(hr);
+
+	camera_ = camera;
+}
+
+boost::shared_ptr<VertexBuffer> Renderer::create_vertex_buffer(VertexTraits const *traits, size_t size, bool dynamic, bool writeonly)
+{
+	boost::shared_ptr<VertexBuffer> vertex_buffer(new D3D9VertexBuffer(shared_from_this(), size, dynamic, writeonly,
+		traits, vertex_declarations_->get(traits)));
+	register_resource(boost::static_pointer_cast<Resource>(vertex_buffer));
+	return vertex_buffer;
 }
 
 boost::shared_ptr<Texture> Renderer::create_texture(std::string const &filename)

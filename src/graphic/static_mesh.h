@@ -43,14 +43,14 @@ public:
 	virtual void set_indices(unsigned *indices, size_t count);
 
 protected:
-	typedef VertexArray<V> vertex_buffer_t;
+	typedef VertexArray<V> vertex_array_type;
 	typedef IndexArray16 index_buffer_t;
 
 	// AABB over positions of all vertices before applyed transform
 	math::aabb<3> bounds_;
 
 	GenericVertex::format_t initialized_vertex_components_;
-	boost::shared_ptr<vertex_buffer_t> vertex_buffer_;
+	boost::shared_ptr<vertex_array_type> vertex_array_;
 	boost::shared_ptr<index_buffer_t> index_buffer_;
 };
 

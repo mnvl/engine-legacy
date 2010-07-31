@@ -97,7 +97,7 @@ public:
 			renderer_->get_device()->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
 			renderer_->get_device()->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_ONE);
 			renderer_->get_device()->SetRenderState(D3DRS_ZWRITEENABLE, FALSE);
-			renderer_->draw_triangles(vertex_array_.get(), nparticles_ * 2);
+			renderer_->draw_triangles(vertex_array_->get_vertex_buffer().get(), nparticles_ * 2);
 			renderer_->get_device()->SetRenderState(D3DRS_ALPHABLENDENABLE, FALSE);
 			renderer_->get_device()->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_ZERO);
 			renderer_->get_device()->SetRenderState(D3DRS_ZWRITEENABLE, TRUE);

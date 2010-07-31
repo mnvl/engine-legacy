@@ -9,6 +9,7 @@
 // prior written consent of Manvel Avetisian.
 //-----------------------------------------------------------------------------
 
+#include "vertex.h"
 #include "vertex_buffer.h"
 
 namespace graphic
@@ -17,35 +18,41 @@ namespace graphic
 class Renderer;
 
 template <class T>
-class VertexArray: public VertexBuffer
-{
-	friend Renderer;
-
+class VertexArray {
 public:
-	typedef T vertex_t;
+	typedef T vertex_type;
 
-	vertex_t *lock(bool discard) { return (vertex_t *) VertexBuffer::lock(discard); }
-	vertex_t const *lock() const { return (vertex_t const *) VertexBuffer::lock(); }
-
-	vertex_t *begin() { return (vertex_t *) VertexBuffer::begin(); }
-	vertex_t const *begin() const { return (vertex_t const *) VertexBuffer::begin(); }
-
-	vertex_t *end() { return (vertex_t *) VertexBuffer::end(); }
-	vertex_t const *end() const { return (vertex_t const *) VertexBuffer::end(); }
-
-	vertex_t *at(size_t index) { return &begin()[index]; }
-	vertex_t const *at(size_t index) const { return &begin()[index]; }
-
-	virtual VertexTraits const *get_vertex_traits() const;
-	virtual IDirect3DVertexDeclaration9 *get_vertex_decl() const;
-
-	size_t get_count() const { return get_size() / sizeof(T); }
-
-protected:
-	VertexArray(boost::shared_ptr<Renderer> const &renderer, size_t count, bool dynamic = false, bool writeonly = false):
-		VertexBuffer(renderer, count * sizeof(vertex_t), dynamic, writeonly)
+	VertexArray(boost::shared_ptr<VertexBuffer> const &vertex_buffer):
+		vertex_buffer_(vertex_buffer)
 	{
 	}
+
+	virtual ~VertexArray()
+	{
+	}
+
+	vertex_type *lock(bool discard) { return (vertex_type *) vertex_buffer_->lock(discard); }
+	vertex_type const *lock() const { return (vertex_type const *) vertex_buffer_->lock(); }
+
+	void unlock() { vertex_buffer_->unlock(); }
+	void unlock() const { vertex_buffer_->unlock(); }
+
+	vertex_type *begin() { return (vertex_type *) vertex_buffer_->begin(); }
+	vertex_type const *begin() const { return (vertex_type const *) vertex_buffer_->begin(); }
+
+	vertex_type *end() { return (vertex_type *) vertex_buffer_->end(); }
+	vertex_type const *end() const { return (vertex_type const *) vertex_buffer_->end(); }
+
+	vertex_type *at(size_t index) { return begin() + index; }
+	vertex_type const *at(size_t index) const { return begin() + index; }
+
+	size_t get_size() const { return vertex_buffer_->get_size(); }
+	size_t get_count() const { return get_size() / sizeof(T); }
+
+	boost::shared_ptr<VertexBuffer> const &get_vertex_buffer() { return vertex_buffer_;	}
+
+protected:
+	boost::shared_ptr<VertexBuffer> vertex_buffer_;
 };
 
 typedef VertexArray<VERTEX_PT> VertexArrayPT;

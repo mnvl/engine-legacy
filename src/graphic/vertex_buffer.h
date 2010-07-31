@@ -9,19 +9,13 @@
 // prior written consent of Manvel Avetisian.
 //-----------------------------------------------------------------------------
 
-#include <d3d9.h>
-#include <vector>
-#include <boost/shared_ptr.hpp>
-#include <boost/intrusive_ptr.hpp>
 #include <luabind/lua_include.hpp>
-#include <util/boost_com_intrusive_ptr.h>
-#include "vertex.h"
-#include "vertex_traits.h"
 #include "resource.h"
 
 namespace graphic
 {
 
+class D3D9VertexBuffer;
 class Renderer;
 
 class VertexBuffer: public Resource
@@ -31,37 +25,21 @@ class VertexBuffer: public Resource
 public:
 	virtual ~VertexBuffer();
 
-	const void *lock() const;
-	void unlock() const;
-	void *lock(bool discard);
-	void unlock();
+	virtual const void *lock() const = 0;
+	virtual void unlock() const = 0;
+	virtual void *lock(bool discard) = 0;
+	virtual void unlock() = 0;
 
-	size_t get_size() const { return clone_.size(); }
+	virtual size_t get_size() const = 0;
 
-	void *begin() { return &clone_[0]; }
-	void const *begin() const { return &clone_[0]; }
-	void *end() { return &clone_[0] + get_size(); }
-	void const *end() const { return &clone_[0] + get_size(); }
+	virtual void *begin() = 0;
+	virtual void const *begin() const = 0;
+	virtual void *end() = 0;
+	virtual void const *end() const = 0;
 
-	IDirect3DVertexBuffer9 *get() const { return buffer_.get(); }
-
-	virtual VertexTraits const *get_vertex_traits() const = 0;
-	virtual IDirect3DVertexDeclaration9 *get_vertex_decl() const = 0;
-
-	virtual void handle_lost_device();
-	virtual void handle_reset_device();
+	virtual D3D9VertexBuffer *cast_to_d3d9_vertex_buffer() = 0;
 
 	static void bind(lua_State *L);
-
-protected:
-	boost::shared_ptr<Renderer> renderer_;
-	boost::intrusive_ptr<IDirect3DVertexBuffer9> buffer_;
-	std::vector<char> clone_;
-	DWORD usage_;
-	D3DPOOL pool_;
-
-	VertexBuffer(boost::shared_ptr<Renderer> const &renderer, size_t size,
-		bool dynamic = false, bool writeonly = false);
 };
 
 }

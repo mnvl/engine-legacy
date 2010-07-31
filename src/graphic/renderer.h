@@ -22,6 +22,7 @@
 #include <platform/window.h>
 #include "camera.h"
 #include "resource.h"
+#include "vertex_traits.h"
 #include "vertex_array.h"
 #include "index_array.h"
 
@@ -55,12 +56,22 @@ public:
 	VertexDeclarations *get_vertex_declarations() const { return vertex_declarations_.get(); }
 	ShadersLibrary *get_shaders_library() const { return shaders_library_.get(); }
 
-	template <class V> boost::shared_ptr<VertexArray<V> >
+    void set_world_matrix(math::matrix<4,4> const &tf);
+	void set_camera(Camera const &camera); // stores copy of camera
+
+	math::matrix<4,4> const &get_world_matrix() const { return world_matrix_; }
+	Camera const &get_camera() const { return camera_; }
+	math::matrix<4,4> const &get_view_matrix() const { return camera_.get_view_matrix(); }
+	math::matrix<4,4> const &get_projection_matrix() const { return camera_.get_projection_matrix(); }
+
+	boost::shared_ptr<VertexBuffer> create_vertex_buffer(VertexTraits const *vertex_traits, size_t size, bool dynamic = false, bool writeonly = false);
+
+	template <class V> boost::shared_ptr< VertexArray<V> >
 	create_vertex_array(size_t count, bool dynamic = false, bool writeonly = false)
 	{
-		boost::shared_ptr<VertexArray<V> > vertex_array(new VertexArray<V>(shared_from_this(), count, dynamic, writeonly));
-		register_resource(boost::static_pointer_cast<Resource>(vertex_array));
-		return vertex_array;
+		return boost::shared_ptr< VertexArray<V> >(
+			new VertexArray<V>(
+				create_vertex_buffer(VertexTraits::get<V>(), sizeof(V) * count, dynamic, writeonly)));
 	}
 
 	template <class I> boost::shared_ptr<IndexArray<I> >
