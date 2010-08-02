@@ -11,7 +11,7 @@
 #include <math/frustum.h>
 #include "vertex_traits.h"
 #include "d3d9_vertex_buffer.h"
-#include "index_array.h"
+#include "d3d9_index_buffer.h"
 #include "camera.h"
 #include "shaders_library.h"
 #include "vertex_declarations.h"
@@ -115,6 +115,7 @@ void DrawCall::execute()
     ShadersLibrary *shaders_library_ptr = renderer_->get_shaders_library();
 	IDirect3DDevice9 *device_ptr = renderer_->get_device();
 	D3D9VertexBuffer *vertex_buffer = vertex_buffer_->cast_to_d3d9_vertex_buffer();
+	D3D9IndexBuffer *index_buffer = index_buffer_->cast_to_d3d9_index_buffer();
 	VertexTraits const *vertex_traits = vertex_buffer->get_vertex_traits();
 
 	hr = device_ptr->SetVertexShader(0);
@@ -140,7 +141,7 @@ void DrawCall::execute()
 
 	if (index_buffer_)
 	{
-		hr = device_ptr->SetIndices(index_buffer_->get());
+		hr = device_ptr->SetIndices(index_buffer->get());
 		if (FAILED(hr)) throw exception::directx_error(hr);
 	}
 

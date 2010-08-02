@@ -14,6 +14,7 @@
 #include <platform/timer.h>
 #include <util/logger.h>
 #include "d3d9_vertex_buffer.h"
+#include "d3d9_index_buffer.h"
 #include "texture.h"
 #include "font.h"
 #include "shader.h"
@@ -241,7 +242,7 @@ boost::shared_ptr<VertexBuffer> Renderer::create_vertex_buffer(VertexTraits cons
 
 boost::shared_ptr<IndexBuffer> Renderer::create_index_buffer(unsigned format, size_t size, bool dynamic, bool writeonly)
 {
-	boost::shared_ptr<IndexBuffer> index_buffer(new IndexBuffer(shared_from_this(), (D3DFORMAT) format, size, dynamic, writeonly));
+	boost::shared_ptr<IndexBuffer> index_buffer(new D3D9IndexBuffer(shared_from_this(), (D3DFORMAT) format, size, dynamic, writeonly));
 	register_resource(boost::static_pointer_cast<Resource>(index_buffer));
 	return index_buffer;
 }

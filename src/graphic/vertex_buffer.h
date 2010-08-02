@@ -16,12 +16,8 @@ namespace graphic
 {
 
 class D3D9VertexBuffer;
-class Renderer;
 
-class VertexBuffer: public Resource
-{
-	friend Renderer;
-
+class VertexBuffer: public Resource {
 public:
 	virtual ~VertexBuffer();
 

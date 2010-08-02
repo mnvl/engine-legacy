@@ -9,6 +9,7 @@
 //-----------------------------------------------------------------------------
 
 #include "d3d9_vertex_buffer.h"
+#include "d3d9_index_buffer.h"
 #include "vertex_array.h"
 #include "index_array.h"
 #include "material.h"
@@ -48,6 +49,7 @@ void MeshDrawCall::execute()
     ShadersLibrary *shaders_library_ptr = renderer_->get_shaders_library();
 	IDirect3DDevice9 *device_ptr = renderer_->get_device();
 	D3D9VertexBuffer *vertex_buffer = vertex_buffer_->cast_to_d3d9_vertex_buffer();
+	D3D9IndexBuffer *index_buffer = index_buffer_->cast_to_d3d9_index_buffer();
 	VertexTraits const *vertex_traits = vertex_buffer->get_vertex_traits();
 
 	hr = device_ptr->SetVertexDeclaration(renderer_->get_vertex_declarations()->get(vertex_traits));
@@ -56,7 +58,7 @@ void MeshDrawCall::execute()
     hr = device_ptr->SetStreamSource(0, vertex_buffer->get(), 0, vertex_traits->get_size());
 	if (FAILED(hr)) throw exception::directx_error(hr);
 
-    hr = device_ptr->SetIndices(index_buffer_->get());
+    hr = device_ptr->SetIndices(index_buffer->get());
 	if (FAILED(hr)) throw exception::directx_error(hr);
 
 	shader_->get_technique_for_vertex(vertex_traits)->set();

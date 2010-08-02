@@ -9,54 +9,29 @@
 // prior written consent of Manvel Avetisian.
 //-----------------------------------------------------------------------------
 
-#include <d3d9.h>
-#include <vector>
-#include <boost/shared_ptr.hpp>
-#include <boost/intrusive_ptr.hpp>
 #include <luabind/lua_include.hpp>
-#include <util/boost_com_intrusive_ptr.h>
-#include "index.h"
 #include "resource.h"
 
 namespace graphic
 {
 
-class Renderer;
+class D3D9IndexBuffer;
 
-class IndexBuffer: public Resource
-{
-	friend Renderer;
-
+class IndexBuffer: public Resource {
 public:
 	virtual ~IndexBuffer();
 
-	const void *lock() const;
-	void unlock() const;
-	void *lock(bool discard);
-	void unlock();
+	virtual const void *lock() const = 0;
+	virtual void unlock() const = 0;
+	virtual void *lock(bool discard) = 0;
+	virtual void unlock() = 0;
 
-	void *begin() { return &clone_[0]; }
-	void const *begin() const { return &clone_[0]; }
+	virtual void *begin() = 0;
+	virtual void const *begin() const = 0;
 
-	IDirect3DIndexBuffer9 *get() const { return buffer_.get(); }
-
-	virtual void handle_lost_device();
-	virtual void handle_reset_device();
+	virtual D3D9IndexBuffer *cast_to_d3d9_index_buffer() = 0;
 
 	static void bind(lua_State *L);
-
-protected:
-	boost::shared_ptr<Renderer> renderer_;
-
-	IndexBuffer(boost::shared_ptr<Renderer> const &renderer, D3DFORMAT format, size_t size,
-		bool dynamic = false, bool writeonly = false);
-
-private:
-	D3DFORMAT format_;
-	boost::intrusive_ptr<IDirect3DIndexBuffer9> buffer_;
-	std::vector<char> clone_;
-	DWORD usage_;
-	D3DPOOL pool_;
 };
 
 }
