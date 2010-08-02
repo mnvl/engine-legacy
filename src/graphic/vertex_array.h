@@ -27,7 +27,7 @@ public:
 	{
 	}
 
-	virtual ~VertexArray()
+	~VertexArray()
 	{
 	}
 

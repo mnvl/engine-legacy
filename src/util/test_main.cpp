@@ -18,7 +18,7 @@ struct Dummy
 {
 	Dummy()
 	{
-		srand(time(0));
+		srand((unsigned) time(0));
 	}
 };
 

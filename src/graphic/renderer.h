@@ -65,6 +65,7 @@ public:
 	math::matrix<4,4> const &get_projection_matrix() const { return camera_.get_projection_matrix(); }
 
 	boost::shared_ptr<VertexBuffer> create_vertex_buffer(VertexTraits const *vertex_traits, size_t size, bool dynamic = false, bool writeonly = false);
+	boost::shared_ptr<IndexBuffer> create_index_buffer(unsigned index_format, size_t size, bool dynamic = false, bool writeonly = false);
 
 	template <class V> boost::shared_ptr< VertexArray<V> >
 	create_vertex_array(size_t count, bool dynamic = false, bool writeonly = false)
@@ -77,9 +78,9 @@ public:
 	template <class I> boost::shared_ptr<IndexArray<I> >
 	create_index_array(size_t count, bool dynamic = false, bool writeonly = false)
 	{
-		boost::shared_ptr<IndexArray<I> > index_array(new IndexArray<I>(shared_from_this(), count, dynamic, writeonly));
-		register_resource(boost::static_pointer_cast<Resource>(index_array));
-		return index_array;
+		return boost::shared_ptr< IndexArray<I> >(
+			new IndexArray<I>(
+				create_index_buffer(INDEX_FORMAT_U16, sizeof(I) * count, dynamic, writeonly)));
 	}
 
 	boost::shared_ptr<Texture> create_texture(std::string const &filename);

@@ -15,7 +15,7 @@
 namespace graphic
 {
 
-typedef boost::uint16_t index_t;
-static D3DFORMAT const INDEX_FORMAT = D3DFMT_INDEX16;
+static D3DFORMAT const INDEX_FORMAT_U16 = D3DFMT_INDEX16;
+typedef boost::uint16_t INDEX_U16;
 
 }

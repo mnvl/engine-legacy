@@ -49,9 +49,9 @@ void BasicStaticMesh<T>::check()
 {
 	Mesh::check();
 
-	if (initialized_vertex_components_ != vertex_t::FORMAT)
+	if (initialized_vertex_components_ != vertex_type::FORMAT)
 	{
-		LOG_WARN("some vertex components are not initialized, format = " << vertex_t::FORMAT
+		LOG_WARN("some vertex components are not initialized, format = " << vertex_type::FORMAT
 			<< ", initialized components = " << initialized_vertex_components_);
 	}
 }
@@ -72,7 +72,7 @@ void BasicStaticMesh<T>::draw(Joint *joint_ptr, boost::shared_ptr<Camera> const 
 		}
 
 		draw_call->set_vertex_buffer(vertex_array_->get_vertex_buffer());
-		draw_call->set_index_buffer(index_buffer_);
+		draw_call->set_index_buffer(index_array_->get_index_buffer());
 		draw_call->set_material(it->material_ptr);
 		draw_call->set_minimal_vertex_index(it->minimal_vertex_index);
 		draw_call->set_vertices_count(vertex_array_->get_count());
@@ -93,7 +93,7 @@ void BasicStaticMesh<T>::set_vertices(GenericVertex *vertices, GenericVertex::fo
 
 	if (!vertex_array_)
 	{
-		vertex_array_ = get_model()->get_renderer()->create_vertex_array<vertex_t>(count, false, true);
+		vertex_array_ = get_model()->get_renderer()->create_vertex_array<vertex_type>(count, false, true);
 
 		vertex_array_->lock(true);
 		memset(vertex_array_->begin(), 0, vertex_array_->get_size());
@@ -105,7 +105,7 @@ void BasicStaticMesh<T>::set_vertices(GenericVertex *vertices, GenericVertex::fo
 
 	if (initialized_vertex_components_ == 0 || T::FORMAT == format)
 	{
-		vertex_t *p = vertex_array_->begin();
+		vertex_type *p = vertex_array_->begin();
 		GenericVertex *vertex = vertices;
 
 		for (size_t i = 0; i < count; i++, p++, vertex++)
@@ -115,7 +115,7 @@ void BasicStaticMesh<T>::set_vertices(GenericVertex *vertices, GenericVertex::fo
 	}
 	else
 	{
-		vertex_t *p = vertex_array_->begin();
+		vertex_type *p = vertex_array_->begin();
 		GenericVertex *vertex = vertices;
 
 		for (size_t i = 0; i < count; i++, p++, vertex++)
@@ -148,18 +148,18 @@ void BasicStaticMesh<T>::set_indices(unsigned *buffer, size_t count)
 {
 	LOG_DEBUG("indices: count = " << count);
 
-	index_buffer_ = get_model()->get_renderer()->create_index_array<index_t>(count, false, true);
+	index_array_ = get_model()->get_renderer()->create_index_array<INDEX_U16>(count, false, true);
 
-    index_buffer_->lock(false);
+    index_array_->lock(false);
 
-    index_t *p = index_buffer_->begin();
+    index_type *p = index_array_->begin();
 
     for (size_t i = 0; i < count; i++, p++, buffer++)
     {
         *p = *buffer;
     }
 
-    index_buffer_->unlock();
+    index_array_->unlock();
 }
 
 template StaticMeshPNT;

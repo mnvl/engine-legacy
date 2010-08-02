@@ -728,9 +728,9 @@ namespace collada_elements
 
 	class vertex_indexer {
 	public:
-		typedef GenericVertex vertex_t;
+		typedef GenericVertex vertex_type;
 
-		std::pair<size_t, bool> choose_index(vertex_t const &v)
+		std::pair<size_t, bool> choose_index(vertex_type const &v)
 		{
 			vertex_x_index_type::const_iterator it = vertex_x_index_.find(v);
 			if (it != vertex_x_index_.end()) return std::pair<size_t, bool>(it->second, false);
@@ -741,7 +741,7 @@ namespace collada_elements
 		}
 
 	private:
-		typedef std::map<vertex_t, size_t> vertex_x_index_type;
+		typedef std::map<vertex_type, size_t> vertex_x_index_type;
 		vertex_x_index_type vertex_x_index_;
 	};
 

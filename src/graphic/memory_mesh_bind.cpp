@@ -33,13 +33,13 @@ void MemoryMesh::bind(lua_State *L)
 		class_<MemoryMesh, Mesh, boost::shared_ptr<MemoryMesh> >("MemoryMesh")
 		.scope
 		[
-			class_<std::vector<vertex_t> >("VertexBuffer")
-			.def("size", &std::vector<vertex_t>::size)
-			.def("at", (vertex_t &(std::vector<vertex_t>::*)(size_t)) &std::vector<vertex_t>::at),
+			class_<std::vector<vertex_type> >("VertexBuffer")
+			.def("size", &std::vector<vertex_type>::size)
+			.def("at", (vertex_type &(std::vector<vertex_type>::*)(size_t)) &std::vector<vertex_type>::at),
 
-			class_<std::vector<index_t> >("IndexBuffer")
-			.def("size", &std::vector<index_t>::size)
-			.def("at", (index_t &(std::vector<index_t>::*)(size_t)) &std::vector<index_t>::at),
+			class_<std::vector<index_type> >("IndexBuffer")
+			.def("size", &std::vector<index_type>::size)
+			.def("at", (index_type &(std::vector<index_type>::*)(size_t)) &std::vector<index_type>::at),
 
 			def("downcast_to_memory_mesh", &downcast_to_memory_mesh)
 		]

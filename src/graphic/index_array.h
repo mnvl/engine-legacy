@@ -9,38 +9,45 @@
 // prior written consent of Manvel Avetisian.
 //-----------------------------------------------------------------------------
 
+#include "index.h"
 #include "index_buffer.h"
 
 namespace graphic
 {
 
 template <class T>
-class IndexArray: public IndexBuffer
-{
-	friend Renderer;
-
+class IndexArray {
 public:
-	typedef T index_t;
+	typedef T index_type;
 
-	index_t *lock(bool discard) { return (index_t *) IndexBuffer::lock(discard); }
-	index_t const *lock() const { return (index_t const *) IndexBuffer::lock(); }
-
-	index_t *begin() { return (index_t *) IndexBuffer::begin(); }
-	index_t const *begin() const { return (index_t const *) IndexBuffer::begin(); }
-
-	index_t *at(size_t index) { return &begin()[index]; }
-	index_t const *at(size_t index) const { return &begin()[index]; }
-
-protected:
-	IndexArray(boost::shared_ptr<Renderer> const &renderer, size_t count,
-		bool dynamic = false, bool writeonly = false)
-	:
-		IndexBuffer(renderer, INDEX_FORMAT, count * sizeof(index_t), dynamic, writeonly)
+	IndexArray(boost::shared_ptr<IndexBuffer> const &index_buffer):
+		index_buffer_(index_buffer)
 	{
 	}
+
+	~IndexArray()
+	{
+	}
+
+	index_type *lock(bool discard) { return (index_type *) index_buffer_->lock(discard); }
+	index_type const *lock() const { return (index_type const *) index_buffer_->lock(); }
+
+	void unlock() { index_buffer_->unlock(); }
+	void unlock() const { index_buffer_->unlock(); }
+
+	index_type *begin() { return (index_type *) index_buffer_->begin(); }
+	index_type const *begin() const { return (index_type const *) index_buffer_->begin(); }
+
+	index_type *at(size_t index) { return &begin()[index]; }
+	index_type const *at(size_t index) const { return &begin()[index]; }
+
+	boost::shared_ptr<IndexBuffer> const &get_index_buffer() { return index_buffer_; }
+
+protected:
+	boost::shared_ptr<IndexBuffer> const index_buffer_;
 };
 
-typedef IndexArray<index_t> IndexArray16;
+typedef IndexArray<INDEX_U16> IndexArray16;
 
 void bind_index_array(lua_State *L);
 

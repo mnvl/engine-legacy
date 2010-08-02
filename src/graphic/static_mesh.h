@@ -26,7 +26,8 @@ template<class T> class BasicStaticModel;
 template<class V = VERTEX_PNT>
 class BasicStaticMesh: public Mesh {
 public:
-	typedef V vertex_t;
+	typedef V vertex_type;
+	typedef INDEX_U16 index_type;
 
 	BasicStaticMesh(Model *model_ptr);
 	~BasicStaticMesh();
@@ -44,14 +45,14 @@ public:
 
 protected:
 	typedef VertexArray<V> vertex_array_type;
-	typedef IndexArray16 index_buffer_t;
+	typedef IndexArray16 index_array_type;
 
 	// AABB over positions of all vertices before applyed transform
 	math::aabb<3> bounds_;
 
 	GenericVertex::format_t initialized_vertex_components_;
 	boost::shared_ptr<vertex_array_type> vertex_array_;
-	boost::shared_ptr<index_buffer_t> index_buffer_;
+	boost::shared_ptr<index_array_type> index_array_;
 };
 
 typedef BasicStaticMesh<VERTEX_PNT> StaticMeshPNT;

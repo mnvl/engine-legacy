@@ -88,14 +88,14 @@ BOOST_AUTO_TEST_CASE(joint)
     graphic::MemoryMesh *mesh_ptr = (graphic::MemoryMesh *) model_ptr->meshes.front().get();
 
     model_ptr->set_animation_time(0);
-    std::vector<graphic::MemoryMesh::vertex_t> vertices1;
+    std::vector<graphic::MemoryMesh::vertex_type> vertices1;
     mesh_ptr->transform_vertices(model_ptr->joints[0].get(), vertices1);
 
     BOOST_ASSERT (vertices1.size() == 3);
     BOOST_ASSERT (abs(vertices1[0].position.y) < 0.1f);
 
     model_ptr->set_animation_time(1);
-    std::vector<graphic::MemoryMesh::vertex_t> vertices2;
+    std::vector<graphic::MemoryMesh::vertex_type> vertices2;
     mesh_ptr->transform_vertices(model_ptr->joints[0].get(), vertices2);
 
     BOOST_ASSERT (vertices2.size() == 3);
@@ -134,11 +134,11 @@ BOOST_AUTO_TEST_CASE(animation)
     BOOST_ASSERT (model_ptr->joints[0]->mesh_ptr.lock().get() == mesh_ptr);
 
     model_ptr->set_animation_time(0);
-    std::vector<graphic::MemoryMesh::vertex_t> vertices1;
+    std::vector<graphic::MemoryMesh::vertex_type> vertices1;
     mesh_ptr->transform_vertices(model_ptr->joints[0].get(), vertices1);
 
     model_ptr->set_animation_time(1);
-    std::vector<graphic::MemoryMesh::vertex_t> vertices2;
+    std::vector<graphic::MemoryMesh::vertex_type> vertices2;
     mesh_ptr->transform_vertices(model_ptr->joints[0].get(), vertices2);
 
     BOOST_ASSERT((vertices1[0].position - math::vec<3>(-1.0f, 0.85f, 1.0f)).length_sq() < 0.1f);
@@ -256,7 +256,7 @@ BOOST_AUTO_TEST_CASE(tbn)
     BOOST_ASSERT (mesh_ptr->get_vertex_buffer().size() == 3);
     BOOST_ASSERT (mesh_ptr->get_index_buffer().size() == 3);
 
-	std::vector<graphic::MemoryMesh::vertex_t> const &vertex_buffer = mesh_ptr->get_vertex_buffer();
+	std::vector<graphic::MemoryMesh::vertex_type> const &vertex_buffer = mesh_ptr->get_vertex_buffer();
 
 	BOOST_ASSERT ((vertex_buffer[0].position - math::vec<3>(-0.5f, 0.0f, -0.5f)).length_sq() < math::EPSILON);
 	BOOST_ASSERT ((vertex_buffer[0].normal   - math::vec<3>(0.0f, 1.0f, 0.0f)).length_sq() < math::EPSILON);
@@ -273,7 +273,7 @@ BOOST_AUTO_TEST_CASE(tbn)
 	BOOST_ASSERT ((vertex_buffer[2].tangent  - math::vec<3>(-1, 0, 0)).length_sq() < math::EPSILON);
 	BOOST_ASSERT ((vertex_buffer[2].binormal - math::vec<3>(0, 0, 1)).length_sq() < math::EPSILON);
 
-	std::vector<graphic::index_t> const &index_buffer = mesh_ptr->get_index_buffer();
+	std::vector<graphic::INDEX_U16> const &index_buffer = mesh_ptr->get_index_buffer();
 
 	BOOST_ASSERT (index_buffer[0] == 0);
 	BOOST_ASSERT (index_buffer[1] == 1);

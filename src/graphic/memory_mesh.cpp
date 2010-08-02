@@ -38,16 +38,16 @@ void MemoryMesh::set_vertices(GenericVertex *vertices, GenericVertex::format_t f
 	{
 		GenericVertex *vertex = vertices;
 
-		if (initialized_vertex_components_ == 0 || format == vertex_t::FORMAT)
+		if (initialized_vertex_components_ == 0 || format == vertex_type::FORMAT)
 		{
-			for (std::vector<vertex_t>::iterator it = vertices_.begin(); it != vertices_.end(); it++)
+			for (std::vector<vertex_type>::iterator it = vertices_.begin(); it != vertices_.end(); it++)
 			{
 				*it = *vertex++;
 			}
 		}
 		else
 		{
-			for (std::vector<vertex_t>::iterator it = vertices_.begin(); it != vertices_.end(); it++)
+			for (std::vector<vertex_type>::iterator it = vertices_.begin(); it != vertices_.end(); it++)
 			{
 				it->assign(*vertex++, format);
 			}
@@ -75,11 +75,11 @@ void MemoryMesh::set_indices(unsigned *indices, size_t count)
 
 	for (size_t i = 0; i < count; ++i)
 	{
-		indices_[i] = index_t(*indices++);
+		indices_[i] = index_type(*indices++);
 	}
 }
 
-void MemoryMesh::transform_vertices(Joint const *joint_ptr, std::vector<vertex_t> &result) const
+void MemoryMesh::transform_vertices(Joint const *joint_ptr, std::vector<vertex_type> &result) const
 {
     std::vector<math::matrix<4,4> > joint_matrix_array;
     joint_matrix_array.reserve(joint_index_transform.size());
@@ -126,7 +126,7 @@ void MemoryMesh::draw_static(Joint *joint_ptr, boost::shared_ptr<Camera> const &
     ShadersLibrary *shaders_library_ptr = renderer_ptr->get_shaders_library();
 	IDirect3DDevice9 *device_ptr = renderer_ptr->get_device();
 
-    device_ptr->SetVertexDeclaration(renderer_ptr->get_vertex_declarations()->get<vertex_t>());
+    device_ptr->SetVertexDeclaration(renderer_ptr->get_vertex_declarations()->get<vertex_type>());
 
 	for (triangles_list_type::const_iterator it = triangles_list.begin();
 		it != triangles_list.end(); it++)
@@ -136,7 +136,7 @@ void MemoryMesh::draw_static(Joint *joint_ptr, boost::shared_ptr<Camera> const &
 		device_ptr->SetTransform(D3DTS_WORLD, (D3DMATRIX const *) joint_ptr->matrix.ij);
 
 		device_ptr->DrawIndexedPrimitiveUP(D3DPT_TRIANGLELIST, it->minimal_vertex_index, it->vertices_count,
-			it->triangles_count, &indices_[it->first_index_offset], INDEX_FORMAT, &vertices_[0], sizeof(vertex_t));
+			it->triangles_count, &indices_[it->first_index_offset], INDEX_FORMAT_U16, &vertices_[0], sizeof(vertex_type));
 	}
 }
 
@@ -147,10 +147,10 @@ void MemoryMesh::draw_animated(Joint *joint_ptr, boost::shared_ptr<Camera> const
     ShadersLibrary *shaders_library_ptr = renderer_ptr->get_shaders_library();
 	IDirect3DDevice9 *device_ptr = renderer_ptr->get_device();
 
-	std::vector<vertex_t> transformed_vertices;
+	std::vector<vertex_type> transformed_vertices;
 	transform_vertices(joint_ptr, transformed_vertices);
 
-	device_ptr->SetVertexDeclaration(renderer_ptr->get_vertex_declarations()->get<vertex_t>());
+	device_ptr->SetVertexDeclaration(renderer_ptr->get_vertex_declarations()->get<vertex_type>());
 
 	for (triangles_list_type::const_iterator it = triangles_list.begin();
 		it != triangles_list.end(); it++)
@@ -160,7 +160,7 @@ void MemoryMesh::draw_animated(Joint *joint_ptr, boost::shared_ptr<Camera> const
 		device_ptr->SetTransform(D3DTS_WORLD, (D3DMATRIX const *) joint_ptr->matrix.ij);
 
 		device_ptr->DrawIndexedPrimitiveUP(D3DPT_TRIANGLELIST, it->minimal_vertex_index, it->vertices_count,
-			it->triangles_count, &indices_[it->first_index_offset], INDEX_FORMAT, &transformed_vertices[0], sizeof(vertex_t));
+			it->triangles_count, &indices_[it->first_index_offset], INDEX_FORMAT_U16, &transformed_vertices[0], sizeof(vertex_type));
 	}
 }
 

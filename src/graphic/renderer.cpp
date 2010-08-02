@@ -239,6 +239,13 @@ boost::shared_ptr<VertexBuffer> Renderer::create_vertex_buffer(VertexTraits cons
 	return vertex_buffer;
 }
 
+boost::shared_ptr<IndexBuffer> Renderer::create_index_buffer(unsigned format, size_t size, bool dynamic, bool writeonly)
+{
+	boost::shared_ptr<IndexBuffer> index_buffer(new IndexBuffer(shared_from_this(), (D3DFORMAT) format, size, dynamic, writeonly));
+	register_resource(boost::static_pointer_cast<Resource>(index_buffer));
+	return index_buffer;
+}
+
 boost::shared_ptr<Texture> Renderer::create_texture(std::string const &filename)
 {
 	boost::shared_ptr<Texture> texture(new Texture(shared_from_this(), filename));

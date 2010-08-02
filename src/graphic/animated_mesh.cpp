@@ -61,7 +61,7 @@ void BasicAnimatedMesh<V>::check()
 		unsigned vertex_weights_are_zero_issued = 0;
 		unsigned vertex_joints_are_zero_issued = 0;
 
-		for (vertex_t const *vertex = vertex_array_->begin(); vertex != vertex_array_->end(); vertex++)
+		for (vertex_type const *vertex = vertex_array_->begin(); vertex != vertex_array_->end(); vertex++)
 		{
 			if (vertex->joints.is_zero() && vertex_joints_are_zero_issued < MAXIMAL_MESSAGES_OF_SAME_KIND_TO_ISSUE)
 			{
@@ -108,7 +108,7 @@ void BasicAnimatedMesh<V>::draw(Joint *joint_ptr, boost::shared_ptr<Camera> cons
 		}
 
 		draw_call->set_vertex_buffer(vertex_array_->get_vertex_buffer());
-		draw_call->set_index_buffer(index_buffer_);
+		draw_call->set_index_buffer(index_array_->get_index_buffer());
 		draw_call->set_material(it->material_ptr);
 		draw_call->set_minimal_vertex_index(it->minimal_vertex_index);
 		draw_call->set_vertices_count(it->vertices_count);
