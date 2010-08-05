@@ -35,12 +35,12 @@ public:
 
 private:
 	typedef boost::shared_ptr<DrawCall> DrawCallPtr;
-	typedef std::vector<DrawCallPtr> draw_calls_t;
+	typedef std::vector<DrawCallPtr> draw_calls_type;
 
 	size_t visible_calls_count_, invisible_calls_count_;
 
 	boost::shared_ptr<Renderer> const &renderer_;
-	draw_calls_t draw_calls_;
+	draw_calls_type draw_calls_;
 };
 
 }

@@ -22,6 +22,7 @@ void DrawCall::bind(lua_State *L)
 	[
 		class_<DrawCall, boost::shared_ptr<DrawCall> >("DrawCall")
 		.def(constructor<boost::shared_ptr<Renderer> const &>())
+		.def("set_priority", &DrawCall::set_priority)
 		.def("set_always_visible", &DrawCall::set_always_visible)
 		.def("set_obb", &DrawCall::set_obb)
 		.def("set_vertex_buffer", &DrawCall::set_vertex_buffer)

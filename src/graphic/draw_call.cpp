@@ -25,6 +25,7 @@ namespace graphic
 
 DrawCall::DrawCall(boost::shared_ptr<Renderer> const &renderer):
 	renderer_(renderer),
+	priority_(0),
 	always_visible_(false),
 	minimal_vertex_index_(0),
 	vertices_count_(0),
@@ -36,6 +37,11 @@ DrawCall::DrawCall(boost::shared_ptr<Renderer> const &renderer):
 
 DrawCall::~DrawCall()
 {
+}
+
+void DrawCall::set_priority(int priority)
+{
+	priority_ = priority_;
 }
 
 void DrawCall::set_always_visible(bool always_visible)
@@ -101,6 +107,14 @@ void DrawCall::commit()
 	world_view_projection_matrix_ = world_matrix_ * camera_->get_view_matrix() * camera_->get_projection_matrix();
 }
 
+bool DrawCall::operator <(DrawCall const &rhs) const
+{
+	if (priority_ < rhs.priority_) return true;
+	if (priority_ > rhs.priority_) return false;
+
+	return material_ < rhs.material_;
+}
+
 bool DrawCall::is_visible() const
 {
 	return always_visible_ || math::frustum<>(world_view_projection_matrix_).test_intersection(bounds_);
@@ -112,10 +126,9 @@ void DrawCall::execute()
 
 	HRESULT hr;
 
-    ShadersLibrary *shaders_library_ptr = renderer_->get_shaders_library();
 	IDirect3DDevice9 *device_ptr = renderer_->get_device();
 	D3D9VertexBuffer *vertex_buffer = vertex_buffer_->cast_to_d3d9_vertex_buffer();
-	D3D9IndexBuffer *index_buffer = index_buffer_->cast_to_d3d9_index_buffer();
+	D3D9IndexBuffer *index_buffer = index_buffer_ ? index_buffer_->cast_to_d3d9_index_buffer() : 0;
 	VertexTraits const *vertex_traits = vertex_buffer->get_vertex_traits();
 
 	hr = device_ptr->SetVertexShader(0);

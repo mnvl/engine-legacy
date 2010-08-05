@@ -28,6 +28,7 @@ public:
 	DrawCall(boost::shared_ptr<Renderer> const &renderer);
 	virtual ~DrawCall();
 
+	void set_priority(int priority);
 	void set_always_visible(bool always_visible);
 	void set_obb(math::obb<3> const &bounds);
 	void set_vertex_buffer(boost::shared_ptr<VertexBuffer> const &vertex_buffer);
@@ -41,6 +42,8 @@ public:
 	void set_camera(boost::shared_ptr<Camera> const &camera);
 	void commit();
 
+	bool operator <(DrawCall const &rhs) const;
+
 	boost::shared_ptr<Material> get_material() const { return material_; }
 
 	bool is_visible() const;
@@ -51,6 +54,7 @@ public:
 
 protected:
 	boost::shared_ptr<Renderer> const renderer_;
+	int priority_;
 	bool always_visible_;
 	math::obb<3> bounds_;
 	boost::shared_ptr<VertexBuffer> vertex_buffer_;
