@@ -79,9 +79,10 @@ void BasicAnimatedMesh<V>::check()
 }
 
 template<class V>
-void BasicAnimatedMesh<V>::draw(Joint *joint_ptr)
+void BasicAnimatedMesh<V>::draw(Joint *joint_ptr, boost::shared_ptr<Camera> const &camera,
+	math::matrix<4,4> const &world_matrix)
 {
-	math::matrix<4,4> world_matrix = joint_ptr->matrix * get_model()->get_renderer()->get_world_matrix();
+	math::matrix<4,4> transform = world_matrix * joint_ptr->matrix;
 
     std::vector<math::matrix<4,4> > joint_matrix_array;
     joint_matrix_array.reserve(joint_index_transform.size());
@@ -102,7 +103,7 @@ void BasicAnimatedMesh<V>::draw(Joint *joint_ptr)
 
 		{
 			math::obb<3> bounds(bounds_);
-			bounds.transform(joint_ptr->matrix);
+			bounds.transform(transform);
 			draw_call->set_obb(bounds);
 		}
 
@@ -113,7 +114,8 @@ void BasicAnimatedMesh<V>::draw(Joint *joint_ptr)
 		draw_call->set_vertices_count(it->vertices_count);
 		draw_call->set_first_index_offset(it->first_index_offset);
 		draw_call->set_triangles_count(it->triangles_count);
-		draw_call->set_world_matrix(world_matrix);
+		draw_call->set_world_matrix(transform);
+		draw_call->set_camera(camera);
 		draw_call->set_joint_matrix_array(joint_matrix_array);
 		draw_call->commit();
 

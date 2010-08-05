@@ -49,8 +49,8 @@ public:
 
 	void transform_vertices(Joint const *joint_ptr, std::vector<vertex_t> &result) const;
 
-	void draw_static(Joint *joint_ptr) const;
-	void draw_animated(Joint *joint_ptr) const;
+	void draw_static(Joint *joint_ptr, boost::shared_ptr<Camera> const &camera, math::matrix<4,4> const &world_matrix) const;
+	void draw_animated(Joint *joint_ptr, boost::shared_ptr<Camera> const &camera, math::matrix<4,4> const &world_matrix) const;
 
 	static void bind(lua_State *L);
 

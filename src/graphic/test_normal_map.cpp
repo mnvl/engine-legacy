@@ -75,23 +75,17 @@ BOOST_AUTO_TEST_CASE(basic)
 
 	boost::shared_ptr<graphic::MeshShader> shader = renderer->get_shaders_library()->get_mesh_shader();
 
-	graphic::Camera camera;
-	camera.set_orthographic_projection(2, 2 * math::scalar(renderer->get_screen_height()) / renderer->get_screen_width(), 0, 2);
-	camera.set_eye_lookat_up(math::vec<3>(0.5f, 0.5f, 1), math::vec<3>(0.5f, 0.5f, 0), math::vec<3>(0, 1, 0));
-	renderer->set_camera(camera);
-
-	{
-		math::matrix<4,4> tf;
-		tf.identity();
-		renderer->set_world_matrix(tf);
-	}
+	boost::shared_ptr<graphic::Camera> camera(new graphic::Camera());
+	camera->set_orthographic_projection(2, 2 * math::scalar(renderer->get_screen_height()) / renderer->get_screen_width(), 0, 2);
+	camera->set_eye_lookat_up(math::vec<3>(0.5f, 0.5f, 1), math::vec<3>(0.5f, 0.5f, 0), math::vec<3>(0, 1, 0));
 
 	shader->tech_ptbnt->set();
 
-	shader->world_view_projection_matrix->set(renderer->get_world_matrix()
-		* renderer->get_view_matrix()
-		* renderer->get_projection_matrix());
-	shader->world_matrix->set(renderer->get_world_matrix());
+	math::matrix<4,4> world_matrix;
+	world_matrix.identity();
+
+	shader->world_view_projection_matrix->set(camera->get_view_matrix() * camera->get_projection_matrix());
+	shader->world_matrix->set(world_matrix);
 	shader->diffuse_texture->set(material->get_diffuse_texture());
 	shader->normal_map_texture->set(material->get_normal_map_texture());
 
@@ -125,7 +119,6 @@ BOOST_AUTO_TEST_CASE(basic)
 		shader->point_lights->set(lights);
 
 		renderer->begin_frame();
-		renderer->set_camera(camera);
 
 		UINT passes_count;
 		hr = shader->get()->Begin(&passes_count, 0);
@@ -136,7 +129,7 @@ BOOST_AUTO_TEST_CASE(basic)
 			hr = shader->get()->BeginPass(pass);
 			if (FAILED(hr)) throw exception::directx_error(hr);
 
-			renderer->draw_triangles(vertex_array.get(), 2);
+			renderer->get_device()->DrawPrimitive(D3DPT_TRIANGLELIST, 0, 2);
 
 			hr = shader->get()->EndPass();
 			if (FAILED(hr)) throw exception::directx_error(hr);

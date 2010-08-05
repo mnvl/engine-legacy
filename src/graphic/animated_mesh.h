@@ -29,7 +29,7 @@ public:
 
 	virtual void check();
 
-    virtual void draw(Joint *joint_ptr);
+    virtual void draw(Joint *joint_ptr, boost::shared_ptr<Camera> const &camera, math::matrix<4,4> const &world_matrix);
 };
 
 typedef BasicAnimatedMesh<VERTEX_PNJWT> AnimatedMeshPNJWT;

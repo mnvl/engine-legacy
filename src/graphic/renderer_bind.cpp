@@ -28,17 +28,11 @@ void graphic::Renderer::bind(lua_State *L)
 		.def("postconstruct", &Renderer::postconstruct)
 		.def("begin_frame", &Renderer::begin_frame)
 		.def("finish_frame", &Renderer::finish_frame)
-		.def("set_camera", &Renderer::set_camera)
-		.def("get_camera", &Renderer::get_camera)
-        .def("set_world_matrix", &Renderer::set_world_matrix)
 		.def("create_texture", &Renderer::create_texture)
 		.def("create_vertex_array_pt", &Renderer::create_vertex_array<VERTEX_PT>)
 		.def("create_vertex_array_pnt", &Renderer::create_vertex_array<VERTEX_PNT>)
 		.def("create_vertex_array_pnjwt", &Renderer::create_vertex_array<VERTEX_PNJWT>)
 		.def("create_font", &Renderer::create_font)
-        .def("draw_triangles", (void (Renderer::*)(VertexBuffer *, size_t))&Renderer::draw_triangles)
-        .def("draw_triangles", (void (Renderer::*)(VertexBuffer *, size_t, size_t))&Renderer::draw_triangles)
-		.def("disable_all_tests", &Renderer::disable_all_tests)
     ];
 }
 

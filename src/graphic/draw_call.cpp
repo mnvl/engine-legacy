@@ -32,8 +32,6 @@ DrawCall::DrawCall(boost::shared_ptr<Renderer> const &renderer):
 	triangles_count_(0)
 {
 	world_matrix_.identity();
-	view_matrix_ = renderer->get_view_matrix();
-	projection_matrix_ = renderer->get_projection_matrix();
 }
 
 DrawCall::~DrawCall()
@@ -92,16 +90,15 @@ void DrawCall::set_world_matrix(math::matrix<4,4> const &world_matrix)
 
 void DrawCall::set_camera(boost::shared_ptr<Camera> const &camera)
 {
-	view_matrix_ = camera->get_view_matrix();
-	projection_matrix_ = camera->get_projection_matrix();
+	camera_ = camera;
 }
 
 void DrawCall::commit()
 {
 	if (!vertex_buffer_) throw std::logic_error("vertex buffer not set");
 	if (!material_) throw std::logic_error("material not set");
-
-	world_view_projection_matrix_ = world_matrix_ * view_matrix_ * projection_matrix_;
+	if (!camera_) throw std::logic_error("camera not set");
+	world_view_projection_matrix_ = world_matrix_ * camera_->get_view_matrix() * camera_->get_projection_matrix();
 }
 
 bool DrawCall::is_visible() const
@@ -126,10 +123,10 @@ void DrawCall::execute()
 	hr = device_ptr->SetPixelShader(0);
 	if (FAILED(hr)) throw exception::directx_error(hr);
 
-	hr = device_ptr->SetTransform(D3DTS_PROJECTION, (D3DMATRIX const *) &projection_matrix_);
+	hr = device_ptr->SetTransform(D3DTS_PROJECTION, (D3DMATRIX const *) &camera_->get_projection_matrix());
 	if (FAILED(hr)) throw exception::directx_error(hr);
 
-	hr = device_ptr->SetTransform(D3DTS_VIEW, (D3DMATRIX const *) &view_matrix_);
+	hr = device_ptr->SetTransform(D3DTS_VIEW, (D3DMATRIX const *) &camera_->get_view_matrix());
 	if (FAILED(hr)) throw exception::directx_error(hr);
 
     hr = device_ptr->SetTransform(D3DTS_WORLD, (D3DMATRIX const *) &world_matrix_);

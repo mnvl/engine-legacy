@@ -31,9 +31,9 @@ public:
 
 	virtual MeshPtr add_mesh();
 
-	virtual void draw();
-	void draw_static();
-	void draw_animated();
+	virtual void draw(boost::shared_ptr<Camera> const &camera, math::matrix<4,4> const &world_matrix);
+	void draw_static(boost::shared_ptr<Camera> const &camera, math::matrix<4,4> const &world_matrix);
+	void draw_animated(boost::shared_ptr<Camera> const &camera, math::matrix<4,4> const &world_matrix);
 
 	static void bind(lua_State *L);
 };

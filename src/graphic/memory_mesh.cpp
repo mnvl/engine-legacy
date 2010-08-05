@@ -119,7 +119,8 @@ void MemoryMesh::transform_vertices(Joint const *joint_ptr, std::vector<vertex_t
 // and no animation: AnimatedMesh always computes positions of vertices using weights but MemoryMesh
 // uses weights only if model have animation. You can easily check if this is the cause just replacing
 // AnimatedMesh with StaticMesh and checking that rendering result is matching the one of MemoryMesh.
-void MemoryMesh::draw_static(Joint *joint_ptr) const
+void MemoryMesh::draw_static(Joint *joint_ptr, boost::shared_ptr<Camera> const &camera,
+	math::matrix<4,4> const &world_matrix) const
 {
 	boost::shared_ptr<Renderer> const renderer_ptr = get_model()->get_renderer();
     ShadersLibrary *shaders_library_ptr = renderer_ptr->get_shaders_library();
@@ -132,17 +133,15 @@ void MemoryMesh::draw_static(Joint *joint_ptr) const
 	{
 		it->material_ptr->select();
 
-		{
-			math::matrix<4,4> tf = joint_ptr->matrix * renderer_ptr->get_world_matrix();
-			device_ptr->SetTransform(D3DTS_WORLD, (D3DMATRIX const *) tf.ij);
-		}
+		device_ptr->SetTransform(D3DTS_WORLD, (D3DMATRIX const *) joint_ptr->matrix.ij);
 
 		device_ptr->DrawIndexedPrimitiveUP(D3DPT_TRIANGLELIST, it->minimal_vertex_index, it->vertices_count,
 			it->triangles_count, &indices_[it->first_index_offset], INDEX_FORMAT, &vertices_[0], sizeof(vertex_t));
 	}
 }
 
-void MemoryMesh::draw_animated(Joint *joint_ptr) const
+void MemoryMesh::draw_animated(Joint *joint_ptr, boost::shared_ptr<Camera> const &camera,
+	math::matrix<4,4> const &world_matrix) const
 {
 	boost::shared_ptr<Renderer> const renderer_ptr = get_model()->get_renderer();
     ShadersLibrary *shaders_library_ptr = renderer_ptr->get_shaders_library();
@@ -158,10 +157,7 @@ void MemoryMesh::draw_animated(Joint *joint_ptr) const
 	{
 		it->material_ptr->select();
 
-		{
-			math::matrix<4,4> tf = joint_ptr->matrix * renderer_ptr->get_world_matrix();
-			device_ptr->SetTransform(D3DTS_WORLD, (D3DMATRIX const *) tf.ij);
-		}
+		device_ptr->SetTransform(D3DTS_WORLD, (D3DMATRIX const *) joint_ptr->matrix.ij);
 
 		device_ptr->DrawIndexedPrimitiveUP(D3DPT_TRIANGLELIST, it->minimal_vertex_index, it->vertices_count,
 			it->triangles_count, &indices_[it->first_index_offset], INDEX_FORMAT, &transformed_vertices[0], sizeof(vertex_t));

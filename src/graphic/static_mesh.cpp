@@ -57,15 +57,17 @@ void BasicStaticMesh<T>::check()
 }
 
 template<class T>
-void BasicStaticMesh<T>::draw(Joint *joint_ptr)
+void BasicStaticMesh<T>::draw(Joint *joint_ptr, boost::shared_ptr<Camera> const &camera, math::matrix<4,4> const &world_matrix)
 {
+	math::matrix<4,4> transform = joint_ptr->matrix * world_matrix;
+
 	for (triangles_list_type::const_iterator it = triangles_list.begin(); it != triangles_list.end(); it++)
 	{
 		boost::shared_ptr<MeshDrawCall> draw_call(new MeshDrawCall(get_model()->get_renderer(), shader_));
 
 		{
 			math::obb<3> bounds(bounds_);
-			bounds.transform(joint_ptr->matrix);
+			bounds.transform(transform);
 			draw_call->set_obb(bounds);
 		}
 
@@ -76,7 +78,8 @@ void BasicStaticMesh<T>::draw(Joint *joint_ptr)
 		draw_call->set_vertices_count(vertex_buffer_->get_count());
 		draw_call->set_first_index_offset(it->first_index_offset);
 		draw_call->set_triangles_count(it->triangles_count);
-		draw_call->set_world_matrix(joint_ptr->matrix * get_model()->get_renderer()->get_world_matrix());
+		draw_call->set_world_matrix(transform);
+		draw_call->set_camera(camera);
 		draw_call->commit();
 
 		get_model()->get_scheduler()->add(draw_call);

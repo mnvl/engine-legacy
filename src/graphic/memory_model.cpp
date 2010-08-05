@@ -29,13 +29,13 @@ MeshPtr MemoryModel::add_mesh()
 	return meshes.back();
 }
 
-void MemoryModel::draw()
+void MemoryModel::draw(boost::shared_ptr<Camera> const &camera, math::matrix<4,4> const &world_matrix)
 {
-	if (animations.size()) draw_animated();
-	else draw_static();
+	if (animations.size()) draw_animated(camera, world_matrix);
+	else draw_static(camera, world_matrix);
 }
 
-void MemoryModel::draw_static()
+void MemoryModel::draw_static(boost::shared_ptr<Camera> const &camera, math::matrix<4,4> const &world_matrix)
 {
 	set_animation_time(0);
 
@@ -43,18 +43,18 @@ void MemoryModel::draw_static()
 	{
 		if (MemoryMeshPtr mesh_ptr = boost::static_pointer_cast<MemoryMesh>((*it)->mesh_ptr.lock()))
 		{
-			mesh_ptr->draw_static(it->get());
+			mesh_ptr->draw_static(it->get(), camera, world_matrix);
 		}
 	}
 }
 
-void MemoryModel::draw_animated()
+void MemoryModel::draw_animated(boost::shared_ptr<Camera> const &camera, math::matrix<4,4> const &world_matrix)
 {
 	for (joints_type::iterator it = joints.begin(); it != joints.end(); it++)
 	{
 		if (MemoryMeshPtr mesh_ptr = boost::static_pointer_cast<MemoryMesh>((*it)->mesh_ptr.lock()))
 		{
-			mesh_ptr->draw_animated(it->get());
+			mesh_ptr->draw_animated(it->get(), camera, world_matrix);
 		}
 	}
 }

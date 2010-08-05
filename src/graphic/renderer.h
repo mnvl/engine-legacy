@@ -55,14 +55,6 @@ public:
 	VertexDeclarations *get_vertex_declarations() const { return vertex_declarations_.get(); }
 	ShadersLibrary *get_shaders_library() const { return shaders_library_.get(); }
 
-    void set_world_matrix(math::matrix<4,4> const &tf);
-	void set_camera(Camera const &camera); // stores copy of camera
-
-	math::matrix<4,4> const &get_world_matrix() const { return world_matrix_; }
-	Camera const &get_camera() const { return camera_; }
-	math::matrix<4,4> const &get_view_matrix() const { return camera_.get_view_matrix(); }
-	math::matrix<4,4> const &get_projection_matrix() const { return camera_.get_projection_matrix(); }
-
 	template <class V> boost::shared_ptr<VertexArray<V> >
 	create_vertex_array(size_t count, bool dynamic = false, bool writeonly = false)
 	{
@@ -83,11 +75,6 @@ public:
 	boost::shared_ptr<Font> create_font(std::string const &face_name, int height = 16);
 
 	void register_resource(boost::shared_ptr<Resource> const &resource);
-
-	void draw_triangles(VertexBuffer *buffer, size_t triangles_count);
-	void draw_triangles(VertexBuffer *buffer, size_t minimal_vertex_index, size_t triangles_count);
-
-	void disable_all_tests();
 
     static void bind(lua_State *L);
 

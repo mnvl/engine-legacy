@@ -185,13 +185,13 @@ void Model::set_animation_time(math::scalar t)
 	}
 }
 
-void Model::draw()
+void Model::draw(boost::shared_ptr<Camera> const &camera, math::matrix<4,4> const &world_matrix)
 {
 	for (joints_type::iterator it = joints.begin(); it != joints.end(); it++)
 	{
 		if (MeshPtr mesh_ptr = (*it)->mesh_ptr.lock())
 		{
-			mesh_ptr->draw(it->get());
+			mesh_ptr->draw(it->get(), camera, world_matrix);
 		}
 	}
 }

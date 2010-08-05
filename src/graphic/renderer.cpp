@@ -209,27 +209,6 @@ void Renderer::finish_frame()
 	if (FAILED(hr)) throw exception::directx_error(hr);
 }
 
-void Renderer::set_world_matrix(math::matrix<4,4> const &tf)
-{
-	world_matrix_ = tf;
-
-    HRESULT hr = device_->SetTransform(D3DTS_WORLD, (D3DMATRIX const *) &tf);
-	if (FAILED(hr)) throw exception::directx_error(hr);
-}
-
-void Renderer::set_camera(Camera const &camera)
-{
-    HRESULT hr;
-
-	hr = device_->SetTransform(D3DTS_VIEW, (D3DMATRIX const *) &camera.get_view_matrix());
-	if (FAILED(hr)) throw exception::directx_error(hr);
-
-	hr = device_->SetTransform(D3DTS_PROJECTION, (D3DMATRIX const *) &camera.get_projection_matrix());
-	if (FAILED(hr)) throw exception::directx_error(hr);
-
-	camera_ = camera;
-}
-
 boost::shared_ptr<Texture> Renderer::create_texture(std::string const &filename)
 {
 	boost::shared_ptr<Texture> texture(new Texture(shared_from_this(), filename));
@@ -251,44 +230,6 @@ void Renderer::register_resource(boost::shared_ptr<Resource> const &resource)
 
 	signal_reset_device_.connect
 		(boost::signals2::signal0<void>::slot_type(&Resource::handle_reset_device, resource.get()).track(resource));
-}
-
-void Renderer::draw_triangles(VertexBuffer *buffer, size_t triangles_count)
-{
-	draw_triangles(buffer, 0, triangles_count);
-}
-
-void Renderer::draw_triangles(VertexBuffer *buffer, size_t minimal_vertex_index, size_t triangles_count)
-{
-	if (triangles_count == 0) return;
-
-	HRESULT hr;
-
-	hr = device_->SetVertexShader(0);
-	if (FAILED(hr)) throw exception::directx_error(hr);
-
-	hr = device_->SetPixelShader(0);
-	if (FAILED(hr)) throw exception::directx_error(hr);
-
-	hr = device_->SetVertexDeclaration(buffer->get_vertex_decl());
-	if (FAILED(hr)) throw exception::directx_error(hr);
-
-	hr = device_->SetStreamSource(0, buffer->get(), 0, buffer->get_vertex_traits()->get_size());
-	if (FAILED(hr)) throw exception::directx_error(hr);
-
-	hr = device_->DrawPrimitive(D3DPT_TRIANGLELIST, minimal_vertex_index, triangles_count);
-	if (FAILED(hr)) throw exception::directx_error(hr);
-}
-
-void Renderer::disable_all_tests()
-{
-	HRESULT hr;
-
-	hr = device_->SetRenderState(D3DRS_ZENABLE, D3DZB_FALSE);
-	if (FAILED(hr)) throw exception::directx_error(hr);
-
-	hr = device_->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
-	if (FAILED(hr)) throw exception::directx_error(hr);
 }
 
 void Renderer::handle_resize()
