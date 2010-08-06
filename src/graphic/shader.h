@@ -15,7 +15,7 @@
 #include <boost/intrusive_ptr.hpp>
 #include <boost/shared_ptr.hpp>
 #include <util/boost_com_intrusive_ptr.h>
-#include "resource.h"
+#include <boost/noncopyable.hpp>
 
 namespace graphic
 {
@@ -23,7 +23,7 @@ namespace graphic
 class Shader;
 class Renderer;
 
-class Shader: public Resource {
+class Shader: public boost::noncopyable {
 public:
     Shader(boost::shared_ptr<Renderer> const &renderer_ptr);
 	virtual ~Shader();
@@ -38,14 +38,14 @@ public:
 
 	virtual void postconstruct();
 
+	void handle_lost_device();
+	void handle_reset_device();
+
 protected:
 	boost::shared_ptr<Renderer> const renderer_;
     boost::intrusive_ptr<ID3DXEffect> effect_;
 
 	static void log_compilation_errors(ID3DXBuffer *compilation_errors_ptr);
-
-	virtual void handle_lost_device();
-	virtual void handle_reset_device();
 };
 
 }

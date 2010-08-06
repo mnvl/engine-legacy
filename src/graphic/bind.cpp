@@ -8,7 +8,7 @@
 // prior written consent of Manvel Avetisian.
 //-----------------------------------------------------------------------------
 
-#include "resource.h"
+#include <boost/noncopyable.hpp>
 #include "vertex.h"
 #include "vertex_buffer.h"
 #include "vertex_array.h"
@@ -36,7 +36,6 @@ namespace graphic
 
 void bind(lua_State *L)
 {
-	Resource::bind(L);
 	bind_vertex(L);
 	VertexBuffer::bind(L);
 	bind_vertex_array(L);

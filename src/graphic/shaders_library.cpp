@@ -34,7 +34,7 @@ boost::shared_ptr<MeshShader> ShadersLibrary::get_mesh_shader()
 	if (shader) return shader;
 
 	shader.reset(new MeshShader(renderer_->shared_from_this()));
-	renderer_->register_resource(boost::static_pointer_cast<Resource>(shader));
+	renderer_->register_resource(shader);
 
 	shader->load_from_file(util::get_graphic_sources_path() + "mesh.fx");
 

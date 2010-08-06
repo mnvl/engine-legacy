@@ -9,15 +9,15 @@
 // prior written consent of Manvel Avetisian.
 //-----------------------------------------------------------------------------
 
+#include <boost/noncopyable.hpp>
 #include <luabind/lua_include.hpp>
-#include "resource.h"
 
 namespace graphic
 {
 
 class D3D9IndexBuffer;
 
-class IndexBuffer: public Resource {
+class IndexBuffer: public boost::noncopyable {
 public:
 	virtual ~IndexBuffer();
 

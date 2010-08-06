@@ -53,10 +53,6 @@ public:
 	virtual MeshPtr add_mesh() = 0;
 
     void load_from_collada(std::string const &filename);
-    void load_from_raw_i16_heightfield(std::string const &filename, math::matrix<4,4> const &tf,
-		size_t nrows, size_t ncols, math::vec<3> const &scale, std::string const &texture_name);
-    void load_from_raw_u16_heightfield(std::string const &filename, math::matrix<4,4> const &tf,
-		size_t nrows, size_t ncols, math::vec<3> const &scale, std::string const &texture_name);
 
 	// checks that model have been loaded correctly
 	virtual void check();

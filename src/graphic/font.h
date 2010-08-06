@@ -17,14 +17,14 @@
 #include <luabind/lua_include.hpp>
 #include <math/vec.h>
 #include <util/boost_com_intrusive_ptr.h>
-#include "resource.h"
+#include <boost/noncopyable.hpp>
 
 namespace graphic
 {
 
 class Renderer;
 
-class Font: public Resource
+class Font: public boost::noncopyable
 {
 	friend Renderer;
 

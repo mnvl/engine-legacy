@@ -9,15 +9,15 @@
 // prior written consent of Manvel Avetisian.
 //-----------------------------------------------------------------------------
 
+#include <boost/noncopyable.hpp>
 #include <luabind/lua_include.hpp>
-#include "resource.h"
 
 namespace graphic
 {
 
 class D3D9VertexBuffer;
 
-class VertexBuffer: public Resource {
+class VertexBuffer: public boost::noncopyable {
 public:
 	virtual ~VertexBuffer();
 

@@ -8,6 +8,7 @@
 // prior written consent of Manvel Avetisian.
 //-----------------------------------------------------------------------------
 
+#include <boost/shared_ptr.hpp>
 #include <luabind/luabind.hpp>
 #include "index_buffer.h"
 
@@ -24,7 +25,7 @@ void IndexBuffer::bind(lua_State *L)
 
 	module_(L, "graphic")
 	[
-		class_<IndexBuffer, Resource, boost::shared_ptr<IndexBuffer> >("IndexBuffer")
+		class_<IndexBuffer, boost::shared_ptr<IndexBuffer> >("IndexBuffer")
 	];
 }
 

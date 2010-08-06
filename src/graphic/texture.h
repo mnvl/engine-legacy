@@ -16,14 +16,14 @@
 #include <boost/intrusive_ptr.hpp>
 #include <util/boost_com_intrusive_ptr.h>
 #include <exception/directx_error.h>
-#include "resource.h"
+#include <boost/noncopyable.hpp>
 
 namespace graphic
 {
 
 class Renderer;
 
-class Texture: public Resource {
+class Texture: public boost::noncopyable {
 	friend Renderer;
 
 public:

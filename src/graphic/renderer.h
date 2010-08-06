@@ -21,7 +21,7 @@
 #include <util/boost_com_intrusive_ptr.h>
 #include <platform/window.h>
 #include "camera.h"
-#include "resource.h"
+#include <boost/noncopyable.hpp>
 #include "vertex_traits.h"
 #include "vertex_array.h"
 #include "index_array.h"
@@ -86,7 +86,15 @@ public:
 	boost::shared_ptr<Texture> create_texture(std::string const &filename);
 	boost::shared_ptr<Font> create_font(std::string const &face_name, int height = 16);
 
-	void register_resource(boost::shared_ptr<Resource> const &resource);
+	template<class T>
+	void register_resource(boost::shared_ptr<T> const &resource)
+	{
+		signal_lost_device_.connect
+			(boost::signals2::signal0<void>::slot_type(&T::handle_lost_device, resource.get()).track(resource));
+
+		signal_reset_device_.connect
+			(boost::signals2::signal0<void>::slot_type(&T::handle_reset_device, resource.get()).track(resource));
+	}
 
     static void bind(lua_State *L);
 
@@ -95,9 +103,6 @@ private:
 	int screen_width_, screen_height_;
 	bool fullscreen_;
 	D3DPRESENT_PARAMETERS pp_;
-
-	Camera camera_;
-    math::matrix<4,4> world_matrix_;
 
 	boost::intrusive_ptr<IDirect3D9> direct3d_;
 	boost::intrusive_ptr<IDirect3DDevice9> device_;

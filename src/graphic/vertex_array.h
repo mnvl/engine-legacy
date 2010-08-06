@@ -9,6 +9,7 @@
 // prior written consent of Manvel Avetisian.
 //-----------------------------------------------------------------------------
 
+#include <boost/shared_ptr.hpp>
 #include "vertex.h"
 #include "vertex_buffer.h"
 

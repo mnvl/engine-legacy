@@ -107,7 +107,7 @@ void Texture::bind(lua_State *L)
 
 	module(L, "graphic")
 	[
-		class_<Texture, Resource, boost::shared_ptr<Texture> >("Texture")
+		class_<Texture, boost::shared_ptr<Texture> >("Texture")
 		.def("load_from_file", &Texture::load_from_file)
 		.def("select", &Texture::select)
 	];

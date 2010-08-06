@@ -38,8 +38,8 @@ public:
 
 	IDirect3DIndexBuffer9 *get() const { return buffer_.get(); }
 
-	virtual void handle_lost_device();
-	virtual void handle_reset_device();
+	void handle_lost_device();
+	void handle_reset_device();
 
 	virtual D3D9IndexBuffer *cast_to_d3d9_index_buffer();
 

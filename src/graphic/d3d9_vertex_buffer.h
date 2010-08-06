@@ -17,7 +17,6 @@
 #include "vertex.h"
 #include "vertex_buffer.h"
 #include "vertex_traits.h"
-#include "resource.h"
 
 namespace graphic
 {
@@ -50,8 +49,8 @@ public:
 	VertexTraits const *get_vertex_traits() const { return traits_; }
 	IDirect3DVertexDeclaration9 *get_vertex_decl() const { return decl_; }
 
-	virtual void handle_lost_device();
-	virtual void handle_reset_device();
+	void handle_lost_device();
+	void handle_reset_device();
 
 protected:
 	boost::shared_ptr<Renderer> renderer_;

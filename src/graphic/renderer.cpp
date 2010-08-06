@@ -234,40 +234,31 @@ void Renderer::set_camera(Camera const &camera)
 
 boost::shared_ptr<VertexBuffer> Renderer::create_vertex_buffer(VertexTraits const *traits, size_t size, bool dynamic, bool writeonly)
 {
-	boost::shared_ptr<VertexBuffer> vertex_buffer(new D3D9VertexBuffer(shared_from_this(), size, dynamic, writeonly,
+	boost::shared_ptr<D3D9VertexBuffer> vertex_buffer(new D3D9VertexBuffer(shared_from_this(), size, dynamic, writeonly,
 		traits, vertex_declarations_->get(traits)));
-	register_resource(boost::static_pointer_cast<Resource>(vertex_buffer));
+	register_resource(vertex_buffer);
 	return vertex_buffer;
 }
 
 boost::shared_ptr<IndexBuffer> Renderer::create_index_buffer(unsigned format, size_t size, bool dynamic, bool writeonly)
 {
-	boost::shared_ptr<IndexBuffer> index_buffer(new D3D9IndexBuffer(shared_from_this(), (D3DFORMAT) format, size, dynamic, writeonly));
-	register_resource(boost::static_pointer_cast<Resource>(index_buffer));
+	boost::shared_ptr<D3D9IndexBuffer> index_buffer(new D3D9IndexBuffer(shared_from_this(), (D3DFORMAT) format, size, dynamic, writeonly));
+	register_resource(index_buffer);
 	return index_buffer;
 }
 
 boost::shared_ptr<Texture> Renderer::create_texture(std::string const &filename)
 {
 	boost::shared_ptr<Texture> texture(new Texture(shared_from_this(), filename));
-	register_resource(boost::static_pointer_cast<Resource>(texture));
+	register_resource(texture);
 	return texture;
 }
 
 boost::shared_ptr<Font> Renderer::create_font(std::string const &face_name, int height)
 {
 	boost::shared_ptr<Font> font(new Font(shared_from_this(), face_name, height));
-	register_resource(boost::static_pointer_cast<Resource>(font));
+	register_resource(font);
 	return font;
-}
-
-void Renderer::register_resource(boost::shared_ptr<Resource> const &resource)
-{
-	signal_lost_device_.connect
-		(boost::signals2::signal0<void>::slot_type(&Resource::handle_lost_device, resource.get()).track(resource));
-
-	signal_reset_device_.connect
-		(boost::signals2::signal0<void>::slot_type(&Resource::handle_reset_device, resource.get()).track(resource));
 }
 
 void Renderer::handle_resize()
