@@ -33,8 +33,6 @@ public:
 	virtual void *end() = 0;
 	virtual void const *end() const = 0;
 
-	virtual D3D9VertexBuffer *cast_to_d3d9_vertex_buffer() = 0;
-
 	static void bind(lua_State *L);
 };
 

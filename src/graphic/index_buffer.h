@@ -29,8 +29,6 @@ public:
 	virtual void *begin() = 0;
 	virtual void const *begin() const = 0;
 
-	virtual D3D9IndexBuffer *cast_to_d3d9_index_buffer() = 0;
-
 	static void bind(lua_State *L);
 };
 

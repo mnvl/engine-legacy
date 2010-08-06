@@ -42,8 +42,6 @@ public:
 	void *end() { return &clone_[0] + get_size(); }
 	void const *end() const { return &clone_[0] + get_size(); }
 
-	virtual D3D9VertexBuffer *cast_to_d3d9_vertex_buffer() { return this; }
-
 	IDirect3DVertexBuffer9 *get() const { return buffer_.get(); }
 
 	VertexTraits const *get_vertex_traits() const { return traits_; }

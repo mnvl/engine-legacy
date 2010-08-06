@@ -89,9 +89,4 @@ void D3D9IndexBuffer::handle_reset_device()
 	unlock();
 }
 
-D3D9IndexBuffer *D3D9IndexBuffer::cast_to_d3d9_index_buffer()
-{
-	return this;
-}
-
 }

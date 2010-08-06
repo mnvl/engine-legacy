@@ -41,8 +41,6 @@ public:
 	void handle_lost_device();
 	void handle_reset_device();
 
-	virtual D3D9IndexBuffer *cast_to_d3d9_index_buffer();
-
 protected:
 	boost::shared_ptr<Renderer> renderer_;
 

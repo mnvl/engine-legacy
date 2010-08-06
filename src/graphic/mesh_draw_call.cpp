@@ -48,8 +48,8 @@ void MeshDrawCall::execute()
 
     ShadersLibrary *shaders_library_ptr = renderer_->get_shaders_library();
 	IDirect3DDevice9 *device_ptr = renderer_->get_device();
-	D3D9VertexBuffer *vertex_buffer = vertex_buffer_->cast_to_d3d9_vertex_buffer();
-	D3D9IndexBuffer *index_buffer = index_buffer_->cast_to_d3d9_index_buffer();
+	D3D9VertexBuffer *vertex_buffer = static_cast<D3D9VertexBuffer *>(vertex_buffer_.get());
+	D3D9IndexBuffer *index_buffer = static_cast<D3D9IndexBuffer *>(index_buffer_.get());
 	VertexTraits const *vertex_traits = vertex_buffer->get_vertex_traits();
 
 	hr = device_ptr->SetVertexDeclaration(renderer_->get_vertex_declarations()->get(vertex_traits));
