@@ -8,6 +8,7 @@
 // prior written consent of Manvel Avetisian.
 //-----------------------------------------------------------------------------
 
+#include <exception/directx_error.h>
 #include "d3d9_vertex_buffer.h"
 #include "d3d9_index_buffer.h"
 #include "vertex_array.h"

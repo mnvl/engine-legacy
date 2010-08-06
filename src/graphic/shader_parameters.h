@@ -12,7 +12,8 @@
 #include <vector>
 #include <math/vec.h>
 #include <math/matrix.h>
-#include "texture.h"
+#include <exception/directx_error.h>
+#include "d3d9_texture.h"
 #include "shader.h"
 
 namespace graphic
@@ -88,7 +89,7 @@ void Parameter<std::vector<math::matrix<4,4> > >::set(std::vector<math::matrix<4
 
 void Parameter<boost::shared_ptr<Texture> >::set(boost::shared_ptr<Texture> const &texture)
 {
-	HRESULT hr = shader_->get()->SetTexture(handle_, texture ? texture->get() : 0);
+	HRESULT hr = shader_->get()->SetTexture(handle_, texture ? static_cast<D3D9Texture *>(texture.get())->get() : 0);
 	if (FAILED(hr)) throw exception::directx_error(hr);
 }
 

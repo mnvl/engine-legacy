@@ -9,6 +9,7 @@
 //-----------------------------------------------------------------------------
 
 #include <math/frustum.h>
+#include <exception/directx_error.h>
 #include "vertex_traits.h"
 #include "d3d9_vertex_buffer.h"
 #include "d3d9_index_buffer.h"
@@ -158,8 +159,7 @@ void DrawCall::execute()
 		if (FAILED(hr)) throw exception::directx_error(hr);
 	}
 
-	hr = device_ptr->SetTexture(0, material_ ? material_->get_diffuse_texture()->get() : 0);
-	if (FAILED(hr)) throw exception::directx_error(hr);
+	if (material_) material_->select();
 
 	if (index_buffer_)
 	{

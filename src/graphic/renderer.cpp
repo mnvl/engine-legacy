@@ -15,6 +15,7 @@
 #include <util/logger.h>
 #include "d3d9_vertex_buffer.h"
 #include "d3d9_index_buffer.h"
+#include "d3d9_texture.h"
 #include "texture.h"
 #include "font.h"
 #include "shader.h"
@@ -249,7 +250,7 @@ boost::shared_ptr<IndexBuffer> Renderer::create_index_buffer(unsigned format, si
 
 boost::shared_ptr<Texture> Renderer::create_texture(std::string const &filename)
 {
-	boost::shared_ptr<Texture> texture(new Texture(shared_from_this(), filename));
+	boost::shared_ptr<D3D9Texture> texture(new D3D9Texture(shared_from_this(), filename));
 	register_resource(texture);
 	return texture;
 }

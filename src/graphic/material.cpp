@@ -11,6 +11,7 @@
 #include <luabind/luabind.hpp>
 #include <exception/directx_error.h>
 #include <util/logger.h>
+#include "d3d9_texture.h"
 #include "material.h"
 
 namespace graphic
@@ -34,7 +35,7 @@ void Material::set_diffuse_texture(std::string const &filename)
 	else
 	{
 		LOG_WARN("material without renderer: set_diffuse_texture() will create texture without renderer");
-		diffuse_texture_.reset(new Texture(renderer_, filename));
+		diffuse_texture_.reset(new Texture(filename));
 	}
 }
 
@@ -47,7 +48,7 @@ void Material::set_normal_map_texture(std::string const &filename)
 	else
 	{
 		LOG_WARN("material without renderer: set_normal_map_texture() will create texture without renderer");
-		normal_map_texture_.reset(new Texture(renderer_, filename));
+		normal_map_texture_.reset(new Texture(filename));
 	}
 }
 
@@ -55,10 +56,10 @@ void Material::select()
 {
 	HRESULT hr;
 
-	hr = renderer_->get_device()->SetTexture(0, diffuse_texture_ ? diffuse_texture_->get() : 0);
+	hr = renderer_->get_device()->SetTexture(0, diffuse_texture_ ? static_cast<D3D9Texture *>(diffuse_texture_.get())->get() : 0);
 	if (FAILED(hr)) throw exception::directx_error(hr);
 
-	hr = renderer_->get_device()->SetTexture(1, normal_map_texture_ ? normal_map_texture_->get() : 0);
+	hr = renderer_->get_device()->SetTexture(1, normal_map_texture_ ? static_cast<D3D9Texture *>(normal_map_texture_.get())->get() : 0);
 	if (FAILED(hr)) throw exception::directx_error(hr);
 }
 

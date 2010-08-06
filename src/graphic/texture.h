@@ -10,49 +10,25 @@
 //-----------------------------------------------------------------------------
 
 #include <luabind/lua_include.hpp>
-#include <d3d9.h>
-#include <d3dx9.h>
-#include <boost/shared_ptr.hpp>
-#include <boost/intrusive_ptr.hpp>
-#include <util/boost_com_intrusive_ptr.h>
-#include <exception/directx_error.h>
 #include <boost/noncopyable.hpp>
 
 namespace graphic
 {
 
-class Renderer;
-
 class Texture: public boost::noncopyable {
-	friend Renderer;
-
 public:
-	Texture(boost::shared_ptr<Renderer> const &renderer_ptr, std::string const &filename);
-	~Texture();
+	Texture(std::string const &filename);
+	virtual ~Texture();
 
 	std::string const &get_filename() const
 	{
 		return filename_;
 	}
 
-	IDirect3DTexture9 *get() const
-	{
-		return texture_.get();
-	}
-
-	void select();
-
-	virtual void handle_lost_device();
-	virtual void handle_reset_device();
-
 	static void bind(lua_State *L);
 
-private:
-	boost::shared_ptr<Renderer> renderer_;
+protected:
 	std::string filename_;
-	boost::intrusive_ptr<IDirect3DTexture9> texture_;
-
-	void load_from_file(std::string const &filename);
 };
 
 }
