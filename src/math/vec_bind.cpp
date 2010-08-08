@@ -48,6 +48,9 @@ void bind_vec(lua_State *L)
 		.def("length_sq", &vec<3>::length_sq)
 		.def("normalize", &vec<3>::normalize)
 		.def("set", &vec<3>::set)
+		.def("perpendicular_xy", &vec<3>::perpendicular_xy)
+		.def("perpendicular_yz", &vec<3>::perpendicular_yz)
+		.def("perpendicular_xz", &vec<3>::perpendicular_xz)
 		.def(tostring(const_self)),
 
 		class_<vec<3,bool> >("vec3b")

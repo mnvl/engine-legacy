@@ -450,7 +450,6 @@ public:
 		return buf;
 	}
 
-	// perpendicular in plane xOy and null if vector itself is in xOy
 	vec perpendicular_xy() const;
 	vec perpendicular_yz() const;
 	vec perpendicular_xz() const;
