@@ -1470,6 +1470,8 @@ namespace collada_elements
 				}
 			}
 
+			material_ptr->set_cull_mode(Material::CULL_CCW);
+
 			return material_ptr;
 		}
 	};

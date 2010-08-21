@@ -11,14 +11,18 @@
 #include <luabind/luabind.hpp>
 #include <exception/directx_error.h>
 #include <util/logger.h>
-#include "d3d9_texture.h"
 #include "material.h"
 
 namespace graphic
 {
 
 Material::Material(boost::shared_ptr<Renderer> const &renderer_ptr):
-	renderer_(renderer_ptr)
+	renderer_(renderer_ptr),
+	cull_mode_(CULL_NONE),
+	zwrite_enabled_(true),
+	alpha_blend_enabled_(false),
+	src_blend_mode_(BLEND_ONE),
+	dest_blend_mode_(BLEND_ZERO)
 {
 }
 
@@ -54,12 +58,24 @@ void Material::set_normal_map_texture(std::string const &filename)
 
 void Material::select()
 {
-	HRESULT hr;
+	static DWORD cull_mode_table[] = { D3DCULL_CW, D3DCULL_CCW, D3DCULL_NONE };
+	static DWORD blend_mode_table[] = { D3DBLEND_ZERO, D3DBLEND_ONE };
 
-	hr = renderer_->get_device()->SetTexture(0, diffuse_texture_ ? static_cast<D3D9Texture *>(diffuse_texture_.get())->get() : 0);
+	HRESULT hr = 0;
+
+	hr = renderer_->get_device()->SetRenderState(D3DRS_CULLMODE, cull_mode_table[cull_mode_]);
 	if (FAILED(hr)) throw exception::directx_error(hr);
 
-	hr = renderer_->get_device()->SetTexture(1, normal_map_texture_ ? static_cast<D3D9Texture *>(normal_map_texture_.get())->get() : 0);
+	hr = renderer_->get_device()->SetRenderState(D3DRS_ZWRITEENABLE, zwrite_enabled_);
+	if (FAILED(hr)) throw exception::directx_error(hr);
+
+	hr = renderer_->get_device()->SetRenderState(D3DRS_SRCBLEND, blend_mode_table[src_blend_mode_]);
+	if (FAILED(hr)) throw exception::directx_error(hr);
+
+	hr = renderer_->get_device()->SetRenderState(D3DRS_DESTBLEND, blend_mode_table[dest_blend_mode_]);
+	if (FAILED(hr)) throw exception::directx_error(hr);
+
+	hr = renderer_->get_device()->SetRenderState(D3DRS_ALPHABLENDENABLE, alpha_blend_enabled_);
 	if (FAILED(hr)) throw exception::directx_error(hr);
 }
 

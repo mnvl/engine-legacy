@@ -60,6 +60,7 @@ BOOST_AUTO_TEST_CASE(directional_ps)
 
 		renderer->begin_frame();
 		ps->draw();
+		scheduler->flush();
 		renderer->finish_frame();
 
 		LOG_DEBUG("frame " << i << " (t = " << total_time << ", dt = " << dt <<")");
@@ -112,6 +113,7 @@ BOOST_AUTO_TEST_CASE(cylindrical_ps)
 
 		renderer->begin_frame();
 		ps->draw();
+		scheduler->flush();
 		renderer->finish_frame();
 
 		LOG_DEBUG("frame " << i << " (t = " << total_time << ", dt = " << dt <<")");

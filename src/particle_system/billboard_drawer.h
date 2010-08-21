@@ -26,17 +26,29 @@ public:
 		nparticles_(0)
 	{
 		vertex_array_ = renderer->create_vertex_array<graphic::VERTEX_PNT>(max_nparticles_ * VERTICES_PER_PARTICLE, true, true);
+
+		draw_call_.reset(new graphic::DrawCall(renderer_));
+		draw_call_->set_camera(camera_);
+		draw_call_->set_vertex_buffer(vertex_array_->get_vertex_buffer());
+		draw_call_->set_priority(1000);
 	}
 
 	void set_material(boost::shared_ptr<graphic::Material> const &material)
 	{
-		material_ = material;
+		material->set_cull_mode(graphic::Material::CULL_NONE);
+		material->set_zwrite_enabled(false);
+		material->set_alpha_blend_enabled(true);
+		material->set_dest_blend_mode(graphic::Material::BLEND_ONE);
+		draw_call_->set_material(material);
 	}
 
 	template<class Keeper>
 	void preprocess(Keeper const &keeper)
 	{
 		graphic::Camera const &camera = renderer_->get_camera();
+
+		math::aabb<3> bounds;
+		bounds.null();
 
 		math::vec<3> normal = -camera.get_view_dir();
 
@@ -83,6 +95,11 @@ public:
 		}
 
 		vertex_array_->unlock();
+
+		draw_call_->set_vertices_count(nparticles_ * VERTICES_PER_PARTICLE);
+		draw_call_->set_triangles_count(nparticles_ * TRIANGLES_PER_PARTICLE);
+		draw_call_->set_obb(math::obb<3>(bounds));
+		draw_call_->commit();
 	}
 
 	void draw()
@@ -107,6 +124,7 @@ public:
 	static void bind(lua_State *L);
 
 private:
+	static size_t const TRIANGLES_PER_PARTICLE = 2;
 	static size_t const VERTICES_PER_PARTICLE = 6;
 
 	boost::shared_ptr<graphic::Renderer> const renderer_;

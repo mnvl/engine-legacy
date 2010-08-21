@@ -62,6 +62,8 @@ void MeshDrawCall::execute()
     hr = device_ptr->SetIndices(index_buffer->get());
 	if (FAILED(hr)) throw exception::directx_error(hr);
 
+	if (material_) material_->select();
+
 	shader_->get_technique_for_vertex(vertex_traits)->set();
 
 	shader_->diffuse_texture->set(material_ ? material_->get_diffuse_texture() : boost::shared_ptr<Texture>());

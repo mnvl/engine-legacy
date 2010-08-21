@@ -13,6 +13,7 @@
 #include "vertex_traits.h"
 #include "d3d9_vertex_buffer.h"
 #include "d3d9_index_buffer.h"
+#include "d3d9_texture.h"
 #include "camera.h"
 #include "shaders_library.h"
 #include "vertex_declarations.h"
@@ -151,6 +152,9 @@ void DrawCall::execute()
 	if (FAILED(hr)) throw exception::directx_error(hr);
 
     hr = device_ptr->SetStreamSource(0, vertex_buffer->get(), 0, vertex_traits->get_size());
+	if (FAILED(hr)) throw exception::directx_error(hr);
+
+	hr = device_ptr->SetTexture(0, static_cast<D3D9Texture *>(material_->get_diffuse_texture().get())->get());
 	if (FAILED(hr)) throw exception::directx_error(hr);
 
 	if (index_buffer_)
