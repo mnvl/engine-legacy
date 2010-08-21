@@ -32,9 +32,13 @@ public:
 	typedef Keeper<particle_t> keeper_t;
 	typedef Drawer drawer_t;
 
-	ParticleSystem(boost::shared_ptr<graphic::Renderer> const &renderer, size_t const max_nparticles = 1000):
+	ParticleSystem(graphic::RendererPtr const &renderer,
+		graphic::SchedulerPtr const &scheduler,
+		graphic::CameraPtr const &camera,
+		size_t const max_nparticles = 1000)
+	:
 		max_nparticles_(max_nparticles),
-		drawer_(renderer, max_nparticles)
+		drawer_(renderer, scheduler, camera, max_nparticles)
 	{
 	}
 

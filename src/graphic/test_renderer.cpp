@@ -19,7 +19,7 @@ BOOST_AUTO_TEST_SUITE(renderer)
 BOOST_AUTO_TEST_CASE(basic)
 {
 	boost::shared_ptr<platform::Window> window(new platform::Window("test renderer basic"));
-	boost::shared_ptr<graphic::Renderer> renderer(new graphic::Renderer(window));
+	graphic::RendererPtr renderer(new graphic::Renderer(window));
 
 	renderer->postconstruct();
 	renderer->reset_state();

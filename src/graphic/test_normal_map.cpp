@@ -23,7 +23,7 @@ BOOST_AUTO_TEST_CASE(basic)
 	std::string const &src = util::get_graphic_sources_path();
 
 	boost::shared_ptr<platform::Window> window(new platform::Window("test normal_map basic"));
-	boost::shared_ptr<graphic::Renderer> renderer(new graphic::Renderer(window));
+	graphic::RendererPtr renderer(new graphic::Renderer(window));
 
 	renderer->postconstruct();
 	renderer->reset_state();

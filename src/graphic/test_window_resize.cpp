@@ -19,7 +19,7 @@ BOOST_AUTO_TEST_SUITE(window_resize)
 BOOST_AUTO_TEST_CASE(basic)
 {
 	boost::shared_ptr<platform::Window> window(new platform::Window("test_window_resize"));
-	boost::shared_ptr<graphic::Renderer> renderer(new graphic::Renderer(window));
+	graphic::RendererPtr renderer(new graphic::Renderer(window));
 
 	for (int i = 0; i < 10 && window->run_message_loop(); i++)
 	{
@@ -34,7 +34,7 @@ BOOST_AUTO_TEST_CASE(with_postconstruct)
 {
 	boost::shared_ptr<platform::Window> window(new platform::Window("test_window_resize"));
 
-	boost::shared_ptr<graphic::Renderer> renderer(new graphic::Renderer(window));
+	graphic::RendererPtr renderer(new graphic::Renderer(window));
 	renderer->postconstruct();
 
 	for (int i = 0; i < 10 && window->run_message_loop(); i++)
@@ -50,7 +50,7 @@ BOOST_AUTO_TEST_CASE(with_postconstruct_and_vertex_array)
 {
 	boost::shared_ptr<platform::Window> window(new platform::Window("test_window_resize"));
 
-	boost::shared_ptr<graphic::Renderer> renderer(new graphic::Renderer(window));
+	graphic::RendererPtr renderer(new graphic::Renderer(window));
 	renderer->postconstruct();
 
 	boost::shared_ptr<graphic::VertexArrayPT> vertex_array1;
@@ -82,7 +82,7 @@ BOOST_AUTO_TEST_CASE(with_postconstruct_and_index_array)
 {
 	boost::shared_ptr<platform::Window> window(new platform::Window("test_window_resize"));
 
-	boost::shared_ptr<graphic::Renderer> renderer(new graphic::Renderer(window));
+	graphic::RendererPtr renderer(new graphic::Renderer(window));
 	renderer->postconstruct();
 
 	boost::shared_ptr<graphic::IndexArray16> index_array1;
@@ -114,7 +114,7 @@ BOOST_AUTO_TEST_CASE(with_postconstruct_and_texture)
 {
 	boost::shared_ptr<platform::Window> window(new platform::Window("test_window_resize"));
 
-	boost::shared_ptr<graphic::Renderer> renderer(new graphic::Renderer(window));
+	graphic::RendererPtr renderer(new graphic::Renderer(window));
 	renderer->postconstruct();
 
 	boost::shared_ptr<graphic::Texture> texture;
@@ -140,7 +140,7 @@ BOOST_AUTO_TEST_CASE(with_postconstruct_and_font)
 {
 	boost::shared_ptr<platform::Window> window(new platform::Window("test_window_resize"));
 
-	boost::shared_ptr<graphic::Renderer> renderer(new graphic::Renderer(window));
+	graphic::RendererPtr renderer(new graphic::Renderer(window));
 	renderer->postconstruct();
 
 	boost::shared_ptr<graphic::Font> font;

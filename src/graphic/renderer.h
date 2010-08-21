@@ -11,17 +11,17 @@
 
 #include <d3d9.h>
 #include <d3dx9.h>
+#include <boost/noncopyable.hpp>
 #include <boost/scoped_ptr.hpp>
 #include <boost/shared_ptr.hpp>
-#include <boost/noncopyable.hpp>
 #include <boost/enable_shared_from_this.hpp>
 #include <boost/intrusive_ptr.hpp>
 #include <luabind/lua_include.hpp>
 #include <math/matrix.h>
 #include <util/boost_com_intrusive_ptr.h>
 #include <platform/window.h>
+#include "forward.h"
 #include "camera.h"
-#include <boost/noncopyable.hpp>
 #include "vertex_traits.h"
 #include "vertex_array.h"
 #include "index_array.h"

@@ -5,5 +5,4 @@ ADD_LIBRARY(graphic STATIC ${GRAPHIC_SOURCES})
 
 ADD_EXECUTABLE(test_graphic ${GRAPHIC_TEST_SOURCES})
 TARGET_LINK_LIBRARIES(test_graphic ${ENGINE_LIBRARIES} graphic platform util math d3d9 d3dx9 dxerr)
-
 ADD_CONFIGURATION_DEPENDENT_TEST(graphic test_graphic)

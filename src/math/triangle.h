@@ -26,7 +26,6 @@ template<class T>
 class triangle<3,T> {
 public:
     typedef T scalar_t;
-    typedef std::numeric_limits<scalar_t> limits_t;
     static const size_t ARITY = 3;
     typedef vec<ARITY,scalar_t> vec_t;
     typedef ray<ARITY,scalar_t> ray_t;
@@ -320,7 +319,7 @@ public:
         vec_t vel = vel1 - vel0, n0 = get_normal(), n1 = tri1.get_normal(), cp0;
         scalar_t a_n0 = -vel & n0, a_n1 = vel & n1, t0;
 	
-        t = limits_t::max();
+        t = MAX_SCALAR;
 	
         if(abs(a_n1) > 0) {
             t0 = ((A - tri1.A) & n1) / a_n1;
@@ -374,7 +373,7 @@ public:
             }
         }
 
-        return t != limits_t::max();
+        return t != MAX_SCALAR;
     }
 };
 

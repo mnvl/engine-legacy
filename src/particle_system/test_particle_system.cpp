@@ -13,6 +13,7 @@
 #include <platform/window.h>
 #include <util/get_sources_path.h>
 #include <graphic/material.h>
+#include <graphic/scheduler.h>
 #include <graphic/renderer.h>
 #include "directional_particle_system.h"
 #include "cylindrical_particle_system.h"
@@ -22,19 +23,22 @@ BOOST_AUTO_TEST_SUITE(particle_system)
 BOOST_AUTO_TEST_CASE(directional_ps)
 {
 	boost::shared_ptr<platform::Window> window(new platform::Window("particle_system"));
-	boost::shared_ptr<graphic::Renderer> renderer(new graphic::Renderer(window));
+	graphic::RendererPtr renderer(new graphic::Renderer(window));
 
-	graphic::Camera camera;
-	camera.set_orthographic_projection(20.0f, 20.0f * renderer->get_screen_height() / renderer->get_screen_width(), 1.0f, 1000.0f);
-	camera.set_eye_lookat_up(math::vec<3>(10, 10, 10), math::vec<3>(0, 0, 0), math::vec<3>(0, 1, 0));
+	graphic::CameraPtr camera(new graphic::Camera());
+	camera->set_orthographic_projection(20.0f, 20.0f * renderer->get_screen_height() / renderer->get_screen_width(), 1.0f, 1000.0f);
+	camera->set_eye_lookat_up(math::vec<3>(10, 10, 10), math::vec<3>(0, 0, 0), math::vec<3>(0, 1, 0));
+
+	graphic::SchedulerPtr scheduler(new graphic::Scheduler(renderer));
 
 	renderer->postconstruct();
 
 	platform::Timer timer;
-	boost::shared_ptr<particle_system::DirectionalParticleSystem> ps(new particle_system::DirectionalParticleSystem(renderer));
+	boost::shared_ptr<particle_system::DirectionalParticleSystem> ps(
+		new particle_system::DirectionalParticleSystem(renderer, scheduler, camera));
 
 	boost::shared_ptr<graphic::Material> material(new graphic::Material(renderer));
-	material->set_diffuse_texture(util::get_particle_system_sources_path() + "test_particle.png");
+	material->set_diffuse_texture("test_particle.png");
 
 	ps->get_emitter().size_interval = math::interval<>(2, 2);
 	ps->get_emitter().velocity_interval = math::interval<>(10, 20);
@@ -48,8 +52,6 @@ BOOST_AUTO_TEST_CASE(directional_ps)
 
 	for (int i = 0; i < 100 && window->run_message_loop(); i++)
 	{
-		renderer->set_camera(camera);
-
 		double t = timer.get_current_time();
 		math::scalar dt = math::scalar(t - prev_t);
 
@@ -74,19 +76,22 @@ BOOST_AUTO_TEST_CASE(directional_ps)
 BOOST_AUTO_TEST_CASE(cylindrical_ps)
 {
 	boost::shared_ptr<platform::Window> window(new platform::Window("particle_system"));
-	boost::shared_ptr<graphic::Renderer> renderer(new graphic::Renderer(window));
+	graphic::RendererPtr renderer(new graphic::Renderer(window));
 
-	graphic::Camera camera;
-	camera.set_orthographic_projection(20.0f, 20.0f * renderer->get_screen_height() / renderer->get_screen_width(), 1.0f, 1000.0f);
-	camera.set_eye_lookat_up(math::vec<3>(10, 10, 10), math::vec<3>(0, 0, 0), math::vec<3>(0, 1, 0));
+	graphic::CameraPtr camera(new graphic::Camera());
+	camera->set_orthographic_projection(20.0f, 20.0f * renderer->get_screen_height() / renderer->get_screen_width(), 1.0f, 1000.0f);
+	camera->set_eye_lookat_up(math::vec<3>(10, 10, 10), math::vec<3>(0, 0, 0), math::vec<3>(0, 1, 0));
+
+	graphic::SchedulerPtr scheduler(new graphic::Scheduler(renderer));
 
 	renderer->postconstruct();
 
 	platform::Timer timer;
-	boost::shared_ptr<particle_system::CylindricalParticleSystem> ps(new particle_system::CylindricalParticleSystem(renderer));
+	boost::shared_ptr<particle_system::CylindricalParticleSystem> ps(
+		new particle_system::CylindricalParticleSystem(renderer, scheduler, camera));
 
 	boost::shared_ptr<graphic::Material> material(new graphic::Material(renderer));
-	material->set_diffuse_texture(util::get_particle_system_sources_path() + "test_particle.png");
+	material->set_diffuse_texture("test_particle.png");
 
 	ps->get_emitter().size_interval = math::interval<>(2, 2);
 	ps->get_emitter().velocity_interval = math::interval<>(10, 10);
@@ -101,8 +106,6 @@ BOOST_AUTO_TEST_CASE(cylindrical_ps)
 
 	for (int i = 0; i < 100 && window->run_message_loop(); i++)
 	{
-		renderer->set_camera(camera);
-
 		double t = timer.get_current_time();
 		math::scalar dt = math::scalar(t - prev_t);
 
