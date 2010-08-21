@@ -40,7 +40,7 @@ BOOST_AUTO_TEST_CASE(plane)
 	std::auto_ptr<graphic::MemoryModel> model_ptr(new graphic::MemoryModel(boost::shared_ptr<graphic::Renderer>(), boost::shared_ptr<graphic::Scheduler>()));
 
     graphic::ColladaLoader loader(model_ptr.get());
-	loader.load(util::get_graphic_sources_path() + "test_collada_loader_plane.xml");
+	loader.load("test_collada_loader_plane.xml");
 	loader.build_model();
 
     BOOST_ASSERT (model_ptr->meshes.size() == 1);
@@ -73,7 +73,7 @@ BOOST_AUTO_TEST_CASE(joint)
     std::auto_ptr<graphic::MemoryModel> model_ptr(new graphic::MemoryModel(boost::shared_ptr<graphic::Renderer>(), boost::shared_ptr<graphic::Scheduler>()));
 
     graphic::ColladaLoader loader(model_ptr.get());
-	loader.load(util::get_graphic_sources_path() + "test_collada_loader_joint.xml");
+	loader.load("test_collada_loader_joint.xml");
 	loader.build_model();
 
     BOOST_ASSERT (model_ptr->meshes.size() == 1);
@@ -108,7 +108,7 @@ BOOST_AUTO_TEST_CASE(animation)
 
     std::auto_ptr<graphic::MemoryModel> model_ptr(new graphic::MemoryModel(boost::shared_ptr<graphic::Renderer>(), boost::shared_ptr<graphic::Scheduler>()));
     graphic::ColladaLoader loader(model_ptr.get());
-	loader.load(util::get_graphic_sources_path() + "test_collada_loader_animation.xml");
+	loader.load("test_collada_loader_animation.xml");
 	loader.build_model();
 
     BOOST_ASSERT (model_ptr->meshes.size() == 1);
@@ -155,7 +155,7 @@ BOOST_AUTO_TEST_CASE(materials)
     std::auto_ptr<graphic::MemoryModel> model_ptr(new graphic::MemoryModel(boost::shared_ptr<graphic::Renderer>(), boost::shared_ptr<graphic::Scheduler>()));
 
     graphic::ColladaLoader loader(model_ptr.get());
-	loader.load(util::get_graphic_sources_path() + "test_collada_loader_materials.xml");
+	loader.load("test_collada_loader_materials.xml");
 	loader.build_model();
 
     BOOST_ASSERT (model_ptr->meshes.size() == 2);
@@ -247,7 +247,7 @@ BOOST_AUTO_TEST_CASE(tbn)
     std::auto_ptr<graphic::MemoryModel> model_ptr(new graphic::MemoryModel(boost::shared_ptr<graphic::Renderer>(), boost::shared_ptr<graphic::Scheduler>()));
 
     graphic::ColladaLoader loader(model_ptr.get());
-	loader.load(util::get_graphic_sources_path() + "test_collada_loader_tbn.xml");
+	loader.load("test_collada_loader_tbn.xml");
 	loader.build_model();
 
 	BOOST_ASSERT (model_ptr->meshes.size() == 1);
