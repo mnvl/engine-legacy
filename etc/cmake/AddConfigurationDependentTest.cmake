@@ -1,4 +1,10 @@
-
+# usage: ADD_CONFIGURATION_DEPENDENT_TEST(TEST_NAME TARGET_NAME)
+#
+# Gets location of target ${TARGET_NAME} for each configuration (Debug, Release,
+# RelWithDebInfo etc.) and then adds appropriate tests working for that configuration.
+#
+# For Google: $(OutDir)
+#
 FUNCTION(ADD_CONFIGURATION_DEPENDENT_TEST TEST_NAME TARGET_NAME)
 	FOREACH (CONFIGURATION ${CMAKE_CONFIGURATION_TYPES})
 		GET_TARGET_PROPERTY(TARGET_LOCATION ${TARGET_NAME} ${CONFIGURATION}_LOCATION)
