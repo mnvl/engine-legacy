@@ -35,12 +35,12 @@ public:
 		BLEND_ONE
 	};
 
-	Material(boost::shared_ptr<Renderer> const &renderer_ptr = boost::shared_ptr<Renderer>());
+	Material(RendererPtr const &renderer_ptr = RendererPtr());
 	~Material();
 
 	std::string const &get_name() const { return name_; }
-	boost::shared_ptr<Texture> get_diffuse_texture() const { return diffuse_texture_; }
-	boost::shared_ptr<Texture> get_normal_map_texture() const {	return normal_map_texture_; }
+	TexturePtr get_diffuse_texture() const { return diffuse_texture_; }
+	TexturePtr get_normal_map_texture() const {	return normal_map_texture_; }
 
 	void set_name(std::string const &name) { name_ = name; }
 	void set_cull_mode(cull_mode_type cull_mode) { cull_mode_ = cull_mode; }
@@ -59,15 +59,15 @@ public:
 private:
 	std::string name_;
 
-	boost::shared_ptr<Renderer> renderer_;
+	RendererPtr renderer_;
 
 	cull_mode_type cull_mode_;
 	bool zwrite_enabled_;
 	bool alpha_blend_enabled_;
 	blend_mode_type src_blend_mode_, dest_blend_mode_;
 
-	boost::shared_ptr<Texture> diffuse_texture_;
-	boost::shared_ptr<Texture> normal_map_texture_;
+	TexturePtr diffuse_texture_;
+	TexturePtr normal_map_texture_;
 };
 
 }

@@ -12,8 +12,10 @@
 #include <luabind/lua_include.hpp>
 #include <math/vec.h>
 #include <math/matrix.h>
+#include "forward.h"
 
-namespace graphic {
+namespace graphic
+{
 
 class Camera {
 public:

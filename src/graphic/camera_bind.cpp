@@ -18,7 +18,7 @@ void graphic::Camera::bind(lua_State *L)
 
 	module(L, "graphic")
 	[
-		class_<Camera, boost::shared_ptr<Camera> >("Camera")
+		class_<Camera, CameraPtr >("Camera")
 		.def(constructor<>())
 		.def("set_perspective_projection", &Camera::set_perspective_projection)
 		.def("set_orthographic_projection", &Camera::set_orthographic_projection)

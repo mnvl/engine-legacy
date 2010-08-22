@@ -10,6 +10,7 @@
 //-----------------------------------------------------------------------------
 
 #include <boost/shared_ptr.hpp>
+#include "forward.h"
 #include "index.h"
 #include "index_buffer.h"
 
@@ -21,7 +22,7 @@ class IndexArray {
 public:
 	typedef T index_type;
 
-	IndexArray(boost::shared_ptr<IndexBuffer> const &index_buffer):
+	IndexArray(IndexBufferPtr const &index_buffer):
 		index_buffer_(index_buffer)
 	{
 	}
@@ -42,10 +43,10 @@ public:
 	index_type *at(size_t index) { return &begin()[index]; }
 	index_type const *at(size_t index) const { return &begin()[index]; }
 
-	boost::shared_ptr<IndexBuffer> const &get_index_buffer() { return index_buffer_; }
+	IndexBufferPtr const &get_index_buffer() { return index_buffer_; }
 
 protected:
-	boost::shared_ptr<IndexBuffer> const index_buffer_;
+	IndexBufferPtr const index_buffer_;
 };
 
 typedef IndexArray<INDEX_U16> IndexArray16;

@@ -23,7 +23,7 @@
 namespace graphic
 {
 
-MeshDrawCall::MeshDrawCall(boost::shared_ptr<Renderer> const &renderer, boost::shared_ptr<MeshShader> shader):
+MeshDrawCall::MeshDrawCall(RendererPtr const &renderer, boost::shared_ptr<MeshShader> shader):
 	DrawCall(renderer),
 	shader_(shader)
 {
@@ -66,8 +66,8 @@ void MeshDrawCall::execute()
 
 	shader_->get_technique_for_vertex(vertex_traits)->set();
 
-	shader_->diffuse_texture->set(material_ ? material_->get_diffuse_texture() : boost::shared_ptr<Texture>());
-	shader_->normal_map_texture->set(material_ ? material_->get_normal_map_texture() : boost::shared_ptr<Texture>());
+	shader_->diffuse_texture->set(material_ ? material_->get_diffuse_texture() : TexturePtr());
+	shader_->normal_map_texture->set(material_ ? material_->get_normal_map_texture() : TexturePtr());
 
 	shader_->world_matrix->set(world_matrix_);
 	shader_->world_view_projection_matrix->set(world_view_projection_matrix_);

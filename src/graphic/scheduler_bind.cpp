@@ -20,8 +20,8 @@ void Scheduler::bind(lua_State *L)
 
 	module_(L, "graphic")
 	[
-		class_<Scheduler, boost::shared_ptr<Scheduler> >("Scheduler")
-		.def(constructor<boost::shared_ptr<Renderer> const &>())
+		class_<Scheduler, SchedulerPtr >("Scheduler")
+		.def(constructor<RendererPtr const &>())
 		.def("add", &Scheduler::add)
 		.def("flush", &Scheduler::flush)
 		.def("get_visible_calls_count", &Scheduler::get_visible_calls_count)

@@ -56,16 +56,8 @@ public:
 	VertexDeclarations *get_vertex_declarations() const { return vertex_declarations_.get(); }
 	ShadersLibrary *get_shaders_library() const { return shaders_library_.get(); }
 
-    void set_world_matrix(math::matrix<4,4> const &tf);
-	void set_camera(Camera const &camera); // stores copy of camera
-
-	math::matrix<4,4> const &get_world_matrix() const { return world_matrix_; }
-	Camera const &get_camera() const { return camera_; }
-	math::matrix<4,4> const &get_view_matrix() const { return camera_.get_view_matrix(); }
-	math::matrix<4,4> const &get_projection_matrix() const { return camera_.get_projection_matrix(); }
-
-	boost::shared_ptr<VertexBuffer> create_vertex_buffer(VertexTraits const *vertex_traits, size_t size, bool dynamic = false, bool writeonly = false);
-	boost::shared_ptr<IndexBuffer> create_index_buffer(unsigned index_format, size_t size, bool dynamic = false, bool writeonly = false);
+	VertexBufferPtr create_vertex_buffer(VertexTraits const *vertex_traits, size_t size, bool dynamic = false, bool writeonly = false);
+	IndexBufferPtr create_index_buffer(unsigned index_format, size_t size, bool dynamic = false, bool writeonly = false);
 
 	template <class V> boost::shared_ptr< VertexArray<V> >
 	create_vertex_array(size_t count, bool dynamic = false, bool writeonly = false)
@@ -83,7 +75,7 @@ public:
 				create_index_buffer(INDEX_FORMAT_U16, sizeof(I) * count, dynamic, writeonly)));
 	}
 
-	boost::shared_ptr<Texture> create_texture(std::string const &filename);
+	TexturePtr create_texture(std::string const &filename);
 	boost::shared_ptr<Font> create_font(std::string const &face_name, int height = 16);
 
 	template<class T>

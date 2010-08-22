@@ -16,7 +16,7 @@
 namespace graphic
 {
 
-Material::Material(boost::shared_ptr<Renderer> const &renderer_ptr):
+Material::Material(RendererPtr const &renderer_ptr):
 	renderer_(renderer_ptr),
 	cull_mode_(CULL_NONE),
 	zwrite_enabled_(true),

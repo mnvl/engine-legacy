@@ -23,7 +23,7 @@ namespace graphic
 class MeshShader: public Shader
 {
 public:
-	MeshShader(boost::shared_ptr<Renderer> const &renderer_ptr);
+	MeshShader(RendererPtr const &renderer_ptr);
 	~MeshShader();
 
 	virtual void postconstruct();

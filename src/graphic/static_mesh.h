@@ -38,7 +38,7 @@ public:
 
 	virtual void check();
 
-	virtual void draw(Joint *joint_ptr, boost::shared_ptr<Camera> const &camera, math::matrix<4,4> const &world_matrix);
+	virtual void draw(Joint *joint_ptr, CameraPtr const &camera, math::matrix<4,4> const &world_matrix);
 
 	virtual void set_vertices(GenericVertex *vertices, GenericVertex::format_t format, size_t count);
 	virtual void set_indices(unsigned *indices, size_t count);

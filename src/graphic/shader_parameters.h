@@ -87,7 +87,7 @@ void Parameter<std::vector<math::matrix<4,4> > >::set(std::vector<math::matrix<4
 	if (FAILED(hr)) throw exception::directx_error(hr);
 }
 
-void Parameter<boost::shared_ptr<Texture> >::set(boost::shared_ptr<Texture> const &texture)
+void Parameter<TexturePtr >::set(TexturePtr const &texture)
 {
 	HRESULT hr = shader_->get()->SetTexture(handle_, texture ? static_cast<D3D9Texture *>(texture.get())->get() : 0);
 	if (FAILED(hr)) throw exception::directx_error(hr);
@@ -124,7 +124,7 @@ protected:
 typedef Parameter<math::vec<3> > float3;
 typedef Parameter<math::matrix<4, 4> > float4x4;
 typedef Parameter<std::vector<math::matrix<4, 4> > > float4x4_array;
-typedef Parameter<boost::shared_ptr<Texture> > texture;
+typedef Parameter<TexturePtr > texture;
 typedef Parameter<POINT_LIGHTS> point_lights;
 typedef Parameter<math::matrix<4, 4> > float4x4;
 

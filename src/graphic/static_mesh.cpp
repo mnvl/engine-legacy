@@ -57,7 +57,7 @@ void BasicStaticMesh<T>::check()
 }
 
 template<class T>
-void BasicStaticMesh<T>::draw(Joint *joint_ptr, boost::shared_ptr<Camera> const &camera, math::matrix<4,4> const &world_matrix)
+void BasicStaticMesh<T>::draw(Joint *joint_ptr, CameraPtr const &camera, math::matrix<4,4> const &world_matrix)
 {
 	math::matrix<4,4> transform = joint_ptr->matrix * world_matrix;
 

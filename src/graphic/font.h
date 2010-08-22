@@ -18,11 +18,10 @@
 #include <math/vec.h>
 #include <util/boost_com_intrusive_ptr.h>
 #include <boost/noncopyable.hpp>
+#include "forward.h"
 
 namespace graphic
 {
-
-class Renderer;
 
 class Font: public boost::noncopyable
 {
@@ -51,7 +50,7 @@ public:
 private:
 	boost::intrusive_ptr<ID3DXFont> font_;
 
-	Font(boost::shared_ptr<Renderer> const &renderer, std::string const &face_name, int height = 16);
+	Font(RendererPtr const &renderer, std::string const &face_name, int height = 16);
 };
 
 }

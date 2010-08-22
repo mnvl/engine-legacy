@@ -14,7 +14,7 @@
 
 namespace graphic {
 
-Model::Model(boost::shared_ptr<Renderer> const &renderer_ptr, boost::shared_ptr<Scheduler> const &scheduler_ptr):
+Model::Model(RendererPtr const &renderer_ptr, SchedulerPtr const &scheduler_ptr):
 	renderer_(renderer_ptr),
 	scheduler_(scheduler_ptr)
 {
@@ -172,7 +172,7 @@ void Model::set_animation_time(math::scalar t)
 	}
 }
 
-void Model::draw(boost::shared_ptr<Camera> const &camera, math::matrix<4,4> const &world_matrix)
+void Model::draw(CameraPtr const &camera, math::matrix<4,4> const &world_matrix)
 {
 	for (joints_type::iterator it = joints.begin(); it != joints.end(); it++)
 	{

@@ -25,7 +25,7 @@ void IndexBuffer::bind(lua_State *L)
 
 	module_(L, "graphic")
 	[
-		class_<IndexBuffer, boost::shared_ptr<IndexBuffer> >("IndexBuffer")
+		class_<IndexBuffer, IndexBufferPtr >("IndexBuffer")
 	];
 }
 

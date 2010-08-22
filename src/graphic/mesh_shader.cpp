@@ -4,7 +4,7 @@
 namespace graphic
 {
 
-MeshShader::MeshShader(boost::shared_ptr<Renderer> const &renderer_ptr):
+MeshShader::MeshShader(RendererPtr const &renderer_ptr):
 	Shader(renderer_ptr)
 {
 }

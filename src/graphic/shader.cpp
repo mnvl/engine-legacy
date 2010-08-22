@@ -22,7 +22,7 @@ static DWORD const ENGINE_SHADER_FLAGS = D3DXSHADER_DEBUG;
 namespace graphic
 {
 
-Shader::Shader(boost::shared_ptr<Renderer> const &renderer_ptr):
+Shader::Shader(RendererPtr const &renderer_ptr):
 	renderer_(renderer_ptr)
 {
 }

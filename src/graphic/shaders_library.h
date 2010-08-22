@@ -11,14 +11,12 @@
 
 #include <boost/shared_ptr.hpp>
 #include <boost/weak_ptr.hpp>
+#include "forward.h"
 
 namespace graphic
 {
 
-class Font;
-class Material;
 class MeshShader;
-class Renderer;
 
 class ShadersLibrary {
 public:

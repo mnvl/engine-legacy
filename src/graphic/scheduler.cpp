@@ -17,7 +17,7 @@
 namespace graphic
 {
 
-Scheduler::Scheduler(boost::shared_ptr<Renderer> const &renderer):
+Scheduler::Scheduler(RendererPtr const &renderer):
 	renderer_(renderer)
 {
 	draw_calls_.reserve(4096);
@@ -27,7 +27,7 @@ Scheduler::~Scheduler()
 {
 }
 
-void Scheduler::add(boost::shared_ptr<DrawCall> const &draw_call)
+void Scheduler::add(DrawCallPtr const &draw_call)
 {
 	draw_calls_.push_back(draw_call);
 }

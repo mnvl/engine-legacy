@@ -16,16 +16,14 @@
 #include <boost/shared_ptr.hpp>
 #include <util/boost_com_intrusive_ptr.h>
 #include <boost/noncopyable.hpp>
+#include "forward.h"
 
 namespace graphic
 {
 
-class Shader;
-class Renderer;
-
 class Shader: public boost::noncopyable {
 public:
-    Shader(boost::shared_ptr<Renderer> const &renderer_ptr);
+    Shader(RendererPtr const &renderer_ptr);
 	virtual ~Shader();
 
     void load_from_file(std::string const &filename);
@@ -42,7 +40,7 @@ public:
 	void handle_reset_device();
 
 protected:
-	boost::shared_ptr<Renderer> const renderer_;
+	RendererPtr const renderer_;
     boost::intrusive_ptr<ID3DXEffect> effect_;
 
 	static void log_compilation_errors(ID3DXBuffer *compilation_errors_ptr);

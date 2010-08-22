@@ -10,6 +10,7 @@
 //-----------------------------------------------------------------------------
 
 #include <boost/shared_ptr.hpp>
+#include "forward.h"
 #include "vertex.h"
 #include "vertex_buffer.h"
 
@@ -23,7 +24,7 @@ class VertexArray {
 public:
 	typedef T vertex_type;
 
-	VertexArray(boost::shared_ptr<VertexBuffer> const &vertex_buffer):
+	VertexArray(VertexBufferPtr const &vertex_buffer):
 		vertex_buffer_(vertex_buffer)
 	{
 	}
@@ -50,10 +51,10 @@ public:
 	size_t get_size() const { return vertex_buffer_->get_size(); }
 	size_t get_count() const { return get_size() / sizeof(T); }
 
-	boost::shared_ptr<VertexBuffer> const &get_vertex_buffer() { return vertex_buffer_;	}
+	VertexBufferPtr const &get_vertex_buffer() { return vertex_buffer_;	}
 
 protected:
-	boost::shared_ptr<VertexBuffer> vertex_buffer_;
+	VertexBufferPtr vertex_buffer_;
 };
 
 typedef VertexArray<VERTEX_PT> VertexArrayPT;

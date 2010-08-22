@@ -18,7 +18,7 @@ namespace graphic
 class MeshDrawCall: public DrawCall
 {
 public:
-	MeshDrawCall(boost::shared_ptr<Renderer> const &renderer, boost::shared_ptr<MeshShader> shader);
+	MeshDrawCall(RendererPtr const &renderer, boost::shared_ptr<MeshShader> shader);
 	~MeshDrawCall();
 
 	void swap_joint_matrix_array(std::vector<math::matrix<4,4> > &joint_matrix_array);

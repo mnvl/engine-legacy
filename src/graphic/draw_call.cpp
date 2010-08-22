@@ -25,7 +25,7 @@
 namespace graphic
 {
 
-DrawCall::DrawCall(boost::shared_ptr<Renderer> const &renderer):
+DrawCall::DrawCall(RendererPtr const &renderer):
 	renderer_(renderer),
 	priority_(0),
 	always_visible_(false),
@@ -56,17 +56,17 @@ void DrawCall::set_obb(math::obb<3> const &bounds)
 	bounds_ = bounds;
 }
 
-void DrawCall::set_vertex_buffer(boost::shared_ptr<VertexBuffer> const &vertex_buffer)
+void DrawCall::set_vertex_buffer(VertexBufferPtr const &vertex_buffer)
 {
 	vertex_buffer_ = vertex_buffer;
 }
 
-void DrawCall::set_index_buffer(boost::shared_ptr<IndexBuffer> const &index_buffer)
+void DrawCall::set_index_buffer(IndexBufferPtr const &index_buffer)
 {
 	index_buffer_ = index_buffer;
 }
 
-void DrawCall::set_material(boost::shared_ptr<Material> const &material)
+void DrawCall::set_material(MaterialPtr const &material)
 {
 	material_ = material;
 }
@@ -96,7 +96,7 @@ void DrawCall::set_world_matrix(math::matrix<4,4> const &world_matrix)
 	world_matrix_ = world_matrix;
 }
 
-void DrawCall::set_camera(boost::shared_ptr<Camera> const &camera)
+void DrawCall::set_camera(CameraPtr const &camera)
 {
 	camera_ = camera;
 }

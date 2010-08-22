@@ -13,6 +13,7 @@
 #include <boost/noncopyable.hpp>
 #include <boost/shared_ptr.hpp>
 #include <luabind/lua_include.hpp>
+#include "forward.h"
 
 namespace graphic
 {
@@ -22,10 +23,10 @@ class Renderer;
 
 class Scheduler: public boost::noncopyable {
 public:
-	Scheduler(boost::shared_ptr<Renderer> const &renderer);
+	Scheduler(RendererPtr const &renderer);
 	~Scheduler();
 
-	void add(boost::shared_ptr<DrawCall> const &draw_call);
+	void add(DrawCallPtr const &draw_call);
 	void flush();
 
 	size_t get_visible_calls_count() const { return visible_calls_count_; }
@@ -34,12 +35,12 @@ public:
 	static void bind(lua_State *L);
 
 private:
-	typedef boost::shared_ptr<DrawCall> DrawCallPtr;
+	typedef DrawCallPtr DrawCallPtr;
 	typedef std::vector<DrawCallPtr> draw_calls_type;
 
 	size_t visible_calls_count_, invisible_calls_count_;
 
-	boost::shared_ptr<Renderer> const &renderer_;
+	RendererPtr const &renderer_;
 	draw_calls_type draw_calls_;
 };
 

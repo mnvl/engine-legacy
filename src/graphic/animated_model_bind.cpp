@@ -24,7 +24,7 @@ void BasicAnimatedModel<V>::bind(lua_State *L, char const *classname)
     [
         class_<BasicAnimatedModel, Model, boost::shared_ptr<BasicAnimatedModel> >(classname)
 		.def(constructor<BasicAnimatedModel const &>())
-        .def(constructor<boost::shared_ptr<Renderer> const &, boost::shared_ptr<Scheduler> const &>())
+        .def(constructor<RendererPtr const &, SchedulerPtr const &>())
 	];
 }
 

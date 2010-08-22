@@ -11,12 +11,11 @@
 
 #include <vector>
 #include <boost/shared_ptr.hpp>
+#include "forward.h"
 #include "sampler.h"
 
 namespace graphic
 {
-
-typedef boost::shared_ptr<struct Animation> AnimationPtr;
 
 struct Animation {
 	typedef std::vector<Sampler> samplers_type;

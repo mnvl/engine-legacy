@@ -17,7 +17,7 @@
 namespace graphic
 {
 
-D3D9Texture::D3D9Texture(boost::shared_ptr<Renderer> const &renderer_ptr, std::string const &filename):
+D3D9Texture::D3D9Texture(RendererPtr const &renderer_ptr, std::string const &filename):
 	Texture(filename),
 	renderer_(renderer_ptr)
 {

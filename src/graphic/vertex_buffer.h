@@ -11,6 +11,7 @@
 
 #include <boost/noncopyable.hpp>
 #include <luabind/lua_include.hpp>
+#include "forward.h"
 
 namespace graphic
 {

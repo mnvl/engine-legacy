@@ -15,7 +15,7 @@ namespace graphic
 {
 
 template<class V>
-BasicAnimatedModel<V>::BasicAnimatedModel(boost::shared_ptr<Renderer> const &renderer_ptr, boost::shared_ptr<Scheduler> const &scheduler_ptr):
+BasicAnimatedModel<V>::BasicAnimatedModel(RendererPtr const &renderer_ptr, SchedulerPtr const &scheduler_ptr):
 	Model(renderer_ptr, scheduler_ptr)
 {
 }

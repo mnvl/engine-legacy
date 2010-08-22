@@ -119,10 +119,10 @@ void MemoryMesh::transform_vertices(Joint const *joint_ptr, std::vector<vertex_t
 // and no animation: AnimatedMesh always computes positions of vertices using weights but MemoryMesh
 // uses weights only if model have animation. You can easily check if this is the cause just replacing
 // AnimatedMesh with StaticMesh and checking that rendering result is matching the one of MemoryMesh.
-void MemoryMesh::draw_static(Joint *joint_ptr, boost::shared_ptr<Camera> const &camera,
+void MemoryMesh::draw_static(Joint *joint_ptr, CameraPtr const &camera,
 	math::matrix<4,4> const &world_matrix) const
 {
-	boost::shared_ptr<Renderer> const renderer_ptr = get_model()->get_renderer();
+	RendererPtr const renderer_ptr = get_model()->get_renderer();
     ShadersLibrary *shaders_library_ptr = renderer_ptr->get_shaders_library();
 	IDirect3DDevice9 *device_ptr = renderer_ptr->get_device();
 
@@ -140,10 +140,10 @@ void MemoryMesh::draw_static(Joint *joint_ptr, boost::shared_ptr<Camera> const &
 	}
 }
 
-void MemoryMesh::draw_animated(Joint *joint_ptr, boost::shared_ptr<Camera> const &camera,
+void MemoryMesh::draw_animated(Joint *joint_ptr, CameraPtr const &camera,
 	math::matrix<4,4> const &world_matrix) const
 {
-	boost::shared_ptr<Renderer> const renderer_ptr = get_model()->get_renderer();
+	RendererPtr const renderer_ptr = get_model()->get_renderer();
     ShadersLibrary *shaders_library_ptr = renderer_ptr->get_shaders_library();
 	IDirect3DDevice9 *device_ptr = renderer_ptr->get_device();
 

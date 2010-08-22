@@ -42,7 +42,7 @@ void Mesh::check()
 	LOG_INFO("checking mesh id = " << id << ", name = " << name << "...");
 }
 
-void Mesh::draw(Joint *joint_ptr, boost::shared_ptr<Camera> const &camera, math::matrix<4,4> const &world_matrix)
+void Mesh::draw(Joint *joint_ptr, CameraPtr const &camera, math::matrix<4,4> const &world_matrix)
 {
 }
 

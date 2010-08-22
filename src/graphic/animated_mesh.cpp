@@ -79,7 +79,7 @@ void BasicAnimatedMesh<V>::check()
 }
 
 template<class V>
-void BasicAnimatedMesh<V>::draw(Joint *joint_ptr, boost::shared_ptr<Camera> const &camera,
+void BasicAnimatedMesh<V>::draw(Joint *joint_ptr, CameraPtr const &camera,
 	math::matrix<4,4> const &world_matrix)
 {
 	math::matrix<4,4> transform = world_matrix * joint_ptr->matrix;

@@ -30,7 +30,7 @@ void Texture::bind(lua_State *L)
 
 	module(L, "graphic")
 	[
-		class_<Texture, boost::shared_ptr<Texture> >("Texture")
+		class_<Texture, TexturePtr >("Texture")
 	];
 }
 

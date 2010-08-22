@@ -42,9 +42,9 @@ public:
 	void handle_reset_device();
 
 protected:
-	boost::shared_ptr<Renderer> renderer_;
+	RendererPtr renderer_;
 
-	D3D9IndexBuffer(boost::shared_ptr<Renderer> const &renderer, D3DFORMAT format, size_t size,
+	D3D9IndexBuffer(RendererPtr const &renderer, D3DFORMAT format, size_t size,
 		bool dynamic = false, bool writeonly = false);
 
 private:

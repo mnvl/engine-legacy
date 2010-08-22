@@ -21,7 +21,7 @@ namespace graphic {
 template<class V = VERTEX_PNT>
 class BasicStaticModel: public Model {
 public:
-	BasicStaticModel(boost::shared_ptr<Renderer> const &renderer_ptr, boost::shared_ptr<Scheduler> const &scheduler_ptr);
+	BasicStaticModel(RendererPtr const &renderer_ptr, SchedulerPtr const &scheduler_ptr);
 	~BasicStaticModel();
 
 	MeshPtr add_mesh();

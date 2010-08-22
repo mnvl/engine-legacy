@@ -18,7 +18,7 @@ namespace graphic {
 
 class MemoryModel: public Model {
 public:
-	MemoryModel(boost::shared_ptr<Renderer> const &renderer_ptr, boost::shared_ptr<Scheduler> const &scheduler_ptr);
+	MemoryModel(RendererPtr const &renderer_ptr, SchedulerPtr const &scheduler_ptr);
 	~MemoryModel();
 
 	MemoryMeshPtr get_mesh_by_id(std::string const &id) {
@@ -31,9 +31,9 @@ public:
 
 	virtual MeshPtr add_mesh();
 
-	virtual void draw(boost::shared_ptr<Camera> const &camera, math::matrix<4,4> const &world_matrix);
-	void draw_static(boost::shared_ptr<Camera> const &camera, math::matrix<4,4> const &world_matrix);
-	void draw_animated(boost::shared_ptr<Camera> const &camera, math::matrix<4,4> const &world_matrix);
+	virtual void draw(CameraPtr const &camera, math::matrix<4,4> const &world_matrix);
+	void draw_static(CameraPtr const &camera, math::matrix<4,4> const &world_matrix);
+	void draw_animated(CameraPtr const &camera, math::matrix<4,4> const &world_matrix);
 
 	static void bind(lua_State *L);
 };

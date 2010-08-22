@@ -14,7 +14,7 @@
 namespace graphic
 {
 
-MemoryModel::MemoryModel(boost::shared_ptr<Renderer> const &renderer_ptr, boost::shared_ptr<Scheduler> const &scheduler_ptr):
+MemoryModel::MemoryModel(RendererPtr const &renderer_ptr, SchedulerPtr const &scheduler_ptr):
 	Model(renderer_ptr, scheduler_ptr)
 {
 }
@@ -29,13 +29,13 @@ MeshPtr MemoryModel::add_mesh()
 	return meshes.back();
 }
 
-void MemoryModel::draw(boost::shared_ptr<Camera> const &camera, math::matrix<4,4> const &world_matrix)
+void MemoryModel::draw(CameraPtr const &camera, math::matrix<4,4> const &world_matrix)
 {
 	if (animations.size()) draw_animated(camera, world_matrix);
 	else draw_static(camera, world_matrix);
 }
 
-void MemoryModel::draw_static(boost::shared_ptr<Camera> const &camera, math::matrix<4,4> const &world_matrix)
+void MemoryModel::draw_static(CameraPtr const &camera, math::matrix<4,4> const &world_matrix)
 {
 	set_animation_time(0);
 
@@ -48,7 +48,7 @@ void MemoryModel::draw_static(boost::shared_ptr<Camera> const &camera, math::mat
 	}
 }
 
-void MemoryModel::draw_animated(boost::shared_ptr<Camera> const &camera, math::matrix<4,4> const &world_matrix)
+void MemoryModel::draw_animated(CameraPtr const &camera, math::matrix<4,4> const &world_matrix)
 {
 	for (joints_type::iterator it = joints.begin(); it != joints.end(); it++)
 	{

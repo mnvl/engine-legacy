@@ -16,7 +16,7 @@
 namespace graphic
 {
 
-D3D9VertexBuffer::D3D9VertexBuffer(boost::shared_ptr<Renderer> const &renderer, size_t size, bool dynamic, bool writeonly,
+D3D9VertexBuffer::D3D9VertexBuffer(RendererPtr const &renderer, size_t size, bool dynamic, bool writeonly,
 	VertexTraits const *traits, IDirect3DVertexDeclaration9 *decl)
 :
 	renderer_(renderer),

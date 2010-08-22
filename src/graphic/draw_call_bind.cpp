@@ -20,8 +20,8 @@ void DrawCall::bind(lua_State *L)
 
 	module_(L, "graphic")
 	[
-		class_<DrawCall, boost::shared_ptr<DrawCall> >("DrawCall")
-		.def(constructor<boost::shared_ptr<Renderer> const &>())
+		class_<DrawCall, DrawCallPtr >("DrawCall")
+		.def(constructor<RendererPtr const &>())
 		.def("set_priority", &DrawCall::set_priority)
 		.def("set_always_visible", &DrawCall::set_always_visible)
 		.def("set_obb", &DrawCall::set_obb)

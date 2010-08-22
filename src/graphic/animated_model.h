@@ -20,7 +20,7 @@ class Renderer;
 template<class V = VERTEX_PNJWT>
 class BasicAnimatedModel: public Model {
 public:
-	BasicAnimatedModel(boost::shared_ptr<Renderer> const &renderer_ptr, boost::shared_ptr<Scheduler> const &scheduler_ptr);
+	BasicAnimatedModel(RendererPtr const &renderer_ptr, SchedulerPtr const &scheduler_ptr);
 	~BasicAnimatedModel();
 
 	virtual MeshPtr add_mesh();

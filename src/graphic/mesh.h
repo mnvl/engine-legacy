@@ -64,7 +64,7 @@ public:
 
 	virtual void check();
 
-	virtual void draw(Joint *joint_ptr, boost::shared_ptr<Camera> const &camera, math::matrix<4,4> const &world_matrix);
+	virtual void draw(Joint *joint_ptr, CameraPtr const &camera, math::matrix<4,4> const &world_matrix);
 
 	static void bind(lua_State *L);
 

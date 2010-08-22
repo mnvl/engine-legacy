@@ -20,8 +20,8 @@ void Material::bind(lua_State *L)
 
 	module(L, "graphic")
 	[
-		class_<Material, boost::shared_ptr<Material> >("Material")
-		.def(constructor<boost::shared_ptr<Renderer> const &>())
+		class_<Material, MaterialPtr >("Material")
+		.def(constructor<RendererPtr const &>())
 		.def("get_name", &Material::get_name)
 		.def("set_diffuse_texture", &Material::set_diffuse_texture)
 		.def("set_normal_map_texture", &Material::set_normal_map_texture)

@@ -21,7 +21,7 @@ void graphic::Renderer::bind(lua_State *L)
 
     module_(L, "graphic")
     [
-        class_<Renderer, boost::shared_ptr<Renderer> >("Renderer")
+        class_<Renderer, RendererPtr >("Renderer")
 		.def(constructor<boost::shared_ptr<platform::Window> const &>())
 		.def("get_screen_width", &Renderer::get_screen_width)
 		.def("get_screen_height", &Renderer::get_screen_height)

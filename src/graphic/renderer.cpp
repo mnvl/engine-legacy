@@ -212,28 +212,7 @@ void Renderer::finish_frame()
 	if (FAILED(hr)) throw exception::directx_error(hr);
 }
 
-void Renderer::set_world_matrix(math::matrix<4,4> const &tf)
-{
-	world_matrix_ = tf;
-
-    HRESULT hr = device_->SetTransform(D3DTS_WORLD, (D3DMATRIX const *) &tf);
-	if (FAILED(hr)) throw exception::directx_error(hr);
-}
-
-void Renderer::set_camera(Camera const &camera)
-{
-    HRESULT hr;
-
-	hr = device_->SetTransform(D3DTS_VIEW, (D3DMATRIX const *) &camera.get_view_matrix());
-	if (FAILED(hr)) throw exception::directx_error(hr);
-
-	hr = device_->SetTransform(D3DTS_PROJECTION, (D3DMATRIX const *) &camera.get_projection_matrix());
-	if (FAILED(hr)) throw exception::directx_error(hr);
-
-	camera_ = camera;
-}
-
-boost::shared_ptr<VertexBuffer> Renderer::create_vertex_buffer(VertexTraits const *traits, size_t size, bool dynamic, bool writeonly)
+VertexBufferPtr Renderer::create_vertex_buffer(VertexTraits const *traits, size_t size, bool dynamic, bool writeonly)
 {
 	boost::shared_ptr<D3D9VertexBuffer> vertex_buffer(new D3D9VertexBuffer(shared_from_this(), size, dynamic, writeonly,
 		traits, vertex_declarations_->get(traits)));
@@ -241,14 +220,14 @@ boost::shared_ptr<VertexBuffer> Renderer::create_vertex_buffer(VertexTraits cons
 	return vertex_buffer;
 }
 
-boost::shared_ptr<IndexBuffer> Renderer::create_index_buffer(unsigned format, size_t size, bool dynamic, bool writeonly)
+IndexBufferPtr Renderer::create_index_buffer(unsigned format, size_t size, bool dynamic, bool writeonly)
 {
 	boost::shared_ptr<D3D9IndexBuffer> index_buffer(new D3D9IndexBuffer(shared_from_this(), (D3DFORMAT) format, size, dynamic, writeonly));
 	register_resource(index_buffer);
 	return index_buffer;
 }
 
-boost::shared_ptr<Texture> Renderer::create_texture(std::string const &filename)
+TexturePtr Renderer::create_texture(std::string const &filename)
 {
 	boost::shared_ptr<D3D9Texture> texture(new D3D9Texture(shared_from_this(), filename));
 	register_resource(texture);

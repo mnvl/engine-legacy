@@ -23,7 +23,7 @@ void BasicStaticModel<V>::bind(lua_State *L, char const *classname)
     [
         class_<BasicStaticModel, Model, boost::shared_ptr<BasicStaticModel> >(classname)
 		.def(constructor<BasicStaticModel const &>())
-        .def(constructor<boost::shared_ptr<Renderer> const &, boost::shared_ptr<Scheduler> const &>())
+        .def(constructor<RendererPtr const &, SchedulerPtr const &>())
     ];
 }
 
