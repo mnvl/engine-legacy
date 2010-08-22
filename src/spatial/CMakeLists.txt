@@ -5,4 +5,5 @@ ADD_LIBRARY(spatial STATIC ${SPATIAL_SOURCES})
 
 ADD_EXECUTABLE(test_spatial ${SPATIAL_TEST_SOURCES})
 TARGET_LINK_LIBRARIES(test_spatial spatial math util ${ENGINE_LIBRARIES})
+
 ADD_TEST(test_spatial ${EXECUTABLE_OUTPUT_PATH}/test_spatial --log_level=test_suite)
