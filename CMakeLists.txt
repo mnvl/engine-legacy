@@ -18,6 +18,7 @@ ENABLE_TESTING()
 SET(ENGINE_LIBRARIES)
 
 INCLUDE(CollectSourceFiles)
+INCLUDE(AddConfigurationDependentTest)
 INCLUDE(bin2c)
 
 IF(WIN32)
