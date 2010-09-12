@@ -13,7 +13,7 @@
 
 BOOST_AUTO_TEST_SUITE(obb)
 
-BOOST_AUTO_TEST_CASE(forward_point)
+BOOST_AUTO_TEST_CASE(world_to_local_point)
 {
 	math::obb<3> bounds;
 	bounds.origin.set(0, 0, 0);
@@ -22,7 +22,7 @@ BOOST_AUTO_TEST_CASE(forward_point)
 	bounds.binormal.set(0, 0, 2);
 
 	math::vec<3> point(10, 0, 0), point_local;
-	bounds.forward_point(point_local, point);
+	bounds.world_to_local_point(point_local, point);
 
 	BOOST_ASSERT(math::abs(point_local.x - 5) < math::EPSILON);
 	BOOST_ASSERT(math::abs(point_local.y - 0) < math::EPSILON);

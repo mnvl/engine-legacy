@@ -106,7 +106,7 @@ plane<T>::classify(obb<ARITY, scalar_t> const &bounds) const
 	if (bounds.is_basis_linearly_independent())
 	{
 		plane p;
-		bounds.forward_plane(p, *this);
+		bounds.world_to_local_plane(p, *this);
 		return p.classify(aabb<ARITY, scalar_t>(vec_t(0, 0, 0), vec_t(1, 1, 1)));
 	}
 	else

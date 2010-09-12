@@ -70,21 +70,21 @@ public:
 		}
 	}
 
-	void forward_vector(vec_t &v,vec_t const &v0) const {
+	void world_to_local_vector(vec_t &v,vec_t const &v0) const {
 		v.x = v0.x / (hi.x - lo.x);
 		v.y = v0.y / (hi.y - lo.y);
 		v.z = v0.z / (hi.z - lo.z);
 	}
 
 	// получить координаты точки в локальной системе координат
-	void forward_point(vec_t &v,vec_t const &v0) const {
-		forward_vector(v, v0 - lo);
+	void world_to_local_point(vec_t &v,vec_t const &v0) const {
+		world_to_local_vector(v, v0 - lo);
 	}
 
 	// перенести прямую в локальную систему координат
-	void forward_ray(ray_t &r,const ray_t &r0) const {
-		forward_point(r.r0,r0.r0);
-		forward_vector(r.a,r0.a);
+	void world_to_local_ray(ray_t &r,const ray_t &r0) const {
+		world_to_local_point(r.r0,r0.r0);
+		world_to_local_vector(r.a,r0.a);
 	}
 
 	void normalize() {
@@ -127,7 +127,7 @@ public:
 	bool trace(const ray_t &r, scalar_t t_min = 0, scalar_t t_max = 1) const {
 		// перенести луч в локальную систему координат
 		ray_t r1;
-		forward_ray(r1, r);
+		world_to_local_ray(r1, r);
 
 		// пересечение прямой r1 с плоскостьями x=0 и x=1
 		if(abs(r1.a.x) > EPSILON) {
