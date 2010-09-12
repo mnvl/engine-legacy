@@ -220,6 +220,42 @@ matrix<3,3,T>::direct(const vec_t &dir) {
 	mul(*this, self, temp);
 }
 
+template<class T> bool
+matrix<3,3,T>::world_to_axes(vec_t const &tangent, vec_t const &normal, vec_t const &binormal)
+{
+	scalar_t tt = tangent & tangent;
+	scalar_t nt = normal & tangent;
+	scalar_t bt = binormal & tangent;
+	scalar_t nn = normal & normal;
+	scalar_t bn = binormal & normal;
+	scalar_t bb = binormal & binormal;
+
+	matrix A;
+	A.ij[0][0] = tt; A.ij[0][1] = nt; A.ij[0][2] = bt;
+	A.ij[1][0] = nt; A.ij[1][1] = nn; A.ij[1][2] = bn;
+	A.ij[2][0] = bt; A.ij[2][1] = bn; A.ij[2][2] = bb;
+
+	matrix B;
+	if (!A.inverse(B)) return false;
+
+	matrix C;
+	C.ij[0][0] = tangent.x; C.ij[0][1] = normal.x; C.ij[0][2] = binormal.x;
+	C.ij[1][0] = tangent.y; C.ij[1][1] = normal.y; C.ij[1][2] = binormal.y;
+	C.ij[2][0] = tangent.z; C.ij[2][1] = normal.z; C.ij[2][2] = binormal.z;
+
+	*this = C * B;
+
+	return true;
+}
+
+template<class T> bool
+matrix<3,3,T>::axes_to_world(vec_t const &tangent, vec_t const &normal, vec_t const &binormal)
+{
+	matrix world_to_axes;
+	world_to_axes.world_to_axes(tangent, normal, binormal);
+	return world_to_axes.inverse(*this);
+}
+
 template<class T> void
 matrix<3,3,T>::decompose(vec_t &rotate) const {
  	rotate.y = asin(-ij[0][2]);

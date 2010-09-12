@@ -14,54 +14,35 @@ namespace math
 {
 
 template <class T> void
-obb<3,T>::world_to_local_vector(vec_type &v,vec_type const &v0) const
+obb<3,T>::world_to_local_vector(vec_t &v,vec_t const &v0) const
 {
-	scalar_type tt = tangent & tangent;
-	scalar_type nt = normal & tangent;
-	scalar_type bt = binormal & tangent;
-	scalar_type nn = normal & normal;
-	scalar_type bn = binormal & normal;
-	scalar_type bb = binormal & binormal;
-
-	matrix3_type A;
-	A.ij[0][0] = tt; A.ij[0][1] = nt; A.ij[0][2] = bt;
-	A.ij[1][0] = nt; A.ij[1][1] = nn; A.ij[1][2] = bn;
-	A.ij[2][0] = bt; A.ij[2][1] = bn; A.ij[2][2] = bb;
-
-	matrix3_type B;
-	A.inverse(B);
-
-	matrix3_type C;
-	C.ij[0][0] = tangent.x; C.ij[0][1] = normal.x; C.ij[0][2] = binormal.x;
-	C.ij[1][0] = tangent.y; C.ij[1][1] = normal.y; C.ij[1][2] = binormal.y;
-	C.ij[2][0] = tangent.z; C.ij[2][1] = normal.z; C.ij[2][2] = binormal.z;
-
-	matrix3_type world_to_local = C * B;
+	matrix3_t world_to_local;
+	world_to_local.world_to_axes(tangent, normal, binormal);
 
 	v = v0 * world_to_local;
 }
 
 template<class T> void
-obb<3,T>::world_to_local_plane(plane<scalar_type> &p, plane<scalar_type> const &p0) const
+obb<3,T>::world_to_local_plane(plane<scalar_t> &p, plane<scalar_t> const &p0) const
 {
-	vec_type origin, normal;
+	vec_t origin, normal;
 	world_to_local_point(origin, p0.get_origin());
 	world_to_local_vector(normal, p0.get_normal());
 	p.set(origin, normal);
 }
 
 template<class T> bool
-obb<3,T>::trace(const ray<ARITY, scalar> &r, scalar_type t_min, scalar_type t_max) const {
+obb<3,T>::trace(const ray<ARITY, scalar> &r, scalar_t t_min, scalar_t t_max) const {
 	// перенести луч в локальную систему координат
 	ray<ARITY, scalar> r1;
 	world_to_local_ray(r1, r);
 
 	// пересечение прямой r1 с плоскостьями x=0 и x=1
 	if(abs(r1.a.x) > EPSILON) {
-		scalar_type dx = 1 / r1.a.x;
+		scalar_t dx = 1 / r1.a.x;
 
-		scalar_type t = -r1.r0.x * dx;
-		vec_type v;
+		scalar_t t = -r1.r0.x * dx;
+		vec_t v;
 		if(t >= t_min && t <= t_max) {
 			v = r1.r0 + r1.a * t;
 			if(v.y>=0 && v.y<=1 && v.z>=0 && v.z<=1) return true;
@@ -76,10 +57,10 @@ obb<3,T>::trace(const ray<ARITY, scalar> &r, scalar_type t_min, scalar_type t_ma
 
 	// пересечение прямой r1 с плоскостьями y=0 и y=1
 	if(abs(r1.a.y) > EPSILON) {
-		scalar_type dy = 1 / r1.a.y;
+		scalar_t dy = 1 / r1.a.y;
 
-		scalar_type t = -r1.r0.y * dy;
-		vec_type v;
+		scalar_t t = -r1.r0.y * dy;
+		vec_t v;
 		if(t >= t_min && t <= t_max) {
 			v = r1.r0 + r1.a * t;
 			if(v.x>=0 && v.x<=1 && v.z>=0 && v.z<=1) return true;
@@ -94,10 +75,10 @@ obb<3,T>::trace(const ray<ARITY, scalar> &r, scalar_type t_min, scalar_type t_ma
 
 	// пересечение прямой r1 с плоскостьями z=0 и z=1
 	if(abs(r1.a.z) > EPSILON) {
-		scalar_type dz = 1 / r1.a.z;
+		scalar_t dz = 1 / r1.a.z;
 
-		scalar_type t = -r1.r0.z * dz;
-		vec_type v;
+		scalar_t t = -r1.r0.z * dz;
+		vec_t v;
 		if(t >= t_min && t <= t_max) {
 			v = r1.r0 + r1.a * t;
 			if(v.x>=0 && v.x<=1 && v.y>=0 && v.y<=1) return true;
@@ -115,21 +96,21 @@ obb<3,T>::trace(const ray<ARITY, scalar> &r, scalar_type t_min, scalar_type t_ma
 
 template<class T> bool obb<3,T>::contains(const obb &r) const {
 	// получить координаты r в локальной системе координат
-	vec_type r_origin, r_tangent, r_normal, r_binormal;
+	vec_t r_origin, r_tangent, r_normal, r_binormal;
 	world_to_local_point(r_origin,r.origin);
 	world_to_local_vector(r_tangent,r.tangent);
 	world_to_local_vector(r_normal,r.normal);
 	world_to_local_vector(r_binormal,r.binormal);
 
 	// получить координаты вершин obb
-	vec_type v0 = r_origin;
-	vec_type v1 = v0 + r_tangent;
-	vec_type v2 = v1 + r_normal;
-	vec_type v3 = v0 + r_normal;
-	vec_type v4 = v0 + r_binormal;
-	vec_type v5 = v1 + r_binormal;
-	vec_type v6 = v2 + r_binormal;
-	vec_type v7 = v3 + r_binormal;
+	vec_t v0 = r_origin;
+	vec_t v1 = v0 + r_tangent;
+	vec_t v2 = v1 + r_normal;
+	vec_t v3 = v0 + r_normal;
+	vec_t v4 = v0 + r_binormal;
+	vec_t v5 = v1 + r_binormal;
+	vec_t v6 = v2 + r_binormal;
+	vec_t v7 = v3 + r_binormal;
 
 	// один obb содержить второй если он содержит все вершины второго
 	return (v0.x>=0 && v1.x>=0 && v2.x>=0 && v3.x>=0 && v4.x>=0 && v5.x>=0 && v6.x>=0 && v7.x>=0)
@@ -141,10 +122,10 @@ template<class T> bool obb<3,T>::contains(const obb &r) const {
 }
 
 template<class T> bool
-obb<3,T>::test_nonintersection(const triangle<ARITY, scalar_type> &r) const
+obb<3,T>::test_nonintersection(const triangle<ARITY, scalar_t> &r) const
 {
 	// получить координаты вершин треугольника в локальной системе координат
-	vec_type A, B, C;
+	vec_t A, B, C;
 	world_to_local_point(A, r.A);
 	world_to_local_point(B, r.B);
 	world_to_local_point(C, r.C);
@@ -158,16 +139,16 @@ obb<3,T>::test_nonintersection(const triangle<ARITY, scalar_type> &r) const
 
 	// если ни одна из сторон obb не является разделяющей плоскостью, то проверить: находится ли obb
 	// целиком в одном из полупространств, задаваемых треугольником
-	vec_type N = (B - A) ^ (C - B);
+	vec_t N = (B - A) ^ (C - B);
 
-	scalar_type k1 = (vec_type(0,0,0) - A) & N;
-	scalar_type k2 = (vec_type(0,0,1) - A) & N;
-	scalar_type k3 = (vec_type(0,1,0) - A) & N;
-	scalar_type k4 = (vec_type(0,1,1) - A) & N;
-	scalar_type k5 = (vec_type(1,0,0) - A) & N;
-	scalar_type k6 = (vec_type(1,0,1) - A) & N;
-	scalar_type k7 = (vec_type(1,1,0) - A) & N;
-	scalar_type k8 = (vec_type(1,1,1) - A) & N;
+	scalar_t k1 = (vec_t(0,0,0) - A) & N;
+	scalar_t k2 = (vec_t(0,0,1) - A) & N;
+	scalar_t k3 = (vec_t(0,1,0) - A) & N;
+	scalar_t k4 = (vec_t(0,1,1) - A) & N;
+	scalar_t k5 = (vec_t(1,0,0) - A) & N;
+	scalar_t k6 = (vec_t(1,0,1) - A) & N;
+	scalar_t k7 = (vec_t(1,1,0) - A) & N;
+	scalar_t k8 = (vec_t(1,1,1) - A) & N;
 
 	return (k1>0 && k2>0 && k3>0 && k4>0 && k5>0 && k6>0 && k7>0 && k8>0)
 	    || (k1<0 && k2<0 && k3<0 && k4<0 && k5<0 && k6<0 && k7<0 && k8<0);
@@ -175,21 +156,21 @@ obb<3,T>::test_nonintersection(const triangle<ARITY, scalar_type> &r) const
 
 template<class T> bool obb<3,T>::test_nonintersection(const obb &r) const {
 	// получить координаты r в локальной системе координат
-	vec_type r_origin, r_tangent, r_normal, r_binormal;
+	vec_t r_origin, r_tangent, r_normal, r_binormal;
 	world_to_local_point(r_origin,r.origin);
 	world_to_local_vector(r_tangent,r.tangent);
 	world_to_local_vector(r_normal,r.normal);
 	world_to_local_vector(r_binormal,r.binormal);
 
 	// получить координаты вершин obb
-	vec_type v0 = r_origin;
-	vec_type v1 = v0 + r_tangent;
-	vec_type v2 = v1 + r_normal;
-	vec_type v3 = v0 + r_normal;
-	vec_type v4 = v0 + r_binormal;
-	vec_type v5 = v1 + r_binormal;
-	vec_type v6 = v2 + r_binormal;
-	vec_type v7 = v3 + r_binormal;
+	vec_t v0 = r_origin;
+	vec_t v1 = v0 + r_tangent;
+	vec_t v2 = v1 + r_normal;
+	vec_t v3 = v0 + r_normal;
+	vec_t v4 = v0 + r_binormal;
+	vec_t v5 = v1 + r_binormal;
+	vec_t v6 = v2 + r_binormal;
+	vec_t v7 = v3 + r_binormal;
 
 	// два obb не пересекаются если существует плоскость, которая делит прастранство на
 	// два полупространства, одно из которых содержит первый obb, а второе -- второй
@@ -203,27 +184,27 @@ template<class T> bool obb<3,T>::test_nonintersection(const obb &r) const {
 }
 
 template<class T> bool
-obb<3,T>::test_noncollision(const triangle<ARITY, scalar_type> &tri, const vec_type &vel, scalar_type t_min, scalar_type t_max) const
+obb<3,T>::test_noncollision(const triangle<ARITY, scalar_t> &tri, const vec_t &vel, scalar_t t_min, scalar_t t_max) const
 {
-	vec_type tri_A, tri_B, tri_C, tri_vel;
+	vec_t tri_A, tri_B, tri_C, tri_vel;
 	world_to_local_point(tri_A, tri.A);
 	world_to_local_point(tri_B, tri.B);
 	world_to_local_point(tri_C, tri.C);
 	world_to_local_vector(tri_vel, vel);
 
-        scalar_type t_len = t_max - t_min;
-	vec_type tri_delta = tri_vel * t_len;
+        scalar_t t_len = t_max - t_min;
+	vec_t tri_delta = tri_vel * t_len;
 
 	if(t_min != 0) {
-		vec_type tri_start = tri_vel * t_min;
+		vec_t tri_start = tri_vel * t_min;
 		tri_A -= tri_start;
 		tri_B -= tri_start;
 		tri_C -= tri_start;
 	}
 
-    vec_type tri_A1 = tri_A + tri_delta;
-	vec_type tri_B1 = tri_B + tri_delta;
-	vec_type tri_C1 = tri_C + tri_delta;
+    vec_t tri_A1 = tri_A + tri_delta;
+	vec_t tri_B1 = tri_B + tri_delta;
+	vec_t tri_C1 = tri_C + tri_delta;
 
 	if((tri_A.x<0 && tri_B.x<0 && tri_C.x<0 && tri_A1.x<0 && tri_A1.x<0 && tri_A1.x<0)
 	|| (tri_A.x>1 && tri_B.x>1 && tri_C.x>1 && tri_A1.x>1 && tri_A1.x>1 && tri_A1.x>1)
@@ -235,27 +216,27 @@ obb<3,T>::test_noncollision(const triangle<ARITY, scalar_type> &tri, const vec_t
 		return true;
 	}
 
-	vec_type tri_normal = (tri_B - tri_A) ^ (tri_C - tri_B);
+	vec_t tri_normal = (tri_B - tri_A) ^ (tri_C - tri_B);
 
-	scalar_type k1 = (vec_type(0,0,0) - tri_A) & tri_normal;
-	scalar_type k2 = (vec_type(0,0,1) - tri_A) & tri_normal;
-	scalar_type k3 = (vec_type(0,1,0) - tri_A) & tri_normal;
-	scalar_type k4 = (vec_type(0,1,1) - tri_A) & tri_normal;
-	scalar_type k5 = (vec_type(1,0,0) - tri_A) & tri_normal;
-	scalar_type k6 = (vec_type(1,0,1) - tri_A) & tri_normal;
-	scalar_type k7 = (vec_type(1,1,0) - tri_A) & tri_normal;
-	scalar_type k8 = (vec_type(1,1,1) - tri_A) & tri_normal;
+	scalar_t k1 = (vec_t(0,0,0) - tri_A) & tri_normal;
+	scalar_t k2 = (vec_t(0,0,1) - tri_A) & tri_normal;
+	scalar_t k3 = (vec_t(0,1,0) - tri_A) & tri_normal;
+	scalar_t k4 = (vec_t(0,1,1) - tri_A) & tri_normal;
+	scalar_t k5 = (vec_t(1,0,0) - tri_A) & tri_normal;
+	scalar_t k6 = (vec_t(1,0,1) - tri_A) & tri_normal;
+	scalar_t k7 = (vec_t(1,1,0) - tri_A) & tri_normal;
+	scalar_t k8 = (vec_t(1,1,1) - tri_A) & tri_normal;
 
 	return (k1<0 && k2<0 && k3<0 && k4<0 && k5<0 && k6<0 && k7<0 && k8<0)
 	    || (k1>0 && k2>0 && k3>0 && k4>0 && k5>0 && k6>0 && k7>0 && k8>0);
 }
 
 template<class T> bool
-obb<3,T>::test_noncollision(const obb &box, const vec_type &vel, scalar_type t_min,
-	scalar_type t_max) const
+obb<3,T>::test_noncollision(const obb &box, const vec_t &vel, scalar_t t_min,
+	scalar_t t_max) const
 {
 	// получить координаты box в локальной системе координат
-	vec_type box_origin, box_tangent, box_normal, box_binormal, box_vel;
+	vec_t box_origin, box_tangent, box_normal, box_binormal, box_vel;
 	world_to_local_point(box_origin,box.origin);
 	world_to_local_vector(box_tangent,box.tangent);
 	world_to_local_vector(box_normal,box.normal);
@@ -263,26 +244,26 @@ obb<3,T>::test_noncollision(const obb &box, const vec_type &vel, scalar_type t_m
 	world_to_local_vector(box_vel, vel);
 
 	// вычислить длину интервала
-	scalar_type t_len = t_max - t_min;
-	vec_type delta = box_vel * t_len;
+	scalar_t t_len = t_max - t_min;
+	vec_t delta = box_vel * t_len;
 
 	// получить координаты вершин obb
-	vec_type v0_0 = box_origin - box_vel * t_min;
-	vec_type v1_0 = v0_0 + box_tangent;
-	vec_type v2_0 = v1_0 + box_normal;
-	vec_type v3_0 = v0_0 + box_normal;
-	vec_type v4_0 = v0_0 + box_binormal;
-	vec_type v5_0 = v1_0 + box_binormal;
-	vec_type v6_0 = v2_0 + box_binormal;
-	vec_type v7_0 = v3_0 + box_binormal;
-	vec_type v0_1 = v0_0 + delta;
-	vec_type v1_1 = v1_0 + delta;
-	vec_type v2_1 = v2_0 + delta;
-	vec_type v3_1 = v3_0 + delta;
-	vec_type v4_1 = v4_0 + delta;
-	vec_type v5_1 = v5_0 + delta;
-	vec_type v6_1 = v6_0 + delta;
-	vec_type v7_1 = v7_0 + delta;
+	vec_t v0_0 = box_origin - box_vel * t_min;
+	vec_t v1_0 = v0_0 + box_tangent;
+	vec_t v2_0 = v1_0 + box_normal;
+	vec_t v3_0 = v0_0 + box_normal;
+	vec_t v4_0 = v0_0 + box_binormal;
+	vec_t v5_0 = v1_0 + box_binormal;
+	vec_t v6_0 = v2_0 + box_binormal;
+	vec_t v7_0 = v3_0 + box_binormal;
+	vec_t v0_1 = v0_0 + delta;
+	vec_t v1_1 = v1_0 + delta;
+	vec_t v2_1 = v2_0 + delta;
+	vec_t v3_1 = v3_0 + delta;
+	vec_t v4_1 = v4_0 + delta;
+	vec_t v5_1 = v5_0 + delta;
+	vec_t v6_1 = v6_0 + delta;
+	vec_t v7_1 = v7_0 + delta;
 
 	// два obb не пересекаются если существует плоскость, которая делит прастранство на
 	// два полупространства, одно из которых содержит первый obb, а второе -- второй

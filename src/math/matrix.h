@@ -91,6 +91,9 @@ public:
 	void direction(const vec_t &dir);
 	void direct(const vec_t &dir);
 
+	bool world_to_axes(vec_t const &tangent, vec_t const &normal, vec_t const &binormal);
+	bool axes_to_world(vec_t const &tangent, vec_t const &normal, vec_t const &binormal);
+
 	// вычислить детерминант минора
 	// r0, r1 -- индексы столбцов минора
 	// c0, c1 -- индексы строк минора
