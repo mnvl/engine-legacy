@@ -126,7 +126,8 @@ public:
 	typedef T scalar_type;
 	static size_t const ARITY = 3;
 	typedef vec<ARITY,scalar_type> vec_type;
-	typedef matrix<ARITY+1,ARITY+1,scalar_type> matrix_type;
+	typedef matrix<ARITY, ARITY, scalar_type> matrix3_type;
+	typedef matrix<ARITY+1, ARITY+1, scalar_type> matrix_type;
 	typedef aabb<ARITY,scalar_type> aabb_type;
 	static size_t const sides_count = 6;
 	static size_t const vertices_count = 8;
@@ -221,10 +222,10 @@ public:
 
 	// получить координаты вектора в локальной системе координат с
 	// базисом (tangent,normal,binormal)
-	void world_to_local_vector(vec_type &v,vec_type const &v0) const {
-		v.x = (v0 & tangent) / tangent.length_sq();
-		v.y = (v0 & normal)	/ normal.length_sq();
-		v.z = (v0 & binormal) / binormal.length_sq();
+	void world_to_local_vector(vec_type &v, vec_type const &v0) const;
+
+	void local_to_world_vector(vec_type &v, vec_type const &v0) const {
+		v = v0.x * tangent + v0.y * normal + v0.z * binormal;
 	}
 
 	// получить координаты точки в локальной системе координат

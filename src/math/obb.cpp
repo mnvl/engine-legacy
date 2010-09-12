@@ -13,6 +13,34 @@
 namespace math
 {
 
+template <class T> void
+obb<3,T>::world_to_local_vector(vec_type &v,vec_type const &v0) const
+{
+	scalar_type tt = tangent & tangent;
+	scalar_type nt = normal & tangent;
+	scalar_type bt = binormal & tangent;
+	scalar_type nn = normal & normal;
+	scalar_type bn = binormal & normal;
+	scalar_type bb = binormal & binormal;
+
+	matrix3_type A;
+	A.ij[0][0] = tt; A.ij[0][1] = nt; A.ij[0][2] = bt;
+	A.ij[1][0] = nt; A.ij[1][1] = nn; A.ij[1][2] = bn;
+	A.ij[2][0] = bt; A.ij[2][1] = bn; A.ij[2][2] = bb;
+
+	matrix3_type B;
+	A.inverse(B);
+
+	matrix3_type C;
+	C.ij[0][0] = tangent.x; C.ij[0][1] = normal.x; C.ij[0][2] = binormal.x;
+	C.ij[1][0] = tangent.y; C.ij[1][1] = normal.y; C.ij[1][2] = binormal.y;
+	C.ij[2][0] = tangent.z; C.ij[2][1] = normal.z; C.ij[2][2] = binormal.z;
+
+	matrix3_type world_to_local = C * B;
+
+	v = v0 * world_to_local;
+}
+
 template<class T> void
 obb<3,T>::world_to_local_plane(plane<scalar_type> &p, plane<scalar_type> const &p0) const
 {
