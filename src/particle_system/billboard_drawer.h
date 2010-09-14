@@ -55,6 +55,7 @@ public:
 	void preprocess(Keeper const &keeper)
 	{
 		math::aabb<3> bounds;
+		bounds.null();
 
 		math::vec<3> normal = -camera_->get_view_dir();
 
