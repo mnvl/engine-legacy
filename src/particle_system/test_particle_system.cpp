@@ -12,6 +12,7 @@
 #include <platform/timer.h>
 #include <platform/window.h>
 #include <util/get_sources_path.h>
+#include <util/logger.h>
 #include <graphic/material.h>
 #include <graphic/scheduler.h>
 #include <graphic/renderer.h>
