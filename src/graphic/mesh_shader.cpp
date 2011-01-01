@@ -5,7 +5,7 @@ namespace graphic
 {
 
 MeshShader::MeshShader(RendererPtr const &renderer_ptr):
-	Shader(renderer_ptr)
+D3D9Shader(boost::static_pointer_cast<D3D9Renderer>(renderer_ptr))
 {
 }
 

@@ -16,7 +16,7 @@
 #include "material.h"
 #include "mesh_shader.h"
 #include "shaders_library.h"
-#include "vertex_declarations.h"
+#include "d3d9_vertex_declarations.h"
 #include "renderer.h"
 #include "mesh_draw_call.h"
 
@@ -47,7 +47,7 @@ void MeshDrawCall::execute()
 {
 	HRESULT hr;
 
-    ShadersLibrary *shaders_library_ptr = renderer_->get_shaders_library();
+	ShadersLibrary *shaders_library_ptr = boost::static_pointer_cast(renderer_->get_shaders_library();
 	IDirect3DDevice9 *device_ptr = renderer_->get_device();
 	D3D9VertexBuffer *vertex_buffer = static_cast<D3D9VertexBuffer *>(vertex_buffer_.get());
 	D3D9IndexBuffer *index_buffer = static_cast<D3D9IndexBuffer *>(index_buffer_.get());

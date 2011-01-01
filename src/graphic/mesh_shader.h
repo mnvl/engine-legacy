@@ -14,13 +14,13 @@
 #include <boost/scoped_ptr.hpp>
 #include "vertex.h"
 #include "vertex_traits.h"
-#include "shader.h"
+#include "d3d9_shader.h"
 #include "shader_parameters.h"
 
 namespace graphic
 {
 
-class MeshShader: public Shader {
+class MeshShader: public D3D9Shader {
 public:
 	MeshShader(RendererPtr const &renderer_ptr);
 	~MeshShader();

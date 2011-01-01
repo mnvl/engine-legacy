@@ -14,6 +14,7 @@
 #include <math/matrix.h>
 #include <exception/directx_error.h>
 #include "d3d9_texture.h"
+#include "d3d9_shader.h"
 #include "shader.h"
 
 namespace graphic
@@ -45,7 +46,7 @@ public:
 		name_(name),
 		handle_(0)
 	{
-		handle_ = shader_->get()->GetParameterByName(0, name_.c_str());
+		handle_ = static_cast<D3D9Shader *>(shader_)->get()->GetParameterByName(0, name_.c_str());
 		if (!handle_) throw std::logic_error("can't get " + name_ + " parameter handle");
 	}
 
@@ -70,26 +71,26 @@ public:
 
 	inline void set(T const &value)
 	{
-		HRESULT hr = shader_->get()->SetValue(handle_, &value, sizeof(value));
+		HRESULT hr = static_cast<D3D9Shader *>(shader_)->get()->SetValue(handle_, &value, sizeof(value));
 		if (FAILED(hr)) throw exception::directx_error(hr);
 	}
 };
 
 void Parameter<math::matrix<4,4> >::set(math::matrix<4,4> const &value)
 {
-	HRESULT hr = shader_->get()->SetMatrix(handle_, (D3DXMATRIX const *) value.ij);
+	HRESULT hr = static_cast<D3D9Shader *>(shader_)->get()->SetMatrix(handle_, (D3DXMATRIX const *) value.ij);
 	if (FAILED(hr)) throw exception::directx_error(hr);
 }
 
 void Parameter<std::vector<math::matrix<4,4> > >::set(std::vector<math::matrix<4,4> > const &value)
 {
-	HRESULT hr = shader_->get()->SetMatrixArray(handle_, (D3DXMATRIX const *) &value[0], value.size());
+	HRESULT hr = static_cast<D3D9Shader *>(shader_)->get()->SetMatrixArray(handle_, (D3DXMATRIX const *) &value[0], value.size());
 	if (FAILED(hr)) throw exception::directx_error(hr);
 }
 
 void Parameter<TexturePtr >::set(TexturePtr const &texture)
 {
-	HRESULT hr = shader_->get()->SetTexture(handle_, texture ? static_cast<D3D9Texture *>(texture.get())->get() : 0);
+	HRESULT hr = static_cast<D3D9Shader *>(shader_)->get()->SetTexture(handle_, texture ? static_cast<D3D9Texture *>(texture.get())->get() : 0);
 	if (FAILED(hr)) throw exception::directx_error(hr);
 }
 
@@ -101,7 +102,7 @@ public:
 		name_(name),
 		handle_(0)
 	{
-		handle_ = shader_->get()->GetTechniqueByName(name_.c_str());
+		handle_ = static_cast<D3D9Shader *>(shader_)->get()->GetTechniqueByName(name_.c_str());
 		if (!handle_) throw std::logic_error("can't get " + name_ + " technique handle");
 	}
 
@@ -111,7 +112,7 @@ public:
 
 	void set()
 	{
-		HRESULT hr = shader_->get()->SetTechnique(handle_);
+		HRESULT hr = static_cast<D3D9Shader *>(shader_)->get()->SetTechnique(handle_);
 		if (FAILED(hr)) throw exception::directx_error(hr);
 	}
 
