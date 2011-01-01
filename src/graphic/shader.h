@@ -40,7 +40,7 @@ public:
 	void handle_reset_device();
 
 protected:
-	RendererPtr const renderer_;
+	D3D9RendererPtr const renderer_;
     boost::intrusive_ptr<ID3DXEffect> effect_;
 
 	static void log_compilation_errors(ID3DXBuffer *compilation_errors_ptr);

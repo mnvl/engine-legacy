@@ -13,14 +13,14 @@
 #include "font.h"
 #include "material.h"
 #include "mesh_shader.h"
-#include "renderer.h"
+#include "d3d9_renderer.h"
 #include "shaders_library.h"
 
 namespace graphic
 {
 
 ShadersLibrary::ShadersLibrary(Renderer * const renderer_ptr):
-    renderer_(renderer_ptr)
+    renderer_(static_cast<D3D9Renderer * const>(renderer_ptr))
 {
 }
 

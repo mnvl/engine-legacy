@@ -19,7 +19,7 @@
 namespace graphic
 {
 
-class Renderer;
+class D3D9Renderer;
 
 class VertexDeclarations {
 public:
@@ -35,7 +35,7 @@ public:
 	IDirect3DVertexDeclaration9 *get(VertexTraits const *vertex_traits);
 
 private:
-	Renderer * const renderer_;
+	D3D9Renderer * const renderer_;
 
 	typedef boost::intrusive_ptr<IDirect3DVertexDeclaration9> VertexDeclarationPtr;
 	typedef std::map<VertexTraits const *,  VertexDeclarationPtr> traits_to_declarations_t;

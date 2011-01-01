@@ -20,8 +20,7 @@
 namespace graphic
 {
 
-class MeshShader: public Shader
-{
+class MeshShader: public Shader {
 public:
 	MeshShader(RendererPtr const &renderer_ptr);
 	~MeshShader();

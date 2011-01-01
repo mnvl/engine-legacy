@@ -9,14 +9,14 @@
 //-----------------------------------------------------------------------------
 
 #include <exception/directx_error.h>
-#include "renderer.h"
+#include "d3d9_renderer.h"
 #include "vertex_declarations.h"
 
 namespace graphic
 {
 
 VertexDeclarations::VertexDeclarations(Renderer * const renderer_ptr):
-	renderer_(renderer_ptr)
+	renderer_(static_cast<D3D9Renderer *>(renderer_ptr))
 {
 }
 

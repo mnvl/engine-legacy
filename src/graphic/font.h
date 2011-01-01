@@ -11,13 +11,13 @@
 
 #include <d3d9.h>
 #include <d3dx9.h>
+#include <boost/noncopyable.hpp>
 #include <boost/shared_ptr.hpp>
 #include <boost/weak_ptr.hpp>
 #include <boost/intrusive_ptr.hpp>
 #include <luabind/lua_include.hpp>
 #include <math/vec.h>
 #include <util/boost_com_intrusive_ptr.h>
-#include <boost/noncopyable.hpp>
 #include "forward.h"
 
 namespace graphic

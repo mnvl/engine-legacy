@@ -10,7 +10,6 @@
 
 #include <boost/shared_ptr.hpp>
 #include <luabind/luabind.hpp>
-#include <platform/window.h>
 #include "texture.h"
 #include "font.h"
 #include "renderer.h"
@@ -22,7 +21,6 @@ void graphic::Renderer::bind(lua_State *L)
     module_(L, "graphic")
     [
         class_<Renderer, RendererPtr >("Renderer")
-		.def(constructor<boost::shared_ptr<platform::Window> const &>())
 		.def("get_screen_width", &Renderer::get_screen_width)
 		.def("get_screen_height", &Renderer::get_screen_height)
 		.def("postconstruct", &Renderer::postconstruct)

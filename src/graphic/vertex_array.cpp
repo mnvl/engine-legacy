@@ -11,7 +11,6 @@
 #include <luabind/luabind.hpp>
 #include <exception/directx_error.h>
 #include "renderer.h"
-#include "vertex_declarations.h"
 #include "vertex_array.h"
 
 namespace graphic
