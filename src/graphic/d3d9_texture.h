@@ -27,7 +27,7 @@ class D3D9Texture: public Texture {
 	friend Renderer;
 
 public:
-	D3D9Texture(RendererPtr const &renderer_ptr, std::string const &filename);
+	D3D9Texture(D3D9RendererPtr const &renderer_ptr, std::string const &filename);
 	~D3D9Texture();
 
 	IDirect3DTexture9 *get() const
@@ -39,7 +39,7 @@ public:
 	void handle_reset_device();
 
 private:
-	RendererPtr renderer_;
+	D3D9RendererPtr renderer_;
 	boost::intrusive_ptr<IDirect3DTexture9> texture_;
 
 	void load_from_file(std::string const &filename);

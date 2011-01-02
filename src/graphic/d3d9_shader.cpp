@@ -8,14 +8,24 @@
 // prior written consent of Manvel Avetisian.
 //-----------------------------------------------------------------------------
 
+#include <exception/directx_error.h>
+#include <util/logger.h>
+#include "d3d9_texture.h"
+#include "d3d9_renderer.h"
 #include "d3d9_shader.h"
 
 namespace graphic
 {
 
+#if defined(NDEBUG)
+static DWORD const ENGINE_SHADER_FLAGS = D3DXSHADER_OPTIMIZATION_LEVEL3;
+#else
+static DWORD const ENGINE_SHADER_FLAGS = D3DXSHADER_DEBUG;
+#endif
+
 class D3D9Shader::D3D9Parameter: public Parameter {
 public:
-	BasicParameter(boost::shared_ptr<D3D9Shader> const &shader, std::string const &name):
+	D3D9Parameter(boost::shared_ptr<D3D9Shader> const &shader, std::string const &name):
 		shader_(shader),
 		name_(name),
 		handle_(0)
@@ -24,7 +34,7 @@ public:
 		if (!handle_) throw std::logic_error("can't get " + name_ + " parameter handle");
 	}
 
-	~BasicParameter()
+	virtual ~D3D9Parameter()
 	{
 	}
 
@@ -68,9 +78,9 @@ private:
 	D3DXHANDLE handle_;
 };
 
-class Shader::D3D9Technique: public Shader::Technique {
+class D3D9Shader::D3D9Technique: public Shader::Technique {
 public:
-	Technique(boost::shared_ptr<D3D9Shader> const &shader, std::string const &name):
+	D3D9Technique(boost::shared_ptr<D3D9Shader> const &shader, std::string const &name):
 		shader_(shader),
 		name_(name),
 		handle_(0)
@@ -79,7 +89,7 @@ public:
 		if (!handle_) throw std::logic_error("can't get " + name_ + " technique handle");
 	}
 
-	~Technique()
+	virtual ~D3D9Technique()
 	{
 	}
 
@@ -115,8 +125,6 @@ void D3D9Shader::load_from_file(std::string const &filename)
 	if (FAILED(hr)) throw exception::directx_error(hr);
 
 	effect_.reset(effect_ptr);
-
-	postconstruct();
 }
 
 void D3D9Shader::load_from_buffer(char const *buffer, size_t len)
@@ -135,8 +143,6 @@ void D3D9Shader::load_from_buffer(char const *buffer, size_t len)
 	if (FAILED(hr)) throw exception::directx_error(hr);
 
 	effect_.reset(effect_ptr);
-
-	postconstruct();
 }
 
 void D3D9Shader::log_compilation_errors(ID3DXBuffer *compilation_errors_ptr)
@@ -147,10 +153,6 @@ void D3D9Shader::log_compilation_errors(ID3DXBuffer *compilation_errors_ptr)
 				compilation_errors_ptr->GetBufferSize()));
 		compilation_errors_ptr->Release();
 	}
-}
-
-void D3D9Shader::postconstruct()
-{
 }
 
 void D3D9Shader::handle_lost_device()
@@ -165,17 +167,17 @@ void D3D9Shader::handle_reset_device()
 	if (FAILED(hr)) throw exception::directx_error(hr);
 }
 
-ParameterPtr D3D9Shader::get_parameter(std::string const &name)
+Shader::ParameterPtr D3D9Shader::get_parameter(std::string const &name)
 {
-	return new D3D9Parameter(shared_from_this(), name);
+	return Shader::ParameterPtr(new D3D9Parameter(shared_from_this(), name));
 }
 
-TechniquePtr D3D9Shader::get_technique(std::string const &name)
+Shader::TechniquePtr D3D9Shader::get_technique(std::string const &name)
 {
-	return new D3D9Technique(shared_from_this(), name);
+	return Shader::TechniquePtr(new D3D9Technique(shared_from_this(), name));
 }
 
-D3D9Shader(D3D9RendererPtr const &renderer_ptr):
+D3D9Shader::D3D9Shader(D3D9RendererPtr const &renderer_ptr):
 	renderer_(renderer_ptr)
 {
 }

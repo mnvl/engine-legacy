@@ -8,6 +8,11 @@
 // prior written consent of Manvel Avetisian.
 //-----------------------------------------------------------------------------
 
+#include <exception/directx_error.h>
+#include <util/logger.h>
+#include <util/get_sources_path.h>
+#include "uber_shader.h"
+#include "d3d9_shader.h"
 #include "d3d9_renderer.h"
 
 namespace graphic
@@ -124,7 +129,7 @@ void D3D9Renderer::postconstruct()
 		uber_shader_.reset(new UberShader(shader));
 	}
 
-	vertex_declarations_.reset(new VertexDeclarations(this));
+	vertex_declarations_.reset(new D3D9VertexDeclarations(this));
 
 	window_->signal_resize.connect
 		(boost::signals2::signal0<void>::slot_type(&Renderer::handle_resize, this).track(shared_from_this()));

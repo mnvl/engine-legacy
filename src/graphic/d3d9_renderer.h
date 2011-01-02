@@ -14,13 +14,11 @@
 #include <boost/scoped_ptr.hpp>
 #include <boost/intrusive_ptr.hpp>
 #include <util/boost_com_intrusive_ptr.h>
+#include "d3d9_vertex_declarations.h"
 #include "renderer.h"
 
 namespace graphic
 {
-
-class VertexDeclarations;
-class ShadersLibrary;
 
 class D3D9Renderer: public Renderer {
 public:
@@ -40,8 +38,7 @@ public:
 	virtual void finish_frame();
 
 	IDirect3DDevice9 *get_device() const { return device_.get(); }
-	VertexDeclarations *get_vertex_declarations() const { return vertex_declarations_.get(); }
-	ShadersLibrary *get_shaders_library() const { return shaders_library_.get(); }
+	D3D9VertexDeclarations *get_vertex_declarations() const { return vertex_declarations_.get(); }
 
 	virtual VertexBufferPtr create_vertex_buffer(VertexTraits const *vertex_traits,
 		size_t size, bool dynamic = false, bool writeonly = false);
@@ -49,7 +46,7 @@ public:
 		bool dynamic = false, bool writeonly = false);
 
 	virtual TexturePtr create_texture(std::string const &filename);
-	virtual MaterialPtr create_material()
+	virtual MaterialPtr create_material();
 	virtual FontPtr create_font(std::string const &face_name, int height = 16);
 	virtual ShaderPtr create_shader();
 
@@ -80,7 +77,7 @@ private:
 	boost::signals2::signal0<void> signal_reset_device_;
 
 	UberShaderPtr uber_shader_;
-	boost::scoped_ptr<VertexDeclarations> vertex_declarations_;
+	boost::scoped_ptr<D3D9VertexDeclarations> vertex_declarations_;
 
 	void handle_resize();
 };

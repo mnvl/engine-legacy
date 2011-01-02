@@ -13,7 +13,6 @@
 #include "vertex_traits.h"
 #include "camera.h"
 #include "uber_shader.h"
-#include "vertex_declarations.h"
 #include "texture.h"
 #include "material.h"
 #include "renderer.h"

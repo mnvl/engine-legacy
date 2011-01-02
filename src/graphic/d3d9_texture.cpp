@@ -11,13 +11,13 @@
 #include <boost/filesystem.hpp>
 #include <luabind/luabind.hpp>
 #include <util/logger.h>
-#include "renderer.h"
+#include "d3d9_renderer.h"
 #include "d3d9_texture.h"
 
 namespace graphic
 {
 
-D3D9Texture::D3D9Texture(RendererPtr const &renderer_ptr, std::string const &filename):
+D3D9Texture::D3D9Texture(D3D9RendererPtr const &renderer_ptr, std::string const &filename):
 	Texture(filename),
 	renderer_(renderer_ptr)
 {

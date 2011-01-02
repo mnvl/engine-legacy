@@ -9,14 +9,14 @@
 //-----------------------------------------------------------------------------
 
 #include <exception/directx_error.h>
-#include "renderer.h"
-#include "vertex_declarations.h"
+#include "d3d9_renderer.h"
+#include "d3d9_vertex_declarations.h"
 #include "d3d9_vertex_buffer.h"
 
 namespace graphic
 {
 
-D3D9VertexBuffer::D3D9VertexBuffer(RendererPtr const &renderer, size_t size, bool dynamic, bool writeonly,
+D3D9VertexBuffer::D3D9VertexBuffer(D3D9RendererPtr const &renderer, size_t size, bool dynamic, bool writeonly,
 	VertexTraits const *traits, IDirect3DVertexDeclaration9 *decl)
 :
 	renderer_(renderer),

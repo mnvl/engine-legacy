@@ -145,6 +145,8 @@ void MemoryMesh::draw_static(Joint *joint_ptr, CameraPtr const &camera,
 void MemoryMesh::draw_animated(Joint *joint_ptr, CameraPtr const &camera,
 	math::matrix<4,4> const &world_matrix) const
 {
+	// TODO
+/*
 	RendererPtr const renderer_ptr = get_model()->get_renderer();
     ShadersLibrary *shaders_library_ptr = renderer_ptr->get_shaders_library();
 	IDirect3DDevice9 *device_ptr = renderer_ptr->get_device();
@@ -164,6 +166,7 @@ void MemoryMesh::draw_animated(Joint *joint_ptr, CameraPtr const &camera,
 		device_ptr->DrawIndexedPrimitiveUP(D3DPT_TRIANGLELIST, it->minimal_vertex_index, it->vertices_count,
 			it->triangles_count, &indices_[it->first_index_offset], INDEX_FORMAT_U16, &transformed_vertices[0], sizeof(vertex_type));
 	}
+*/
 }
 
 }

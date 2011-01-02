@@ -21,10 +21,10 @@ namespace graphic
 
 class D3D9Renderer;
 
-class VertexDeclarations {
+class D3D9VertexDeclarations {
 public:
-    VertexDeclarations(Renderer * const renderer_ptr);
-    ~VertexDeclarations();
+    D3D9VertexDeclarations(D3D9Renderer * const renderer_ptr);
+    ~D3D9VertexDeclarations();
 
     template<class V> inline
     IDirect3DVertexDeclaration9 *get()

@@ -10,21 +10,21 @@
 
 #include <exception/directx_error.h>
 #include "d3d9_renderer.h"
-#include "vertex_declarations.h"
+#include "d3d9_vertex_declarations.h"
 
 namespace graphic
 {
 
-VertexDeclarations::VertexDeclarations(Renderer * const renderer_ptr):
-	renderer_(static_cast<D3D9Renderer *>(renderer_ptr))
+D3D9VertexDeclarations::D3D9VertexDeclarations(D3D9Renderer * const renderer_ptr):
+	renderer_(renderer_ptr)
 {
 }
 
-VertexDeclarations::~VertexDeclarations()
+D3D9VertexDeclarations::~D3D9VertexDeclarations()
 {
 }
 
-IDirect3DVertexDeclaration9 *VertexDeclarations::get(VertexTraits const *vertex_traits)
+IDirect3DVertexDeclaration9 *D3D9VertexDeclarations::get(VertexTraits const *vertex_traits)
 {
 	traits_to_declarations_t::const_iterator it = traits_to_declarations_.find(vertex_traits);
 

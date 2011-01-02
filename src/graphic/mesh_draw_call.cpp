@@ -8,7 +8,7 @@
 // prior written consent of Manvel Avetisian.
 //-----------------------------------------------------------------------------
 
-#include <exception/directx_error.h>
+#include "renderer.h"
 #include "mesh_draw_call.h"
 
 namespace graphic

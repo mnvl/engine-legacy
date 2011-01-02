@@ -52,7 +52,7 @@ public:
 	void handle_reset_device();
 
 protected:
-	RendererPtr renderer_;
+	D3D9RendererPtr renderer_;
 	boost::intrusive_ptr<IDirect3DVertexBuffer9> buffer_;
 	std::vector<char> clone_;
 	DWORD usage_;
@@ -60,7 +60,7 @@ protected:
 	VertexTraits const *traits_;
 	IDirect3DVertexDeclaration9 *decl_;
 
-	D3D9VertexBuffer(RendererPtr const &renderer, size_t size, bool dynamic, bool writeonly,
+	D3D9VertexBuffer(D3D9RendererPtr const &renderer, size_t size, bool dynamic, bool writeonly,
 		VertexTraits const *traits, IDirect3DVertexDeclaration9 *decl);
 };
 
