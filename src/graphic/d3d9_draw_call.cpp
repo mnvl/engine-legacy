@@ -11,22 +11,23 @@
 #include <math/frustum.h>
 #include <exception/directx_error.h>
 #include "vertex_traits.h"
+#include "camera.h"
+#include "uber_shader.h"
 #include "d3d9_vertex_buffer.h"
 #include "d3d9_index_buffer.h"
 #include "d3d9_texture.h"
-#include "camera.h"
-#include "uber_shader.h"
-#include "vertex_declarations.h"
-#include "texture.h"
-#include "material.h"
-#include "renderer.h"
-#include "draw_call.h"
+#include "d3d9_vertex_declarations.h"
+#include "d3d9_texture.h"
+#include "d3d9_material.h"
+#include "d3d9_renderer.h"
+#include "d3d9_draw_call.h"
 
 namespace graphic
 {
 
-D3D9DrawCall::D3D9DrawCall(RendererPtr const &renderer):
-	DrawCall(renderer)
+D3D9DrawCall::D3D9DrawCall(D3D9RendererPtr const &renderer):
+	DrawCall(renderer),
+	renderer_(renderer)
 {
 }
 

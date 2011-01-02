@@ -9,21 +9,23 @@
 //-----------------------------------------------------------------------------
 
 #include <exception/directx_error.h>
-#include "d3d9_vertex_buffer.h"
-#include "d3d9_index_buffer.h"
 #include "vertex_array.h"
 #include "index_array.h"
 #include "material.h"
 #include "uber_shader.h"
+#include "d3d9_vertex_buffer.h"
+#include "d3d9_index_buffer.h"
 #include "d3d9_vertex_declarations.h"
-#include "renderer.h"
-#include "mesh_draw_call.h"
+#include "d3d9_shader.h"
+#include "d3d9_renderer.h"
+#include "d3d9_mesh_draw_call.h"
 
 namespace graphic
 {
 
-D3D9MeshDrawCall::D3D9MeshDrawCall(RendererPtr const &renderer):
-	MeshDrawCall(renderer)
+D3D9MeshDrawCall::D3D9MeshDrawCall(D3D9RendererPtr const &renderer):
+	MeshDrawCall(renderer),
+	renderer_(renderer)
 {
 }
 
@@ -39,6 +41,7 @@ void D3D9MeshDrawCall::execute()
 	D3D9VertexBuffer *vertex_buffer = static_cast<D3D9VertexBuffer *>(vertex_buffer_.get());
 	D3D9IndexBuffer *index_buffer = static_cast<D3D9IndexBuffer *>(index_buffer_.get());
 	VertexTraits const *vertex_traits = vertex_buffer->get_vertex_traits();
+	D3D9Shader *shader = static_cast<D3D9Shader *>(shader_->get_shader().get());
 
 	hr = device_ptr->SetVertexDeclaration(renderer_->get_vertex_declarations()->get(vertex_traits));
 	if (FAILED(hr)) throw exception::directx_error(hr);
@@ -62,23 +65,23 @@ void D3D9MeshDrawCall::execute()
 	if (joint_matrix_array_.size()) shader_->joint_matrix_array->set(joint_matrix_array_);
 
 	UINT passes_count;
-	hr = shader_->get()->Begin(&passes_count, D3DXFX_DONOTSAVESTATE);
+	hr = shader->get()->Begin(&passes_count, D3DXFX_DONOTSAVESTATE);
 	if (FAILED(hr)) throw exception::directx_error(hr);
 
 	for(UINT pass = 0; pass < passes_count; pass++)
 	{
-		hr = shader_->get()->BeginPass(pass);
+		hr = shader->get()->BeginPass(pass);
 		if (FAILED(hr)) throw exception::directx_error(hr);
 
 		hr = device_ptr->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, minimal_vertex_index_, vertices_count_,
 			first_index_offset_, triangles_count_);
 		if (FAILED(hr)) throw exception::directx_error(hr);
 
-		hr = shader_->get()->EndPass();
+		hr = shader->get()->EndPass();
 		if (FAILED(hr)) throw exception::directx_error(hr);
 	}
 
-	hr = shader_->get()->End();
+	hr = shader->get()->End();
 	if (FAILED(hr)) throw exception::directx_error(hr);
 }
 

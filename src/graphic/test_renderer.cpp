@@ -12,14 +12,14 @@
 #include <platform/window.h>
 #include <platform/timer.h>
 #include <util/logger.h>
-#include "renderer.h"
+#include "d3d9_renderer.h"
 
 BOOST_AUTO_TEST_SUITE(renderer)
 
 BOOST_AUTO_TEST_CASE(basic)
 {
 	boost::shared_ptr<platform::Window> window(new platform::Window("test renderer basic"));
-	graphic::RendererPtr renderer(new graphic::Renderer(window));
+	graphic::D3D9RendererPtr renderer(new graphic::D3D9Renderer(window));
 
 	renderer->postconstruct();
 	renderer->reset_state();

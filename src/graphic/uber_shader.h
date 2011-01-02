@@ -43,6 +43,8 @@ public:
 
 	virtual Shader::TechniquePtr get_technique_for_vertex(VertexTraits const *vertex_traits) const;
 
+	ShaderPtr get_shader() const { return shader_; }
+
 private:
 	ShaderPtr shader_;
 };

@@ -11,13 +11,15 @@
 #include <luabind/luabind.hpp>
 #include <exception/directx_error.h>
 #include <util/logger.h>
-#include "material.h"
+#include "d3d9_renderer.h"
+#include "d3d9_material.h"
 
 namespace graphic
 {
 
-D3D9Material::D3D9Material(RendererPtr const &renderer_ptr):
-	Material(renderer_ptr)
+D3D9Material::D3D9Material(D3D9RendererPtr const &renderer_ptr):
+	Material(renderer_ptr),
+	renderer_(renderer_ptr)
 {
 }
 

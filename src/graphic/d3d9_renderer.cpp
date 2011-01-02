@@ -11,8 +11,15 @@
 #include <exception/directx_error.h>
 #include <util/logger.h>
 #include <util/get_sources_path.h>
+#include "font.h"
 #include "uber_shader.h"
+#include "d3d9_vertex_buffer.h"
+#include "d3d9_index_buffer.h"
+#include "d3d9_texture.h"
+#include "d3d9_material.h"
 #include "d3d9_shader.h"
+#include "d3d9_draw_call.h"
+#include "d3d9_mesh_draw_call.h"
 #include "d3d9_renderer.h"
 
 namespace graphic
@@ -132,7 +139,7 @@ void D3D9Renderer::postconstruct()
 	vertex_declarations_.reset(new D3D9VertexDeclarations(this));
 
 	window_->signal_resize.connect
-		(boost::signals2::signal0<void>::slot_type(&Renderer::handle_resize, this).track(shared_from_this()));
+		(boost::signals2::signal0<void>::slot_type(&D3D9Renderer::handle_resize, this).track(shared_from_this()));
 
 	reset_state();
 }
@@ -246,7 +253,7 @@ TexturePtr D3D9Renderer::create_texture(std::string const &filename)
 
 MaterialPtr D3D9Renderer::create_material()
 {
-	return new D3D9Material(shared_from_this());
+	return MaterialPtr(new D3D9Material(shared_from_this()));
 }
 
 FontPtr D3D9Renderer::create_font(std::string const &face_name, int height)
@@ -265,15 +272,15 @@ ShaderPtr D3D9Renderer::create_shader()
 
 DrawCallPtr D3D9Renderer::create_draw_call()
 {
-	return new D3D9DrawCall(shared_from_this());
+	return DrawCallPtr(new D3D9DrawCall(shared_from_this()));
 }
 
 MeshDrawCallPtr D3D9Renderer::create_mesh_draw_call()
 {
-	return new D3D9MeshDrawCall(shared_from_this());
+	return MeshDrawCallPtr(new D3D9MeshDrawCall(shared_from_this()));
 }
 
-UberShaderPtr D3D9Renderer::get_uber_shader()
+UberShaderPtr D3D9Renderer::get_uber_shader() const
 {
 	return uber_shader_;
 }

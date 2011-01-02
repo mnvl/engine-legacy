@@ -118,4 +118,8 @@ bool DrawCall::is_visible() const
 	return always_visible_ || math::frustum<>(world_view_projection_matrix_).test_intersection(bounds_);
 }
 
+void DrawCall::execute()
+{
+}
+
 }

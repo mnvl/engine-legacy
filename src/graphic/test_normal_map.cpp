@@ -14,7 +14,7 @@
 #include "material.h"
 #include "uber_shader.h"
 #include "uber_shader.h"
-#include "renderer.h"
+#include "d3d9_renderer.h"
 
 BOOST_AUTO_TEST_SUITE(normal_map)
 
@@ -23,10 +23,9 @@ BOOST_AUTO_TEST_CASE(basic)
 	std::string const &src = util::get_graphic_sources_path();
 
 	boost::shared_ptr<platform::Window> window(new platform::Window("test normal_map basic"));
-	graphic::RendererPtr renderer(new graphic::Renderer(window));
+	graphic::RendererPtr renderer(new graphic::D3D9Renderer(window));
 
 	renderer->postconstruct();
-	renderer->reset_state();
 
 	boost::shared_ptr<graphic::Material> material(new graphic::Material(renderer));
 	material->set_diffuse_texture(src + "test_gray.png");
@@ -73,7 +72,7 @@ BOOST_AUTO_TEST_CASE(basic)
 		vertex_array->unlock();
 	}
 
-	boost::shared_ptr<graphic::MeshShader> shader = renderer->get_shaders_library()->get_uber_shader();
+	graphic::UberShaderPtr shader = renderer->get_uber_shader();
 
 	boost::shared_ptr<graphic::Camera> camera(new graphic::Camera());
 	camera->set_orthographic_projection(2, 2 * math::scalar(renderer->get_screen_height()) / renderer->get_screen_width(), 0, 2);

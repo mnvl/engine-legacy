@@ -19,11 +19,11 @@
 namespace graphic
 {
 
-class Renderer;
+class D3D9Renderer;
 
 class D3D9IndexBuffer: public IndexBuffer
 {
-	friend Renderer;
+	friend D3D9Renderer;
 
 public:
 	virtual ~D3D9IndexBuffer();
@@ -42,9 +42,9 @@ public:
 	void handle_reset_device();
 
 protected:
-	RendererPtr renderer_;
+	D3D9RendererPtr renderer_;
 
-	D3D9IndexBuffer(RendererPtr const &renderer, D3DFORMAT format, size_t size,
+	D3D9IndexBuffer(D3D9RendererPtr const &renderer, D3DFORMAT format, size_t size,
 		bool dynamic = false, bool writeonly = false);
 
 private:

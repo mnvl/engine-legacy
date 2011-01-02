@@ -23,7 +23,7 @@ public:
 	void swap_joint_matrix_array(std::vector<math::matrix<4,4> > &joint_matrix_array);
 	void set_joint_matrix_array(std::vector<math::matrix<4,4> > &joint_matrix_array);
 
-private:
+protected:
 	UberShaderPtr const shader_;
 	std::vector<math::matrix<4,4> > joint_matrix_array_;
 };

@@ -25,7 +25,7 @@ namespace graphic
 
 class Font: public boost::noncopyable
 {
-	friend Renderer;
+	friend D3D9Renderer;
 
 public:
 	~Font();

@@ -15,7 +15,7 @@
 #include <util/logger.h>
 #include <graphic/material.h>
 #include <graphic/scheduler.h>
-#include <graphic/renderer.h>
+#include <graphic/d3d9_renderer.h>
 #include "directional_particle_system.h"
 #include "cylindrical_particle_system.h"
 
@@ -24,7 +24,7 @@ BOOST_AUTO_TEST_SUITE(particle_system)
 BOOST_AUTO_TEST_CASE(directional_ps)
 {
 	boost::shared_ptr<platform::Window> window(new platform::Window("particle_system"));
-	graphic::RendererPtr renderer(new graphic::Renderer(window));
+	graphic::RendererPtr renderer(new graphic::D3D9Renderer(window));
 
 	graphic::CameraPtr camera(new graphic::Camera());
 	camera->set_orthographic_projection(20.0f, 20.0f * renderer->get_screen_height() / renderer->get_screen_width(), 1.0f, 1000.0f);
@@ -77,7 +77,7 @@ BOOST_AUTO_TEST_CASE(directional_ps)
 BOOST_AUTO_TEST_CASE(cylindrical_ps)
 {
 	boost::shared_ptr<platform::Window> window(new platform::Window("particle_system"));
-	graphic::RendererPtr renderer(new graphic::Renderer(window));
+	graphic::RendererPtr renderer(new graphic::D3D9Renderer(window));
 
 	graphic::CameraPtr camera(new graphic::Camera());
 	camera->set_orthographic_projection(20.0f, 20.0f * renderer->get_screen_height() / renderer->get_screen_width(), 1.0f, 1000.0f);

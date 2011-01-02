@@ -16,10 +16,13 @@ namespace graphic
 
 class D3D9Material: public Material {
 public:
-	D3D9Material(RendererPtr const &renderer_ptr = RendererPtr());
+	D3D9Material(D3D9RendererPtr const &renderer_ptr = D3D9RendererPtr());
 	virtual ~D3D9Material();
 
 	virtual void select();
+
+private:
+	D3D9RendererPtr renderer_;
 };
 
 }

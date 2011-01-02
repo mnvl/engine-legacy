@@ -9,13 +9,13 @@
 //-----------------------------------------------------------------------------
 
 #include <exception/directx_error.h>
-#include "renderer.h"
+#include "d3d9_renderer.h"
 #include "d3d9_index_buffer.h"
 
 namespace graphic
 {
 
-D3D9IndexBuffer::D3D9IndexBuffer(RendererPtr const &renderer, D3DFORMAT format, size_t size,
+D3D9IndexBuffer::D3D9IndexBuffer(D3D9RendererPtr const &renderer, D3DFORMAT format, size_t size,
 	bool dynamic, bool writeonly)
 :
 	renderer_(renderer),

@@ -22,11 +22,11 @@
 namespace graphic
 {
 
-class Renderer;
+class D3D9Renderer;
 
 class D3D9VertexBuffer: public VertexBuffer
 {
-	friend Renderer;
+	friend D3D9Renderer;
 
 public:
 	virtual ~D3D9VertexBuffer();

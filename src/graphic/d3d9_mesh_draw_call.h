@@ -14,12 +14,15 @@
 namespace graphic
 {
 
-class D3D9MeshDrawCall: public DrawCall {
+class D3D9MeshDrawCall: public MeshDrawCall {
 public:
-	D3D9MeshDrawCall(RendererPtr const &renderer);
+	D3D9MeshDrawCall(D3D9RendererPtr const &renderer);
 	virtual ~D3D9MeshDrawCall();
 
 	virtual void execute();
+
+private:
+	D3D9RendererPtr const renderer_;
 };
 
 }
