@@ -9,26 +9,17 @@
 // prior written consent of Manvel Avetisian.
 //-----------------------------------------------------------------------------
 
-#include <boost/shared_ptr.hpp>
-#include <boost/weak_ptr.hpp>
-#include "forward.h"
+#include "mesh_draw_call.h"
 
 namespace graphic
 {
 
-class MeshShader;
-
-class ShadersLibrary {
+class D3D9MeshDrawCall: public DrawCall {
 public:
-    ShadersLibrary(Renderer * const renderer_ptr);
-    ~ShadersLibrary();
+	D3D9MeshDrawCall(RendererPtr const &renderer);
+	virtual ~D3D9MeshDrawCall();
 
-	boost::shared_ptr<MeshShader> get_mesh_shader();
-
-private:
-	class D3D9Renderer * const renderer_;
-
-	boost::weak_ptr<MeshShader> mesh_shader_;
+	virtual void execute();
 };
 
 }

@@ -10,7 +10,7 @@
 
 #include <exception/directx_error.h>
 #include <util/logger.h>
-#include "mesh_shader.h"
+#include "uber_shader.h"
 #include "mesh_draw_call.h"
 #include "static_model.h"
 #include "renderer.h"
@@ -63,7 +63,7 @@ void BasicStaticMesh<T>::draw(Joint *joint_ptr, CameraPtr const &camera, math::m
 
 	for (triangles_list_type::const_iterator it = triangles_list.begin(); it != triangles_list.end(); it++)
 	{
-		boost::shared_ptr<MeshDrawCall> draw_call(new MeshDrawCall(get_model()->get_renderer(), shader_));
+		MeshDrawCallPtr draw_call = get_model()->get_renderer()->create_mesh_draw_call();
 
 		{
 			math::obb<3> bounds(bounds_);

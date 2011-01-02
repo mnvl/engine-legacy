@@ -117,7 +117,13 @@ int D3D9Renderer::get_screen_height() const
 
 void D3D9Renderer::postconstruct()
 {
-    shaders_library_.reset(new ShadersLibrary(this));
+	{
+		ShaderPtr shader = create_shader();
+		shader->load_from_file(util::get_graphic_sources_path() + "mesh.fx");
+
+		uber_shader_.reset(new UberShader(shader));
+	}
+
 	vertex_declarations_.reset(new VertexDeclarations(this));
 
 	window_->signal_resize.connect
@@ -233,11 +239,33 @@ TexturePtr D3D9Renderer::create_texture(std::string const &filename)
 	return texture;
 }
 
-boost::shared_ptr<Font> D3D9Renderer::create_font(std::string const &face_name, int height)
+FontPtr D3D9Renderer::create_font(std::string const &face_name, int height)
 {
-	boost::shared_ptr<Font> font(new Font(shared_from_this(), face_name, height));
+	FontPtr font(new Font(shared_from_this(), face_name, height));
 	register_resource(font);
 	return font;
+}
+
+ShaderPtr D3D9Renderer::create_shader()
+{
+	boost::shared_ptr<D3D9Shader> shader(new D3D9Shader(shared_from_this()));
+	register_resource(shader);
+	return shader;
+}
+
+DrawCallPtr D3D9Renderer::create_draw_call()
+{
+	return new D3D9DrawCall(shared_from_this());
+}
+
+MeshDrawCallPtr D3D9Renderer::create_mesh_draw_call()
+{
+	return new D3D9MeshDrawCall(shared_from_this());
+}
+
+UberShaderPtr D3D9Renderer::get_uber_shader()
+{
+	return uber_shader_;
 }
 
 void D3D9Renderer::handle_resize()

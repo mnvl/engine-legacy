@@ -21,7 +21,6 @@
 #include "shader.h"
 #include "material.h"
 #include "d3d9_vertex_declarations.h"
-#include "shaders_library.h"
 #include "renderer.h"
 
 namespace graphic

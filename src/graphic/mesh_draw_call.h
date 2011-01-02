@@ -9,25 +9,22 @@
 // prior written consent of Manvel Avetisian.
 //-----------------------------------------------------------------------------
 
-#include "mesh_shader.h"
+#include "uber_shader.h"
 #include "draw_call.h"
 
 namespace graphic
 {
 
-class MeshDrawCall: public DrawCall
-{
+class MeshDrawCall: public DrawCall {
 public:
-	MeshDrawCall(RendererPtr const &renderer, boost::shared_ptr<MeshShader> shader);
-	~MeshDrawCall();
+	MeshDrawCall(RendererPtr const &renderer);
+	virtual ~MeshDrawCall();
 
 	void swap_joint_matrix_array(std::vector<math::matrix<4,4> > &joint_matrix_array);
 	void set_joint_matrix_array(std::vector<math::matrix<4,4> > &joint_matrix_array);
 
-	virtual void execute();
-
 private:
-	boost::shared_ptr<MeshShader> shader_;
+	UberShaderPtr const shader_;
 	std::vector<math::matrix<4,4> > joint_matrix_array_;
 };
 

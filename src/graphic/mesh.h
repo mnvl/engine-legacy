@@ -70,7 +70,7 @@ public:
 
 protected:
 	Model *model_;
-	boost::shared_ptr<MeshShader> shader_;
+	UberShaderPtr shader_;
 };
 
 }

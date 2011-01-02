@@ -59,7 +59,13 @@ public:
 	}
 
 	virtual TexturePtr create_texture(std::string const &filename) = 0;
-	virtual boost::shared_ptr<Font> create_font(std::string const &face_name, int height = 16) = 0;
+	virtual FontPtr create_font(std::string const &face_name, int height = 16) = 0;
+	virtual ShaderPtr create_shader() = 0;
+
+	virtual UberShaderPtr get_uber_shader() const = 0;
+
+	virtual DrawCallPtr create_draw_call() = 0;
+	virtual MeshDrawCallPtr create_mesh_draw_call() = 0;
 
     static void bind(lua_State *L);
 

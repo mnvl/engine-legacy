@@ -12,8 +12,8 @@
 #include <platform/window.h>
 #include <util/get_sources_path.h>
 #include "material.h"
-#include "mesh_shader.h"
-#include "shaders_library.h"
+#include "uber_shader.h"
+#include "uber_shader.h"
 #include "renderer.h"
 
 BOOST_AUTO_TEST_SUITE(normal_map)
@@ -73,7 +73,7 @@ BOOST_AUTO_TEST_CASE(basic)
 		vertex_array->unlock();
 	}
 
-	boost::shared_ptr<graphic::MeshShader> shader = renderer->get_shaders_library()->get_mesh_shader();
+	boost::shared_ptr<graphic::MeshShader> shader = renderer->get_shaders_library()->get_uber_shader();
 
 	boost::shared_ptr<graphic::Camera> camera(new graphic::Camera());
 	camera->set_orthographic_projection(2, 2 * math::scalar(renderer->get_screen_height()) / renderer->get_screen_width(), 0, 2);

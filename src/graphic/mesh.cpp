@@ -10,7 +10,7 @@
 
 #include <util/logger.h>
 #include "model.h"
-#include "shaders_library.h"
+#include "uber_shader.h"
 #include "renderer.h"
 #include "mesh.h"
 
@@ -18,7 +18,7 @@ namespace graphic {
 
 Mesh::Mesh(Model *model_ptr):
 	model_(model_ptr),
-	shader_(model_ptr->get_renderer() ? model_ptr->get_renderer()->get_shaders_library()->get_mesh_shader() : boost::shared_ptr<MeshShader>())
+	shader_(model_ptr->get_renderer() ? model_ptr->get_renderer()->get_uber_shader() : UberShaderPtr())
 {
 	bind_shape_matrix.zero();
 }

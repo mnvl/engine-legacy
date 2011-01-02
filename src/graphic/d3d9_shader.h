@@ -14,15 +14,15 @@
 #include <d3dx9.h>
 #include <boost/intrusive_ptr.hpp>
 #include <boost/shared_ptr.hpp>
+#include <boost/enable_shared_from_this.hpp>
 #include <util/boost_com_intrusive_ptr.h>
-#include <boost/noncopyable.hpp>
 #include "forward.h"
 #include "shader.h"
 
 namespace graphic
 {
 
-class D3D9Shader: public Shader {
+class D3D9Shader: public Shader, public boost::enable_shared_from_this<D3D9Shader> {
 	friend class D3D9Renderer;
 
 public:
@@ -36,10 +36,16 @@ public:
         return effect_.get();
     }
 
-	virtual void handle_lost_device();
-	virtual void handle_reset_device();
+	void handle_lost_device();
+	void handle_reset_device();
+
+	virtual ParameterPtr get_parameter(std::string const &name);
+	virtual TechniquePtr get_technique(std::string const &name);
 
 protected:
+	class D3D9Parameter;
+	class D3D9Technique;
+
     D3D9Shader(D3D9RendererPtr const &renderer_ptr);
 
 	D3D9RendererPtr const renderer_;

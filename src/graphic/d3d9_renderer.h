@@ -49,7 +49,13 @@ public:
 		bool dynamic = false, bool writeonly = false);
 
 	virtual TexturePtr create_texture(std::string const &filename);
-	virtual boost::shared_ptr<Font> create_font(std::string const &face_name, int height = 16);
+	virtual FontPtr create_font(std::string const &face_name, int height = 16);
+	virtual ShaderPtr create_shader();
+
+	virtual DrawCallPtr create_draw_call();
+	virtual MeshDrawCallPtr create_mesh_draw_call();
+
+	virtual UberShaderPtr get_uber_shader() const;
 
 	template<class T>
 	void register_resource(boost::shared_ptr<T> const &resource)
@@ -72,7 +78,7 @@ private:
 	boost::signals2::signal0<void> signal_lost_device_;
 	boost::signals2::signal0<void> signal_reset_device_;
 
-    boost::scoped_ptr<ShadersLibrary> shaders_library_;
+	UberShaderPtr uber_shader_;
 	boost::scoped_ptr<VertexDeclarations> vertex_declarations_;
 
 	void handle_resize();
