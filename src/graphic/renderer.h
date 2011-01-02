@@ -59,6 +59,7 @@ public:
 	}
 
 	virtual TexturePtr create_texture(std::string const &filename) = 0;
+	virtual MaterialPtr create_material() = 0;
 	virtual FontPtr create_font(std::string const &face_name, int height = 16) = 0;
 	virtual ShaderPtr create_shader() = 0;
 

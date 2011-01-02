@@ -239,6 +239,11 @@ TexturePtr D3D9Renderer::create_texture(std::string const &filename)
 	return texture;
 }
 
+MaterialPtr D3D9Renderer::create_material()
+{
+	return new D3D9Material(shared_from_this());
+}
+
 FontPtr D3D9Renderer::create_font(std::string const &face_name, int height)
 {
 	FontPtr font(new Font(shared_from_this(), face_name, height));

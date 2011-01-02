@@ -49,6 +49,7 @@ public:
 		bool dynamic = false, bool writeonly = false);
 
 	virtual TexturePtr create_texture(std::string const &filename);
+	virtual MaterialPtr create_material()
 	virtual FontPtr create_font(std::string const &face_name, int height = 16);
 	virtual ShaderPtr create_shader();
 

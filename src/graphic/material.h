@@ -9,18 +9,18 @@
 // prior written consent of Manvel Avetisian.
 //-----------------------------------------------------------------------------
 
+#include <boost/noncopyable.hpp>
 #include <boost/shared_ptr.hpp>
 #include <luabind/lua_include.hpp>
 #include <math/vec.h>
+#include "forward.h"
 #include "texture.h"
 #include "renderer.h"
 
 namespace graphic
 {
 
-typedef boost::shared_ptr<class Material> MaterialPtr;
-
-class Material {
+class Material: public boost::noncopyable {
 public:
 	enum cull_mode_type
 	{
@@ -36,7 +36,7 @@ public:
 	};
 
 	Material(RendererPtr const &renderer_ptr = RendererPtr());
-	~Material();
+	virtual ~Material();
 
 	std::string const &get_name() const { return name_; }
 	TexturePtr get_diffuse_texture() const { return diffuse_texture_; }
@@ -52,11 +52,11 @@ public:
 	void set_diffuse_texture(std::string const &filename);
 	void set_normal_map_texture(std::string const &filename);
 
-	void select();
+	virtual void select();
 
 	static void bind(lua_State *L);
 
-private:
+protected:
 	std::string name_;
 
 	RendererPtr renderer_;
