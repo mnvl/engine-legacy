@@ -11,9 +11,10 @@
 #include <boost/test/unit_test.hpp>
 #include <platform/window.h>
 #include <util/get_sources_path.h>
+#include <exception/directx_error.h>
 #include "material.h"
 #include "uber_shader.h"
-#include "uber_shader.h"
+#include "d3d9_shader.h"
 #include "d3d9_renderer.h"
 
 BOOST_AUTO_TEST_SUITE(normal_map)
@@ -23,7 +24,7 @@ BOOST_AUTO_TEST_CASE(basic)
 	std::string const &src = util::get_graphic_sources_path();
 
 	boost::shared_ptr<platform::Window> window(new platform::Window("test normal_map basic"));
-	graphic::RendererPtr renderer(new graphic::D3D9Renderer(window));
+	boost::shared_ptr<graphic::D3D9Renderer> renderer(new graphic::D3D9Renderer(window));
 
 	renderer->postconstruct();
 
@@ -88,7 +89,7 @@ BOOST_AUTO_TEST_CASE(basic)
 	shader->diffuse_texture->set(material->get_diffuse_texture());
 	shader->normal_map_texture->set(material->get_normal_map_texture());
 
-	graphic::shader_parameters::POINT_LIGHTS lights;
+	graphic::UberShader::POINT_LIGHTS lights;
 	memset(&lights, 0, sizeof(lights));
 
 	lights.items[0].position = math::vec<3>(0, 0, 10);
@@ -109,32 +110,35 @@ BOOST_AUTO_TEST_CASE(basic)
 	POINT_VERTEX point;
 	point.color.set(1.0f, 1.0f, 0, 1.0f);
 
+	boost::shared_ptr<graphic::D3D9Shader> d3d9_shader =
+		boost::static_pointer_cast<graphic::D3D9Shader>(shader->get_shader());
+
 	HRESULT hr;
 
 	for (int i = 0; i < 1000 && window->run_message_loop(); i++)
 	{
 		point.position.set(cos(math::scalar(i) / 100) * 0.5f + 0.5f, 0.5f, sin(math::scalar(i) / 100) * 0.5f);
 		lights.items[1].position = point.position;
-		shader->point_lights->set(lights);
+		shader->point_lights->set(&lights, sizeof(lights));
 
 		renderer->begin_frame();
 
 		UINT passes_count;
-		hr = shader->get()->Begin(&passes_count, 0);
+		hr = d3d9_shader->get()->Begin(&passes_count, 0);
 		if (FAILED(hr)) throw exception::directx_error(hr);
 
 		for(UINT pass = 0; pass < passes_count; pass++)
 		{
-			hr = shader->get()->BeginPass(pass);
+			hr = d3d9_shader->get()->BeginPass(pass);
 			if (FAILED(hr)) throw exception::directx_error(hr);
 
 			renderer->get_device()->DrawPrimitive(D3DPT_TRIANGLELIST, 0, 2);
 
-			hr = shader->get()->EndPass();
+			hr = d3d9_shader->get()->EndPass();
 			if (FAILED(hr)) throw exception::directx_error(hr);
 		}
 
-		hr = shader->get()->End();
+		hr = d3d9_shader->get()->End();
 		if (FAILED(hr)) throw exception::directx_error(hr);
 
 		hr = renderer->get_device()->SetFVF(D3DFVF_XYZ|D3DFVF_DIFFUSE);

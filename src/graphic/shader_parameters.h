@@ -22,22 +22,6 @@ namespace graphic
 namespace shader_parameters
 {
 
-static size_t const MAX_POINT_LIGHTS = 5;
-
-#pragma pack(push, 1)
-struct POINT_LIGHT
-{
-	math::vec<3> position;
-	math::vec<3> color;
-	math::scalar inv_attenuation;
-};
-
-struct POINT_LIGHTS
-{
-	POINT_LIGHT items[MAX_POINT_LIGHTS];
-};
-#pragma pack(pop)
-
 
 }
 }
