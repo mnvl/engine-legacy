@@ -66,7 +66,7 @@ public:
 	virtual UberShaderPtr get_uber_shader() const = 0;
 
 	virtual DrawCallPtr create_draw_call() = 0;
-	virtual MeshDrawCallPtr create_mesh_draw_call() = 0;
+	virtual UberDrawCallPtr create_uber_draw_call() = 0;
 
     static void bind(lua_State *L);
 

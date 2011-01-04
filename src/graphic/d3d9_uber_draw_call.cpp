@@ -18,22 +18,22 @@
 #include "d3d9_vertex_declarations.h"
 #include "d3d9_shader.h"
 #include "d3d9_renderer.h"
-#include "d3d9_mesh_draw_call.h"
+#include "d3d9_uber_draw_call.h"
 
 namespace graphic
 {
 
-D3D9MeshDrawCall::D3D9MeshDrawCall(D3D9RendererPtr const &renderer):
-	MeshDrawCall(renderer),
+D3D9UberDrawCall::D3D9UberDrawCall(D3D9RendererPtr const &renderer):
+	UberDrawCall(renderer),
 	renderer_(renderer)
 {
 }
 
-D3D9MeshDrawCall::~D3D9MeshDrawCall()
+D3D9UberDrawCall::~D3D9UberDrawCall()
 {
 }
 
-void D3D9MeshDrawCall::execute()
+void D3D9UberDrawCall::execute()
 {
 	HRESULT hr;
 

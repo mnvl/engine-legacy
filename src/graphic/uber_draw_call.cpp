@@ -1,4 +1,3 @@
-#pragma once
 //-----------------------------------------------------------------------------
 // Copyright (c) 2004 - 2011 Manvel Avetisian.
 // All Rights Reserved.
@@ -9,20 +8,30 @@
 // prior written consent of Manvel Avetisian.
 //-----------------------------------------------------------------------------
 
-#include "mesh_draw_call.h"
+#include "renderer.h"
+#include "uber_draw_call.h"
 
 namespace graphic
 {
 
-class D3D9MeshDrawCall: public MeshDrawCall {
-public:
-	D3D9MeshDrawCall(D3D9RendererPtr const &renderer);
-	virtual ~D3D9MeshDrawCall();
+UberDrawCall::UberDrawCall(RendererPtr const &renderer):
+	DrawCall(renderer),
+	shader_(renderer->get_uber_shader())
+{
+}
 
-	virtual void execute();
+UberDrawCall::~UberDrawCall()
+{
+}
 
-private:
-	D3D9RendererPtr const renderer_;
-};
+void UberDrawCall::swap_joint_matrix_array(std::vector<math::matrix<4,4> > &joint_matrix_array)
+{
+	joint_matrix_array_.swap(joint_matrix_array);
+}
+
+void UberDrawCall::set_joint_matrix_array(std::vector<math::matrix<4,4> > &joint_matrix_array)
+{
+	joint_matrix_array_ = joint_matrix_array;
+}
 
 }

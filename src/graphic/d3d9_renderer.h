@@ -56,7 +56,7 @@ public:
 	virtual ShaderPtr create_shader();
 
 	virtual DrawCallPtr create_draw_call();
-	virtual MeshDrawCallPtr create_mesh_draw_call();
+	virtual UberDrawCallPtr create_uber_draw_call();
 
 	virtual UberShaderPtr get_uber_shader() const;
 

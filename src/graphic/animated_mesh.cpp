@@ -12,7 +12,7 @@
 #include <vector>
 #include <util/logger.h>
 #include "uber_shader.h"
-#include "mesh_draw_call.h"
+#include "uber_draw_call.h"
 #include "animated_model.h"
 #include "renderer.h"
 #include "scheduler.h"
@@ -99,7 +99,7 @@ void BasicAnimatedMesh<V>::draw(Joint *joint_ptr, CameraPtr const &camera,
 
 	for (triangles_list_type::const_iterator it = triangles_list.begin(); it != triangles_list.end(); it++)
 	{
-		MeshDrawCallPtr draw_call = get_model()->get_renderer()->create_mesh_draw_call();
+		UberDrawCallPtr draw_call = get_model()->get_renderer()->create_uber_draw_call();
 
 		{
 			math::obb<3> bounds(bounds_);

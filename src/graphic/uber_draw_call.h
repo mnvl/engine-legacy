@@ -15,10 +15,10 @@
 namespace graphic
 {
 
-class MeshDrawCall: public DrawCall {
+class UberDrawCall: public DrawCall {
 public:
-	MeshDrawCall(RendererPtr const &renderer);
-	virtual ~MeshDrawCall();
+	UberDrawCall(RendererPtr const &renderer);
+	virtual ~UberDrawCall();
 
 	void swap_joint_matrix_array(std::vector<math::matrix<4,4> > &joint_matrix_array);
 	void set_joint_matrix_array(std::vector<math::matrix<4,4> > &joint_matrix_array);

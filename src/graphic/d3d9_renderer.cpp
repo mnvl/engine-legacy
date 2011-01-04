@@ -19,7 +19,7 @@
 #include "d3d9_material.h"
 #include "d3d9_shader.h"
 #include "d3d9_draw_call.h"
-#include "d3d9_mesh_draw_call.h"
+#include "d3d9_uber_draw_call.h"
 #include "d3d9_renderer.h"
 
 namespace graphic
@@ -131,7 +131,7 @@ void D3D9Renderer::postconstruct()
 {
 	{
 		ShaderPtr shader = create_shader();
-		shader->load_from_file(util::get_graphic_sources_path() + "mesh.fx");
+		shader->load_from_file(util::get_graphic_sources_path() + "uber_shader.fx");
 
 		uber_shader_.reset(new UberShader(shader));
 	}
@@ -275,9 +275,9 @@ DrawCallPtr D3D9Renderer::create_draw_call()
 	return DrawCallPtr(new D3D9DrawCall(shared_from_this()));
 }
 
-MeshDrawCallPtr D3D9Renderer::create_mesh_draw_call()
+UberDrawCallPtr D3D9Renderer::create_uber_draw_call()
 {
-	return MeshDrawCallPtr(new D3D9MeshDrawCall(shared_from_this()));
+	return UberDrawCallPtr(new D3D9UberDrawCall(shared_from_this()));
 }
 
 UberShaderPtr D3D9Renderer::get_uber_shader() const

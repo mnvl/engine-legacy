@@ -16,7 +16,7 @@
 #include "material.h"
 #include "vertex_array.h"
 #include "index_array.h"
-#include "mesh_draw_call.h"
+#include "uber_draw_call.h"
 #include "uber_shader.h"
 #include "d3d9_shader.h"
 #include "d3d9_renderer.h"
@@ -96,7 +96,7 @@ BOOST_AUTO_TEST_CASE(basic)
 	math::matrix<4,4> world_matrix;
 	world_matrix.identity();
 
-	graphic::MeshDrawCallPtr draw_call = renderer->create_mesh_draw_call();
+	graphic::UberDrawCallPtr draw_call = renderer->create_uber_draw_call();
 
 	draw_call->set_always_visible(true);
 	draw_call->set_vertex_buffer(vertex_array->get_vertex_buffer());
