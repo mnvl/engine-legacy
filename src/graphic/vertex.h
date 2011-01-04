@@ -65,6 +65,36 @@ struct VERTEX_PNT
 	}
 };
 
+struct VERTEX_PNTB
+{
+	static GenericVertex::format_type const FORMAT = GenericVertex::FORMAT_POSITION |
+		GenericVertex::FORMAT_NORMAL |
+		GenericVertex::FORMAT_TEXCOORDS |
+		GenericVertex::FORMAT_TEXTURE_BLEND_WEIGHTS;
+
+	math::vec<3> position;
+	math::vec<3> normal;
+	math::vec<2> texcoords;
+	math::vec<4> texutre_blend_weights;
+
+	VERTEX_PNTB &operator =(GenericVertex const &rhs)
+	{
+		position = rhs.position;
+		normal = rhs.normal;
+		texcoords = rhs.texcoords;
+		texutre_blend_weights = rhs.texutre_blend_weights;
+		return *this;
+	}
+
+	void assign(GenericVertex const &v, GenericVertex::format_type format)
+	{
+		if (format & GenericVertex::FORMAT_POSITION) position = v.position;
+		if (format & GenericVertex::FORMAT_NORMAL) normal = v.normal;
+		if (format & GenericVertex::FORMAT_TEXCOORDS) texcoords = v.texcoords;
+		if (format & GenericVertex::FORMAT_TEXTURE_BLEND_WEIGHTS) texutre_blend_weights = v.texutre_blend_weights;
+	}
+};
+
 struct VERTEX_PTBNT
 {
 	static GenericVertex::format_type const FORMAT = GenericVertex::FORMAT_POSITION |
