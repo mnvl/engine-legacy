@@ -88,6 +88,7 @@ BOOST_AUTO_TEST_CASE(basic)
 	}
 
 	graphic::UberShaderPtr shader = renderer->get_uber_shader();
+	shader->set_lighting_enabled(true);
 
 	boost::shared_ptr<graphic::Camera> camera(new graphic::Camera());
 	camera->set_orthographic_projection(2, 2 * math::scalar(renderer->get_screen_height()) / renderer->get_screen_width(), 0, 2);

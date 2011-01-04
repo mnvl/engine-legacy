@@ -53,6 +53,10 @@ public:
 	Shader::TechniquePtr tech_ptbnt;
 	Shader::TechniquePtr tech_pnjwt;
 	Shader::TechniquePtr tech_ptbnjwt;
+	Shader::TechniquePtr tech_pnt_lit;
+	Shader::TechniquePtr tech_ptbnt_lit;
+	Shader::TechniquePtr tech_pnjwt_lit;
+	Shader::TechniquePtr tech_ptbnjwt_lit;
 
 	// from skeletal_animation.fx
 	Shader::ParameterPtr joint_matrix_array;
@@ -60,9 +64,11 @@ public:
 	virtual Shader::TechniquePtr get_technique_for_vertex(VertexTraits const *vertex_traits) const;
 
 	ShaderPtr get_shader() const { return shader_; }
+	void set_lighting_enabled(bool flag) { lighting_enabled_ = true; }
 
 private:
 	ShaderPtr shader_;
+	bool lighting_enabled_;
 };
 
 }

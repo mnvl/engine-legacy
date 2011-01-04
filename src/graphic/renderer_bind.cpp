@@ -13,6 +13,7 @@
 #include "texture.h"
 #include "font.h"
 #include "renderer.h"
+#include "d3d9_renderer.h"
 
 void graphic::Renderer::bind(lua_State *L)
 {
@@ -20,7 +21,7 @@ void graphic::Renderer::bind(lua_State *L)
 
     module_(L, "graphic")
     [
-        class_<Renderer, RendererPtr >("Renderer")
+        class_<Renderer, RendererPtr>("Renderer")
 		.def("get_screen_width", &Renderer::get_screen_width)
 		.def("get_screen_height", &Renderer::get_screen_height)
 		.def("postconstruct", &Renderer::postconstruct)
@@ -30,7 +31,10 @@ void graphic::Renderer::bind(lua_State *L)
 		.def("create_vertex_array_pt", &Renderer::create_vertex_array<VERTEX_PT>)
 		.def("create_vertex_array_pnt", &Renderer::create_vertex_array<VERTEX_PNT>)
 		.def("create_vertex_array_pnjwt", &Renderer::create_vertex_array<VERTEX_PNJWT>)
-		.def("create_font", &Renderer::create_font)
+		.def("create_font", &Renderer::create_font),
+
+		class_<D3D9Renderer, Renderer, RendererPtr>("D3D9Renderer")
+		.def(constructor<boost::shared_ptr<platform::Window> const &, int, int, bool>())
     ];
 }
 

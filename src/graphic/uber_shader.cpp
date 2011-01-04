@@ -6,7 +6,8 @@ namespace graphic
 {
 
 UberShader::UberShader(ShaderPtr const &shader):
-	shader_(shader)
+	shader_(shader),
+	lighting_enabled_(false)
 {
 	world_view_projection_matrix = shader_->get_parameter("world_view_projection_matrix");
 	world_matrix = shader_->get_parameter("world_matrix");
@@ -20,6 +21,11 @@ UberShader::UberShader(ShaderPtr const &shader):
 	tech_ptbnt = shader_->get_technique("TECH_PTBNT");
 	tech_pnjwt = shader_->get_technique("TECH_PNJWT");
 	tech_ptbnjwt = shader_->get_technique("TECH_PTBNJWT");
+	tech_pnt_lit = shader_->get_technique("TECH_PNT_LIT");
+	tech_ptbnt_lit = shader_->get_technique("TECH_PTBNT_LIT");
+	tech_pnjwt_lit = shader_->get_technique("TECH_PNJWT_LIT");
+	tech_ptbnjwt_lit = shader_->get_technique("TECH_PTBNJWT_LIT");
+
 
 	joint_matrix_array = shader_->get_parameter("joint_matrix_array");
 }

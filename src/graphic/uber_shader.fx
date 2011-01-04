@@ -103,8 +103,8 @@ VS_OUTPUT_PNT VS_PNT(const VS_INPUT_PNT i)
 
 float4 PS_PNT(uniform const int point_lights_count, const VS_OUTPUT_PNT i) : COLOR
 {
-    float3 color = float4(GetPointLightsTotalIlluminationAtPosition(point_lights_count, i.position, i.normal), 1.0f);
-	return float4(color, 1.0f) * tex2D(DIFFUSE_TEXTURE_SAMPLER, i.texcoords);
+	return float4(GetPointLightsTotalIlluminationAtPosition(point_lights_count, i.position, i.normal), 1.0f) *
+		tex2D(DIFFUSE_TEXTURE_SAMPLER, i.texcoords);
 }
 
 VS_OUTPUT_PTBNT VS_PTBNT(const VS_INPUT_PTBNT i)
@@ -190,11 +190,29 @@ technique TECH_PNT
     pass p0
     {
         VertexShader = compile vs_2_0 VS_PNT();
+		PixelShader = compile ps_2_0 PS_PNT(0);
+    }
+}
+
+technique TECH_PNT_LIT
+{
+    pass p0
+    {
+        VertexShader = compile vs_2_0 VS_PNT();
 		PixelShader = compile ps_2_0 PS_PNT(MAX_POINT_LIGHTS);
     }
 }
 
 technique TECH_PTBNT
+{
+    pass p0
+    {
+        VertexShader = compile vs_2_0 VS_PTBNT();
+		PixelShader = compile ps_2_0 PS_PTBNT(0);
+    }
+}
+
+technique TECH_PTBNT_LIT
 {
     pass p0
     {
@@ -208,6 +226,15 @@ technique TECH_PNJWT
     pass p0
     {
         VertexShader = compile vs_2_0 VS_PNJWT(8);
+		PixelShader = compile ps_2_0 PS_PNJWT(0);
+    }
+}
+
+technique TECH_PNJWT_LIT
+{
+    pass p0
+    {
+        VertexShader = compile vs_2_0 VS_PNJWT(8);
 		PixelShader = compile ps_2_0 PS_PNJWT(MAX_POINT_LIGHTS);
     }
 }
@@ -217,6 +244,16 @@ technique TECH_PTBNJWT
     pass p0
     {
         VertexShader = compile vs_2_0 VS_PTBNJWT(8);
+		PixelShader = compile ps_2_0 PS_PTBNJWT(0);
+    }
+}
+
+technique TECH_PTBNJWT_LIT
+{
+    pass p0
+    {
+        VertexShader = compile vs_2_0 VS_PTBNJWT(8);
 		PixelShader = compile ps_2_0 PS_PTBNJWT(MAX_POINT_LIGHTS);
     }
 }
+

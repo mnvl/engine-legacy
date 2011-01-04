@@ -21,12 +21,19 @@ float3 GetPointLightIlluminationAtPosition(const int n, float3 position, float3 
 
 float3 GetPointLightsTotalIlluminationAtPosition(uniform const int count, float3 position, float3 normal)
 {
-	float3 color = 0.0f;
-
-	for (int n = 0; n < count; n++)
+	if (count == 0)
 	{
-		color += GetPointLightIlluminationAtPosition(n, position, normal);
+		return float3(1.0f, 1.0f, 1.0f);
 	}
+	else
+	{
+		float3 color = GetPointLightIlluminationAtPosition(0, position, normal);
 
-	return color;
+		for (int n = 1; n < count; n++)
+		{
+			color += GetPointLightIlluminationAtPosition(n, position, normal);
+		}
+
+		return color;
+	}
 }
