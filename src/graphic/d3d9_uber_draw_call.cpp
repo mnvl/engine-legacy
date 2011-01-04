@@ -41,7 +41,7 @@ void D3D9UberDrawCall::execute()
 	D3D9VertexBuffer *vertex_buffer = static_cast<D3D9VertexBuffer *>(vertex_buffer_.get());
 	D3D9IndexBuffer *index_buffer = static_cast<D3D9IndexBuffer *>(index_buffer_.get());
 	VertexTraits const *vertex_traits = vertex_buffer->get_vertex_traits();
-	UberShader::InstancePtr shader_instance = shader_->get_instance_for_vertex_format(vertex_traits->get_format());
+	UberShader::InstancePtr shader_instance = shader_->get_instance(vertex_traits->get_format(), material_);
 	D3D9Shader *shader = static_cast<D3D9Shader *>(shader_instance->get_shader().get());
 
 	hr = device_ptr->SetVertexDeclaration(renderer_->get_vertex_declarations()->get(vertex_traits));
