@@ -39,7 +39,7 @@ public:
 	virtual ~Material();
 
 	std::string const &get_name() const { return name_; }
-	TexturePtr get_diffuse_texture() const { return diffuse_texture_; }
+	TexturePtr get_diffuse_texture(size_t index = 0) const { return diffuse_textures_.at(index); }
 	TexturePtr get_normal_map_texture() const {	return normal_map_texture_; }
 
 	void set_name(std::string const &name) { name_ = name; }
@@ -49,7 +49,7 @@ public:
 	void set_src_blend_mode(blend_mode_type src_blend_mode) { src_blend_mode_ = src_blend_mode; }
 	void set_dest_blend_mode(blend_mode_type dest_blend_mode) { dest_blend_mode_ = dest_blend_mode; }
 
-	void set_diffuse_texture(std::string const &filename);
+	void set_diffuse_texture(std::string const &filename, size_t index = 0);
 	void set_normal_map_texture(std::string const &filename);
 
 	virtual void select();
@@ -66,7 +66,7 @@ protected:
 	bool alpha_blend_enabled_;
 	blend_mode_type src_blend_mode_, dest_blend_mode_;
 
-	TexturePtr diffuse_texture_;
+	std::vector<TexturePtr> diffuse_textures_;
 	TexturePtr normal_map_texture_;
 };
 

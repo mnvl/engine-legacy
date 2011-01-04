@@ -30,16 +30,18 @@ Material::~Material()
 {
 }
 
-void Material::set_diffuse_texture(std::string const &filename)
+void Material::set_diffuse_texture(std::string const &filename, size_t index)
 {
+	if (diffuse_textures_.size() <= index) diffuse_textures_.resize(index + 1);
+
 	if (renderer_)
 	{
-		diffuse_texture_ = renderer_->create_texture(filename);
+		diffuse_textures_[index] = renderer_->create_texture(filename);
 	}
 	else
 	{
 		LOG_WARN("material without renderer: set_diffuse_texture() will create texture without renderer");
-		diffuse_texture_.reset(new Texture(filename));
+		diffuse_textures_[index].reset(new Texture(filename));
 	}
 }
 
