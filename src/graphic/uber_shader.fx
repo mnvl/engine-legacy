@@ -15,16 +15,16 @@ float4x4 world_view_projection_matrix : VIEWPROJECTION;
 float4x4 world_matrix : WORLD;
 
 
-uniform extern texture diffuse_texture_1;
-sampler DIFFUSE_TEXTURE_SAMPLER_1 = sampler_state { Texture = <diffuse_texture_1>; };
+uniform extern texture diffuse_texture_0;
+sampler DIFFUSE_TEXTURE_SAMPLER_0 = sampler_state { Texture = <diffuse_texture_0>; };
 
 #if defined(TEXTURE_BLENDING_ENABLED)
+uniform extern texture diffuse_texture_1;
 uniform extern texture diffuse_texture_2;
 uniform extern texture diffuse_texture_3;
-uniform extern texture diffuse_texture_4;
+sampler DIFFUSE_TEXTURE_SAMPLER_1 = sampler_state { Texture = <diffuse_texture_1>; };
 sampler DIFFUSE_TEXTURE_SAMPLER_2 = sampler_state { Texture = <diffuse_texture_2>; };
 sampler DIFFUSE_TEXTURE_SAMPLER_3 = sampler_state { Texture = <diffuse_texture_3>; };
-sampler DIFFUSE_TEXTURE_SAMPLER_4 = sampler_state { Texture = <diffuse_texture_4>; };
 #endif
 
 struct VS_INPUT
@@ -140,13 +140,13 @@ float4 PS(const VS_OUTPUT i) : COLOR
 #if defined(TEXTURE_BLENDING_ENABLED)
 #if defined(TEXUTRE_BLENDING_WEIGHTS_IN_VERTEX)
 	float4 color =
-		tex2D(DIFFUSE_TEXTURE_SAMPLER_1, i.texcoords) * i.texture_blend_weights.x +
-		tex2D(DIFFUSE_TEXTURE_SAMPLER_2, i.texcoords) * i.texture_blend_weights.y +
-		tex2D(DIFFUSE_TEXTURE_SAMPLER_3, i.texcoords) * i.texture_blend_weights.z +
-		tex2D(DIFFUSE_TEXTURE_SAMPLER_4, i.texcoords) * i.texture_blend_weights.w;
+		tex2D(DIFFUSE_TEXTURE_SAMPLER_0, i.texcoords) * i.texture_blend_weights.x +
+		tex2D(DIFFUSE_TEXTURE_SAMPLER_1, i.texcoords) * i.texture_blend_weights.y +
+		tex2D(DIFFUSE_TEXTURE_SAMPLER_2, i.texcoords) * i.texture_blend_weights.z +
+		tex2D(DIFFUSE_TEXTURE_SAMPLER_3, i.texcoords) * i.texture_blend_weights.w;
 #endif
 #else
-	float4 color = tex2D(DIFFUSE_TEXTURE_SAMPLER_1, i.texcoords);
+	float4 color = tex2D(DIFFUSE_TEXTURE_SAMPLER_0, i.texcoords);
 #endif
 
 #if defined(LIGHTING_ENABLED)

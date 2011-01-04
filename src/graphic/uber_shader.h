@@ -51,7 +51,6 @@ public:
 		// from uber_shader.fx
 		Shader::ParameterPtr world_view_projection_matrix;
 		Shader::ParameterPtr world_matrix;
-		Shader::ParameterPtr diffuse_texture;
 		Shader::ParameterPtr diffuse_textures[DIFFUSE_TEXTURES_COUNT];
 
 		// from point_light.fx
