@@ -39,6 +39,7 @@ public:
 	virtual ~Material();
 
 	std::string const &get_name() const { return name_; }
+	size_t get_diffuse_textures_count() const { return diffuse_textures_.size(); }
 	TexturePtr get_diffuse_texture(size_t index = 0) const { return diffuse_textures_.at(index); }
 	TexturePtr get_normal_map_texture() const {	return normal_map_texture_; }
 

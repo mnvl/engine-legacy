@@ -28,6 +28,8 @@ public:
 	static unsigned const FLAG_TEXTURE_BLENDING_ENABLED = 64;
 	static unsigned const FLAG_TEXUTRE_BLENDING_WEIGHTS_IN_VERTEX = 128;
 
+	static size_t const DIFFUSE_TEXTURES_COUNT = 4;
+
 	static size_t const MAX_POINT_LIGHTS = 5;
 
 #pragma pack(push, 1)
@@ -50,6 +52,7 @@ public:
 		Shader::ParameterPtr world_view_projection_matrix;
 		Shader::ParameterPtr world_matrix;
 		Shader::ParameterPtr diffuse_texture;
+		Shader::ParameterPtr diffuse_textures[DIFFUSE_TEXTURES_COUNT];
 
 		// from point_light.fx
 		Shader::ParameterPtr point_lights;

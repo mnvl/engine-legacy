@@ -86,6 +86,52 @@ get_vertex_descr<VERTEX_PNT>()
 }
 
 template<> D3DVERTEXELEMENT9 const *
+get_vertex_descr<VERTEX_PNTB>()
+{
+	static D3DVERTEXELEMENT9 descr[] = {
+		{
+			0,
+			offsetof(VERTEX_PNTB, position),
+			D3DDECLTYPE_FLOAT3,
+			D3DDECLMETHOD_DEFAULT,
+			D3DDECLUSAGE_POSITION,
+			0
+		},
+
+		{
+			0,
+			offsetof(VERTEX_PNTB, normal),
+			D3DDECLTYPE_FLOAT3,
+			D3DDECLMETHOD_DEFAULT,
+			D3DDECLUSAGE_NORMAL,
+			0
+		},
+
+		{
+			0,
+			offsetof(VERTEX_PNTB, texcoords),
+			D3DDECLTYPE_FLOAT2,
+			D3DDECLMETHOD_DEFAULT,
+			D3DDECLUSAGE_TEXCOORD,
+			0
+		},
+
+		{
+			0,
+			offsetof(VERTEX_PNTB, texutre_blend_weights),
+			D3DDECLTYPE_FLOAT4,
+			D3DDECLMETHOD_DEFAULT,
+			D3DDECLUSAGE_TEXCOORD,
+			1
+		},
+
+		D3DDECL_END()
+	};
+
+	return descr;
+}
+
+template<> D3DVERTEXELEMENT9 const *
 get_vertex_descr<VERTEX_PTBNT>()
 {
 	static D3DVERTEXELEMENT9 descr[] = {
@@ -328,6 +374,7 @@ VertexTraits const *VertexTraits::get()
 
 template VertexTraits const *VertexTraits::get<VERTEX_PT>();
 template VertexTraits const *VertexTraits::get<VERTEX_PNT>();
+template VertexTraits const *VertexTraits::get<VERTEX_PNTB>();
 template VertexTraits const *VertexTraits::get<VERTEX_PTBNT>();
 template VertexTraits const *VertexTraits::get<VERTEX_PNJWT>();
 template VertexTraits const *VertexTraits::get<VERTEX_PTBNJWT>();

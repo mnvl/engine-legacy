@@ -1,4 +1,5 @@
 
+#include <boost/lexical_cast.hpp>
 #include <util/get_sources_path.h>
 #include <util/logger.h>
 #include "vertex.h"
@@ -41,6 +42,14 @@ UberShader::Instance::Instance(RendererPtr const &renderer, unsigned flags)
 	world_view_projection_matrix = shader_->get_parameter("world_view_projection_matrix");
 	world_matrix = shader_->get_parameter("world_matrix");
 	diffuse_texture = shader_->get_parameter("diffuse_texture_1");
+
+	if (flags & FLAG_TEXTURE_BLENDING_ENABLED)
+	{
+		for (size_t i = 0; i < DIFFUSE_TEXTURES_COUNT; ++i)
+		{
+			diffuse_textures[i] = shader_->get_parameter("diffuse_texture_" + boost::lexical_cast<std::string>(i + 1));
+		}
+	}
 
 	if (flags & FLAG_LIGHTING_ENABLED)
 		point_lights = shader_->get_parameter("point_lights");

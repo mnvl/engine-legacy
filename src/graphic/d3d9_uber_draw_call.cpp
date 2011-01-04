@@ -53,9 +53,15 @@ void D3D9UberDrawCall::execute()
     hr = device_ptr->SetIndices(index_buffer->get());
 	if (FAILED(hr)) throw exception::directx_error(hr);
 
-	if (material_) material_->select();
+	if (material_)
+	{
+		material_->select();
 
-	shader_instance->diffuse_texture->set(material_ ? material_->get_diffuse_texture() : TexturePtr());
+		for (size_t i = 0; i < UberShader::DIFFUSE_TEXTURES_COUNT && i < material_->get_diffuse_textures_count(); ++i)
+		{
+			shader_instance->diffuse_textures[i]->set(material_->get_diffuse_texture(i));
+		}
+	}
 
 	if (shader_instance->normal_map_texture)
 		shader_instance->normal_map_texture->set(material_ ? material_->get_normal_map_texture() : TexturePtr());

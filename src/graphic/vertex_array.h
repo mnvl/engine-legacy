@@ -59,6 +59,7 @@ protected:
 
 typedef VertexArray<VERTEX_PT> VertexArrayPT;
 typedef VertexArray<VERTEX_PNT> VertexArrayPNT;
+typedef VertexArray<VERTEX_PNTB> VertexArrayPNTB;
 typedef VertexArray<VERTEX_PTBNT> VertexArrayPTBNT;
 typedef VertexArray<VERTEX_PNJWT> VertexArrayPNJWT;
 typedef VertexArray<VERTEX_PTBNJWT> VertexArrayPTBNJWT;
