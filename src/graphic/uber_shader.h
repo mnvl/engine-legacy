@@ -27,6 +27,7 @@ public:
 	static unsigned const FLAG_NORMAL_MAP_ENABLED = 32;
 	static unsigned const FLAG_TEXTURE_BLENDING_ENABLED = 64;
 	static unsigned const FLAG_TEXUTRE_BLENDING_WEIGHTS_IN_VERTEX = 128;
+	static unsigned const FLAG_TEXUTRE_BLENDING_WEIGHTS_IN_TEXTURE = 256;
 
 	static size_t const DIFFUSE_TEXTURES_COUNT = 4;
 
@@ -52,6 +53,7 @@ public:
 		Shader::ParameterPtr world_view_projection_matrix;
 		Shader::ParameterPtr world_matrix;
 		Shader::ParameterPtr diffuse_textures[DIFFUSE_TEXTURES_COUNT];
+		Shader::ParameterPtr texture_blending_weights_texture;
 
 		// from point_light.fx
 		Shader::ParameterPtr point_lights;
@@ -85,6 +87,7 @@ private:
 		bool lighting_enabled;
 		bool texture_blending_enabled;
 		bool texture_blending_weights_in_vertex;
+		bool texture_blending_weights_in_texture;
 
 		struct Hash
 		{
@@ -94,6 +97,7 @@ private:
 				hash = (hash << 1) | (size_t) ik.lighting_enabled;
 				hash = (hash << 1) | (size_t) ik.texture_blending_enabled;
 				hash = (hash << 1) | (size_t) ik.texture_blending_weights_in_vertex;
+				hash = (hash << 1) | (size_t) ik.texture_blending_weights_in_texture;
 				return hash;
 			}
 		};
@@ -105,7 +109,8 @@ private:
 				return left.vertex_format == right.vertex_format
 					&& left.lighting_enabled == right.lighting_enabled
 					&& left.texture_blending_enabled == right.texture_blending_enabled
-					&& left.texture_blending_weights_in_vertex == right.texture_blending_weights_in_vertex;
+					&& left.texture_blending_weights_in_vertex == right.texture_blending_weights_in_vertex
+					&& left.texture_blending_weights_in_texture == right.texture_blending_weights_in_texture;
 			}
 		};
 	};
@@ -116,7 +121,7 @@ private:
 	instances_type instances_;
 	bool lighting_enabled_;
 
-	void build_instance(bool lit, GenericVertex::format_type format, unsigned flags);
+	void build_instance(GenericVertex::format_type format, unsigned flags);
 };
 
 }

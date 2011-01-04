@@ -45,6 +45,11 @@ void Material::set_diffuse_texture(std::string const &filename, size_t index)
 	}
 }
 
+void Material::set_texture_blending_weights_texture(std::string const &filename)
+{
+	texture_blending_weights_texture_ = renderer_->create_texture(filename);
+}
+
 void Material::set_normal_map_texture(std::string const &filename)
 {
 	if (renderer_)

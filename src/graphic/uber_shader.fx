@@ -25,6 +25,11 @@ uniform extern texture diffuse_texture_3;
 sampler DIFFUSE_TEXTURE_SAMPLER_1 = sampler_state { Texture = <diffuse_texture_1>; };
 sampler DIFFUSE_TEXTURE_SAMPLER_2 = sampler_state { Texture = <diffuse_texture_2>; };
 sampler DIFFUSE_TEXTURE_SAMPLER_3 = sampler_state { Texture = <diffuse_texture_3>; };
+
+#if defined(TEXUTRE_BLENDING_WEIGHTS_IN_TEXTURE)
+uniform extern texture texture_blending_weights_texture;
+sampler TEXUTRE_BLENDING_WEIGHTS_IN_TEXTURE_SAMPLER = sampler_state { Texture = <texture_blending_weights_texture>; };
+#endif
 #endif
 
 struct VS_INPUT
@@ -139,12 +144,18 @@ float4 PS(const VS_OUTPUT i) : COLOR
 
 #if defined(TEXTURE_BLENDING_ENABLED)
 #if defined(TEXUTRE_BLENDING_WEIGHTS_IN_VERTEX)
-	float4 color =
-		tex2D(DIFFUSE_TEXTURE_SAMPLER_0, i.texcoords) * i.texture_blend_weights.x +
-		tex2D(DIFFUSE_TEXTURE_SAMPLER_1, i.texcoords) * i.texture_blend_weights.y +
-		tex2D(DIFFUSE_TEXTURE_SAMPLER_2, i.texcoords) * i.texture_blend_weights.z +
-		tex2D(DIFFUSE_TEXTURE_SAMPLER_3, i.texcoords) * i.texture_blend_weights.w;
+	float4 blend_factor = i.texture_blend_weights;
 #endif
+
+#if defined(TEXUTRE_BLENDING_WEIGHTS_IN_TEXTURE)
+	float4 blend_factor = tex2D(TEXUTRE_BLENDING_WEIGHTS_IN_TEXTURE_SAMPLER, i.texcoords);
+#endif
+
+	float4 color =
+		tex2D(DIFFUSE_TEXTURE_SAMPLER_0, i.texcoords) * blend_factor.x +
+		tex2D(DIFFUSE_TEXTURE_SAMPLER_1, i.texcoords) * blend_factor.y +
+		tex2D(DIFFUSE_TEXTURE_SAMPLER_2, i.texcoords) * blend_factor.z +
+		tex2D(DIFFUSE_TEXTURE_SAMPLER_3, i.texcoords) * blend_factor.w;
 #else
 	float4 color = tex2D(DIFFUSE_TEXTURE_SAMPLER_0, i.texcoords);
 #endif

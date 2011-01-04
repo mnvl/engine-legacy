@@ -61,6 +61,11 @@ void D3D9UberDrawCall::execute()
 		{
 			shader_instance->diffuse_textures[i]->set(material_->get_diffuse_texture(i));
 		}
+
+		if (material_->get_texture_blending_weights_texture())
+		{
+			shader_instance->texture_blending_weights_texture->set(material_->get_texture_blending_weights_texture());
+		}
 	}
 
 	if (shader_instance->normal_map_texture)
