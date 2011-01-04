@@ -76,7 +76,7 @@ VS_OUTPUT VS(const VS_INPUT i)
     o.position_h = mul(float4(i.position, 1.0f), world_view_projection_matrix);
 #endif
 
-	o.position = mul(i.position, world_view_projection_matrix);
+	o.position = mul(float4(i.position, 1.0f), world_matrix);
 
 #if defined(VERTEX_JW_ENABLED) && defined(VERTEX_TB_ENABLED)
 	float3 tangent = ApplySkeletalAnimationToVector(i.tangent, joints, weights);
