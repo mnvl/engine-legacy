@@ -15,15 +15,15 @@ namespace graphic
 {
 
 struct GenericVertex {
-	typedef unsigned format_t;
+	typedef unsigned format_type;
 
-	static format_t const FORMAT_POSITION      = 0x0001u;
-	static format_t const FORMAT_TANGENT       = 0x0002u;
-	static format_t const FORMAT_BINORMAL      = 0x0004u;
-	static format_t const FORMAT_NORMAL        = 0x0008u;
-	static format_t const FORMAT_JOINT_INDICES = 0x0010u;
-	static format_t const FORMAT_JOINT_WEIGHTS = 0x0020u;
-	static format_t const FORMAT_TEXCOORDS     = 0x0040u;
+	static format_type const FORMAT_POSITION      = 0x0001u;
+	static format_type const FORMAT_TANGENT       = 0x0002u;
+	static format_type const FORMAT_BINORMAL      = 0x0004u;
+	static format_type const FORMAT_NORMAL        = 0x0008u;
+	static format_type const FORMAT_JOINT_INDICES = 0x0010u;
+	static format_type const FORMAT_JOINT_WEIGHTS = 0x0020u;
+	static format_type const FORMAT_TEXCOORDS     = 0x0040u;
 
 	inline bool operator <(GenericVertex const &rhs) const
 	{

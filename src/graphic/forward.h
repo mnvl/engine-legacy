@@ -35,6 +35,7 @@ typedef boost::shared_ptr<DrawCall> DrawCallPtr;
 typedef boost::shared_ptr<UberDrawCall> UberDrawCallPtr;
 typedef boost::shared_ptr<Font> FontPtr;
 typedef boost::shared_ptr<Scheduler> SchedulerPtr;
+typedef boost::weak_ptr<Renderer> RendererWeakPtr;
 typedef boost::shared_ptr<Renderer> RendererPtr;
 typedef boost::weak_ptr<D3D9Renderer> D3D9RendererWeakPtr;
 typedef boost::shared_ptr<D3D9Renderer> D3D9RendererPtr;

@@ -87,7 +87,7 @@ void BasicStaticMesh<T>::draw(Joint *joint_ptr, CameraPtr const &camera, math::m
 }
 
 template<class T>
-void BasicStaticMesh<T>::set_vertices(GenericVertex *vertices, GenericVertex::format_t format, size_t count)
+void BasicStaticMesh<T>::set_vertices(GenericVertex *vertices, GenericVertex::format_type format, size_t count)
 {
 	LOG_DEBUG("vertices: count = " << count << ", format = " << std::hex << format);
 

@@ -45,7 +45,7 @@ public:
 	std::vector<index_type> const &get_index_buffer() const { return indices_; }
 	std::vector<JointWeights> const &get_vertex_weights() const { return weights_; }
 
-	virtual void set_vertices(GenericVertex *vertices, GenericVertex::format_t format, size_t count);
+	virtual void set_vertices(GenericVertex *vertices, GenericVertex::format_type format, size_t count);
 	virtual void set_indices(unsigned *indices, size_t count);
 
 	void transform_vertices(Joint const *joint_ptr, std::vector<vertex_type> &result) const;
@@ -56,7 +56,7 @@ public:
 	static void bind(lua_State *L);
 
 private:
-	GenericVertex::format_t initialized_vertex_components_;
+	GenericVertex::format_type initialized_vertex_components_;
 	std::vector<vertex_type> vertices_;
 	std::vector<index_type> indices_;
 	std::vector<JointWeights> weights_;

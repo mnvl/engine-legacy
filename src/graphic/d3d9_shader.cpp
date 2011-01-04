@@ -78,35 +78,13 @@ private:
 	D3DXHANDLE handle_;
 };
 
-class D3D9Shader::D3D9Technique: public Shader::Technique {
-public:
-	D3D9Technique(boost::shared_ptr<D3D9Shader> const &shader, std::string const &name):
-		shader_(shader),
-		name_(name),
-		handle_(0)
-	{
-		handle_ = shader_->get()->GetTechniqueByName(name_.c_str());
-		if (!handle_) throw std::logic_error("can't get " + name_ + " technique handle");
-	}
-
-	virtual ~D3D9Technique()
-	{
-	}
-
-	virtual void set()
-	{
-		HRESULT hr = shader_->get()->SetTechnique(handle_);
-		if (FAILED(hr)) throw exception::directx_error(hr);
-	}
-
-private:
-	boost::shared_ptr<D3D9Shader> const shader_;
-	std::string const name_;
-	D3DXHANDLE handle_;
-};
-
 D3D9Shader::~D3D9Shader()
 {
+}
+
+void D3D9Shader::add_preprocessor_macro(std::string const &key, std::string const &value = std::string())
+{
+	macros_.push_back(std::make_pair(key, value));
 }
 
 void D3D9Shader::load_from_file(std::string const &filename)
@@ -115,7 +93,29 @@ void D3D9Shader::load_from_file(std::string const &filename)
 
 	HRESULT hr;
 
-	LOG_INFO("loading shader from file " << filename);
+	LOG_INFO("*** building preprocessor macros for shader " << filename);
+	std::vector<D3DXMACRO> macros;
+
+	for (std::vector<std::pair<std::string, std::string> >::const_iterator it = macros_.begin();
+		 it != macros_.end(); ++it)
+	{
+		D3DXMACRO macro;
+		macro.Name = it->first.c_str();
+		macro.Definition = it->second.c_str();
+
+		if (it->second.empty()) LOG_INFO("*** " << it->first);
+		else LOG_INFO("*** " << it->first << " = " << it->second);
+
+		macros.push_back(macro);
+	}
+
+	{
+		D3DXMACRO empty;
+		empty.Name = empty.Definition = 0;
+		macros.push_back(empty);
+	}
+
+	LOG_INFO("*** compiling shader from file " << filename);
 
 	ID3DXEffect *effect_ptr;
 	ID3DXBuffer *compilation_errors_ptr;
@@ -153,7 +153,7 @@ void D3D9Shader::log_compilation_errors(ID3DXBuffer *compilation_errors_ptr)
 {
 	if (compilation_errors_ptr && compilation_errors_ptr->GetBufferSize() > 0)
 	{
-		LOG_WARN("compilation messages:" << std::string((char const *) compilation_errors_ptr->GetBufferPointer(),
+		LOG_WARN("*** compilation messages:" << std::string((char const *) compilation_errors_ptr->GetBufferPointer(),
 				compilation_errors_ptr->GetBufferSize()));
 		compilation_errors_ptr->Release();
 	}
@@ -176,9 +176,10 @@ Shader::ParameterPtr D3D9Shader::get_parameter(std::string const &name)
 	return Shader::ParameterPtr(new D3D9Parameter(shared_from_this(), name));
 }
 
-Shader::TechniquePtr D3D9Shader::get_technique(std::string const &name)
+void D3D9Shader::set()
 {
-	return Shader::TechniquePtr(new D3D9Technique(shared_from_this(), name));
+	HRESULT hr = effect_->SetTechnique(handle_);
+	if (FAILED(hr)) throw exception::directx_error(hr);
 }
 
 D3D9Shader::D3D9Shader(D3D9RendererPtr const &renderer_ptr):

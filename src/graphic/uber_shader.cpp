@@ -1,46 +1,85 @@
 
 #include "vertex.h"
+#include "renderer.h"
 #include "uber_shader.h"
 
 namespace graphic
 {
 
-UberShader::UberShader(ShaderPtr const &shader):
-	shader_(shader),
-	lighting_enabled_(false)
+UberShader::Instance::Instance(RendererPtr const &renderer, unsigned flags)
 {
+	shader_ = renderer->create_shader();
+
+	if (flags & FLAG_VERTEX_N_ENABLED)
+		shader_->add_preporcessor_macro("VERTEX_N_ENABLED");
+
+	if (flags & FLAG_VERTEX_TB_ENABLED)
+		shader_->add_preporcessor_macro("VERTEX_TB_ENABLED");
+
+	if (flags & FLAG_VERTEX_JW_ENABLED)
+		shader_->add_preporcessor_macro("VERTEX_JW_ENABLED");
+
+	if (FLAG_SKELETAL_ANIMATION_ENABLED)
+		shader_->add_preporcessor_macro("SKELETAL_ANIMATION_ENABLED");
+
+	if (FLAG_LIGHTING_ENABLED)
+		shader_->add_preporcessor_macro("LIGHTING_ENABLED");
+
+	if (FLAG_NORMAL_MAP_ENABLED)
+		shader_->add_preporcessor_macro("NORMAL_MAP_ENABLED");
+
+	shader_->load_from_file("uber_shader.fx");
+
 	world_view_projection_matrix = shader_->get_parameter("world_view_projection_matrix");
 	world_matrix = shader_->get_parameter("world_matrix");
 	diffuse_texture = shader_->get_parameter("diffuse_texture");
 
-	point_lights = shader_->get_parameter("point_lights");
+	if (FLAG_LIGHTING_ENABLED)
+		point_lights = shader_->get_parameter("point_lights");
 
-	normal_map_texture = shader_->get_parameter("normal_map_texture");
+	if (FLAG_NORMAL_MAP_ENABLED)
+		normal_map_texture = shader_->get_parameter("normal_map_texture");
 
-	tech_pnt = shader_->get_technique("TECH_PNT");
-	tech_ptbnt = shader_->get_technique("TECH_PTBNT");
-	tech_pnjwt = shader_->get_technique("TECH_PNJWT");
-	tech_ptbnjwt = shader_->get_technique("TECH_PTBNJWT");
-	tech_pnt_lit = shader_->get_technique("TECH_PNT_LIT");
-	tech_ptbnt_lit = shader_->get_technique("TECH_PTBNT_LIT");
-	tech_pnjwt_lit = shader_->get_technique("TECH_PNJWT_LIT");
-	tech_ptbnjwt_lit = shader_->get_technique("TECH_PTBNJWT_LIT");
+	if (FLAG_SKELETAL_ANIMATION_ENABLED)
+		joint_matrix_array = shader_->get_parameter("joint_matrix_array");
+}
 
+UberShader::Instance::~Instance()
+{
+}
 
-	joint_matrix_array = shader_->get_parameter("joint_matrix_array");
+UberShader::UberShader(RendererPtr const &renderer):
+	lighting_enabled_(false)
+{
+	for (int i = 0; i <= 1; ++i)
+	{
+		bool lit = (i == 1);
+		unsigned lit_flag = lit ? FLAG_LIGHTING_ENABLED : 0;
+
+		build_instance(lit, VERTEX_PT::FORMAT,  lit_flag);
+		build_instance(lit, VERTEX_PNT::FORMAT, lit_flag | FLAG_VERTEX_N_ENABLED);
+		build_instance(lit, VERTEX_PNT::FORMAT, lit_flag | FLAG_VERTEX_TB_ENABLED | FLAG_VERTEX_N_ENABLED );
+		build_instance(lit, VERTEX_PNT::FORMAT, lit_flag | FLAG_VERTEX_N_ENABLED  | FLAG_VERTEX_JW_ENABLED);
+		build_instance(lit, VERTEX_PNT::FORMAT, lit_flag | FLAG_VERTEX_TB_ENABLED | FLAG_VERTEX_N_ENABLED | FLAG_VERTEX_JW_ENABLED);
+	}
 }
 
 UberShader::~UberShader()
 {
 }
 
-Shader::TechniquePtr UberShader::get_technique_for_vertex(VertexTraits const *vertex_traits) const
+UberShader::InstancePtr const &UberShader::get_instance_for_vertex(GenericVertex::format_type format) const
 {
-	if (vertex_traits == VertexTraits::get<VERTEX_PNT>()) return tech_pnt;
-	if (vertex_traits == VertexTraits::get<VERTEX_PTBNT>()) return tech_ptbnt;
-	if (vertex_traits == VertexTraits::get<VERTEX_PNJWT>()) return tech_pnjwt;
-	if (vertex_traits == VertexTraits::get<VERTEX_PTBNJWT>()) return tech_ptbnjwt;
-	throw std::logic_error("unknown vertex type");
+	instances_type const *instances = (lighting_enabled_ ? &instances_lit_ : &instances_);
+	instances_type::const_iterator it = instances->find(format);
+	if (it == instances->end()) throw std::logic_error("vertex format is not supported by uber shader");
+	return it->second;
+}
+
+void UberShader::build_instance(bool lit, GenericVertex::format_type format, unsigned flags)
+{
+	RendererPtr renderer(renderer_);
+	(lit ? &instances_lit_ : &instances_)->insert(std::make_pair(format, InstancePtr(new Instance(renderer, flags))));
 }
 
 }

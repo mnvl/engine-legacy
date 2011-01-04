@@ -59,7 +59,7 @@ public:
 	void set_model(Model *model);
 	Model *get_model() const;
 
-	virtual void set_vertices(GenericVertex *vertices, GenericVertex::format_t format, size_t count) = 0;
+	virtual void set_vertices(GenericVertex *vertices, GenericVertex::format_type format, size_t count) = 0;
 	virtual void set_indices(unsigned *indices, size_t count) = 0;
 
 	virtual void check();

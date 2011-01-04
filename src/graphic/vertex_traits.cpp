@@ -305,9 +305,9 @@ get_vertex_descr<VERTEX_PTBNJWT>()
 }
 
 template <class V>
-class SpecificVertexTraits: public VertexTraits
-{
+class SpecificVertexTraits: public VertexTraits {
 public:
+	virtual GenericVertex::format_type get_format() const { return V::FORMAT; }
 	virtual size_t get_size() const { return sizeof(V); }
 	virtual D3DVERTEXELEMENT9 const *get_descr() const { return get_vertex_descr<V>(); }
 

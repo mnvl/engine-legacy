@@ -29,7 +29,7 @@ MeshPtr MemoryMesh::shallow_copy() const
 	return MeshPtr(new MemoryMesh(*this));
 }
 
-void MemoryMesh::set_vertices(GenericVertex *vertices, GenericVertex::format_t format, size_t count)
+void MemoryMesh::set_vertices(GenericVertex *vertices, GenericVertex::format_type format, size_t count)
 {
 	vertices_.resize(count);
 	weights_.resize(count);

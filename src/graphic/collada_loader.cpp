@@ -780,7 +780,7 @@ namespace collada_elements
 		vertex_indexer vertex_indexer_;
 		position_index_to_vertex_index_type position_index_to_vertex_index_;
 
-		GenericVertex::format_t vertex_format_;
+		GenericVertex::format_type vertex_format_;
 		std::vector<GenericVertex> vertex_array_;
 		std::vector<unsigned> index_array_;
 

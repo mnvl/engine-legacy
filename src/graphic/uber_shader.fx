@@ -1,7 +1,15 @@
 
+#if defined(SKELETAL_ANIMATION_ENABLED)
 #include "skeletal_animation.fx"
+#endif
+
+#if defined(LIGHTING_ENABLED)
 #include "point_light.fx"
+#endif
+
+#if defined(NORMAL_MAP_ENABLED)
 #include "normal_map.fx"
+#endif
 
 float4x4 world_view_projection_matrix : VIEWPROJECTION;
 float4x4 world_matrix : WORLD;
@@ -13,247 +21,109 @@ sampler DIFFUSE_TEXTURE_SAMPLER = sampler_state
 	Texture = <diffuse_texture>;
 };
 
-struct VS_INPUT_PNT
-{
-    float3 position  : POSITION;
-    float3 normal    : NORMAL;
-    float2 texcoords : TEXCOORD0;
-};
-
-struct VS_OUTPUT_PNT
-{
-    float4 position_h : POSITION;
-    float2 texcoords  : TEXCOORD0;
-	float3 position   : TEXCOORD1;
-	float3 normal     : TEXCOORD2;
-};
-
-struct VS_INPUT_PTBNT
-{
-    float3 position  : POSITION;
-	float3 tangent   : TANGENT0;
-	float3 binormal  : BINORMAL0;
-	float3 normal    : NORMAL0;
-    float2 texcoords : TEXCOORD0;
-};
-
-struct VS_OUTPUT_PTBNT
-{
-    float4 position_h : POSITION;
-    float2 texcoords  : TEXCOORD0;
-	float3 position   : TEXCOORD1;
-	float3 tangent    : TEXCOORD2;
-	float3 binormal   : TEXCOORD3;
-	float3 normal     : TEXCOORD4;
-};
-
-struct VS_INPUT_PNJWT
-{
-    float3 position  : POSITION;
-    float3 normal    : NORMAL;
-    int4 joints1     : BLENDINDICES0;
-    int4 joints2     : BLENDINDICES1;
-    float4 weights1  : BLENDWEIGHT0;
-    float4 weights2  : BLENDWEIGHT1;
-    float2 texcoords : TEXCOORD0;
-};
-
-struct VS_OUTPUT_PNJWT
-{
-    float4 position_h : POSITION;
-    float2 texcoords  : TEXCOORD0;
-    float3 position   : TEXCOORD1;
-    float3 normal     : TEXCOORD2;
-};
-
-struct VS_INPUT_PTBNJWT
+struct VS_INPUT
 {
 	float3 position  : POSITION;
+
+#if defined(VERTEX_TB_ENABLED)
     float3 tangent   : TANGENT0;
     float3 binormal  : BINORMAL0;
+#endif
+
+#if defined(VERTEX_N_ENABLED)
     float3 normal    : NORMAL0;
+#endif
+
+#if defined(VERTEX_JW_ENABLED)
     int4 joints1     : BLENDINDICES0;
     int4 joints2     : BLENDINDICES1;
     float4 weights1  : BLENDWEIGHT0;
 	float4 weights2  : BLENDWEIGHT1;
+#endif
+
     float2 texcoords : TEXCOORD0;
 };
 
-struct VS_OUTPUT_PTBNJWT
+struct VS_OUTPUT
 {
 	float4 position_h : POSITION;
 	float2 texcoords  : TEXCOORD0;
 	float3 position   : TEXCOORD1;
+#if defined(VERTEX_TB_ENABLED)
 	float3 tangent    : TEXCOORD2;
 	float3 binormal   : TEXCOORD3;
+#endif
 	float3 normal     : TEXCOORD4;
 };
 
-VS_OUTPUT_PNT VS_PNT(const VS_INPUT_PNT i)
+
+VS_OUTPUT VS(const VS_INPUT i)
 {
-    VS_OUTPUT_PNT o;
+    VS_OUTPUT o;
 
-    o.position_h = mul(float4(i.position, 1.0f), world_view_projection_matrix);
-    o.texcoords  = i.texcoords;
-	o.position   = mul(float4(i.position, 1.0f), world_matrix);
-	o.normal     = normalize(mul(i.normal, (float3x3) world_matrix));
-
-    return o;
-}
-
-float4 PS_PNT(uniform const int point_lights_count, const VS_OUTPUT_PNT i) : COLOR
-{
-	return float4(GetPointLightsTotalIlluminationAtPosition(point_lights_count, i.position, i.normal), 1.0f) *
-		tex2D(DIFFUSE_TEXTURE_SAMPLER, i.texcoords);
-}
-
-VS_OUTPUT_PTBNT VS_PTBNT(const VS_INPUT_PTBNT i)
-{
-    VS_OUTPUT_PTBNT o;
-
-    o.position_h = mul(float4(i.position, 1.0f), world_view_projection_matrix);
-    o.texcoords  = i.texcoords;
-	o.position   = mul(float4(i.position, 1.0f), world_matrix);
-	o.tangent    = normalize(mul(i.tangent, (float3x3) world_matrix));
-	o.binormal   = normalize(mul(i.binormal, (float3x3) world_matrix));
-	o.normal     = normalize(mul(i.normal, (float3x3) world_matrix));
-
-    return o;
-}
-
-float4 PS_PTBNT(uniform const int point_lights_count, const VS_OUTPUT_PTBNT i) : COLOR
-{
-	float3 normal = GetNormalMapNormal(i.texcoords, i.tangent, i.binormal, i.normal);
-	float3 color = GetPointLightsTotalIlluminationAtPosition(point_lights_count, i.position, normal);
-	return float4(color, 1.0f) * tex2D(DIFFUSE_TEXTURE_SAMPLER, i.texcoords);
-}
-
-VS_OUTPUT_PNJWT VS_PNJWT(uniform const int count, const VS_INPUT_PNJWT i)
-{
-    VS_OUTPUT_PNJWT o;
-
+#if defined(VERTEX_JW_ENABLED)
 	const int joints[8] = { i.joints1, i.joints2 };
 	const float weights[8] = { i.weights1, i.weights2 };
 
-	float3 position = ApplySkeletalAnimationToPosition(i.position, count, joints, weights);
-	float3 normal = ApplySkeletalAnimationToVector(i.normal, count, joints, weights);
+	float3 position = ApplySkeletalAnimationToPosition(i.position, joints, weights);
 
     o.position_h = mul(float4(position, 1.0f), world_view_projection_matrix);
-    o.texcoords  = i.texcoords;
-	o.position   = mul(float4(position, 1.0f), world_matrix);
-	o.normal     = normalize(mul(normal, (float3x3) world_matrix));
+#else
+    o.position_h = mul(float4(i.position, 1.0f), world_view_projection_matrix);
+#endif
 
-    return o;
-}
+	o.position = o.position_h.xyz / o.position_h.w;
 
-float4 PS_PNJWT(uniform const int point_lights_count, const VS_OUTPUT_PNJWT i) : COLOR
-{
-    float3 color = GetPointLightsTotalIlluminationAtPosition(point_lights_count, i.position, i.normal);
-	return float4(color, 1.0f) * tex2D(DIFFUSE_TEXTURE_SAMPLER, i.texcoords);
-}
+#if defined(VERTEX_JW_ENABLED) && defined(VERTEX_TB_ENABLED)
+	float3 tangent = ApplySkeletalAnimationToVector(i.tangent, joints, weights);
+	float3 binormal = ApplySkeletalAnimationToVector(i.binormal, joints, weights);
 
-VS_OUTPUT_PTBNJWT VS_PTBNJWT(uniform const int count, const VS_INPUT_PTBNJWT i)
-{
-    VS_OUTPUT_PTBNJWT o;
-
-	const int joints[8] = { i.joints1, i.joints2 };
-	const float weights[8] = { i.weights1, i.weights2 };
-
-	float3 position = ApplySkeletalAnimationToPosition(i.position, count, joints, weights);
-
-    o.position_h = mul(float4(position, 1.0f), world_view_projection_matrix);
-	o.position = mul(position, world_matrix);
-
-	float3 tangent = ApplySkeletalAnimationToVector(i.tangent, count, joints, weights);
 	o.tangent = normalize(mul(tangent, (float3x3) world_matrix));
-
-	float3 binormal = ApplySkeletalAnimationToVector(i.binormal, count, joints, weights);
 	o.binormal = normalize(mul(binormal, (float3x3) world_matrix));
+#endif
 
-	float3 normal = ApplySkeletalAnimationToVector(i.normal, count, joints, weights);
+#if defined(VERTEX_JW_ENABLED) && defined(VERTEX_N_ENABLED)
+	float3 normal = ApplySkeletalAnimationToVector(i.normal, joints, weights);
 	o.normal = normalize(mul(normal, (float3x3) world_matrix));
+#endif
+
+#if !defined(VERTEX_JW_ENABLED) && defined(VERTEX_TB_ENABLED)
+	o.tangent = normalize(mul(i.tangent, (float3x3) world_matrix));
+	o.binormal = normalize(mul(i.binormal, (float3x3) world_matrix));
+#endif
+
+#if !defined(VERTEX_JW_ENABLED) && defined(VERTEX_N_ENABLED)
+	o.normal = normalize(mul(i.normal, (float3x3) world_matrix));
+#endif
 
     o.texcoords  = i.texcoords;
 
     return o;
 }
 
-float4 PS_PTBNJWT(uniform const int point_lights_count, const VS_OUTPUT_PTBNJWT i) : COLOR
+float4 PS(const VS_OUTPUT_PTBNJWT i) : COLOR
 {
+#if defined(NORMAL_MAP_ENABLED)
 	float3 normal = GetNormalMapNormal(i.texcoords, i.tangent, i.binormal, i.normal);
-	float3 color = GetPointLightsTotalIlluminationAtPosition(point_lights_count, i.position, normal);
-	return float4(color, 1.0f) * tex2D(DIFFUSE_TEXTURE_SAMPLER, i.texcoords);
+#else
+	float3 normal = i.normal;
+#endif
+
+#if defined(LIGHTING_ENABLED)
+	float4 color = float4(GetPointLightsTotalIlluminationAtPosition(point_lights_count, i.position, normal), 1.0f);
+#else
+	float4 color = 1.0f;
+#endif
+
+	return color * tex2D(DIFFUSE_TEXTURE_SAMPLER, i.texcoords);
 }
 
-technique TECH_PNT
+technique TECH
 {
     pass p0
     {
-        VertexShader = compile vs_2_0 VS_PNT();
-		PixelShader = compile ps_2_0 PS_PNT(0);
-    }
-}
-
-technique TECH_PNT_LIT
-{
-    pass p0
-    {
-        VertexShader = compile vs_2_0 VS_PNT();
-		PixelShader = compile ps_2_0 PS_PNT(MAX_POINT_LIGHTS);
-    }
-}
-
-technique TECH_PTBNT
-{
-    pass p0
-    {
-        VertexShader = compile vs_2_0 VS_PTBNT();
-		PixelShader = compile ps_2_0 PS_PTBNT(0);
-    }
-}
-
-technique TECH_PTBNT_LIT
-{
-    pass p0
-    {
-        VertexShader = compile vs_2_0 VS_PTBNT();
-		PixelShader = compile ps_2_0 PS_PTBNT(MAX_POINT_LIGHTS);
-    }
-}
-
-technique TECH_PNJWT
-{
-    pass p0
-    {
-        VertexShader = compile vs_2_0 VS_PNJWT(8);
-		PixelShader = compile ps_2_0 PS_PNJWT(0);
-    }
-}
-
-technique TECH_PNJWT_LIT
-{
-    pass p0
-    {
-        VertexShader = compile vs_2_0 VS_PNJWT(8);
-		PixelShader = compile ps_2_0 PS_PNJWT(MAX_POINT_LIGHTS);
-    }
-}
-
-technique TECH_PTBNJWT
-{
-    pass p0
-    {
-        VertexShader = compile vs_2_0 VS_PTBNJWT(8);
-		PixelShader = compile ps_2_0 PS_PTBNJWT(0);
-    }
-}
-
-technique TECH_PTBNJWT_LIT
-{
-    pass p0
-    {
-        VertexShader = compile vs_2_0 VS_PTBNJWT(8);
-		PixelShader = compile ps_2_0 PS_PTBNJWT(MAX_POINT_LIGHTS);
+        VertexShader = compile vs_2_0 VS();
+		PixelShader = compile ps_2_0 PS();
     }
 }
 

@@ -40,7 +40,7 @@ public:
 
 	virtual void draw(Joint *joint_ptr, CameraPtr const &camera, math::matrix<4,4> const &world_matrix);
 
-	virtual void set_vertices(GenericVertex *vertices, GenericVertex::format_t format, size_t count);
+	virtual void set_vertices(GenericVertex *vertices, GenericVertex::format_type format, size_t count);
 	virtual void set_indices(unsigned *indices, size_t count);
 
 protected:
@@ -50,7 +50,7 @@ protected:
 	// AABB over positions of all vertices before applyed transform
 	math::aabb<3> bounds_;
 
-	GenericVertex::format_t initialized_vertex_components_;
+	GenericVertex::format_type initialized_vertex_components_;
 	boost::shared_ptr<vertex_array_type> vertex_array_;
 	boost::shared_ptr<index_array_type> index_array_;
 };

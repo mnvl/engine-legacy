@@ -20,7 +20,7 @@ namespace graphic
 #pragma pack(push, 1)
 struct VERTEX_PT
 {
-	static GenericVertex::format_t const FORMAT = GenericVertex::FORMAT_POSITION | GenericVertex::FORMAT_TEXCOORDS;
+	static GenericVertex::format_type const FORMAT = GenericVertex::FORMAT_POSITION | GenericVertex::FORMAT_TEXCOORDS;
 
 	math::vec<3> position;
 	math::vec<2> texcoords;
@@ -32,7 +32,7 @@ struct VERTEX_PT
 		return *this;
 	}
 
-	void assign(GenericVertex const &v, GenericVertex::format_t format)
+	void assign(GenericVertex const &v, GenericVertex::format_type format)
 	{
 		if (format & GenericVertex::FORMAT_POSITION) position = v.position;
 		if (format & GenericVertex::FORMAT_TEXCOORDS) texcoords = v.texcoords;
@@ -41,7 +41,7 @@ struct VERTEX_PT
 
 struct VERTEX_PNT
 {
-	static GenericVertex::format_t const FORMAT = GenericVertex::FORMAT_POSITION |
+	static GenericVertex::format_type const FORMAT = GenericVertex::FORMAT_POSITION |
 		GenericVertex::FORMAT_NORMAL |
 		GenericVertex::FORMAT_TEXCOORDS;
 
@@ -57,7 +57,7 @@ struct VERTEX_PNT
 		return *this;
 	}
 
-	void assign(GenericVertex const &v, GenericVertex::format_t format)
+	void assign(GenericVertex const &v, GenericVertex::format_type format)
 	{
 		if (format & GenericVertex::FORMAT_POSITION) position = v.position;
 		if (format & GenericVertex::FORMAT_NORMAL) normal = v.normal;
@@ -67,7 +67,7 @@ struct VERTEX_PNT
 
 struct VERTEX_PTBNT
 {
-	static GenericVertex::format_t const FORMAT = GenericVertex::FORMAT_POSITION |
+	static GenericVertex::format_type const FORMAT = GenericVertex::FORMAT_POSITION |
 		GenericVertex::FORMAT_TANGENT |
 		GenericVertex::FORMAT_BINORMAL |
 		GenericVertex::FORMAT_NORMAL |
@@ -89,7 +89,7 @@ struct VERTEX_PTBNT
 		return *this;
 	}
 
-	void assign(GenericVertex const &v, GenericVertex::format_t format)
+	void assign(GenericVertex const &v, GenericVertex::format_type format)
 	{
 		if (format & GenericVertex::FORMAT_POSITION) position = v.position;
 		if (format & GenericVertex::FORMAT_TANGENT) tangent = v.tangent;
@@ -101,7 +101,7 @@ struct VERTEX_PTBNT
 
 struct VERTEX_PNJWT
 {
-	static GenericVertex::format_t const FORMAT = GenericVertex::FORMAT_POSITION |
+	static GenericVertex::format_type const FORMAT = GenericVertex::FORMAT_POSITION |
 		GenericVertex::FORMAT_NORMAL |
 		GenericVertex::FORMAT_JOINT_INDICES |
 		GenericVertex::FORMAT_JOINT_WEIGHTS |
@@ -123,7 +123,7 @@ struct VERTEX_PNJWT
 		return *this;
 	}
 
-	void assign(GenericVertex const &v, GenericVertex::format_t format)
+	void assign(GenericVertex const &v, GenericVertex::format_type format)
 	{
 		if (format & GenericVertex::FORMAT_POSITION) position = v.position;
 		if (format & GenericVertex::FORMAT_NORMAL) normal = v.normal;
@@ -135,7 +135,7 @@ struct VERTEX_PNJWT
 
 struct VERTEX_PTBNJWT
 {
-	static GenericVertex::format_t const FORMAT = GenericVertex::FORMAT_POSITION |
+	static GenericVertex::format_type const FORMAT = GenericVertex::FORMAT_POSITION |
 		GenericVertex::FORMAT_TANGENT |
 		GenericVertex::FORMAT_BINORMAL |
 		GenericVertex::FORMAT_NORMAL |
@@ -163,7 +163,7 @@ struct VERTEX_PTBNJWT
 		return *this;
 	}
 
-	void assign(GenericVertex const &v, GenericVertex::format_t format)
+	void assign(GenericVertex const &v, GenericVertex::format_type format)
 	{
 		if (format & GenericVertex::FORMAT_POSITION) position = v.position;
 		if (format & GenericVertex::FORMAT_TANGENT) tangent = v.tangent;
