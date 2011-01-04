@@ -17,13 +17,14 @@ namespace graphic
 struct GenericVertex {
 	typedef unsigned format_type;
 
-	static format_type const FORMAT_POSITION      = 0x0001u;
-	static format_type const FORMAT_TANGENT       = 0x0002u;
-	static format_type const FORMAT_BINORMAL      = 0x0004u;
-	static format_type const FORMAT_NORMAL        = 0x0008u;
+	static format_type const FORMAT_POSITION = 0x0001u;
+	static format_type const FORMAT_TANGENT = 0x0002u;
+	static format_type const FORMAT_BINORMAL = 0x0004u;
+	static format_type const FORMAT_NORMAL = 0x0008u;
 	static format_type const FORMAT_JOINT_INDICES = 0x0010u;
 	static format_type const FORMAT_JOINT_WEIGHTS = 0x0020u;
-	static format_type const FORMAT_TEXCOORDS     = 0x0040u;
+	static format_type const FORMAT_TEXCOORDS = 0x0040u;
+	static format_type const FORMAT_TEXTURE_BLEND_WEIGHTS = 0x0080u;
 
 	inline bool operator <(GenericVertex const &rhs) const
 	{
@@ -39,7 +40,10 @@ struct GenericVertex {
 		if (math::lexicographical_less(normal, rhs.normal)) return true;
 		if (math::lexicographical_greater(normal, rhs.normal)) return false;
 
-		return math::lexicographical_less(texcoords, rhs.texcoords);
+		if (math::lexicographical_less(texcoords, rhs.texcoords)) return true;
+		if (math::lexicographical_greater(texcoords, rhs.texcoords)) return true;
+
+		return math::lexicographical_less(texutre_blend_weights, rhs.texutre_blend_weights);
 	}
 
 	math::vec<3> position;
@@ -49,6 +53,7 @@ struct GenericVertex {
 	math::vec<8, unsigned> joints;
 	math::vec<8> weights;
 	math::vec<2> texcoords;
+	math::vec<4> texutre_blend_weights;
 };
 
 }

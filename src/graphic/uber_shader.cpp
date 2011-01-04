@@ -1,4 +1,5 @@
 
+#include <util/get_sources_path.h>
 #include <util/logger.h>
 #include "vertex.h"
 #include "renderer.h"
@@ -29,11 +30,17 @@ UberShader::Instance::Instance(RendererPtr const &renderer, unsigned flags)
 	if (flags & FLAG_NORMAL_MAP_ENABLED)
 		shader_->add_preprocessor_macro("NORMAL_MAP_ENABLED");
 
-	shader_->load_from_file("uber_shader.fx");
+	if (flags & FLAG_TEXTURE_BLENDING_ENABLED)
+		shader_->add_preprocessor_macro("TEXTURE_BLENDING_ENABLED");
+
+	if (flags &FLAG_TEXUTRE_BLENDING_WEIGHTS_IN_VERTEX)
+		shader_->add_preprocessor_macro("TEXUTRE_BLENDING_WEIGHTS_IN_VERTEX");
+
+	shader_->load_from_file(util::get_graphic_sources_path() + "uber_shader.fx");
 
 	world_view_projection_matrix = shader_->get_parameter("world_view_projection_matrix");
 	world_matrix = shader_->get_parameter("world_matrix");
-	diffuse_texture = shader_->get_parameter("diffuse_texture");
+	diffuse_texture = shader_->get_parameter("diffuse_texture_1");
 
 	if (flags & FLAG_LIGHTING_ENABLED)
 		point_lights = shader_->get_parameter("point_lights");
@@ -58,13 +65,30 @@ UberShader::UberShader(RendererPtr const &renderer):
 
 	for (int i = 0; i <= 1; ++i)
 	{
-		bool lit = (i == 1);
-		unsigned lit_flag = lit ? FLAG_LIGHTING_ENABLED : 0;
+		bool lighting_enabled = (i == 1);
+		unsigned lighting_enabled_flag = lighting_enabled ? FLAG_LIGHTING_ENABLED : 0;
 
-		build_instance(lit, VERTEX_PNT::FORMAT, lit_flag | FLAG_VERTEX_N_ENABLED);
-		build_instance(lit, VERTEX_PTBNT::FORMAT, lit_flag | FLAG_VERTEX_TB_ENABLED | FLAG_VERTEX_N_ENABLED | FLAG_NORMAL_MAP_ENABLED);
-		build_instance(lit, VERTEX_PNJWT::FORMAT, lit_flag | FLAG_VERTEX_N_ENABLED  | FLAG_VERTEX_JW_ENABLED | FLAG_SKELETAL_ANIMATION_ENABLED);
-		build_instance(lit, VERTEX_PTBNJWT::FORMAT, lit_flag | FLAG_VERTEX_TB_ENABLED | FLAG_VERTEX_N_ENABLED | FLAG_VERTEX_JW_ENABLED | FLAG_NORMAL_MAP_ENABLED | FLAG_SKELETAL_ANIMATION_ENABLED);
+		build_instance(lighting_enabled,
+			VERTEX_PNT::FORMAT,
+			lighting_enabled_flag | FLAG_VERTEX_N_ENABLED);
+
+		build_instance(lighting_enabled,
+			VERTEX_PNTB::FORMAT,
+			lighting_enabled_flag | FLAG_VERTEX_N_ENABLED | FLAG_TEXTURE_BLENDING_ENABLED
+			| FLAG_TEXUTRE_BLENDING_WEIGHTS_IN_VERTEX);
+
+		build_instance(lighting_enabled,
+			VERTEX_PTBNT::FORMAT,
+			lighting_enabled_flag | FLAG_VERTEX_TB_ENABLED | FLAG_VERTEX_N_ENABLED | FLAG_NORMAL_MAP_ENABLED);
+
+		build_instance(lighting_enabled,
+			VERTEX_PNJWT::FORMAT,
+			lighting_enabled_flag | FLAG_VERTEX_N_ENABLED  | FLAG_VERTEX_JW_ENABLED | FLAG_SKELETAL_ANIMATION_ENABLED);
+
+		build_instance(lighting_enabled,
+			VERTEX_PTBNJWT::FORMAT,
+			lighting_enabled_flag | FLAG_VERTEX_TB_ENABLED | FLAG_VERTEX_N_ENABLED | FLAG_VERTEX_JW_ENABLED
+			| FLAG_NORMAL_MAP_ENABLED | FLAG_SKELETAL_ANIMATION_ENABLED);
 	}
 }
 
@@ -72,20 +96,32 @@ UberShader::~UberShader()
 {
 }
 
-UberShader::InstancePtr const &UberShader::get_instance_for_vertex_format(GenericVertex::format_type format) const
+UberShader::InstancePtr const &UberShader::get_instance(GenericVertex::format_type format,
+	MaterialPtr const &material) const
 {
-	instances_type const *instances = (lighting_enabled_ ? &instances_lit_ : &instances_);
-	instances_type::const_iterator it = instances->find(format);
-	if (it == instances->end()) throw std::logic_error("vertex format is not supported by uber shader");
+	InstanceKey key;
+	key.vertex_format = format;
+	key.lighting_enabled = lighting_enabled_;
+	key.texture_blending_enabled = false;
+	key.texture_blending_weights_in_vertex = false;
+
+	instances_type::const_iterator it = instances_.find(key);
+	if (it == instances_.end()) throw std::logic_error("vertex format is not supported by uber shader");
 	return it->second;
 }
 
-void UberShader::build_instance(bool lit, GenericVertex::format_type format, unsigned flags)
+void UberShader::build_instance(bool lighting_enabled, GenericVertex::format_type format, unsigned flags)
 {
-	LOG_INFO("*** building uber shader, lit = " << lit << ", format = " << format << ", flags = " << flags);
-
 	RendererPtr renderer(renderer_);
-	(lit ? &instances_lit_ : &instances_)->insert(std::make_pair(format, InstancePtr(new Instance(renderer, flags))));
+
+	InstanceKey key;
+	key.vertex_format = format;
+	key.lighting_enabled = lighting_enabled;
+	key.texture_blending_enabled = false;
+	key.texture_blending_weights_in_vertex = false;
+
+	LOG_INFO("*** building uber shader, lighting_enabled = " << lighting_enabled << ", format = " << format << ", flags = " << flags);
+	instances_.insert(std::make_pair(key, InstancePtr(new Instance(renderer, flags))));
 }
 
 }

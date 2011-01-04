@@ -14,12 +14,18 @@
 float4x4 world_view_projection_matrix : VIEWPROJECTION;
 float4x4 world_matrix : WORLD;
 
-uniform extern texture diffuse_texture;
 
-sampler DIFFUSE_TEXTURE_SAMPLER = sampler_state
-{
-	Texture = <diffuse_texture>;
-};
+uniform extern texture diffuse_texture_1;
+sampler DIFFUSE_TEXTURE_SAMPLER_1 = sampler_state { Texture = <diffuse_texture_1>; };
+
+#if defined(TEXTURE_BLENDING_ENABLED)
+uniform extern texture diffuse_texture_2;
+uniform extern texture diffuse_texture_3;
+uniform extern texture diffuse_texture_4;
+sampler DIFFUSE_TEXTURE_SAMPLER_2 = sampler_state { Texture = <diffuse_texture_2>; };
+sampler DIFFUSE_TEXTURE_SAMPLER_3 = sampler_state { Texture = <diffuse_texture_3>; };
+sampler DIFFUSE_TEXTURE_SAMPLER_4 = sampler_state { Texture = <diffuse_texture_4>; };
+#endif
 
 struct VS_INPUT
 {
@@ -35,13 +41,17 @@ struct VS_INPUT
 #endif
 
 #if defined(VERTEX_JW_ENABLED)
-    int4 joints1     : BLENDINDICES0;
-    int4 joints2     : BLENDINDICES1;
-    float4 weights1  : BLENDWEIGHT0;
-	float4 weights2  : BLENDWEIGHT1;
+    int4 joints1 : BLENDINDICES0;
+    int4 joints2 : BLENDINDICES1;
+    float4 weights1 : BLENDWEIGHT0;
+	float4 weights2 : BLENDWEIGHT1;
 #endif
 
     float2 texcoords : TEXCOORD0;
+
+#if defined(TEXUTRE_BLENDING_WEIGHTS_IN_VERTEX)
+	float4 texture_blend_weights: TEXCOORD1;
+#endif
 };
 
 struct VS_OUTPUT
@@ -57,6 +67,10 @@ struct VS_OUTPUT
 
 #if defined(VERTEX_N_ENABLED)
 	float3 normal     : TEXCOORD4;
+#endif
+
+#if defined(TEXUTRE_BLENDING_WEIGHTS_IN_VERTEX)
+	float4 texture_blend_weights: TEXCOORD5;
 #endif
 };
 
@@ -76,7 +90,7 @@ VS_OUTPUT VS(const VS_INPUT i)
     o.position_h = mul(float4(i.position, 1.0f), world_view_projection_matrix);
 #endif
 
-	o.position = mul(i.position, world_view_projection_matrix);
+	o.position = mul(float4(i.position, 1.0f), world_matrix);
 
 #if defined(VERTEX_JW_ENABLED) && defined(VERTEX_TB_ENABLED)
 	float3 tangent = ApplySkeletalAnimationToVector(i.tangent, joints, weights);
@@ -102,6 +116,10 @@ VS_OUTPUT VS(const VS_INPUT i)
 
     o.texcoords  = i.texcoords;
 
+#if defined(TEXUTRE_BLENDING_WEIGHTS_IN_VERTEX)
+	o.texture_blend_weights = i.texture_blend_weights;
+#endif
+
     return o;
 }
 
@@ -116,12 +134,26 @@ float4 PS(const VS_OUTPUT i) : COLOR
 #endif
 
 #if defined(LIGHTING_ENABLED)
-	float4 color = float4(GetPointLightsTotalIlluminationAtPosition(MAX_POINT_LIGHTS, i.position, normal), 1.0f);
-#else
-	float4 color = 1.0f;
+	float4 light_color = float4(GetPointLightsTotalIlluminationAtPosition(MAX_POINT_LIGHTS, i.position, normal), 1.0f);
 #endif
 
-	return color * tex2D(DIFFUSE_TEXTURE_SAMPLER, i.texcoords);
+#if defined(TEXTURE_BLENDING_ENABLED)
+#if defined(TEXUTRE_BLENDING_WEIGHTS_IN_VERTEX)
+	float4 color =
+		tex2D(DIFFUSE_TEXTURE_SAMPLER_1, i.texcoords) * i.texture_blend_weights.x +
+		tex2D(DIFFUSE_TEXTURE_SAMPLER_2, i.texcoords) * i.texture_blend_weights.y +
+		tex2D(DIFFUSE_TEXTURE_SAMPLER_3, i.texcoords) * i.texture_blend_weights.z +
+		tex2D(DIFFUSE_TEXTURE_SAMPLER_4, i.texcoords) * i.texture_blend_weights.w;
+#endif
+#else
+	float4 color = tex2D(DIFFUSE_TEXTURE_SAMPLER_1, i.texcoords);
+#endif
+
+#if defined(LIGHTING_ENABLED)
+	return light_color * color;
+#else
+	return color;
+#endif
 }
 
 technique
