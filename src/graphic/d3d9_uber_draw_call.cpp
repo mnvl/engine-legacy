@@ -41,7 +41,7 @@ void D3D9UberDrawCall::execute()
 	D3D9VertexBuffer *vertex_buffer = static_cast<D3D9VertexBuffer *>(vertex_buffer_.get());
 	D3D9IndexBuffer *index_buffer = static_cast<D3D9IndexBuffer *>(index_buffer_.get());
 	VertexTraits const *vertex_traits = vertex_buffer->get_vertex_traits();
-	UberShader::InstancePtr shader_instance = shader_->get_instance(vertex_traits->get_format());
+	UberShader::InstancePtr shader_instance = shader_->get_instance_for_vertex_format(vertex_traits->get_format());
 	D3D9Shader *shader = static_cast<D3D9Shader *>(shader_instance->get_shader().get());
 
 	hr = device_ptr->SetVertexDeclaration(renderer_->get_vertex_declarations()->get(vertex_traits));
@@ -55,8 +55,6 @@ void D3D9UberDrawCall::execute()
 
 	if (material_) material_->select();
 
-	shader->set();
-
 	shader_instance->diffuse_texture->set(material_ ? material_->get_diffuse_texture() : TexturePtr());
 
 	if (shader_instance->normal_map_texture)
@@ -65,8 +63,8 @@ void D3D9UberDrawCall::execute()
 	shader_instance->world_matrix->set(world_matrix_);
 	shader_instance->world_view_projection_matrix->set(world_view_projection_matrix_);
 
-	if (shader_->joint_matrix_array && joint_matrix_array_.size())
-		shader_->joint_matrix_array->set(joint_matrix_array_);
+	if (shader_instance->joint_matrix_array && joint_matrix_array_.size())
+		shader_instance->joint_matrix_array->set(joint_matrix_array_);
 
 	UINT passes_count;
 	hr = shader->get()->Begin(&passes_count, D3DXFX_DONOTSAVESTATE);

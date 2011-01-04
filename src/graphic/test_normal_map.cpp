@@ -129,8 +129,10 @@ BOOST_AUTO_TEST_CASE(basic)
 	POINT_VERTEX point;
 	point.color.set(1.0f, 1.0f, 0, 1.0f);
 
+	graphic::UberShader::InstancePtr shader_instance = shader->get_instance_for_vertex_format(graphic::VERTEX_PTBNT::FORMAT);
+
 	boost::shared_ptr<graphic::D3D9Shader> d3d9_shader =
-		boost::static_pointer_cast<graphic::D3D9Shader>(shader->get_shader());
+		boost::static_pointer_cast<graphic::D3D9Shader>(shader_instance->get_shader());
 
 	boost::posix_time::ptime start_time(boost::posix_time::microsec_clock::local_time());
 	math::scalar delta;
@@ -145,7 +147,7 @@ BOOST_AUTO_TEST_CASE(basic)
 
 		point.position.set(-cos(angle) * 0.5f + 0.5f, 0.5f, sin(angle) * 0.5f);
 		lights.items[1].position = point.position;
-		shader->point_lights->set(&lights, sizeof(lights));
+		shader_instance->point_lights->set(&lights, sizeof(lights));
 
 		renderer->begin_frame();
 

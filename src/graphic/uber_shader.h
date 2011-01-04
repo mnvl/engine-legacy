@@ -73,7 +73,7 @@ public:
 	UberShader(RendererPtr const &renderer);
 	virtual ~UberShader();
 
-	virtual InstancePtr const &get_instance_for_vertex(GenericVertex::format_type format) const;
+	virtual InstancePtr const &get_instance_for_vertex_format(GenericVertex::format_type format) const;
 	void set_lighting_enabled(bool flag) { lighting_enabled_ = true; }
 
 private:

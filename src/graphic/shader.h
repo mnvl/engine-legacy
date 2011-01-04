@@ -38,14 +38,12 @@ public:
 
 	virtual ~Shader();
 
-	virtual void add_preporcessor_macro(std::string const &key, std::string const &value = std::string()) = 0;
+	virtual void add_preprocessor_macro(std::string const &key, std::string const &value = std::string()) = 0;
 
     virtual void load_from_file(std::string const &filename) = 0;
     virtual void load_from_buffer(char const *buffer, size_t len) = 0;
 
 	virtual ParameterPtr get_parameter(std::string const &name) = 0;
-
-	virtual void set();
 
 protected:
     Shader();

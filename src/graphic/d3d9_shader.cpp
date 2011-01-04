@@ -82,7 +82,7 @@ D3D9Shader::~D3D9Shader()
 {
 }
 
-void D3D9Shader::add_preprocessor_macro(std::string const &key, std::string const &value = std::string())
+void D3D9Shader::add_preprocessor_macro(std::string const &key, std::string const &value)
 {
 	macros_.push_back(std::make_pair(key, value));
 }
@@ -103,8 +103,8 @@ void D3D9Shader::load_from_file(std::string const &filename)
 		macro.Name = it->first.c_str();
 		macro.Definition = it->second.c_str();
 
-		if (it->second.empty()) LOG_INFO("*** " << it->first);
-		else LOG_INFO("*** " << it->first << " = " << it->second);
+		if (it->second.empty()) LOG_INFO(it->first);
+		else LOG_INFO(it->first << " = " << it->second);
 
 		macros.push_back(macro);
 	}
@@ -119,7 +119,7 @@ void D3D9Shader::load_from_file(std::string const &filename)
 
 	ID3DXEffect *effect_ptr;
 	ID3DXBuffer *compilation_errors_ptr;
-	hr = D3DXCreateEffectFromFile(renderer->get_device(), filename.c_str(), 0, 0, ENGINE_SHADER_FLAGS, 0,
+	hr = D3DXCreateEffectFromFile(renderer->get_device(), filename.c_str(), &macros[0], 0, ENGINE_SHADER_FLAGS, 0,
 		&effect_ptr, &compilation_errors_ptr);
 
 	log_compilation_errors(compilation_errors_ptr);
@@ -174,12 +174,6 @@ void D3D9Shader::handle_reset_device()
 Shader::ParameterPtr D3D9Shader::get_parameter(std::string const &name)
 {
 	return Shader::ParameterPtr(new D3D9Parameter(shared_from_this(), name));
-}
-
-void D3D9Shader::set()
-{
-	HRESULT hr = effect_->SetTechnique(handle_);
-	if (FAILED(hr)) throw exception::directx_error(hr);
 }
 
 D3D9Shader::D3D9Shader(D3D9RendererPtr const &renderer_ptr):

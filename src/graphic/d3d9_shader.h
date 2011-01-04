@@ -43,8 +43,6 @@ public:
 
 	virtual ParameterPtr get_parameter(std::string const &name);
 
-	virtual void set();
-
 protected:
 	class D3D9Parameter;
 

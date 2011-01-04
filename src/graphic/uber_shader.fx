@@ -49,11 +49,15 @@ struct VS_OUTPUT
 	float4 position_h : POSITION;
 	float2 texcoords  : TEXCOORD0;
 	float3 position   : TEXCOORD1;
+
 #if defined(VERTEX_TB_ENABLED)
 	float3 tangent    : TEXCOORD2;
 	float3 binormal   : TEXCOORD3;
 #endif
+
+#if defined(VERTEX_N_ENABLED)
 	float3 normal     : TEXCOORD4;
+#endif
 };
 
 
@@ -101,16 +105,18 @@ VS_OUTPUT VS(const VS_INPUT i)
     return o;
 }
 
-float4 PS(const VS_OUTPUT_PTBNJWT i) : COLOR
+float4 PS(const VS_OUTPUT i) : COLOR
 {
 #if defined(NORMAL_MAP_ENABLED)
 	float3 normal = GetNormalMapNormal(i.texcoords, i.tangent, i.binormal, i.normal);
 #else
+#if defined(VERTEX_N_ENABLED)
 	float3 normal = i.normal;
+#endif
 #endif
 
 #if defined(LIGHTING_ENABLED)
-	float4 color = float4(GetPointLightsTotalIlluminationAtPosition(point_lights_count, i.position, normal), 1.0f);
+	float4 color = float4(GetPointLightsTotalIlluminationAtPosition(MAX_POINT_LIGHTS, i.position, normal), 1.0f);
 #else
 	float4 color = 1.0f;
 #endif
@@ -118,7 +124,7 @@ float4 PS(const VS_OUTPUT_PTBNJWT i) : COLOR
 	return color * tex2D(DIFFUSE_TEXTURE_SAMPLER, i.texcoords);
 }
 
-technique TECH
+technique
 {
     pass p0
     {

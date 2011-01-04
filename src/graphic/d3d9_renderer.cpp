@@ -129,12 +129,7 @@ int D3D9Renderer::get_screen_height() const
 
 void D3D9Renderer::postconstruct()
 {
-	{
-		ShaderPtr shader = create_shader();
-		shader->load_from_file(util::get_graphic_sources_path() + "uber_shader.fx");
-
-		uber_shader_.reset(new UberShader(shader));
-	}
+	uber_shader_.reset(new UberShader(shared_from_this()));
 
 	vertex_declarations_.reset(new D3D9VertexDeclarations(this));
 
