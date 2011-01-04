@@ -1,5 +1,6 @@
 #pragma once
 
+#include <boost/weak_ptr.hpp>
 #include <boost/shared_ptr.hpp>
 
 namespace graphic
@@ -35,6 +36,7 @@ typedef boost::shared_ptr<MeshDrawCall> MeshDrawCallPtr;
 typedef boost::shared_ptr<Font> FontPtr;
 typedef boost::shared_ptr<Scheduler> SchedulerPtr;
 typedef boost::shared_ptr<Renderer> RendererPtr;
+typedef boost::weak_ptr<D3D9Renderer> D3D9RendererWeakPtr;
 typedef boost::shared_ptr<D3D9Renderer> D3D9RendererPtr;
 
 }

@@ -66,7 +66,7 @@ public:
 		if (FAILED(hr)) throw exception::directx_error(hr);
 	}
 
-	void set(void const *ptr, size_t size)
+	virtual void set(void const *ptr, size_t size)
 	{
 		HRESULT hr = shader_->get()->SetValue(handle_, ptr, size);
 		if (FAILED(hr)) throw exception::directx_error(hr);
@@ -93,7 +93,7 @@ public:
 	{
 	}
 
-	void set()
+	virtual void set()
 	{
 		HRESULT hr = shader_->get()->SetTechnique(handle_);
 		if (FAILED(hr)) throw exception::directx_error(hr);
@@ -111,13 +111,15 @@ D3D9Shader::~D3D9Shader()
 
 void D3D9Shader::load_from_file(std::string const &filename)
 {
+	D3D9RendererPtr renderer(renderer_);
+
 	HRESULT hr;
 
 	LOG_INFO("loading shader from file " << filename);
 
 	ID3DXEffect *effect_ptr;
 	ID3DXBuffer *compilation_errors_ptr;
-	hr = D3DXCreateEffectFromFile(renderer_->get_device(), filename.c_str(), 0, 0, ENGINE_SHADER_FLAGS, 0,
+	hr = D3DXCreateEffectFromFile(renderer->get_device(), filename.c_str(), 0, 0, ENGINE_SHADER_FLAGS, 0,
 		&effect_ptr, &compilation_errors_ptr);
 
 	log_compilation_errors(compilation_errors_ptr);
@@ -129,13 +131,15 @@ void D3D9Shader::load_from_file(std::string const &filename)
 
 void D3D9Shader::load_from_buffer(char const *buffer, size_t len)
 {
+	D3D9RendererPtr renderer(renderer_);
+
 	HRESULT hr;
 
 	LOG_INFO("loading shader from buffer");
 
 	ID3DXEffect *effect_ptr;
 	ID3DXBuffer *compilation_errors_ptr;
-	hr = D3DXCreateEffect(renderer_->get_device(), buffer, len, 0, 0, ENGINE_SHADER_FLAGS, 0,
+	hr = D3DXCreateEffect(renderer->get_device(), buffer, len, 0, 0, ENGINE_SHADER_FLAGS, 0,
 		&effect_ptr, &compilation_errors_ptr);
 
 	log_compilation_errors(compilation_errors_ptr);

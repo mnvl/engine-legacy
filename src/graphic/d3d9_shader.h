@@ -48,7 +48,7 @@ protected:
 
     D3D9Shader(D3D9RendererPtr const &renderer_ptr);
 
-	D3D9RendererPtr const renderer_;
+	D3D9RendererWeakPtr const renderer_;
     boost::intrusive_ptr<ID3DXEffect> effect_;
 
 	static void log_compilation_errors(ID3DXBuffer *compilation_errors_ptr);
