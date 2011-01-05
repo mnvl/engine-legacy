@@ -155,6 +155,9 @@ void D3D9Renderer::reset_state()
 	hr = device_->SetRenderState(D3DRS_ALPHAFUNC, D3DCMP_GREATEREQUAL);
 	if (FAILED(hr)) throw exception::directx_error(hr);
 
+	hr = device_->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
+	if (FAILED(hr)) throw exception::directx_error(hr);
+
 	{
 		D3DMATERIAL9 material;
 		material.Ambient.r = material.Ambient.g = material.Ambient.b = material.Ambient.a = 1.0f;

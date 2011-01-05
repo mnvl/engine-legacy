@@ -26,7 +26,8 @@ public:
 	static size_t const TEXTURE_SAND  = 1;
 	static size_t const TEXTURE_GRASS = 2;
 
-	Heightfield(graphic::RendererPtr const &renderer, graphic::CameraPtr const &camera, math::matrix<4,4> const &tf,
+	Heightfield(graphic::RendererPtr const &renderer, graphic::SchedulerPtr const &scheduler,
+		graphic::CameraPtr const &camera, math::matrix<4,4> const &tf,
 		size_t nrows, size_t ncols, math::vec<3> const &scale);
 	~Heightfield();
 
@@ -39,6 +40,7 @@ public:
 
 private:
 	graphic::RendererPtr const renderer_;
+	graphic::SchedulerPtr const scheduler_;
 	math::heightfield<> heightfield_;
 	boost::shared_ptr<graphic::VertexArrayPNTB> vertex_array_;
 	boost::shared_ptr<graphic::IndexArray16> index_array_;

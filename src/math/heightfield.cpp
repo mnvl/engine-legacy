@@ -26,6 +26,8 @@ heightfield<T>::heightfield(matrix<4,4> const &tf, size_t nrows, size_t ncols, v
 {
     local_to_world_.scale(scale_.x / ncols_, 1, scale_.z / nrows_);
     local_to_world_.inverse(world_to_local_);
+
+	heights_.resize(nrows * ncols);
 }
 
 template<class T>

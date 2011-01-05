@@ -11,20 +11,23 @@
 #include <luabind/luabind.hpp>
 #include <graphic/uber_draw_call.h>
 #include <graphic/material.h>
+#include <graphic/scheduler.h>
 #include <graphic/renderer.h>
 #include "heightfield.h"
 
 namespace pirates
 {
 
-Heightfield::Heightfield(graphic::RendererPtr const &renderer, graphic::CameraPtr const &camera, math::matrix<4,4> const &tf,
+Heightfield::Heightfield(graphic::RendererPtr const &renderer, graphic::SchedulerPtr const &scheduler,
+	graphic::CameraPtr const &camera, math::matrix<4,4> const &tf,
 	size_t ncols, size_t nrows, math::vec<3> const &scale)
 :
 	renderer_(renderer),
+	scheduler_(scheduler),
 	heightfield_(tf, nrows, ncols, scale)
 {
 	vertex_array_ = renderer->create_vertex_array<graphic::VERTEX_PNTB>(nrows * ncols);
-	index_array_ = renderer->create_index_array<graphic::INDEX_U16>((nrows - 1) * (ncols - 1) * 2);
+	index_array_ = renderer->create_index_array<graphic::INDEX_U16>((nrows - 1) * (ncols - 1) * 2 * 3);
 	material_ = renderer->create_material();
 	draw_call_ = renderer->create_uber_draw_call();
 
@@ -33,7 +36,7 @@ Heightfield::Heightfield(graphic::RendererPtr const &renderer, graphic::CameraPt
 	draw_call_->set_index_buffer(index_array_->get_index_buffer());
 	draw_call_->set_material(material_);
 	draw_call_->set_vertices_count(nrows * ncols);
-	draw_call_->set_triangles_count((nrows - 1) * (ncols - 1));
+	draw_call_->set_triangles_count((nrows - 1) * (ncols - 1) * 2);
 	draw_call_->set_world_matrix(tf);
 	draw_call_->set_camera(camera);
 	draw_call_->commit();
@@ -84,31 +87,34 @@ void Heightfield::update()
 				++vertex;
 			}
 		}
+
+		vertex_array_->unlock();
 	}
 
 	{
 		graphic::INDEX_U16 *index = index_array_->lock(true);
 
-
 		for (size_t i = 1; i < heightfield_.ncols(); ++i)
 		{
 			for (size_t j = 1; j < heightfield_.nrows(); ++j)
 			{
-				*index++ = (i - 1) + (j - 1) * heightfield_.nrows();
-				*index++ = (i - 0) + (j - 1) * heightfield_.nrows();
-				*index++ = (i - 0) + (j - 0) * heightfield_.nrows();
+				*index++ = (i - 1) + (j - 1) * heightfield_.ncols();
+				*index++ = (i - 0) + (j - 1) * heightfield_.ncols();
+				*index++ = (i - 0) + (j - 0) * heightfield_.ncols();
 
-				*index++ = (i - 1) + (j - 1) * heightfield_.nrows();
-				*index++ = (i - 0) + (j - 0) * heightfield_.nrows();
-				*index++ = (i - 1) + (j - 0) * heightfield_.nrows();
+				*index++ = (i - 1) + (j - 1) * heightfield_.ncols();
+				*index++ = (i - 1) + (j - 0) * heightfield_.ncols();
+				*index++ = (i - 0) + (j - 0) * heightfield_.ncols();
 			}
 		}
+
+		index_array_->unlock();
 	}
 }
 
 void Heightfield::draw()
 {
-	draw_call_->execute();
+	scheduler_->add(draw_call_);
 }
 
 void Heightfield::bind(lua_State *L)
@@ -118,10 +124,18 @@ void Heightfield::bind(lua_State *L)
     module_(L, "pirates")
     [
         class_<Heightfield, boost::shared_ptr<Heightfield> >("Heightfield")
-		.def(constructor<graphic::RendererPtr const &, graphic::CameraPtr const &, math::matrix<4,4> const &,
+		.enum_("texture_type")
+		[
+			value("WATER", TEXTURE_WATER),
+			value("SAND", TEXTURE_SAND),
+			value("GRASS", TEXTURE_GRASS)
+		]
+		.def(constructor<graphic::RendererPtr const &, graphic::SchedulerPtr const &,
+			graphic::CameraPtr const &, math::matrix<4,4> const &,
 			size_t, size_t, math::vec<3> const &>())
 		.def("update", &Heightfield::update)
 		.def("draw", &Heightfield::draw)
+		.def("set_texture", &Heightfield::set_texture)
 	];
 }
 
