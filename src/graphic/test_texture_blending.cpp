@@ -102,14 +102,6 @@ BOOST_AUTO_TEST_CASE(blending_weights_in_vertex)
 	draw_call->set_camera(camera);
 	draw_call->commit();
 
-#pragma pack(push, 1)
-	struct POINT_VERTEX
-	{
-		math::vec<3> position;
-		math::vec<4> color;
-	};
-#pragma pack(pop)
-
 	boost::posix_time::ptime start_time(boost::posix_time::microsec_clock::local_time());
 	math::scalar delta;
 	math::scalar const DURATION = 5e6;
@@ -201,14 +193,6 @@ BOOST_AUTO_TEST_CASE(blending_weights_in_texture)
 	draw_call->set_triangles_count(2);
 	draw_call->set_camera(camera);
 	draw_call->commit();
-
-#pragma pack(push, 1)
-	struct POINT_VERTEX
-	{
-		math::vec<3> position;
-		math::vec<4> color;
-	};
-#pragma pack(pop)
 
 	boost::posix_time::ptime start_time(boost::posix_time::microsec_clock::local_time());
 	math::scalar delta;

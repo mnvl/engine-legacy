@@ -39,7 +39,6 @@ Heightfield::Heightfield(graphic::RendererPtr const &renderer, graphic::Schedule
 	draw_call_->set_triangles_count((nrows - 1) * (ncols - 1) * 2);
 	draw_call_->set_world_matrix(tf);
 	draw_call_->set_camera(camera);
-	draw_call_->commit();
 }
 
 Heightfield::~Heightfield()
@@ -110,6 +109,8 @@ void Heightfield::update()
 
 		index_array_->unlock();
 	}
+
+	draw_call_->commit();
 }
 
 void Heightfield::draw()
