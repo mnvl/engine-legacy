@@ -209,7 +209,7 @@ contact_info<3> heightfield<T>::trace(ray<3> const &r, scalar max_distance)
 }
 
 template<class T>
-void heightfield<T>::load_from_buffer(value_t const *heights)
+void heightfield<T>::load_from_buffer(value_type const *heights)
 {
     heights_.assign(heights, heights + nheights());
 }
@@ -220,13 +220,14 @@ void heightfield<T>::load_from_raw_file(std::string const &name)
     std::vector<char> buffer;
     util::FileHandle(name.c_str(), O_RDONLY).read_all(buffer);
 
-    if (buffer.size() != nheights() * sizeof(value_t))
+    if (buffer.size() != nheights() * sizeof(value_type))
         throw std::logic_error("heigtfield " + name + " contains invalid amount of data");
 
-    load_from_buffer((value_t const *) &buffer[0]);
+    load_from_buffer((value_type const *) &buffer[0]);
 }
 
 template class heightfield<boost::uint8_t>;
 template class heightfield<boost::uint16_t>;
+template class heightfield<scalar>;
 
 }

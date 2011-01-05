@@ -4,7 +4,6 @@ IF(WIN32)
   ADD_SUBDIRECTORY(platform)
   ADD_SUBDIRECTORY(particle_system)
 
-  ADD_SUBDIRECTORY(bootstrap)
   ADD_SUBDIRECTORY(translator)
 ENDIF()
 
@@ -12,3 +11,7 @@ ADD_SUBDIRECTORY(rpc)
 ADD_SUBDIRECTORY(math)
 ADD_SUBDIRECTORY(spatial)
 ADD_SUBDIRECTORY(util)
+
+ADD_SUBDIRECTORY(bootstrap)
+ADD_SUBDIRECTORY(pirates)
+
