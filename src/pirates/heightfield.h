@@ -11,6 +11,7 @@
 
 #include <vector>
 #include <boost/noncopyable.hpp>
+#include <luabind/lua_include.hpp>
 #include <math/heightfield.h>
 #include <graphic/forward.h>
 #include <graphic/vertex_array.h>
@@ -33,6 +34,8 @@ public:
 
 	void update();
 	void draw();
+
+	static void bind(lua_State *L);
 
 private:
 	graphic::RendererPtr const renderer_;

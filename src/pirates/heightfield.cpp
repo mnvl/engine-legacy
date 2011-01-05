@@ -8,6 +8,7 @@
 // prior written consent of Manvel Avetisian.
 //-----------------------------------------------------------------------------
 
+#include <luabind/luabind.hpp>
 #include <graphic/uber_draw_call.h>
 #include <graphic/material.h>
 #include <graphic/renderer.h>
@@ -108,6 +109,20 @@ void Heightfield::update()
 void Heightfield::draw()
 {
 	draw_call_->execute();
+}
+
+void Heightfield::bind(lua_State *L)
+{
+	using namespace luabind;
+
+    module_(L, "pirates")
+    [
+        class_<Heightfield, boost::shared_ptr<Heightfield> >("Heightfield")
+		.def(constructor<graphic::RendererPtr const &, graphic::CameraPtr const &, math::matrix<4,4> const &,
+			size_t, size_t, math::vec<3> const &>())
+		.def("update", &Heightfield::update)
+		.def("draw", &Heightfield::draw)
+	];
 }
 
 }

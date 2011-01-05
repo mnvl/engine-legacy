@@ -26,6 +26,7 @@
 #include <particle_system/bind.h>
 #include <util/logger.h>
 #include <util/archive.h>
+#include "heightfield.h"
 
 extern "C"
 {
@@ -63,6 +64,8 @@ public:
 		platform::Input::bind(L_);
 		platform::Keyboard::bind(L_);
 		platform::Mouse::bind(L_);
+
+		pirates::Heightfield::bind(L_);
 
 		if (boost::filesystem::exists(boost::filesystem::path("pack0.dat", boost::filesystem::native)))
 		{
