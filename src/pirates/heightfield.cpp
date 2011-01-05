@@ -8,6 +8,7 @@
 // prior written consent of Manvel Avetisian.
 //-----------------------------------------------------------------------------
 
+#include <graphic/uber_draw_call.h>
 #include <graphic/material.h>
 #include <graphic/renderer.h>
 #include "heightfield.h"
@@ -15,7 +16,7 @@
 namespace pirates
 {
 
-Heightfield::Heightfield(graphic::RendererPtr const &renderer, math::matrix<4,4> const &tf,
+Heightfield::Heightfield(graphic::RendererPtr const &renderer, graphic::CameraPtr const &camera, math::matrix<4,4> const &tf,
 	size_t ncols, size_t nrows, math::vec<3> const &scale)
 :
 	renderer_(renderer),
@@ -25,6 +26,16 @@ Heightfield::Heightfield(graphic::RendererPtr const &renderer, math::matrix<4,4>
 	index_array_ = renderer->create_index_array<graphic::INDEX_U16>((nrows - 1) * (ncols - 1) * 2);
 	material_ = renderer->create_material();
 	draw_call_ = renderer->create_uber_draw_call();
+
+	draw_call_->set_always_visible(true);
+	draw_call_->set_vertex_buffer(vertex_array_->get_vertex_buffer());
+	draw_call_->set_index_buffer(index_array_->get_index_buffer());
+	draw_call_->set_material(material_);
+	draw_call_->set_vertices_count(nrows * ncols);
+	draw_call_->set_triangles_count((nrows - 1) * (ncols - 1));
+	draw_call_->set_world_matrix(tf);
+	draw_call_->set_camera(camera);
+	draw_call_->commit();
 }
 
 Heightfield::~Heightfield()
@@ -82,6 +93,13 @@ void Heightfield::update()
 		{
 			for (size_t j = 1; j < heightfield_.nrows(); ++j)
 			{
+				*index++ = (i - 1) + (j - 1) * heightfield_.nrows();
+				*index++ = (i - 0) + (j - 1) * heightfield_.nrows();
+				*index++ = (i - 0) + (j - 0) * heightfield_.nrows();
+
+				*index++ = (i - 1) + (j - 1) * heightfield_.nrows();
+				*index++ = (i - 0) + (j - 0) * heightfield_.nrows();
+				*index++ = (i - 1) + (j - 0) * heightfield_.nrows();
 			}
 		}
 	}
@@ -89,6 +107,7 @@ void Heightfield::update()
 
 void Heightfield::draw()
 {
+	draw_call_->execute();
 }
 
 }
