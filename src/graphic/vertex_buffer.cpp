@@ -25,7 +25,7 @@ void VertexBuffer::bind(lua_State *L)
 
 	module_(L, "graphic")
 	[
-		class_<VertexBuffer, VertexBufferPtr >("VertexBuffer")
+		class_<VertexBuffer, VertexBufferPtr>("VertexBuffer")
 	];
 }
 

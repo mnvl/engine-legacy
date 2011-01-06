@@ -22,7 +22,7 @@ namespace pirates
 
 class Heightfield: public boost::noncopyable {
 public:
-	static size_t const TEXTURE_WATER = 0;
+	static size_t const TEXTURE_SEABED = 0;
 	static size_t const TEXTURE_SAND  = 1;
 	static size_t const TEXTURE_GRASS = 2;
 

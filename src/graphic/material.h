@@ -32,7 +32,11 @@ public:
 	enum blend_mode_type
 	{
 		BLEND_ZERO,
-		BLEND_ONE
+		BLEND_ONE,
+		BLEND_SRC_ALPHA,
+		BLEND_INV_SRC_ALPHA,
+		BLEND_DEST_ALPHA,
+		BLEND_INV_DEST_ALPHA
 	};
 
 	Material(RendererPtr const &renderer_ptr = RendererPtr());

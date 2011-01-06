@@ -43,6 +43,9 @@ public:
 	index_type *at(size_t index) { return &begin()[index]; }
 	index_type const *at(size_t index) const { return &begin()[index]; }
 
+	void put(size_t index, index_type value) { *at(index) = value; }
+	index_type get(size_t index) const { return *at(index); }
+
 	IndexBufferPtr const &get_index_buffer() { return index_buffer_; }
 
 protected:

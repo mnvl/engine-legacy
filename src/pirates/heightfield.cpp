@@ -32,6 +32,7 @@ Heightfield::Heightfield(graphic::RendererPtr const &renderer, graphic::Schedule
 	draw_call_ = renderer->create_uber_draw_call();
 
 	draw_call_->set_always_visible(true);
+	draw_call_->set_priority(-2);
 	draw_call_->set_vertex_buffer(vertex_array_->get_vertex_buffer());
 	draw_call_->set_index_buffer(index_array_->get_index_buffer());
 	draw_call_->set_material(material_);
@@ -59,7 +60,8 @@ void Heightfield::update()
 		{
 			for (size_t j = 0; j < heightfield_.nrows(); ++j)
 			{
-				math::scalar h = heightfield_.at(i, j);
+				//math::scalar h = heightfield_.at(i, j);
+				math::scalar h = math::scalar(rand()) / RAND_MAX * 2 - 1;
 
 				vertex->position.set(i, h, j);
 				vertex->normal.set(0, 1, 0);
@@ -125,7 +127,7 @@ void Heightfield::bind(lua_State *L)
         class_<Heightfield, boost::shared_ptr<Heightfield> >("Heightfield")
 		.enum_("texture_type")
 		[
-			value("WATER", TEXTURE_WATER),
+			value("SEABED", TEXTURE_SEABED),
 			value("SAND", TEXTURE_SAND),
 			value("GRASS", TEXTURE_GRASS)
 		]

@@ -17,6 +17,7 @@
 #include "material.h"
 #include "texture.h"
 #include "draw_call.h"
+#include "uber_draw_call.h"
 #include "joint.h"
 #include "mesh.h"
 #include "memory_mesh.h"
@@ -44,6 +45,7 @@ void bind(lua_State *L)
 	Material::bind(L);
 	Texture::bind(L);
 	DrawCall::bind(L);
+	UberDrawCall::bind(L);
 	Joint::bind(L);
     Mesh::bind(L);
 	MemoryMesh::bind(L);
