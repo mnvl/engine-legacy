@@ -69,18 +69,17 @@ void Heightfield::update()
 				{
 					vertex->texutre_blend_weights.set(1, 0, 0, 0);
 				}
-				else if (h > 1)
+				else if (h < 0)
 				{
-					vertex->texutre_blend_weights.set(0, 0, 1, 0);
+					vertex->texutre_blend_weights.set(-h, 1 + h, 0, 0);
 				}
-				else if (h > 0.5f)
+				else if (h < 1)
 				{
 					vertex->texutre_blend_weights.set(0, 1 - h, h, 0);
 				}
 				else
 				{
-					math::scalar h2 = (h + 1) / 1.5f;
-					vertex->texutre_blend_weights.set(1 - h2, h2, 0, 0);
+					vertex->texutre_blend_weights.set(0, 0, 1, 0);
 				}
 
 				++vertex;
@@ -109,12 +108,11 @@ void Heightfield::update()
 
 		index_array_->unlock();
 	}
-
-	draw_call_->commit();
 }
 
 void Heightfield::draw()
 {
+	draw_call_->commit();
 	scheduler_->add(draw_call_);
 }
 
