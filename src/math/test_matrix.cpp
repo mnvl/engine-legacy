@@ -11,9 +11,9 @@
 #include <boost/test/unit_test.hpp>
 #include "matrix.h"
 
-
 namespace
 {
+
 template<int N> void
 test_axis_angle_i(math::vec<3> const &src, math::vec<3> const &axis, math::scalar angle, math::vec<3> const &res)
 {
@@ -55,6 +55,7 @@ void test_rotation(math::vec<3> const &src, math::vec<3> const &angles, math::ve
 	test_rotation_i<3>(res, -angles, src);
 	test_rotation_i<4>(res, -angles, src);
 }
+
 }
 
 BOOST_AUTO_TEST_SUITE (test_matrix)

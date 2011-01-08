@@ -35,7 +35,7 @@ private:
 	int_t x_, y_;
 	int_t dx_, dy_, ddx_, ddy_;
 	vec_t results_[3];
-	size_t nresults_;
+	size_t firstresult_, nresults_;
 	bool finished_;
 
 	void next();

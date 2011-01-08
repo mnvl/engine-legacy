@@ -154,6 +154,130 @@ BOOST_AUTO_TEST_CASE (two_points_digonal_4)
 	BOOST_REQUIRE (flag == true);
 }
 
+BOOST_AUTO_TEST_CASE (three_points_digonal_1)
+{
+	math::bresenham_supercover<> bs(math::vec<2, int>(1, 5), math::vec<2, int>(3, 6));
+
+	math::vec<2, int> position;
+	bool flag;
+
+	boost::tie(position, flag) = bs.get();
+	BOOST_REQUIRE (position.x == 1);
+	BOOST_REQUIRE (position.y == 5);
+	BOOST_REQUIRE (flag == false);
+
+	boost::tie(position, flag) = bs.get();
+	BOOST_REQUIRE (position.x == 2);
+	BOOST_REQUIRE (position.y == 5);
+	BOOST_REQUIRE (flag == false);
+
+	boost::tie(position, flag) = bs.get();
+	BOOST_REQUIRE (position.x == 2);
+	BOOST_REQUIRE (position.y == 6);
+	BOOST_REQUIRE (flag == false);
+
+	boost::tie(position, flag) = bs.get();
+	BOOST_REQUIRE (position.x == 3);
+	BOOST_REQUIRE (position.y == 6);
+	BOOST_REQUIRE (flag == false);
+
+	boost::tie(position, flag) = bs.get();
+	BOOST_REQUIRE (flag == true);
+}
+
+BOOST_AUTO_TEST_CASE (three_points_digonal_2)
+{
+	math::bresenham_supercover<> bs(math::vec<2, int>(1, 5), math::vec<2, int>(3, 4));
+
+	math::vec<2, int> position;
+	bool flag;
+
+	boost::tie(position, flag) = bs.get();
+	BOOST_REQUIRE (position.x == 1);
+	BOOST_REQUIRE (position.y == 5);
+	BOOST_REQUIRE (flag == false);
+
+	boost::tie(position, flag) = bs.get();
+	BOOST_REQUIRE (position.x == 2);
+	BOOST_REQUIRE (position.y == 5);
+	BOOST_REQUIRE (flag == false);
+
+	boost::tie(position, flag) = bs.get();
+	BOOST_REQUIRE (position.x == 2);
+	BOOST_REQUIRE (position.y == 4);
+	BOOST_REQUIRE (flag == false);
+
+	boost::tie(position, flag) = bs.get();
+	BOOST_REQUIRE (position.x == 3);
+	BOOST_REQUIRE (position.y == 4);
+	BOOST_REQUIRE (flag == false);
+
+	boost::tie(position, flag) = bs.get();
+	BOOST_REQUIRE (flag == true);
+}
+
+BOOST_AUTO_TEST_CASE (three_points_digonal_3)
+{
+	math::bresenham_supercover<> bs(math::vec<2, int>(3, 6), math::vec<2, int>(1, 5));
+
+	math::vec<2, int> position;
+	bool flag;
+
+	boost::tie(position, flag) = bs.get();
+	BOOST_REQUIRE (position.x == 3);
+	BOOST_REQUIRE (position.y == 6);
+	BOOST_REQUIRE (flag == false);
+
+	boost::tie(position, flag) = bs.get();
+	BOOST_REQUIRE (position.x == 2);
+	BOOST_REQUIRE (position.y == 6);
+	BOOST_REQUIRE (flag == false);
+
+	boost::tie(position, flag) = bs.get();
+	BOOST_REQUIRE (position.x == 2);
+	BOOST_REQUIRE (position.y == 5);
+	BOOST_REQUIRE (flag == false);
+
+	boost::tie(position, flag) = bs.get();
+	BOOST_REQUIRE (position.x == 1);
+	BOOST_REQUIRE (position.y == 5);
+	BOOST_REQUIRE (flag == false);
+
+	boost::tie(position, flag) = bs.get();
+	BOOST_REQUIRE (flag == true);
+}
+
+BOOST_AUTO_TEST_CASE (three_points_digonal_4)
+{
+	math::bresenham_supercover<> bs(math::vec<2, int>(3, 4), math::vec<2, int>(1, 5));
+
+	math::vec<2, int> position;
+	bool flag;
+
+	boost::tie(position, flag) = bs.get();
+	BOOST_REQUIRE (position.x == 3);
+	BOOST_REQUIRE (position.y == 4);
+	BOOST_REQUIRE (flag == false);
+
+	boost::tie(position, flag) = bs.get();
+	BOOST_REQUIRE (position.x == 2);
+	BOOST_REQUIRE (position.y == 4);
+	BOOST_REQUIRE (flag == false);
+
+	boost::tie(position, flag) = bs.get();
+	BOOST_REQUIRE (position.x == 2);
+	BOOST_REQUIRE (position.y == 5);
+	BOOST_REQUIRE (flag == false);
+
+	boost::tie(position, flag) = bs.get();
+	BOOST_REQUIRE (position.x == 1);
+	BOOST_REQUIRE (position.y == 5);
+	BOOST_REQUIRE (flag == false);
+
+	boost::tie(position, flag) = bs.get();
+	BOOST_REQUIRE (flag == true);
+}
+
 BOOST_AUTO_TEST_SUITE_END()
 
 

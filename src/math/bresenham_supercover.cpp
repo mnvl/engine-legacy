@@ -52,6 +52,7 @@ bresenham_supercover<T>::bresenham_supercover(vec_t const &v1, vec_t const &v2):
 	i_ = 0;
 
 	results_[0].set(x1_, y1_);
+	firstresult_ = 0;
 	nresults_ = 1;
 
 	ddx_ = 2 * dx_;
@@ -68,16 +69,17 @@ bresenham_supercover<T>::~bresenham_supercover()
 template<class T>
 boost::tuple<typename bresenham_supercover<T>::vec_t, bool> bresenham_supercover<T>::get()
 {
-	if (nresults_)
+	if (firstresult_ < nresults_)
 	{
-		return boost::make_tuple(results_[--nresults_], false);
+		return boost::make_tuple(results_[firstresult_++], false);
 	}
 
+	firstresult_ = nresults_ = 0;
 	next();
 
-	if (nresults_)
+	if (firstresult_ < nresults_)
 	{
-		return boost::make_tuple(results_[--nresults_], false);
+		return boost::make_tuple(results_[firstresult_++], false);
 	}
 
 	return boost::make_tuple(vec_t(), finished_);
