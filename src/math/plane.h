@@ -56,12 +56,10 @@ public:
 		A = normal.x;	B = normal.y;	C = normal.z;	D = d;
 	}
 
-	// расположение точки
 	scalar_t apply(vec_t const &v) const {
 		return A*v.x + B*v.y + C*v.z + D;
 	}
 
-	// пересечение с прямой
 	bool test_intersection(const ray_t &r) const {
 		return abs(A*r.a.x + B*r.a.y + C*r.a.z) > EPSILON || contains(r);
 	}
@@ -78,9 +76,10 @@ public:
 		return !test_intersection(r);
 	}
 
-	scalar_t trace(const ray_t &r) const {
-		scalar_t a_n = A*r.a.x + B*r.a.y + C*r.a.z;
-		return -(A*r.r0.x + B*r.r0.y + C*r.r0.z + D) / a_n;
+	scalar_t trace(ray_t const &r) const {
+		scalar_t a_n = A * r.a.x + B * r.a.y + C * r.a.z;
+		scalar_t d = apply(r.r0);
+		return -d / a_n;
 	}
 
 	// найти пересечение с лучом r

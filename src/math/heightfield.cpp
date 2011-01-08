@@ -12,6 +12,7 @@
 #include <utility>
 #include <boost/cstdint.hpp>
 #include <util/file_handle.h>
+#include "bresenham_supercover.h"
 #include "heightfield.h"
 
 namespace math
@@ -36,178 +37,75 @@ heightfield<T>::~heightfield()
 }
 
 template<class T>
-scalar heightfield<T>::y_at(vec<3> const &point)
-{
-    vec<3> point_local = point * world_to_local_;
-
-    int col = int(point_local.x);
-    int row = int(point_local.z);
-
-    scalar u = point_local.x - scalar(col);
-    scalar v = point_local.z - scalar(row);
-    scalar uv = u + v;
-
-    if (uv < EPSILON)
-    {
-        return at(row, col);
-    }
-
-	if (uv <= scalar(1))
-    {
-		scalar y = at(row, col) * (scalar(1) - uv);
-
-        scalar y1 = y + at(row, col + 1) * uv;
-        scalar y2 = y + at(row + 1, col) * uv;
-
-        return y1 + (y2 - y1) * u / uv;
-    }
-    else
-    {
-		u = scalar(1) - u;
-		v = scalar(1) - v;
-		uv = u + v;
-
-		if (uv < EPSILON)
-		{
-			return at(row + 1, col + 1);
-		}
-
-		scalar y = at(row, col) * (scalar(1) - uv);
-
-		scalar y1 = y + at(row, col + 1) * uv;
-        scalar y2 = y + at(row + 1, col) * uv;
-
-        return y1 + (y2 - y1) * u / uv;
-    }
-}
-
-template<class T>
 contact_info<3> heightfield<T>::trace(ray<3> const &r, scalar max_distance)
 {
-    // x0 + dx * t = x(t)
-    // t(x) = (x - x0) / dx = x * 1 / dx - x0 / dx
+	vec<3> local_p0 = r.r0 * world_to_local_;
+	vec<3> local_p1 = (r.r0 + r.a * max_distance) * world_to_local_;
 
-    line<3> l(r.r0 * world_to_local_,
-		(r.r0 + normalize(r.a) * max_distance) * world_to_local_);
-    if (lexicographical_greater(l.A, l.B)) std::swap(l.A, l.B);
+	bresenham_supercover<> cells_iterator(vec<2, int>(int (local_p0.x), int(local_p0.z)),
+		vec<2, int>(int(local_p1.x), int(local_p1.z)));
 
-    vec<3> const &v0 = l.A;
-    vec<3> dv = l.B - l.A;
+	ray<3> local_ray(local_p0, local_p1 - local_p0);
 
-	if (abs(dv.x) < EPSILON && abs(dv.z) < EPSILON) {
-		scalar y = y_at(r.r0);
+	contact_info<3> result;
+	result.happened = false;
 
-		if (y * r.a.y > 0)
-		{
-			contact_info<3> ci;
-			ci.happened = true;
-            ci.penetrated = false;
-			ci.position.set(r.r0.x, y, r.r0.z);
+	while (true)
+	{
+		vec<2, int> cell;
+		bool flag;
 
-			int col = int(ci.position.x), row = int(ci.position.z);
+		boost::tie(cell, flag) = cells_iterator.get();
+		if (flag) break;
 
-	        vec<3> v1 = vec<3>(scalar(row + 0), at(row + 0, col + 0), scalar(col + 0));
-		    vec<3> v2 = vec<3>(scalar(row + 0), at(row + 0, col + 1), scalar(col + 1));
-			vec<3> v3 = vec<3>(scalar(row + 1), at(row + 1, col + 1), scalar(col + 1));
-			vec<3> v4 = vec<3>(scalar(row + 1), at(row + 1, col + 0), scalar(col + 0));
+		if (cell.x < 0 || cell.y < 0 || cell.x >= ncols_ || cell.y >= nrows_) continue;
 
-			triangle<3> tri1(v1, v2, v4);
-			triangle<3> tri2(v3, v4, v2);
+		if (cell.x == ncols_ - 1) --cell.x;
+		if (cell.y == nrows_ - 1) --cell.y;
 
-			if (tri1.contains_on_plane(ci.position)) ci.normal = tri1.get_normal();
-			else ci.normal = tri2.get_normal();
+		vec<3> v1 = local_vertex_at(cell.x + 0, cell.y + 0);
+		vec<3> v2 = local_vertex_at(cell.x + 0, cell.y + 1);
+		vec<3> v3 = local_vertex_at(cell.x + 1, cell.y + 1);
+		vec<3> v4 = local_vertex_at(cell.x + 1, cell.y + 0);
 
-			ci.time = (ci.position - r.r0).length() / r.a.length();
+        triangle<3> tri1(v1, v2, v3);
+        triangle<3> tri2(v1, v3, v4);
 
-			return ci;
-		}
-		else
-		{
-			contact_info<3> ci;
-			ci.happened = false;
-			return ci;
-		}
-	}
+		bool trace_h1, trace_h2;
+        scalar trace_t1, trace_t2;
+		vec<3> trace_p1, trace_p2;
 
-    scalar tx = -v0.x / dv.x, tz = -v0.z / dv.z;
-	scalar inv_dx = abs(dv.x) > EPSILON ? 1 / dv.x : 0, inv_dz = abs(dv.z) > EPSILON ? 1 / dv.z : 0;
+		trace_h1 = tri1.trace(local_ray, trace_t1, trace_p1);
+		trace_h2 = tri2.trace(local_ray, trace_t2, trace_p2);
 
-	if (tx < 0) tx += (1 + floor(-tx / inv_dx)) * inv_dx;
-    if (tz < 0) tz += (1 + floor(-tz / inv_dz)) * inv_dz;
-
-	vec<3> prev_p, next_p = v0;
-
-    while ((tx <= 1 || inv_dx == 0) && (tz <= 1 || inv_dz == 0))
-    {
-        prev_p = next_p;
-
-        if ((inv_dx && !inv_dz) || tx < tz)
-        {
-            next_p = v0 + dv * tx;
-            tx += inv_dx;
-        }
-        else
-        {
-            next_p = v0 + dv * tz;
-            tz += inv_dz;
-        }
-
-		if ((prev_p - next_p).length_sq() < math::EPSILON) continue;
-
-		int col = std::min(std::max(0, int(prev_p.x)), int(next_p.x)),
-			row = std::min(std::max(0, int(prev_p.z)), int(next_p.z));
-
-		if (col == ncols_ - 1 || row == nrows_ - 1) break;
-
-        scalar y1 = at(row + 0, col + 0);
-        scalar y2 = at(row + 0, col + 1);
-        scalar y3 = at(row + 1, col + 1);
-        scalar y4 = at(row + 1, col + 0);
-
-        scalar ymin = std::min(std::min(y1, y2), std::min(y3, y4));
-        scalar ymax = std::max(std::max(y1, y2), std::max(y3, y4));
-
-        if ((prev_p.y < ymin && next_p.y < ymin) || (next_p.y > ymax && next_p.y > ymax))
-            continue;
-
-        vec<3> v1 = vec<3>(scalar(row + 0), y1, scalar(col + 0));
-        vec<3> v2 = vec<3>(scalar(row + 0), y2, scalar(col + 1));
-        vec<3> v3 = vec<3>(scalar(row + 1), y3, scalar(col + 1));
-        vec<3> v4 = vec<3>(scalar(row + 1), y4, scalar(col + 0));
-
-        triangle<3> tri1(v1, v2, v4);
-        triangle<3> tri2(v3, v4, v2);
-
-        scalar trace_t1 = 2, trace_t2 = 2;
-        vec<3> trace_p1, trace_p2;
-
-        if (tri1.trace(ray<3>(v0, dv), trace_t1, trace_p1) || tri2.trace(ray<3>(v0, dv), trace_t2, trace_p2))
+		if (trace_h1 || trace_h2)
         {
             contact_info<3> ci;
 
             ci.happened = true;
             ci.penetrated = false;
 
-            if (trace_t1 < trace_t2)
+            if (trace_h1 && ((trace_h2 && trace_t1 < trace_t2) || trace_h2 == false))
             {
                 ci.position = trace_p1;
                 ci.normal = tri1.get_normal();
-				ci.time = trace_t1;
+                ci.time = trace_t1;
             }
             else
             {
                 ci.position = trace_p2;
                 ci.normal = tri2.get_normal();
-				ci.time = trace_t2;
+                ci.time = trace_t2;
             }
 
-            return ci;
+			if (result.worse_than(ci))
+			{
+				result = ci;
+			}
         }
     }
 
-    contact_info<3> ci;
-    ci.happened = false;
-    return ci;
+	return result;
 }
 
 template<class T>

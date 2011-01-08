@@ -20,7 +20,7 @@ BOOST_AUTO_TEST_CASE(test_triangle_trace)
 	math::vec<3> v;
 	bool result = tri.trace(math::ray<3>(math::vec<3>(-1, 2, 0), math::vec<3>(10, 0, 0)), t, v);
 	BOOST_CHECK (result == true);
-	BOOST_CHECK ((math::vec<3>(0.5f, 2, 0) - v).length_sq() < math::EPSILON);
+	BOOST_CHECK ((math::vec<3>(0.5f, 2, 0) - v).length() < math::EPSILON);
 }
 
 BOOST_AUTO_TEST_SUITE_END()

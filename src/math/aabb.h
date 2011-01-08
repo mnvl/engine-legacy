@@ -125,11 +125,9 @@ public:
 	}
 
 	bool trace(const ray_t &r, scalar_t t_min = 0, scalar_t t_max = 1) const {
-		// перенести луч в локальную систему координат
 		ray_t r1;
 		world_to_local_ray(r1, r);
 
-		// пересечение прямой r1 с плоскостьями x=0 и x=1
 		if(abs(r1.a.x) > EPSILON) {
 			scalar_t dx = 1 / r1.a.x;
 
@@ -147,7 +145,6 @@ public:
 			}
 		}
 
-		// пересечение прямой r1 с плоскостьями y=0 и y=1
 		if(abs(r1.a.y) > EPSILON) {
 			scalar_t dy = 1 / r1.a.y;
 
@@ -165,7 +162,6 @@ public:
 			}
 		}
 
-		// пересечение прямой r1 с плоскостьями z=0 и z=1
 		if(abs(r1.a.z) > EPSILON) {
 			scalar_t dz = 1 / r1.a.z;
 

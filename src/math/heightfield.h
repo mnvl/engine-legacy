@@ -23,20 +23,15 @@ class heightfield {
 public:
     typedef T value_type;
 
-    heightfield(matrix<4,4> const &tf, size_t nrows, size_t ncols, vec<3> const &scale);
+    heightfield(matrix<4,4> const &tf, size_t ncols, size_t nrows, vec<3> const &scale);
     ~heightfield();
 
-    scalar at(int row, int col)
-    {
-        return heights_.at(row * ncols_ + col) * scale_.y;
-    }
+	scalar local_y_at(int col, int row) const { return heights_.at(row * ncols_ + col); }
+	scalar y_at(int col, int row) const { return local_y_at(col, row) * scale_.y; }
+	vec<3> local_vertex_at(int col, int row) { return vec<3>(scalar(col), local_y_at(col, row), scalar(row)); }
 
 	size_t ncols() const { return ncols_; }
 	size_t nrows() const { return nrows_; }
-
-    // world to local transform aplyed on point, so we supply all three components of point
-    // result is undefined if point is outside heightfield bounds
-    scalar y_at(vec<3> const &point);
 
     contact_info<3> trace(ray<3> const &r, scalar max_distance = 1000.0f);
 
@@ -45,7 +40,7 @@ public:
 
 private:
     matrix<4,4> local_to_world_, world_to_local_;
-    size_t nrows_, ncols_;
+    size_t ncols_, nrows_;
     vec<3> scale_;
     std::vector<value_type> heights_;
 

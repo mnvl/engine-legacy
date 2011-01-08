@@ -60,7 +60,7 @@ void Heightfield::update()
 		{
 			for (size_t j = 0; j < heightfield_.nrows(); ++j)
 			{
-				math::scalar h = heightfield_.at(i, j);
+				math::scalar h = heightfield_.y_at(i, j);
 
 				vertex->position.set(i, h, j);
 				vertex->normal.set(0, 1, 0);

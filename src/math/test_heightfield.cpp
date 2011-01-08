@@ -15,61 +15,206 @@
 
 BOOST_AUTO_TEST_SUITE(test_triangle)
 
-namespace
+BOOST_AUTO_TEST_CASE(test_raytrace_simple_1)
 {
+	math::matrix<4,4> tf;
+    tf.identity();
 
-struct fixture
-{
-    typedef math::heightfield<boost::uint8_t> hf_t;
-    boost::scoped_ptr<hf_t> hf_;
+	math::heightfield<boost::uint8_t> hf(tf, 2, 2, math::vec<3>(2, 1, 2));
 
-	fixture()
-    {
-        math::matrix<4,4> tf;
-        tf.identity();
+    static boost::uint8_t const heights[] = {
+		0, 1,
+		3, 7
+    };
 
-        hf_.reset(new hf_t(tf, 3, 3, math::vec<3>(3, 1, 3)));
+    hf.load_from_buffer(heights);
 
-        static boost::uint8_t const heights[] = {
-             5, 10, 11,
-             1,  4,  5,
-            10,  5,  5
-        };
+	math::contact_info<3> ci = hf.trace(math::ray<3>(math::vec<3>(0, 10.0f, 0), math::vec<3>(0, -1.0f, 0)));
 
-        hf_->load_from_buffer(heights);
-    }
-};
-
+	BOOST_REQUIRE (ci.happened == true);
+	BOOST_REQUIRE (ci.penetrated == false);
+	BOOST_REQUIRE ((ci.position - math::vec<3>(0, 0, 0)).length_sq() < 0.01f);
+	BOOST_REQUIRE (ci.normal.y > 0);
 }
 
-BOOST_FIXTURE_TEST_CASE(test_y_at, fixture)
+BOOST_AUTO_TEST_CASE(test_raytrace_simple_2)
 {
-	BOOST_ASSERT(abs(hf_->y_at(math::vec<3>( .00f, 0,  .00f)) -  5.00f) < math::EPSILON);
-	BOOST_ASSERT(abs(hf_->y_at(math::vec<3>( .50f, 0,  .00f)) -  3.00f) < math::EPSILON);
-	BOOST_ASSERT(abs(hf_->y_at(math::vec<3>( .00f, 0,  .50f)) -  7.50f) < math::EPSILON);
-	BOOST_ASSERT(abs(hf_->y_at(math::vec<3>( .50f, 0,  .50f)) -  5.50f) < math::EPSILON);
-	BOOST_ASSERT(abs(hf_->y_at(math::vec<3>(1.00f, 0, 0.00f)) - 10.00f) < math::EPSILON);
-	BOOST_ASSERT(abs(hf_->y_at(math::vec<3>(0.00f, 0, 1.00f)) -  1.00f) < math::EPSILON);
-	BOOST_ASSERT(abs(hf_->y_at(math::vec<3>(1.00f, 0, 1.00f)) -  4.00f) < math::EPSILON);
-	BOOST_ASSERT(abs(hf_->y_at(math::vec<3>(0.75f, 0, 0.75f)) -  5.25f) < math::EPSILON);
+	math::matrix<4,4> tf;
+    tf.identity();
+
+	math::heightfield<boost::uint8_t> hf(tf, 2, 2, math::vec<3>(2, 1, 2));
+
+    static boost::uint8_t const heights[] = {
+		0, 1,
+		3, 7
+    };
+
+    hf.load_from_buffer(heights);
+
+	math::contact_info<3> ci = hf.trace(math::ray<3>(math::vec<3>(0.5f, 10.0f, 0), math::vec<3>(0, -1.0f, 0)));
+
+	BOOST_REQUIRE (ci.happened == true);
+	BOOST_REQUIRE (ci.penetrated == false);
+	BOOST_REQUIRE ((ci.position - math::vec<3>(0.5f, 0.5f, 0)).length_sq() < 0.01f);
+	BOOST_REQUIRE (ci.normal.y > 0);
 }
 
-BOOST_FIXTURE_TEST_CASE(test_raytrace_1, fixture)
+BOOST_AUTO_TEST_CASE(test_raytrace_simple_3)
 {
-	math::contact_info<3> ci = hf_->trace(math::ray<3>(math::vec<3>(1.5, 10, 1.5), math::vec<3>(1, -100, 1)));
-	BOOST_ASSERT (ci.happened == true);
-	BOOST_ASSERT (ci.penetrated == false);
-	BOOST_ASSERT ((ci.position - math::vec<3>(1.55f, 5.1f, 1.55f)).length_sq() < 0.01f);
-	BOOST_ASSERT ((ci.normal - math::vec<3>(-0.57f, 0.57f, -0.57f)).length_sq() < 0.01f);
+	math::matrix<4,4> tf;
+    tf.identity();
+
+	math::heightfield<boost::uint8_t> hf(tf, 2, 2, math::vec<3>(2, 1, 2));
+
+    static boost::uint8_t const heights[] = {
+		0, 1,
+		3, 7
+    };
+
+    hf.load_from_buffer(heights);
+
+	math::contact_info<3> ci = hf.trace(math::ray<3>(math::vec<3>(1, 10.0f, 0), math::vec<3>(0, -1.0f, 0)));
+
+	BOOST_REQUIRE (ci.happened == true);
+	BOOST_REQUIRE (ci.penetrated == false);
+	BOOST_REQUIRE ((ci.position - math::vec<3>(1, 1, 0)).length_sq() < 0.01f);
+	BOOST_REQUIRE (ci.normal.y > 0);
 }
 
-BOOST_FIXTURE_TEST_CASE(test_raytrace_2, fixture)
+BOOST_AUTO_TEST_CASE(test_raytrace_simple_4)
 {
-	math::contact_info<3> ci = hf_->trace(math::ray<3>(math::vec<3>(-1, 5, 0.5f), math::vec<3>(1, 0, 0)));
-	BOOST_ASSERT (ci.happened == true);
-	BOOST_ASSERT (ci.penetrated == false);
-	BOOST_ASSERT ((ci.position - math::vec<3>(0.62f, 5.0f, 0.5f)).length_sq() < 0.01f);
-	BOOST_ASSERT ((ci.normal - math::vec<3>(0.62f, 0.15f, -0.78f)).length_sq() < 0.01f);
+	math::matrix<4,4> tf;
+    tf.identity();
+
+	math::heightfield<boost::uint8_t> hf(tf, 2, 2, math::vec<3>(2, 1, 2));
+
+    static boost::uint8_t const heights[] = {
+		0, 1,
+		3, 7
+    };
+
+    hf.load_from_buffer(heights);
+
+	math::contact_info<3> ci = hf.trace(math::ray<3>(math::vec<3>(0, 10.0f, 0.5f), math::vec<3>(0, -1.0f, 0)));
+
+	BOOST_REQUIRE (ci.happened == true);
+	BOOST_REQUIRE (ci.penetrated == false);
+	BOOST_REQUIRE ((ci.position - math::vec<3>(0, 1.5f, 0.5f)).length_sq() < 0.01f);
+	BOOST_REQUIRE (ci.normal.y > 0);
 }
+
+BOOST_AUTO_TEST_CASE(test_raytrace_simple_5)
+{
+	math::matrix<4,4> tf;
+    tf.identity();
+
+	math::heightfield<boost::uint8_t> hf(tf, 2, 2, math::vec<3>(2, 1, 2));
+
+    static boost::uint8_t const heights[] = {
+		0, 1,
+		3, 7
+    };
+
+    hf.load_from_buffer(heights);
+
+	math::contact_info<3> ci = hf.trace(math::ray<3>(math::vec<3>(0, 10.0f,1), math::vec<3>(0, -1.0f, 0)));
+
+	BOOST_REQUIRE (ci.happened == true);
+	BOOST_REQUIRE (ci.penetrated == false);
+	BOOST_REQUIRE ((ci.position - math::vec<3>(0, 3, 1)).length_sq() < 0.01f);
+	BOOST_REQUIRE (ci.normal.y > 0);
+}
+
+BOOST_AUTO_TEST_CASE(test_raytrace_simple_6)
+{
+	math::matrix<4,4> tf;
+    tf.identity();
+
+	math::heightfield<boost::uint8_t> hf(tf, 2, 2, math::vec<3>(2, 1, 2));
+
+    static boost::uint8_t const heights[] = {
+		0, 1,
+		3, 7
+    };
+
+    hf.load_from_buffer(heights);
+
+	math::contact_info<3> ci = hf.trace(math::ray<3>(math::vec<3>(1, 10.0f,1), math::vec<3>(0, -1.0f, 0)));
+
+	BOOST_REQUIRE (ci.happened == true);
+	BOOST_REQUIRE (ci.penetrated == false);
+	BOOST_REQUIRE ((ci.position - math::vec<3>(1, 7, 1)).length_sq() < 0.01f);
+	BOOST_REQUIRE (ci.normal.y > 0);
+}
+
+BOOST_AUTO_TEST_CASE(test_raytrace_complex_1)
+{
+	math::matrix<4,4> tf;
+    tf.identity();
+
+	math::heightfield<boost::uint8_t> hf(tf, 10, 10, math::vec<3>(10, 1, 10));
+
+    static boost::uint8_t const heights[] = {
+		0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
+		0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
+		0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
+		0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
+		0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
+		0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
+		0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
+		0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
+		0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
+		0, 1, 2, 3, 4, 5, 6, 7, 8, 9
+    };
+
+    hf.load_from_buffer(heights);
+
+	math::vec<3> p1(0, 10, 0);
+	math::vec<3> p2(6.6737876f, 0, 4.9803157f);
+
+	math::contact_info<3> ci = hf.trace(math::ray<3>(p1, p2 - p1));
+
+	BOOST_REQUIRE (ci.happened == true);
+	BOOST_REQUIRE (ci.penetrated == false);
+	BOOST_REQUIRE (abs(ci.position.y / ci.position.x - 1) < 0.01f);
+	BOOST_REQUIRE (ci.normal.y > 0);
+}
+
+BOOST_AUTO_TEST_CASE(test_raytrace_complex_2)
+{
+	math::matrix<4,4> tf;
+    tf.identity();
+
+	math::heightfield<boost::uint8_t> hf(tf, 10, 10, math::vec<3>(10, 1, 10));
+
+    static boost::uint8_t const heights[] = {
+		0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
+		0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
+		0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
+		0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
+		0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
+		0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
+		0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
+		0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
+		0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
+		0, 1, 2, 3, 4, 5, 6, 7, 8, 9
+    };
+
+    hf.load_from_buffer(heights);
+
+	for (int i = 0; i < 100; ++i)
+	{
+		math::vec<3> p1(0, 10, 0);
+		math::vec<3> p2(math::scalar(rand()) / RAND_MAX * 10, 0, math::scalar(rand()) / RAND_MAX * 10);
+
+		math::contact_info<3> ci = hf.trace(math::ray<3>(p1, p2 - p1));
+
+ 		BOOST_REQUIRE (ci.happened == true);
+		BOOST_REQUIRE (ci.penetrated == false);
+		BOOST_REQUIRE (abs(ci.position.y / ci.position.x - 1) < 0.01f);
+		BOOST_REQUIRE (ci.normal.y > 0);
+	}
+}
+
 
 BOOST_AUTO_TEST_SUITE_END()

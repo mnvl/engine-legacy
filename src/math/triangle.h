@@ -252,19 +252,11 @@ public:
         mul(C, vec_t(C), tf);
     }
 
-    // only for points on triangles plane
     bool contains_on_plane(const vec_t &v) const {
-        vec_t BA = B - A;
-        scalar_t s1 = (v - A) & BA;
-        if (s1 < 0 || s1 > BA.length_sq()) return false;
-
-        vec_t CB = C - B;
-        scalar_t s2 = (v - B) & CB;
-        if ( s2 < 0 || s2 > CB.length_sq()) return false;
-
-        vec_t AC = A - C;
-        scalar_t s3 = (v - C) & AC;
-        return s3 >= 0 && s3 <= AC.length_sq();
+		// http://www.blackpawn.com/texts/pointinpoly/default.html
+		return ((((B - A) ^ (v - A)) & ((B - A) ^ (C - A))) >= 0)
+			&& ((((C - B) ^ (v - B)) & ((C - B) ^ (A - B))) >= 0)
+			&& ((((A - C) ^ (v - C)) & ((A - C) ^ (B - C))) >= 0);
     }
 
 	bool contains(vec_t const &v) const {
