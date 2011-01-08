@@ -11,6 +11,7 @@
 
 #include <vector>
 #include "vec.h"
+#include "aabb.h"
 #include "line.h"
 #include "matrix.h"
 #include "collision.h"
@@ -43,11 +44,14 @@ private:
     size_t ncols_, nrows_;
     vec<3> scale_;
     std::vector<value_type> heights_;
+	aabb<3> local_aabb_;
 
     size_t nheights()
     {
         return nrows_ * ncols_;
     }
+
+	void post_load();
 };
 
 }

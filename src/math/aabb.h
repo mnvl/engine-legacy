@@ -34,7 +34,6 @@ public:
 	static const size_t vertices_count = 1 << ARITY;
 	static const size_t edges_count = vertices_count + (1 << (ARITY-1));
 	typedef ray<ARITY,scalar_t> ray_t;
-	typedef aabb<ARITY,scalar_t> aabb_t;
 
 	// данные
 	vec_t lo, hi;
@@ -56,10 +55,13 @@ public:
 	{
 	}
 
-	aabb(vec_t const &centre, math::scalar radius):
-		lo(centre.x - radius/2, centre.y - radius/2, centre.z - radius/2),
-		hi(centre.x + radius/2, centre.y + radius/2, centre.z + radius/2)
+	aabb(vec_t const &centre, math::scalar radius)
 	{
+		vec_t delta;
+		delta.set_all(radius / 2);
+
+		lo = centre - delta;
+		hi = centre + delta;
 	}
 
 	// операции
@@ -71,9 +73,7 @@ public:
 	}
 
 	void world_to_local_vector(vec_t &v,vec_t const &v0) const {
-		v.x = v0.x / (hi.x - lo.x);
-		v.y = v0.y / (hi.y - lo.y);
-		v.z = v0.z / (hi.z - lo.z);
+		v = v0 / (hi - lo);
 	}
 
 	// получить координаты точки в локальной системе координат
@@ -82,7 +82,7 @@ public:
 	}
 
 	// перенести прямую в локальную систему координат
-	void world_to_local_ray(ray_t &r,const ray_t &r0) const {
+	void world_to_local_ray(ray_t &r,ray_t const &r0) const {
 		world_to_local_point(r.r0,r0.r0);
 		world_to_local_vector(r.a,r0.a);
 	}
@@ -106,7 +106,7 @@ public:
 		}
 	}
 
-	void extend(const aabb_t &b) {
+	void extend(aabb const &b) {
 		extend(b.lo);
 		extend(b.hi);
 	}
@@ -116,71 +116,17 @@ public:
 		return lo <= right && right <= hi;
 	}
 
-	bool contains(const aabb_t &right) const {
+	bool contains(aabb const &right) const {
 		return contains(right.lo) && contains(right.hi);
 	}
 
-	bool test_intersection(const aabb_t &right) const {
+	bool test_intersection(aabb const &right) const {
 		return right.hi >= lo && hi >= right.lo;
 	}
 
-	bool trace(const ray_t &r, scalar_t t_min = 0, scalar_t t_max = 1) const {
-		ray_t r1;
-		world_to_local_ray(r1, r);
-
-		if(abs(r1.a.x) > EPSILON) {
-			scalar_t dx = 1 / r1.a.x;
-
-			scalar_t t = -r1.r0.x * dx;
-			vec_t v;
-			if(t >= t_min && t <= t_max) {
-				v = r1.r0 + r1.a * t;
-				if(v.y>=0 && v.y<=1 && v.z>=0 && v.z<=1) return true;
-			}
-
-			t = dx - t;
-			if(t >= t_min && t <= t_max) {
-				v += r1.a * dx;
-				if(v.y>=0 && v.y<=1 && v.z>=0 && v.z<=1) return true;
-			}
-		}
-
-		if(abs(r1.a.y) > EPSILON) {
-			scalar_t dy = 1 / r1.a.y;
-
-			scalar_t t = -r1.r0.y * dy;
-			vec_t v;
-			if(t >= t_min && t <= t_max) {
-				v = r1.r0 + r1.a * t;
-				if(v.x>=0 && v.x<=1 && v.z>=0 && v.z<=1) return true;
-			}
-
-			t = dy - t;
-			if(t >= t_min && t <= t_max) {
-				v += r1.a * dy;
-				if(v.x>=0 && v.x<=1 && v.z>=0 && v.z<=1) return true;
-			}
-		}
-
-		if(abs(r1.a.z) > EPSILON) {
-			scalar_t dz = 1 / r1.a.z;
-
-			scalar_t t = -r1.r0.z * dz;
-			vec_t v;
-			if(t >= t_min && t <= t_max) {
-				v = r1.r0 + r1.a * t;
-				if(v.x>=0 && v.x<=1 && v.y>=0 && v.y<=1) return true;
-			}
-
-			t = dz - t;
-			if(t >= t_min && t <= t_max) {
-				v += r1.a * dz;
-				if(v.x>=0 && v.x<=1 && v.y>=0 && v.y<=1) return true;
-			}
-		}
-
-		return false;
-	}
+	bool trace(ray_t const &r, scalar_t results[2], size_t *nresults,
+		scalar_t t_min = 0, scalar_t t_max = 1) const;
+	bool trace(ray_t const &r, scalar_t t_min = 0, scalar_t t_max = 1) const;
 };
 
 void bind_aabb(lua_State *L);

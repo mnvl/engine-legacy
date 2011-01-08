@@ -42,13 +42,21 @@ contact_info<3> heightfield<T>::trace(ray<3> const &r, scalar max_distance)
 	vec<3> local_p0 = r.r0 * world_to_local_;
 	vec<3> local_p1 = (r.r0 + r.a * max_distance) * world_to_local_;
 
-	bresenham_supercover<> cells_iterator(vec<2, int>(int (local_p0.x), int(local_p0.z)),
-		vec<2, int>(int(local_p1.x), int(local_p1.z)));
-
 	ray<3> local_ray(local_p0, local_p1 - local_p0);
+
+	scalar results[2];
+	size_t nresults;
 
 	contact_info<3> result;
 	result.happened = false;
+
+	if (!local_aabb_.trace(r, results, &nresults)) return result;
+
+	vec<3> local_p0_adjusted = local_ray.apply(results[0]);
+	vec<3> local_p1_adjusted = local_ray.apply(results[1]);
+
+	bresenham_supercover<> cells_iterator(vec<2, int>(int (local_p0_adjusted.x), int(local_p0_adjusted.z)),
+		vec<2, int>(int(local_p1_adjusted.x), int(local_p1_adjusted.z)));
 
 	while (true)
 	{
@@ -57,11 +65,6 @@ contact_info<3> heightfield<T>::trace(ray<3> const &r, scalar max_distance)
 
 		boost::tie(cell, flag) = cells_iterator.get();
 		if (flag) break;
-
-		if (cell.x < 0 || cell.y < 0 || cell.x >= ncols_ || cell.y >= nrows_) continue;
-
-		if (cell.x == ncols_ - 1) --cell.x;
-		if (cell.y == nrows_ - 1) --cell.y;
 
 		vec<3> v1 = local_vertex_at(cell.x + 0, cell.y + 0);
 		vec<3> v2 = local_vertex_at(cell.x + 0, cell.y + 1);
@@ -112,6 +115,8 @@ template<class T>
 void heightfield<T>::load_from_buffer(value_type const *heights)
 {
     heights_.assign(heights, heights + nheights());
+
+	post_load();
 }
 
 template<class T>
@@ -124,6 +129,24 @@ void heightfield<T>::load_from_raw_file(std::string const &name)
         throw std::logic_error("heigtfield " + name + " contains invalid amount of data");
 
     load_from_buffer((value_type const *) &buffer[0]);
+}
+
+template<class T>
+void heightfield<T>::post_load()
+{
+	local_aabb_.null();
+
+	for (std::vector<value_type>::const_iterator it = heights_.begin(); it != heights_.end(); ++it)
+	{
+		if (local_aabb_.lo.y > *it) local_aabb_.lo.y = *it;
+		if (local_aabb_.hi.y < *it) local_aabb_.hi.y = *it;
+	}
+
+	local_aabb_.lo.x = 0;
+	local_aabb_.lo.z = 0;
+
+	local_aabb_.hi.x = scalar(ncols_);
+	local_aabb_.hi.z = scalar(nrows_);
 }
 
 template class heightfield<boost::uint8_t>;

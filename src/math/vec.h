@@ -152,14 +152,24 @@ public:
 		return *this;
 	}
 
-	vec operator +(vec const &rhs) const
+	vec operator +(vec const &v) const
 	{
-		return vec(x + rhs.x, y + rhs.y);
+		return vec(x + v.x, y + v.y);
 	}
 
-	vec operator -(vec const &rhs) const
+	vec operator -(vec const &v) const
 	{
-		return vec(x - rhs.x, y - rhs.y);
+		return vec(x - v.x, y - v.y);
+	}
+
+	vec operator *(vec const &v) const
+	{
+		return vec(x * v.x, y * v.y);
+	}
+
+	vec operator /(vec const &v) const
+	{
+		return vec(x / v.x, y / v.y);
 	}
 
 	vec operator *(scalar_t const k) const
@@ -359,24 +369,24 @@ public:
 		return *this;
 	}
 
-	vec operator +(vec const &rhs) const
+	vec operator +(vec const &v) const
 	{
-		return vec(x + rhs.x, y + rhs.y, z + rhs.z);
+		return vec(x + v.x, y + v.y, z + v.z);
 	}
 
-	vec operator -(vec const &rhs) const
+	vec operator -(vec const &v) const
 	{
-		return vec(x - rhs.x, y - rhs.y, z - rhs.z);
+		return vec(x - v.x, y - v.y, z - v.z);
 	}
 
-	vec operator *(vec const &rhs) const
+	vec operator *(vec const &v) const
 	{
-		return vec(x * rhs.x, y * rhs.y, z * rhs.z);
+		return vec(x * v.x, y * v.y, z * v.z);
 	}
 
-	vec operator /(vec const &rhs) const
+	vec operator /(vec const &v) const
 	{
-		return vec(x / rhs.x, y / rhs.y, z / rhs.z);
+		return vec(x / v.x, y / v.y, z / v.z);
 	}
 
 	vec operator *(scalar_t const k) const

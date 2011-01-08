@@ -14,6 +14,130 @@
 namespace math
 {
 
+namespace
+{
+
+template<class T>
+bool trace_impl(aabb<2, T> const &b, ray<2, T> const &r, T results[2], size_t *nresults, T t_min, T t_max)
+{
+	// not implemented
+	assert(0);
+
+	return false;
+}
+
+template<class T>
+bool trace_impl(aabb<3, T> const &b, ray<3, T> const &r, T results[2], size_t *nresults, T t_min, T t_max)
+{
+	*nresults = 0;
+
+	ray<3, T> r1;
+	b.world_to_local_ray(r1, r);
+
+	if(abs(r1.a.x) > EPSILON) {
+		T dx = 1 / r1.a.x;
+
+		T t = -r1.r0.x * dx;
+		vec<3, T> v;
+
+		if(t >= t_min && t <= t_max) {
+			v = r1.r0 + r1.a * t;
+
+			if(v.y>=0 && v.y<=1 && v.z>=0 && v.z<=1)
+			{
+				results[*nresults++] = t;
+			}
+		}
+
+		t = dx - t;
+
+		if(t >= t_min && t <= t_max) {
+			v += r1.a * dx;
+
+			if(v.y>=0 && v.y<=1 && v.z>=0 && v.z<=1)
+			{
+				results[*nresults++] = t;
+			}
+		}
+	}
+
+	if(abs(r1.a.y) > EPSILON) {
+		T dy = 1 / r1.a.y;
+
+		T t = -r1.r0.y * dy;
+		vec<3, T> v;
+
+		if(t >= t_min && t <= t_max) {
+			v = r1.r0 + r1.a * t;
+
+			if(v.x>=0 && v.x<=1 && v.z>=0 && v.z<=1)
+			{
+				results[*nresults++] = t;
+			}
+		}
+
+		t = dy - t;
+
+		if(t >= t_min && t <= t_max) {
+			v += r1.a * dy;
+
+			if(v.x>=0 && v.x<=1 && v.z>=0 && v.z<=1)
+			{
+				results[*nresults++] = t;
+			}
+		}
+	}
+
+	if(abs(r1.a.z) > EPSILON) {
+		T dz = 1 / r1.a.z;
+
+		T t = -r1.r0.z * dz;
+		vec<3, T> v;
+
+		if(t >= t_min && t <= t_max) {
+			v = r1.r0 + r1.a * t;
+
+			if(v.x>=0 && v.x<=1 && v.y>=0 && v.y<=1)
+			{
+				results[*nresults++] = t;
+			}
+		}
+
+		t = dz - t;
+
+		if(t >= t_min && t <= t_max) {
+			v += r1.a * dz;
+
+			if(v.x>=0 && v.x<=1 && v.y>=0 && v.y<=1)
+			{
+				results[*nresults++] = t;
+			}
+		}
+	}
+
+	return *nresults > 0;
+}
+}
+
+template<int N, class T>
+bool aabb<N, T>::trace(ray_t const &r, scalar_t results[2], size_t *nresults,
+	scalar_t t_min, scalar_t t_max) const
+{
+	return trace_impl(*this, r, results, nresults, t_min, t_max);
+}
+
+template<int N, class T>
+bool aabb<N, T>::trace(ray_t const &r, scalar_t t_min = 0, scalar_t t_max = 1) const
+{
+	scalar_t results[2];
+	size_t nresults;
+
+	return trace(r, results, &nresults, t_min, t_max);
+}
+
+template class aabb<2>;
+template class aabb<3>;
+
 void bind_aabb(lua_State *L)
 {
 	using namespace luabind;
