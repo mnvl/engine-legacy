@@ -45,18 +45,18 @@ bool trace_impl(aabb<3, T> const &b, ray<3, T> const &r, T results[2], size_t *n
 
 			if(v.y>=0 && v.y<=1 && v.z>=0 && v.z<=1)
 			{
-				results[*nresults++] = t;
+				results[(*nresults)++] = t;
 			}
 		}
 
-		t = dx - t;
+		t = dx + t;
 
 		if(t >= t_min && t <= t_max) {
 			v += r1.a * dx;
 
 			if(v.y>=0 && v.y<=1 && v.z>=0 && v.z<=1)
 			{
-				results[*nresults++] = t;
+				results[(*nresults)++] = t;
 			}
 		}
 	}
@@ -72,18 +72,18 @@ bool trace_impl(aabb<3, T> const &b, ray<3, T> const &r, T results[2], size_t *n
 
 			if(v.x>=0 && v.x<=1 && v.z>=0 && v.z<=1)
 			{
-				results[*nresults++] = t;
+				results[(*nresults)++] = t;
 			}
 		}
 
-		t = dy - t;
+		t = dy + t;
 
 		if(t >= t_min && t <= t_max) {
 			v += r1.a * dy;
 
 			if(v.x>=0 && v.x<=1 && v.z>=0 && v.z<=1)
 			{
-				results[*nresults++] = t;
+				results[(*nresults)++] = t;
 			}
 		}
 	}
@@ -99,18 +99,18 @@ bool trace_impl(aabb<3, T> const &b, ray<3, T> const &r, T results[2], size_t *n
 
 			if(v.x>=0 && v.x<=1 && v.y>=0 && v.y<=1)
 			{
-				results[*nresults++] = t;
+				results[(*nresults)++] = t;
 			}
 		}
 
-		t = dz - t;
+		t = dz + t;
 
 		if(t >= t_min && t <= t_max) {
 			v += r1.a * dz;
 
 			if(v.x>=0 && v.x<=1 && v.y>=0 && v.y<=1)
 			{
-				results[*nresults++] = t;
+				results[(*nresults)++] = t;
 			}
 		}
 	}

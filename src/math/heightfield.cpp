@@ -50,7 +50,7 @@ contact_info<3> heightfield<T>::trace(ray<3> const &r, scalar max_distance)
 	contact_info<3> result;
 	result.happened = false;
 
-	if (!local_aabb_.trace(r, results, &nresults)) return result;
+	if (!local_aabb_.trace(local_ray, results, &nresults)) return result;
 
 	vec<3> local_p0_adjusted = local_ray.apply(results[0]);
 	vec<3> local_p1_adjusted = local_ray.apply(results[1]);
