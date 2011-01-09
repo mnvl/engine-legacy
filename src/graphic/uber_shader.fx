@@ -1,19 +1,6 @@
 
-#if defined(SKELETAL_ANIMATION_ENABLED)
-#include "skeletal_animation.fx"
-#endif
-
-#if defined(LIGHTING_ENABLED)
-#include "point_light.fx"
-#endif
-
-#if defined(NORMAL_MAP_ENABLED)
-#include "normal_map.fx"
-#endif
-
 float4x4 world_view_projection_matrix : VIEWPROJECTION;
 float4x4 world_matrix : WORLD;
-
 
 uniform extern texture diffuse_texture_0;
 sampler DIFFUSE_TEXTURE_SAMPLER_0 = sampler_state { Texture = <diffuse_texture_0>; };
@@ -30,6 +17,96 @@ sampler DIFFUSE_TEXTURE_SAMPLER_3 = sampler_state { Texture = <diffuse_texture_3
 uniform extern texture texture_blending_weights_texture;
 sampler TEXUTRE_BLENDING_WEIGHTS_IN_TEXTURE_SAMPLER = sampler_state { Texture = <texture_blending_weights_texture>; };
 #endif
+#endif
+
+#if defined(SKELETAL_ANIMATION_ENABLED)
+#if !defined(MAX_JOINT_MATRICES)
+#define MAX_JOINT_MATRICES 54
+#endif
+
+#if !defined(JOINTS_COUNT)
+#define JOINTS_COUNT 8
+#endif
+
+float4x4 joint_matrix_array[MAX_JOINT_MATRICES] : WORLDMATRIXARRAY;
+
+float3 ApplySkeletalAnimationToPosition(float3 p, const int joints[JOINTS_COUNT], const float weights[JOINTS_COUNT])
+{
+	float3 o = 0;
+
+	for (int index = 0; index < JOINTS_COUNT; index++)
+	{
+		o += (float3) mul(float4(p, 1.0f), joint_matrix_array[joints[index]]) * weights[index];
+	}
+
+	return o;
+}
+
+float3 ApplySkeletalAnimationToVector(float3 v, const int joints[JOINTS_COUNT], const float weights[JOINTS_COUNT])
+{
+	float3 o = 0;
+
+	for (int index = 0; index < JOINTS_COUNT; index++)
+	{
+		o += mul(v, (float3x3) joint_matrix_array[joints[index]]) * weights[index];
+	}
+
+	return o;
+}
+#endif
+
+#if defined(LIGHTING_ENABLED)
+#if !defined(MAX_POINT_LIGHTS)
+#define MAX_POINT_LIGHTS 5
+#endif
+
+struct POINT_LIGHT
+{
+	float3 position;
+	float3 color;
+	float inv_attenuation;
+};
+
+uniform extern POINT_LIGHT point_lights[MAX_POINT_LIGHTS];
+
+float3 GetPointLightIlluminationAtPosition(const int n, float3 position, float3 normal)
+{
+	float3 delta = point_lights[n].position - position;
+	float power = saturate(point_lights[n].inv_attenuation * dot(delta, normal) / dot(delta, delta));
+	return point_lights[n].color * power;
+}
+
+float3 GetPointLightsTotalIlluminationAtPosition(uniform const int count, float3 position, float3 normal)
+{
+	float3 color = GetPointLightIlluminationAtPosition(0, position, normal);
+
+	for (int n = 1; n < count; n++)
+	{
+		color += GetPointLightIlluminationAtPosition(n, position, normal);
+	}
+
+	return color;
+}
+#endif
+
+#if defined(NORMAL_MAP_ENABLED)
+uniform extern texture  normal_map_texture;
+
+sampler NORMAL_MAP_SAMPLER = sampler_state
+{
+	Texture = <normal_map_texture>;
+	MinFilter = ANISOTROPIC;
+	MagFilter = LINEAR;
+	MipFilter = LINEAR;
+	AddressU  = WRAP;
+    AddressV  = WRAP;
+};
+
+float3 GetNormalMapNormal(const float2 texcoords, const float3 tangent, const float3 binormal, const float3 normal)
+{
+	float3 normal_tangent = normalize(2.0f * tex2D(NORMAL_MAP_SAMPLER, texcoords) - 1.0f);
+    return mul(normal_tangent, float3x3(normalize(tangent), normalize(binormal), normalize(normal)));
+}
 #endif
 
 struct VS_INPUT
