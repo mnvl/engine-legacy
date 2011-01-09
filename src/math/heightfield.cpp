@@ -44,11 +44,11 @@ contact_info<3> heightfield<T>::trace(ray<3> const &r, scalar max_distance)
 
 	ray<3> local_ray(local_p0, local_p1 - local_p0);
 
-	scalar results[2];
-	size_t nresults;
-
 	contact_info<3> result;
 	result.happened = false;
+
+	scalar results[2];
+	size_t nresults;
 
 	if (!local_aabb_.trace(local_ray, results, &nresults)) return result;
 

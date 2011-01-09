@@ -278,7 +278,7 @@ BOOST_AUTO_TEST_CASE (three_points_digonal_4)
 	BOOST_REQUIRE (flag == true);
 }
 
-BOOST_AUTO_TEST_CASE (many_points)
+BOOST_AUTO_TEST_CASE (many_points_1)
 {
 	math::bresenham_supercover<> bs(math::vec<2, int>(1, 1), math::vec<2, int>(12, 9));
 
@@ -387,6 +387,21 @@ BOOST_AUTO_TEST_CASE (many_points)
 
 	boost::tie(position, flag) = bs.get();
 	BOOST_REQUIRE (flag == true);
+}
+
+BOOST_AUTO_TEST_CASE (many_points_2)
+{
+	math::bresenham_supercover<> bs(math::vec<2, int>(4, 7), math::vec<2, int>(0, 0));
+
+	math::vec<2, int> position, prev_position;
+	bool flag;
+
+	do
+	{
+		prev_position = position;
+		boost::tie(position, flag) = bs.get();
+	}
+	while (flag == false);
 }
 
 BOOST_AUTO_TEST_CASE (final_point_1)

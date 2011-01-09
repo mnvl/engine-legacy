@@ -233,7 +233,7 @@ BOOST_AUTO_TEST_CASE(test_raytrace_complex_3)
 		0, 1, 2, 3, 4, 5, 6, 7, 8, 9
     };
 
-    hf.load_from_buffer(heights);
+	hf.load_from_buffer(heights);
 
 	math::vec<3> p1(0, 10, 0);
 	math::vec<3> p2(4.0656757f, 0, 7.5460067f);
@@ -245,7 +245,6 @@ BOOST_AUTO_TEST_CASE(test_raytrace_complex_3)
 	BOOST_REQUIRE (abs(ci.position.y / ci.position.x - 1) < 0.01f);
 	BOOST_REQUIRE (ci.normal.y > 0);
 }
-
 
 BOOST_AUTO_TEST_CASE(test_raytrace_complex_4)
 {
