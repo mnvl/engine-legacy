@@ -235,6 +235,40 @@ BOOST_AUTO_TEST_CASE(test_raytrace_complex_3)
 
     hf.load_from_buffer(heights);
 
+	math::vec<3> p1(0, 10, 0);
+	math::vec<3> p2(4.0656757f, 0, 7.5460067f);
+
+	math::contact_info<3> ci = hf.trace(math::ray<3>(p1, p2 - p1));
+
+	BOOST_REQUIRE (ci.happened == true);
+	BOOST_REQUIRE (ci.penetrated == false);
+	BOOST_REQUIRE (abs(ci.position.y / ci.position.x - 1) < 0.01f);
+	BOOST_REQUIRE (ci.normal.y > 0);
+}
+
+
+BOOST_AUTO_TEST_CASE(test_raytrace_complex_4)
+{
+	math::matrix<4,4> tf;
+    tf.identity();
+
+	math::heightfield<boost::uint8_t> hf(tf, 10, 10, math::vec<3>(10, 1, 10));
+
+    static boost::uint8_t const heights[] = {
+		0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
+		0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
+		0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
+		0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
+		0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
+		0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
+		0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
+		0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
+		0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
+		0, 1, 2, 3, 4, 5, 6, 7, 8, 9
+    };
+
+    hf.load_from_buffer(heights);
+
 	for (int i = 0; i < 100; ++i)
 	{
 		math::vec<3> p1(0, 10, 0);
