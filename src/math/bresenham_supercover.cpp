@@ -46,17 +46,17 @@ bresenham_supercover<T>::bresenham_supercover(vec_t const &v1, vec_t const &v2):
 		xstep_ = 1;
 	}
 
+	ddx_ = 2 * dx_;
+	ddy_ = 2 * dy_;
+
 	if (ddx_ > ddy_) errorprev_ = error_ = dx_;
-	else errorprev_ = error_ = dx_;
+	else  errorprev_ = error_ = dy_;
 
 	i_ = 0;
 
 	results_[0].set(x1_, y1_);
 	firstresult_ = 0;
 	nresults_ = 1;
-
-	ddx_ = 2 * dx_;
-	ddy_ = 2 * dy_;
 
 	finished_ = false;
 }
@@ -88,14 +88,14 @@ boost::tuple<typename bresenham_supercover<T>::vec_t, bool> bresenham_supercover
 template<class T>
 void bresenham_supercover<T>::next()
 {
-	if (i_ == dx_)
+	if (ddx_ >= ddy_)
 	{
-		finished_ = true;
-		return;
-	}
+		if (i_ == dx_)
+		{
+			finished_ = true;
+			return;
+		}
 
-	if (ddx_ > ddy_)
-	{
 		x_ += xstep_;
 		error_ += ddy_;
 
@@ -127,6 +127,12 @@ void bresenham_supercover<T>::next()
 	}
 	else
 	{
+		if (i_ == dy_)
+		{
+			finished_ = true;
+			return;
+		}
+
 		y_ += ystep_;
 		error_ += ddx_;
 

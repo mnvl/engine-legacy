@@ -389,6 +389,50 @@ BOOST_AUTO_TEST_CASE (many_points)
 	BOOST_REQUIRE (flag == true);
 }
 
+BOOST_AUTO_TEST_CASE (final_point_1)
+{
+	math::bresenham_supercover<> bs(math::vec<2, int>(2, 5), math::vec<2, int>(0, 0));
+
+	math::vec<2, int> position, prev_position;
+	bool flag;
+
+	do
+	{
+		prev_position = position;
+		boost::tie(position, flag) = bs.get();
+	}
+	while (flag == false);
+
+	BOOST_REQUIRE (prev_position.x == 0);
+	BOOST_REQUIRE (prev_position.y == 0);
+}
+
+BOOST_AUTO_TEST_CASE (final_point_2)
+{
+	for (int i = 0; i < 100; ++i)
+	{
+		int x1 = rand();
+		int x2 = rand();
+		int y1 = rand();
+		int y2 = rand();
+
+		math::bresenham_supercover<> bs(math::vec<2, int>(x1, y1), math::vec<2, int>(x2, y2));
+
+		math::vec<2, int> position, prev_position;
+		bool flag;
+
+		do
+		{
+			prev_position = position;
+			boost::tie(position, flag) = bs.get();
+		}
+		while (flag == false);
+
+		BOOST_REQUIRE (prev_position.x == x2);
+		BOOST_REQUIRE (prev_position.y == y2);
+	}
+}
+
 BOOST_AUTO_TEST_SUITE_END()
 
 

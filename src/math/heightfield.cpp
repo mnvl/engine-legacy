@@ -66,6 +66,9 @@ contact_info<3> heightfield<T>::trace(ray<3> const &r, scalar max_distance)
 		boost::tie(cell, flag) = cells_iterator.get();
 		if (flag) break;
 
+		if (cell.x == ncols_ - 1) --cell.x;
+		if (cell.y == nrows_ - 1) --cell.y;
+
 		vec<3> v1 = local_vertex_at(cell.x + 0, cell.y + 0);
 		vec<3> v2 = local_vertex_at(cell.x + 0, cell.y + 1);
 		vec<3> v3 = local_vertex_at(cell.x + 1, cell.y + 1);
@@ -107,6 +110,8 @@ contact_info<3> heightfield<T>::trace(ray<3> const &r, scalar max_distance)
 			}
         }
     }
+
+	result.position = result.position * local_to_world_;
 
 	return result;
 }
