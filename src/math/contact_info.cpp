@@ -8,13 +8,14 @@
 // prior written consent of Manvel Avetisian.
 //-----------------------------------------------------------------------------
 
+#include <luabind/luabind.hpp>
 #include "contact_info.h"
 
 namespace math
 {
 
 template<int N, class T>
-contact_info<N, T>::bind(lua_State *L, char const *name)
+void contact_info<N, T>::bind(lua_State *L, char const *name)
 {
 	using namespace luabind;
 
