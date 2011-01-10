@@ -38,6 +38,8 @@ public:
 
 	math::heightfield<> const &get_storage() const { return heightfield_; }
 
+	void add(math::vec<3> const &position, math::scalar delta);
+
 	static void bind(lua_State *L);
 
 private:

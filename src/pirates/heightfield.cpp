@@ -117,6 +117,14 @@ void Heightfield::draw()
 	scheduler_->add(draw_call_);
 }
 
+void Heightfield::add(math::vec<3> const &position, math::scalar delta)
+{
+	math::vec<2, int> cell = heightfield_.world_position_to_cell(position);
+
+	if (cell.x > 0 && cell.y > 0 && cell.x < heightfield_.ncols() && cell.y < heightfield_.nrows())
+		heightfield_.local_y_at(cell.x, cell.y) += delta;
+}
+
 void Heightfield::bind(lua_State *L)
 {
 	using namespace luabind;
@@ -137,6 +145,7 @@ void Heightfield::bind(lua_State *L)
 		.def("draw", &Heightfield::draw)
 		.def("set_texture", &Heightfield::set_texture)
 		.def("get_storage", &Heightfield::get_storage)
+		.def("add", &Heightfield::add)
 	];
 }
 

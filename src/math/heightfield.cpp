@@ -41,6 +41,13 @@ heightfield<T>::~heightfield()
 }
 
 template<class T>
+vec<2, int> heightfield<T>::world_position_to_cell(vec<3> const &position)
+{
+	vec<3> p = position * world_to_local_;
+	return vec<2, int>(int(p.x), int(p.z));
+}
+
+template<class T>
 contact_info<3> heightfield<T>::trace(ray<3> const &r, scalar max_distance) const
 {
 	vec<3> local_p0 = r.r0 * world_to_local_;
