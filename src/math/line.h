@@ -21,7 +21,7 @@ namespace math
 template<int N,class T=scalar>
 class line {
 public:
-    static const size_t ARITY = N;
+    static size_t const ARITY = N;
     typedef T scalar_t;
     typedef vec<ARITY, scalar_t> vec_t;
     typedef ray<ARITY, scalar_t> ray_t;

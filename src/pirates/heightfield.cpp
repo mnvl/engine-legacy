@@ -62,9 +62,9 @@ void Heightfield::update()
 			{
 				math::scalar h = heightfield_.y_at(i, j);
 
-				vertex->position.set(i, h, j);
+				vertex->position.set((math::scalar) i, h, (math::scalar) j);
 				vertex->normal.set(0, 1, 0);
-				vertex->texcoords.set(i, j);
+				vertex->texcoords.set((math::scalar) i, (math::scalar) j);
 
 				if (h < -1)
 				{

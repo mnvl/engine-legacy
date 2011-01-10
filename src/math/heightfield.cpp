@@ -47,13 +47,12 @@ contact_info<3> heightfield<T>::trace(ray<3> const &r, scalar max_distance)
 	contact_info<3> result;
 	result.happened = false;
 
-	scalar results[2];
-	size_t nresults;
+	scalar local_ray_t0, local_ray_t1;
 
-	if (!local_aabb_.trace(local_ray, results, &nresults)) return result;
+	if (!local_aabb_.trace(local_ray, &local_ray_t0, &local_ray_t1)) return result;
 
-	vec<3> local_p0_adjusted = local_ray.apply(results[0]);
-	vec<3> local_p1_adjusted = local_ray.apply(results[1]);
+	vec<3> local_p0_adjusted = local_ray.apply(local_ray_t0);
+	vec<3> local_p1_adjusted = local_ray.apply(local_ray_t1);
 
 	bresenham_supercover<> cells_iterator(vec<2, int>(int (local_p0_adjusted.x), int(local_p0_adjusted.z)),
 		vec<2, int>(int(local_p1_adjusted.x), int(local_p1_adjusted.z)));
@@ -117,7 +116,7 @@ contact_info<3> heightfield<T>::trace(ray<3> const &r, scalar max_distance)
 }
 
 template<class T>
-void heightfield<T>::load_from_buffer(value_type const *heights)
+void heightfield<T>::load_from_buffer(value_t const *heights)
 {
     heights_.assign(heights, heights + nheights());
 
@@ -130,10 +129,10 @@ void heightfield<T>::load_from_raw_file(std::string const &name)
     std::vector<char> buffer;
     util::FileHandle(name.c_str(), O_RDONLY).read_all(buffer);
 
-    if (buffer.size() != nheights() * sizeof(value_type))
+    if (buffer.size() != nheights() * sizeof(value_t))
         throw std::logic_error("heigtfield " + name + " contains invalid amount of data");
 
-    load_from_buffer((value_type const *) &buffer[0]);
+    load_from_buffer((value_t const *) &buffer[0]);
 }
 
 template<class T>
@@ -141,7 +140,7 @@ void heightfield<T>::post_load()
 {
 	local_aabb_.null();
 
-	for (std::vector<value_type>::const_iterator it = heights_.begin(); it != heights_.end(); ++it)
+	for (std::vector<value_t>::const_iterator it = heights_.begin(); it != heights_.end(); ++it)
 	{
 		if (local_aabb_.lo.y > *it) local_aabb_.lo.y = *it;
 		if (local_aabb_.hi.y < *it) local_aabb_.hi.y = *it;

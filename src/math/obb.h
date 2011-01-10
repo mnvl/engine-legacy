@@ -30,7 +30,7 @@ template<class T>
 class obb<2, T> {
 public:
 	typedef T scalar_t;
-	static const size_t ARITY = 2;
+	static size_t const ARITY = 2;
 	typedef vec<ARITY,scalar_t> vec_t;
 	typedef matrix<ARITY+1,ARITY+1,scalar_t> matrix_t;
 	typedef aabb<ARITY,scalar_t> aabb_t;

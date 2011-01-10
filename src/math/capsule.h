@@ -21,7 +21,7 @@ template<int N, class T> class obb;
 template<int N, class T = scalar>
 class capsule {
 public:
-    static const size_t ARITY = N;
+    static size_t const ARITY = N;
     typedef T scalar_t;
 	typedef vec<ARITY, scalar_t> vec_t;
 	typedef line<ARITY, scalar_t> line_t;

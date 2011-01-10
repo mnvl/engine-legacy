@@ -26,7 +26,7 @@ template<class T>
 class triangle<3,T> {
 public:
     typedef T scalar_t;
-    static const size_t ARITY = 3;
+    static size_t const ARITY = 3;
     typedef vec<ARITY,scalar_t> vec_t;
     typedef ray<ARITY,scalar_t> ray_t;
     typedef line<ARITY,scalar_t> line_t;

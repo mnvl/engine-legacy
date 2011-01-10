@@ -21,6 +21,7 @@ typedef float scalar;
 
 static scalar const PI = 3.141592654f;
 static scalar const EPSILON = 1.0e-6f;
+static scalar const MIN_SCALAR = FLT_MIN;
 static scalar const MAX_SCALAR = FLT_MAX;
 
 inline scalar

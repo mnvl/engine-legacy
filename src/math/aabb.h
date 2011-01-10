@@ -9,11 +9,11 @@
 // prior written consent of Manvel Avetisian.
 //-----------------------------------------------------------------------------
 
+#include <limits>
 #include <iosfwd>
 #include <luabind/lua_include.hpp>
 #include "scalar.h"
 #include "vec.h"
-#include "ray.h"
 
 #undef min
 #undef max
@@ -22,6 +22,7 @@ namespace math
 {
 
 template<int N,class T> class triangle;
+template<int N,class T> class ray;
 
 template<int N,class T = scalar>
 class aabb {
@@ -29,10 +30,10 @@ public:
 	// типы и константы
 	typedef T scalar_t;
 	typedef std::numeric_limits<scalar_t> limits_t;
-	static const size_t ARITY = N;
+	static size_t const ARITY = N;
 	typedef vec<ARITY,scalar_t> vec_t;
-	static const size_t vertices_count = 1 << ARITY;
-	static const size_t edges_count = vertices_count + (1 << (ARITY-1));
+	static size_t const vertices_count = 1 << ARITY;
+	static size_t const edges_count = vertices_count + (1 << (ARITY-1));
 	typedef ray<ARITY,scalar_t> ray_t;
 
 	// данные
@@ -124,8 +125,7 @@ public:
 		return right.hi >= lo && hi >= right.lo;
 	}
 
-	bool trace(ray_t const &r, scalar_t results[2], size_t *nresults,
-		scalar_t t_min = 0, scalar_t t_max = 1) const;
+	bool trace(ray_t const &r, scalar_t *t0, scalar_t *t1, scalar_t t_min = 0, scalar_t t_max = 1) const;
 	bool trace(ray_t const &r, scalar_t t_min = 0, scalar_t t_max = 1) const;
 };
 

@@ -24,7 +24,7 @@ template<int N, class T> class capsule;
 template<int N, class T = scalar>
 class sphere {
 public:
-	static const size_t ARITY = N;
+	static size_t const ARITY = N;
 	typedef T scalar_t;
 	typedef vec<ARITY,scalar_t> vec_t;
 

@@ -9,6 +9,7 @@
 //-----------------------------------------------------------------------------
 
 #include <luabind/luabind.hpp>
+#include "ray.h"
 #include "aabb.h"
 
 namespace math
@@ -18,7 +19,7 @@ namespace
 {
 
 template<class T>
-bool trace_impl(aabb<2, T> const &b, ray<2, T> const &r, T results[2], size_t *nresults, T t_min, T t_max)
+bool trace_impl(aabb<2, T> const &b, ray<2, T> const &r, T *t0, T *t1, T t_min, T t_max)
 {
 	// not implemented
 	assert(0);
@@ -27,9 +28,10 @@ bool trace_impl(aabb<2, T> const &b, ray<2, T> const &r, T results[2], size_t *n
 }
 
 template<class T>
-bool trace_impl(aabb<3, T> const &b, ray<3, T> const &r, T results[2], size_t *nresults, T t_min, T t_max)
+bool trace_impl(aabb<3, T> const &b, ray<3, T> const &r, T *t0, T *t1, T t_min, T t_max)
 {
-	*nresults = 0;
+	*t0 = t_max;
+	*t1 = t_min;
 
 	ray<3, T> r1;
 	b.world_to_local_ray(r1, r);
@@ -45,7 +47,8 @@ bool trace_impl(aabb<3, T> const &b, ray<3, T> const &r, T results[2], size_t *n
 
 			if(v.y>=0 && v.y<=1 && v.z>=0 && v.z<=1)
 			{
-				results[(*nresults)++] = t;
+				*t0 = std::min(*t0, t);
+				*t1 = std::max(*t1, t);
 			}
 		}
 
@@ -56,7 +59,8 @@ bool trace_impl(aabb<3, T> const &b, ray<3, T> const &r, T results[2], size_t *n
 
 			if(v.y>=0 && v.y<=1 && v.z>=0 && v.z<=1)
 			{
-				results[(*nresults)++] = t;
+				*t0 = std::min(*t0, t);
+				*t1 = std::max(*t1, t);
 			}
 		}
 	}
@@ -72,7 +76,8 @@ bool trace_impl(aabb<3, T> const &b, ray<3, T> const &r, T results[2], size_t *n
 
 			if(v.x>=0 && v.x<=1 && v.z>=0 && v.z<=1)
 			{
-				results[(*nresults)++] = t;
+				*t0 = std::min(*t0, t);
+				*t1 = std::max(*t1, t);
 			}
 		}
 
@@ -83,7 +88,8 @@ bool trace_impl(aabb<3, T> const &b, ray<3, T> const &r, T results[2], size_t *n
 
 			if(v.x>=0 && v.x<=1 && v.z>=0 && v.z<=1)
 			{
-				results[(*nresults)++] = t;
+				*t0 = std::min(*t0, t);
+				*t1 = std::max(*t1, t);
 			}
 		}
 	}
@@ -99,7 +105,8 @@ bool trace_impl(aabb<3, T> const &b, ray<3, T> const &r, T results[2], size_t *n
 
 			if(v.x>=0 && v.x<=1 && v.y>=0 && v.y<=1)
 			{
-				results[(*nresults)++] = t;
+				*t0 = std::min(*t0, t);
+				*t1 = std::max(*t1, t);
 			}
 		}
 
@@ -110,29 +117,28 @@ bool trace_impl(aabb<3, T> const &b, ray<3, T> const &r, T results[2], size_t *n
 
 			if(v.x>=0 && v.x<=1 && v.y>=0 && v.y<=1)
 			{
-				results[(*nresults)++] = t;
+				*t0 = std::min(*t0, t);
+				*t1 = std::max(*t1, t);
 			}
 		}
 	}
 
-	return *nresults > 0;
+	return *t0 != t_max;
 }
 }
 
 template<int N, class T>
-bool aabb<N, T>::trace(ray_t const &r, scalar_t results[2], size_t *nresults,
-	scalar_t t_min, scalar_t t_max) const
+bool aabb<N, T>::trace(ray_t const &r, scalar_t *t0, scalar_t *t1, scalar_t t_min, scalar_t t_max) const
 {
-	return trace_impl(*this, r, results, nresults, t_min, t_max);
+	return trace_impl(*this, r, t0, t1, t_min, t_max);
 }
 
 template<int N, class T>
 bool aabb<N, T>::trace(ray_t const &r, scalar_t t_min = 0, scalar_t t_max = 1) const
 {
-	scalar_t results[2];
-	size_t nresults;
+	scalar_t t0, t1;
 
-	return trace(r, results, &nresults, t_min, t_max);
+	return trace(r, &t0, &t1, t_min, t_max);
 }
 
 template class aabb<2>;

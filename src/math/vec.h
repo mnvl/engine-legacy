@@ -45,7 +45,7 @@ template<class T>
 class vec<2,T> {
 public:
 	typedef T scalar_t;
-	static const size_t ARITY = 2;
+	static size_t const ARITY = 2;
 	typedef size_t mask_t;
 
 	union {
@@ -257,7 +257,7 @@ template<class T>
 class vec<3,T> {
 public:
 	typedef T scalar_t;
-	static const size_t ARITY = 3;
+	static size_t const ARITY = 3;
 	typedef vec<2, scalar_t> vec2_t;
 	typedef size_t mask_t;
 
@@ -473,7 +473,7 @@ template<class T>
 class vec<4,T> {
 public:
 	typedef T scalar_t;
-	static const size_t ARITY = 4;
+	static size_t const ARITY = 4;
 	typedef size_t mask_t;
 
 	union {
@@ -661,7 +661,7 @@ public:
 template<int N,class T>
 class vec {
 public:
-	static const size_t ARITY=N;
+	static size_t const ARITY=N;
 	typedef T scalar_t;
 	typedef int mask_t;
 

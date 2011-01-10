@@ -46,7 +46,7 @@ template<class T>
 class math::matrix<3,3,T> {
 public:
 	// типы и константы
-	static const size_t WIDTH=3,HEIGHT=3;
+	static size_t const WIDTH=3,HEIGHT=3;
 	typedef T scalar_t;
 	typedef vec<WIDTH-1,scalar_t> point_t;
 	typedef vec<WIDTH,scalar_t> vec_t;
