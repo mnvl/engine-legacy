@@ -121,8 +121,13 @@ void Heightfield::add(math::vec<3> const &position, math::scalar delta)
 {
 	math::vec<2, int> cell = heightfield_.world_position_to_cell(position);
 
-	if (cell.x > 0 && cell.y > 0 && cell.x < heightfield_.ncols() && cell.y < heightfield_.nrows())
-		heightfield_.local_y_at(cell.x, cell.y) += delta;
+	if (cell.x > 0 && cell.y > 0 && cell.x < heightfield_.ncols() - 1&& cell.y < heightfield_.nrows() - 1)
+	{
+		heightfield_.local_y_at(cell.x, cell.y) += delta / 4;
+		heightfield_.local_y_at(cell.x + 1, cell.y) += delta / 4;
+		heightfield_.local_y_at(cell.x, cell.y + 1) += delta / 4;
+		heightfield_.local_y_at(cell.x + 1, cell.y + 1) += delta / 4;
+	}
 }
 
 void Heightfield::bind(lua_State *L)
