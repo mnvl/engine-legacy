@@ -30,7 +30,9 @@ int log_message(lua_State *L, log4cplus::LogLevel level)
 
 		for (size_t i = 1, n = lua_gettop(L); i <= n; i++)
 		{
-			formatter << lua_tostring(L, i);
+			char const *str = lua_tostring(L, i);
+			if (!str) str = "<can't_convert_to_string>";
+			formatter << str;
 		}
 
 		logger.forcedLog(level, formatter.str(), d.short_src, d.currentline);

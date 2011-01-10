@@ -30,6 +30,9 @@ heightfield<T>::heightfield(matrix<4,4> const &tf, size_t nrows, size_t ncols, v
     local_to_world_.inverse(world_to_local_);
 
 	heights_.resize(nrows * ncols);
+
+	local_aabb_.lo.set(0, -1, 0);
+	local_aabb_.hi.set(ncols_ - 1, 1, nrows_ - 1);
 }
 
 template<class T>
@@ -41,7 +44,7 @@ template<class T>
 contact_info<3> heightfield<T>::trace(ray<3> const &r, scalar max_distance) const
 {
 	vec<3> local_p0 = r.r0 * world_to_local_;
-	vec<3> local_p1 = (r.r0 + r.a * max_distance) * world_to_local_;
+	vec<3> local_p1 = (r.r0 + normalize(r.a) * max_distance) * world_to_local_;
 
 	ray<3> local_ray(local_p0, local_p1 - local_p0);
 
@@ -145,6 +148,12 @@ void heightfield<T>::post_load()
 	{
 		if (local_aabb_.lo.y > *it) local_aabb_.lo.y = *it;
 		if (local_aabb_.hi.y < *it) local_aabb_.hi.y = *it;
+	}
+
+	if (local_aabb_.lo.y == local_aabb_.hi.y)
+	{
+		local_aabb_.lo.y -= 0.5f;
+		local_aabb_.hi.y += 0.5f;
 	}
 
 	local_aabb_.lo.x = 0;
