@@ -20,7 +20,7 @@ BOOST_AUTO_TEST_CASE(test_raytrace_simple_1)
 	math::matrix<4,4> tf;
     tf.identity();
 
-	math::heightfield<boost::uint8_t> hf(tf, 2, 2, math::vec<3>(2, 1, 2));
+	math::heightfield<boost::uint8_t> hf(tf, 2, 2, math::vec<3>(1, 1, 1));
 
     static boost::uint8_t const heights[] = {
 		0, 1,
@@ -42,7 +42,7 @@ BOOST_AUTO_TEST_CASE(test_raytrace_simple_2)
 	math::matrix<4,4> tf;
     tf.identity();
 
-	math::heightfield<boost::uint8_t> hf(tf, 2, 2, math::vec<3>(2, 1, 2));
+	math::heightfield<boost::uint8_t> hf(tf, 2, 2, math::vec<3>(1, 1, 1));
 
     static boost::uint8_t const heights[] = {
 		0, 1,
@@ -64,7 +64,7 @@ BOOST_AUTO_TEST_CASE(test_raytrace_simple_3)
 	math::matrix<4,4> tf;
     tf.identity();
 
-	math::heightfield<boost::uint8_t> hf(tf, 2, 2, math::vec<3>(2, 1, 2));
+	math::heightfield<boost::uint8_t> hf(tf, 2, 2, math::vec<3>(1, 1, 1));
 
     static boost::uint8_t const heights[] = {
 		0, 1,
@@ -86,7 +86,7 @@ BOOST_AUTO_TEST_CASE(test_raytrace_simple_4)
 	math::matrix<4,4> tf;
     tf.identity();
 
-	math::heightfield<boost::uint8_t> hf(tf, 2, 2, math::vec<3>(2, 1, 2));
+	math::heightfield<boost::uint8_t> hf(tf, 2, 2, math::vec<3>(1, 1, 1));
 
     static boost::uint8_t const heights[] = {
 		0, 1,
@@ -108,7 +108,7 @@ BOOST_AUTO_TEST_CASE(test_raytrace_simple_5)
 	math::matrix<4,4> tf;
     tf.identity();
 
-	math::heightfield<boost::uint8_t> hf(tf, 2, 2, math::vec<3>(2, 1, 2));
+	math::heightfield<boost::uint8_t> hf(tf, 2, 2, math::vec<3>(1, 1, 1));
 
     static boost::uint8_t const heights[] = {
 		0, 1,
@@ -130,7 +130,7 @@ BOOST_AUTO_TEST_CASE(test_raytrace_simple_6)
 	math::matrix<4,4> tf;
     tf.identity();
 
-	math::heightfield<boost::uint8_t> hf(tf, 2, 2, math::vec<3>(2, 1, 2));
+	math::heightfield<boost::uint8_t> hf(tf, 2, 2, math::vec<3>(1, 1, 1));
 
     static boost::uint8_t const heights[] = {
 		0, 1,
@@ -152,19 +152,20 @@ BOOST_AUTO_TEST_CASE(test_raytrace_complex_1)
 	math::matrix<4,4> tf;
     tf.identity();
 
-	math::heightfield<boost::uint8_t> hf(tf, 10, 10, math::vec<3>(10, 1, 10));
+	math::heightfield<boost::uint8_t> hf(tf, 11, 11, math::vec<3>(10, 1, 10));
 
     static boost::uint8_t const heights[] = {
-		0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
-		0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
-		0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
-		0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
-		0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
-		0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
-		0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
-		0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
-		0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
-		0, 1, 2, 3, 4, 5, 6, 7, 8, 9
+		0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+		0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+		0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+		0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+		0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+		0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+		0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+		0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+		0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+		0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+		0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10
     };
 
     hf.load_from_buffer(heights);
@@ -185,19 +186,20 @@ BOOST_AUTO_TEST_CASE(test_raytrace_complex_2)
 	math::matrix<4,4> tf;
     tf.identity();
 
-	math::heightfield<boost::uint8_t> hf(tf, 10, 10, math::vec<3>(10, 1, 10));
+	math::heightfield<boost::uint8_t> hf(tf, 11, 11, math::vec<3>(10, 1, 10));
 
     static boost::uint8_t const heights[] = {
-		0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
-		0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
-		0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
-		0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
-		0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
-		0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
-		0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
-		0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
-		0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
-		0, 1, 2, 3, 4, 5, 6, 7, 8, 9
+		0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+		0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+		0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+		0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+		0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+		0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+		0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+		0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+		0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+		0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+		0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10
     };
 
     hf.load_from_buffer(heights);
@@ -218,21 +220,21 @@ BOOST_AUTO_TEST_CASE(test_raytrace_complex_3)
 	math::matrix<4,4> tf;
     tf.identity();
 
-	math::heightfield<boost::uint8_t> hf(tf, 10, 10, math::vec<3>(10, 1, 10));
+	math::heightfield<boost::uint8_t> hf(tf, 11, 11, math::vec<3>(10, 1, 10));
 
     static boost::uint8_t const heights[] = {
-		0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
-		0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
-		0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
-		0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
-		0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
-		0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
-		0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
-		0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
-		0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
-		0, 1, 2, 3, 4, 5, 6, 7, 8, 9
+		0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+		0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+		0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+		0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+		0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+		0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+		0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+		0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+		0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+		0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+		0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10
     };
-
 	hf.load_from_buffer(heights);
 
 	math::vec<3> p1(0, 10, 0);
@@ -251,19 +253,20 @@ BOOST_AUTO_TEST_CASE(test_raytrace_complex_4)
 	math::matrix<4,4> tf;
     tf.identity();
 
-	math::heightfield<boost::uint8_t> hf(tf, 10, 10, math::vec<3>(10, 1, 10));
+	math::heightfield<boost::uint8_t> hf(tf, 11, 11, math::vec<3>(10, 1, 10));
 
     static boost::uint8_t const heights[] = {
-		0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
-		0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
-		0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
-		0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
-		0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
-		0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
-		0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
-		0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
-		0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
-		0, 1, 2, 3, 4, 5, 6, 7, 8, 9
+		0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+		0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+		0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+		0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+		0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+		0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+		0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+		0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+		0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+		0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+		0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10
     };
 
     hf.load_from_buffer(heights);

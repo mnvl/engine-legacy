@@ -25,7 +25,7 @@ heightfield<T>::heightfield(matrix<4,4> const &tf, size_t nrows, size_t ncols, v
     ncols_(ncols),
     scale_(scale)
 {
-    local_to_world_.scale(scale_.x / ncols_, 1, scale_.z / nrows_);
+    local_to_world_.scale(scale_.x / (ncols_ - 1), 1, scale_.z / (nrows_ - 1));
     local_to_world_.inverse(world_to_local_);
 
 	heights_.resize(nrows * ncols);
@@ -149,8 +149,8 @@ void heightfield<T>::post_load()
 	local_aabb_.lo.x = 0;
 	local_aabb_.lo.z = 0;
 
-	local_aabb_.hi.x = scalar(ncols_);
-	local_aabb_.hi.z = scalar(nrows_);
+	local_aabb_.hi.x = scalar(ncols_ - 1);
+	local_aabb_.hi.z = scalar(nrows_ - 1);
 }
 
 template class heightfield<boost::uint8_t>;
