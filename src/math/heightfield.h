@@ -10,6 +10,7 @@
 //-----------------------------------------------------------------------------
 
 #include <vector>
+#include <luabind/lua_include.hpp>
 #include "vec.h"
 #include "aabb.h"
 #include "line.h"
@@ -29,15 +30,17 @@ public:
 
 	scalar local_y_at(int col, int row) const { return heights_.at(row * ncols_ + col); }
 	scalar y_at(int col, int row) const { return local_y_at(col, row) * scale_.y; }
-	vec<3> local_vertex_at(int col, int row) { return vec<3>(scalar(col), local_y_at(col, row), scalar(row)); }
+	vec<3> local_vertex_at(int col, int row) const { return vec<3>(scalar(col), local_y_at(col, row), scalar(row)); }
 
 	size_t ncols() const { return ncols_; }
 	size_t nrows() const { return nrows_; }
 
-    contact_info<3> trace(ray<3> const &r, scalar max_distance = 1000.0f);
+    contact_info<3> trace(ray<3> const &r, scalar max_distance = 1000.0f) const;
 
     void load_from_buffer(value_t const *heights);
     void load_from_raw_file(std::string const &name);
+
+	static void bind(lua_State *L, char const *name);
 
 private:
     matrix<4,4> local_to_world_, world_to_local_;
@@ -53,5 +56,7 @@ private:
 
 	void post_load();
 };
+
+void bind_heightfield(lua_State *L);
 
 }

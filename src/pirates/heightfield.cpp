@@ -136,6 +136,7 @@ void Heightfield::bind(lua_State *L)
 		.def("update", &Heightfield::update)
 		.def("draw", &Heightfield::draw)
 		.def("set_texture", &Heightfield::set_texture)
+		.def("get_storage", &Heightfield::get_storage)
 	];
 }
 

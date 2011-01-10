@@ -17,6 +17,7 @@
 #include "plane.h"
 #include "sphere.h"
 #include "capsule.h"
+#include "heightfield.h"
 #include "bind.h"
 
 namespace math
@@ -33,6 +34,7 @@ void bind(lua_State *L)
 	bind_plane(L);
 	bind_sphere(L);
 	bind_capsule(L);
+	bind_heightfield(L);
 }
 
 }

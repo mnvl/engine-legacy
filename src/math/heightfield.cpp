@@ -11,6 +11,7 @@
 #include <stdexcept>
 #include <utility>
 #include <boost/cstdint.hpp>
+#include <luabind/luabind.hpp>
 #include <util/file_handle.h>
 #include "bresenham_supercover.h"
 #include "heightfield.h"
@@ -37,7 +38,7 @@ heightfield<T>::~heightfield()
 }
 
 template<class T>
-contact_info<3> heightfield<T>::trace(ray<3> const &r, scalar max_distance)
+contact_info<3> heightfield<T>::trace(ray<3> const &r, scalar max_distance) const
 {
 	vec<3> local_p0 = r.r0 * world_to_local_;
 	vec<3> local_p1 = (r.r0 + r.a * max_distance) * world_to_local_;
@@ -153,8 +154,28 @@ void heightfield<T>::post_load()
 	local_aabb_.hi.z = scalar(nrows_ - 1);
 }
 
+template<class T>
+void heightfield<T>::bind(lua_State *L, char const *name)
+{
+	using namespace luabind;
+
+	module(L, "math")
+	[
+		class_<heightfield>(name)
+		.def(constructor<matrix<4,4> const &, size_t, size_t, vec<3> const &>())
+		.def("trace", &heightfield::trace)
+	];
+}
+
 template class heightfield<boost::uint8_t>;
 template class heightfield<boost::uint16_t>;
 template class heightfield<scalar>;
+
+void bind_heightfield(lua_State *L)
+{
+	heightfield<boost::uint8_t>::bind(L, "heightfield_u8");
+	heightfield<boost::uint16_t>::bind(L, "heightfield_u16");
+	heightfield<scalar>::bind(L, "heightfield_s");
+}
 
 }

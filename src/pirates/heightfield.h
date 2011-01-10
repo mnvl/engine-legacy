@@ -36,6 +36,8 @@ public:
 	void update();
 	void draw();
 
+	math::heightfield<> const &get_storage() const { return heightfield_; }
+
 	static void bind(lua_State *L);
 
 private:
