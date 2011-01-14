@@ -25,5 +25,6 @@ void platform::Window::bind(lua_State *L)
 		.def("run_message_loop", &Window::run_message_loop)
 		.def("get_mouse_position", &Window::get_mouse_position)
 		.def("get_mouse_buttons", &Window::get_mouse_buttons)
+		.def("resize", &Window::resize)
     ];
 }

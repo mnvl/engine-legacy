@@ -33,6 +33,8 @@ public:
 	bool run_message_loop();
 	LRESULT process_message(UINT uMsg, WPARAM wParam, LPARAM lParam);
 
+	void resize(int width, int height);
+
 	static void bind(lua_State *L);
 
 private:

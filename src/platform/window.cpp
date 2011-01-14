@@ -142,4 +142,9 @@ LRESULT Window::process_message(UINT uMsg, WPARAM wParam, LPARAM lParam) {
 	return DefWindowProc(handle_, uMsg, wParam, lParam);
 }
 
+void Window::resize(int width, int height)
+{
+	MoveWindow(handle_, 0, 0, width, height, false);
+}
+
 }
