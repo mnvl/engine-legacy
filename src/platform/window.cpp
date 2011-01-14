@@ -44,6 +44,34 @@ Window::Window(char const *title):
 	if(!handle_) throw exception::winapi_error();
 }
 
+Window::Window(lua_State *L):
+	handle_(0)
+{
+	static int seed = 1;
+
+	char class_name[256];
+	sprintf(class_name,"%p %d", this, ++seed);
+
+	WNDCLASSEX wc;
+	wc.cbSize = sizeof(wc);
+	wc.style = 0;
+	wc.lpfnWndProc = dispatch_message;
+	wc.cbClsExtra = 0;
+	wc.cbWndExtra = 0;
+	wc.hInstance = GetModuleHandle(0);
+	wc.hIcon = 0;
+	wc.hCursor = LoadCursor(0, IDC_ARROW);
+	wc.hbrBackground = 0;
+	wc.lpszMenuName = 0;
+	wc.lpszClassName = class_name;
+	wc.hIconSm = 0;
+	if(!RegisterClassEx(&wc)) throw exception::winapi_error();
+
+	handle_ = CreateWindowEx(0, wc.lpszClassName, 0, WS_CHILD | WS_VISIBLE,
+		CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, (HWND) lua_touserdata(L, -1), 0, wc.hInstance, 0);
+	if(!handle_) throw exception::winapi_error();
+}
+
 Window::~Window() {
 	if (handle_) {
 		DestroyWindow(handle_);

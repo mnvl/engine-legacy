@@ -22,6 +22,7 @@ public:
 	boost::signals2::signal0<void> signal_resize;
 
 	Window(char const *title);
+	Window(lua_State *L);
 	~Window();
 
 	HWND get_handle() const throw() { return handle_; }
