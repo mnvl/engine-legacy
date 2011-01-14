@@ -4,10 +4,10 @@
 #  LOG4CPLUS_LIBRARIES
 #  LOG4CPLUS_INCLUDE_DIR, where to find log4cplus.hpp
 
-FIND_PATH(LOG4CPLUS_INCLUDE_DIR logger.h
+FIND_PATH(LOG4CPLUS_INCLUDE_DIR log4cplus/logger.h
   HINTS
   $ENV{LOG4CPLUS_DIR}
-  PATH_SUFFIXES log4cplus include/log4cplus
+  PATH_SUFFIXES include
   PATHS
   ~/Library/Frameworks
   /Library/Frameworks

@@ -4,10 +4,10 @@
 #  LUABIND_LIBRARIES
 #  LUABIND_INCLUDE_DIR, where to find luabind.hpp
 
-FIND_PATH(LUABIND_INCLUDE_DIR luabind.hpp
+FIND_PATH(LUABIND_INCLUDE_DIR luabind/luabind.hpp
   HINTS
   $ENV{LUABIND_DIR}
-  PATH_SUFFIXES luabind include/luabind
+  PATH_SUFFIXES include
   PATHS
   ~/Library/Frameworks
   /Library/Frameworks
