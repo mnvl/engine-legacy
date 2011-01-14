@@ -44,7 +44,7 @@ Window::Window(char const *title):
 	if(!handle_) throw exception::winapi_error();
 }
 
-Window::Window(lua_State *L):
+Window::Window(luabind::object const &parent_handle):
 	handle_(0)
 {
 	static int seed = 1;
@@ -68,7 +68,8 @@ Window::Window(lua_State *L):
 	if(!RegisterClassEx(&wc)) throw exception::winapi_error();
 
 	handle_ = CreateWindowEx(0, wc.lpszClassName, 0, WS_CHILD | WS_VISIBLE,
-		CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, (HWND) lua_touserdata(L, -1), 0, wc.hInstance, 0);
+		CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT,
+		(HWND) lua_touserdata(parent_handle.interpreter(), -1), 0, wc.hInstance, 0);
 	if(!handle_) throw exception::winapi_error();
 }
 

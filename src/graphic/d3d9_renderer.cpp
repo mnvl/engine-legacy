@@ -25,9 +25,7 @@
 namespace graphic
 {
 
-D3D9Renderer::D3D9Renderer(boost::shared_ptr<platform::Window> const &window, int width, int height,
-	bool fullscreen)
-:
+D3D9Renderer::D3D9Renderer(boost::shared_ptr<platform::Window> const &window, int width, int height, bool fullscreen):
 	Renderer(window),
 	screen_width_(width),
 	screen_height_(height),

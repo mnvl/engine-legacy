@@ -67,7 +67,7 @@ public:
 
     ~Main()
 	{
-//		lua_close(L_);
+		lua_close(L_);
 
         xercesc::XMLPlatformUtils::Terminate();
 	}

@@ -12,6 +12,7 @@
 #include <windows.h>
 #include <boost/signals2/signal.hpp>
 #include <luabind/lua_include.hpp>
+#include <luabind/object.hpp>
 #include <math/vec.h>
 
 namespace platform
@@ -22,7 +23,7 @@ public:
 	boost::signals2::signal0<void> signal_resize;
 
 	Window(char const *title);
-	Window(lua_State *L);
+	Window(luabind::object const &parent_handle);
 	~Window();
 
 	HWND get_handle() const throw() { return handle_; }
