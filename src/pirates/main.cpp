@@ -26,6 +26,7 @@
 #include <particle_system/bind.h>
 #include <util/logger.h>
 #include <util/archive.h>
+#include <util/file_handle.h>
 #include "heightfield.h"
 
 extern "C"
@@ -57,6 +58,7 @@ public:
 		util::bind_logger(L_);
 		util::ArchiveReader::bind(L_);
 		util::ArchiveWriter::bind(L_);
+		util::FileHandle::bind(L_);
 
 		platform::Input::bind(L_);
 		platform::Keyboard::bind(L_);

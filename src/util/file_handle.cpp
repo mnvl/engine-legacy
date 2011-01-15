@@ -8,6 +8,8 @@
 // prior written consent of Manvel Avetisian.
 //-----------------------------------------------------------------------------
 
+#include <boost/shared_ptr.hpp>
+#include <luabind/luabind.hpp>
 #include <util/file_handle.h>
 
 namespace util
@@ -110,6 +112,30 @@ void FileHandle::read_all(std::vector<char> &buffer)
 {
     buffer.resize(stat().st_size);
     read(&buffer[0], buffer.size());
+}
+
+void FileHandle::bind(lua_State *L)
+{
+	using namespace luabind;
+
+	module_(L, "util")
+	[
+		class_<FileHandle, boost::shared_ptr<FileHandle> >("FileHandle")
+		.enum_("open_mode")
+		[
+			value("O_RDONLY", O_RDONLY),
+			value("O_WRONLY", O_WRONLY),
+			value("O_CREAT", O_CREAT)
+		]
+		.enum_("open_mode")
+		[
+			value("S_IREAD", S_IREAD),
+			value("S_IWRITE", S_IWRITE)
+		]
+		.def(constructor<std::string const &, int, int>())
+		.def("close", &close)
+	];
+
 }
 
 }

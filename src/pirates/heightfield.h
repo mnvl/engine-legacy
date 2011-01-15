@@ -16,6 +16,7 @@
 #include <graphic/forward.h>
 #include <graphic/vertex_array.h>
 #include <graphic/index_array.h>
+#include <util/file_handle.h>
 
 namespace pirates
 {
@@ -42,8 +43,8 @@ public:
 
 	void add(math::vec<3> const &position, math::scalar delta);
 
-	void load(std::string const &filename);
-	void save(std::string const &filename);
+	void read(boost::shared_ptr<util::FileHandle> const &file_handle);
+	void write(boost::shared_ptr<util::FileHandle> const &file_handle);
 
 	static void bind(lua_State *L);
 

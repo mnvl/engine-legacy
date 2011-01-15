@@ -25,6 +25,7 @@
 #include <string>
 #include <vector>
 #include <stdexcept>
+#include <luabind/lua_include.hpp>
 
 #pragma warning(disable: 4996)
 
@@ -63,6 +64,8 @@ public:
     stat_t stat() const;
 
     void read_all(std::vector<char> &buffer);
+
+	static void bind(lua_State *L);
 
 private:
 	int handle_;
