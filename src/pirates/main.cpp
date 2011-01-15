@@ -100,15 +100,12 @@ public:
 
 		if (result == 0) result = lua_pcall(L_, 0, 0, -2);
 
-		switch (result)
-		{
+		switch (result) {
 		case 0:
 			// success
 			break;
 
 		case LUA_ERRSYNTAX:
-			throw std::runtime_error("syntax eror");
-
 		case LUA_ERRRUN:
 			throw std::runtime_error(lua_tostring(L_, -1));
 
