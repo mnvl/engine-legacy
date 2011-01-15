@@ -13,6 +13,7 @@
 #include <graphic/material.h>
 #include <graphic/scheduler.h>
 #include <graphic/renderer.h>
+#include <util/file_handle.h>
 #include "heightfield.h"
 
 namespace pirates
@@ -130,6 +131,25 @@ void Heightfield::add(math::vec<3> const &position, math::scalar delta)
 	}
 }
 
+void Heightfield::load(std::string const &filename)
+{
+	util::FileHandle file_handle(filename.c_str(), O_RDONLY);
+
+	unsigned format;
+	file_handle.write(&format, sizeof(format));
+
+	if (format != BINARY_FORMAT_VERSION)
+		throw std::runtime_error("mismatching format version");
+}
+
+void Heightfield::save(std::string const &filename)
+{
+	util::FileHandle file_handle(filename.c_str(), O_WRONLY | O_CREAT);
+
+	unsigned format = BINARY_FORMAT_VERSION;
+	file_handle.write(&format, sizeof(format));
+}
+
 void Heightfield::bind(lua_State *L)
 {
 	using namespace luabind;
@@ -151,6 +171,8 @@ void Heightfield::bind(lua_State *L)
 		.def("set_texture", &Heightfield::set_texture)
 		.def("get_storage", &Heightfield::get_storage)
 		.def("add", &Heightfield::add)
+		.def("load", &Heightfield::load)
+		.def("save", &Heightfield::save)
 	];
 }
 

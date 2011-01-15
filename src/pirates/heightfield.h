@@ -22,6 +22,8 @@ namespace pirates
 
 class Heightfield: public boost::noncopyable {
 public:
+	static unsigned const BINARY_FORMAT_VERSION = 1;
+
 	static size_t const TEXTURE_SEABED = 0;
 	static size_t const TEXTURE_SAND  = 1;
 	static size_t const TEXTURE_GRASS = 2;
@@ -39,6 +41,9 @@ public:
 	math::heightfield<> const &get_storage() const { return heightfield_; }
 
 	void add(math::vec<3> const &position, math::scalar delta);
+
+	void load(std::string const &filename);
+	void save(std::string const &filename);
 
 	static void bind(lua_State *L);
 

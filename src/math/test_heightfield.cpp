@@ -27,7 +27,7 @@ BOOST_AUTO_TEST_CASE(test_raytrace_simple_1)
 		3, 7
     };
 
-    hf.load_from_buffer(heights);
+    hf.load_from_raw_buffer(heights);
 
 	math::contact_info<3> ci = hf.trace(math::ray<3>(math::vec<3>(0, 10.0f, 0), math::vec<3>(0, -1.0f, 0)));
 
@@ -49,7 +49,7 @@ BOOST_AUTO_TEST_CASE(test_raytrace_simple_2)
 		3, 7
     };
 
-    hf.load_from_buffer(heights);
+    hf.load_from_raw_buffer(heights);
 
 	math::contact_info<3> ci = hf.trace(math::ray<3>(math::vec<3>(0.5f, 10.0f, 0), math::vec<3>(0, -1.0f, 0)));
 
@@ -71,7 +71,7 @@ BOOST_AUTO_TEST_CASE(test_raytrace_simple_3)
 		3, 7
     };
 
-    hf.load_from_buffer(heights);
+    hf.load_from_raw_buffer(heights);
 
 	math::contact_info<3> ci = hf.trace(math::ray<3>(math::vec<3>(1, 10.0f, 0), math::vec<3>(0, -1.0f, 0)));
 
@@ -93,7 +93,7 @@ BOOST_AUTO_TEST_CASE(test_raytrace_simple_4)
 		3, 7
     };
 
-    hf.load_from_buffer(heights);
+    hf.load_from_raw_buffer(heights);
 
 	math::contact_info<3> ci = hf.trace(math::ray<3>(math::vec<3>(0, 10.0f, 0.5f), math::vec<3>(0, -1.0f, 0)));
 
@@ -115,7 +115,7 @@ BOOST_AUTO_TEST_CASE(test_raytrace_simple_5)
 		3, 7
     };
 
-    hf.load_from_buffer(heights);
+    hf.load_from_raw_buffer(heights);
 
 	math::contact_info<3> ci = hf.trace(math::ray<3>(math::vec<3>(0, 10.0f,1), math::vec<3>(0, -1.0f, 0)));
 
@@ -137,7 +137,7 @@ BOOST_AUTO_TEST_CASE(test_raytrace_simple_6)
 		3, 7
     };
 
-    hf.load_from_buffer(heights);
+    hf.load_from_raw_buffer(heights);
 
 	math::contact_info<3> ci = hf.trace(math::ray<3>(math::vec<3>(1, 10.0f,1), math::vec<3>(0, -1.0f, 0)));
 
@@ -168,7 +168,7 @@ BOOST_AUTO_TEST_CASE(test_raytrace_complex_1)
 		0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10
     };
 
-    hf.load_from_buffer(heights);
+    hf.load_from_raw_buffer(heights);
 
 	math::vec<3> p1(0, 10, 0);
 	math::vec<3> p2(6.6737876f, 0, 4.9803157f);
@@ -202,7 +202,7 @@ BOOST_AUTO_TEST_CASE(test_raytrace_complex_2)
 		0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10
     };
 
-    hf.load_from_buffer(heights);
+    hf.load_from_raw_buffer(heights);
 
 	math::vec<3> p1(0, 10, 0);
 	math::vec<3> p2(2.0899076f, 0, 5.1918087f);
@@ -235,7 +235,7 @@ BOOST_AUTO_TEST_CASE(test_raytrace_complex_3)
 		0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
 		0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10
     };
-	hf.load_from_buffer(heights);
+	hf.load_from_raw_buffer(heights);
 
 	math::vec<3> p1(0, 10, 0);
 	math::vec<3> p2(4.0656757f, 0, 7.5460067f);
@@ -269,7 +269,7 @@ BOOST_AUTO_TEST_CASE(test_raytrace_complex_4)
 		0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10
     };
 
-    hf.load_from_buffer(heights);
+    hf.load_from_raw_buffer(heights);
 
 	for (int i = 0; i < 100; ++i)
 	{
