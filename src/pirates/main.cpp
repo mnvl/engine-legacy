@@ -31,8 +31,6 @@
 extern "C"
 {
 	#include <lualib.h>
-
-	LUALIB_API int luaopen_bit(lua_State *L);
 }
 
 class Main
@@ -44,7 +42,6 @@ public:
 		xercesc::XMLPlatformUtils::Initialize();
 
 		luaL_openlibs(L_);
-		luaopen_bit(L_);
 		luabind::open(L_);
 
 		graphic::bind(L_);
