@@ -43,7 +43,6 @@ public:
 		xercesc::XMLPlatformUtils::Initialize();
 
 		luaL_openlibs(L_);
-		luaopen_bit(L_);
 		luabind::open(L_);
 
 		graphic::bind(L_);
@@ -67,7 +66,7 @@ public:
 
     ~Main()
 	{
-//		lua_close(L_);
+		lua_close(L_);
 
         xercesc::XMLPlatformUtils::Terminate();
 	}
