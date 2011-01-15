@@ -109,15 +109,8 @@ LRESULT Window::dispatch_message(HWND hWnd,UINT uMsg,WPARAM wParam,LPARAM lParam
 LRESULT Window::process_message(UINT uMsg, WPARAM wParam, LPARAM lParam) {
 	switch (uMsg) {
 	case WM_MOUSEMOVE:
-	{
-		POINT p;
-		p.x = LOWORD(lParam);
-		p.y = HIWORD(lParam);
-		ScreenToClient(GetParent(handle_), &p);
-		mouse_position_ = math::vec<2>(float(p.x), float(p.y));
-
 		// note: fall through
-	}
+		mouse_position_ = math::vec<2>(math::scalar(LOWORD(lParam)), math::scalar(HIWORD(lParam)));
 
 	case WM_LBUTTONDOWN:
 	case WM_LBUTTONUP:

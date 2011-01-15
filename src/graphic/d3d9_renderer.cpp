@@ -283,23 +283,20 @@ UberShaderPtr D3D9Renderer::get_uber_shader() const
 
 void D3D9Renderer::handle_resize()
 {
-	if (!fullscreen_)
-	{
-		{
-			RECT rc;
-			GetClientRect(window_->get_handle(), &rc);
+	if (fullscreen_) return;
 
-			screen_width_ = rc.right - rc.left;
-			screen_height_ = rc.bottom - rc.top;
+	RECT rc;
+	GetClientRect(window_->get_handle(), &rc);
 
-			LOG_INFO("window resized, new client dimensions are " << screen_width_ << 'x' << screen_height_);
+	screen_width_ = rc.right - rc.left;
+	screen_height_ = rc.bottom - rc.top;
 
-			pp_.BackBufferWidth = screen_width_;
-			pp_.BackBufferHeight = screen_height_;
+	LOG_INFO("window resized, new client dimensions are " << screen_width_ << 'x' << screen_height_);
 
-			reset_device();
-		}
-	}
+	pp_.BackBufferWidth = screen_width_;
+	pp_.BackBufferHeight = screen_height_;
+
+	reset_device();
 }
 
 }
