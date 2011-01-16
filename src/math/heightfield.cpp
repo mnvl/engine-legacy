@@ -13,6 +13,7 @@
 #include <boost/cstdint.hpp>
 #include <luabind/luabind.hpp>
 #include <util/file_handle.h>
+#include <util/serializer.h>
 #include "bresenham_supercover.h"
 #include "heightfield.h"
 
@@ -32,7 +33,7 @@ heightfield<T>::heightfield(matrix<4,4> const &tf, size_t nrows, size_t ncols, v
 	heights_.resize(nrows * ncols);
 
 	local_aabb_.lo.set(0, -1, 0);
-	local_aabb_.hi.set(ncols_ - 1, 1, nrows_ - 1);
+	local_aabb_.hi.set(math::scalar(ncols_ - 1), 1, math::scalar(nrows_ - 1));
 }
 
 template<class T>
@@ -144,6 +145,29 @@ void heightfield<T>::load_from_raw_file(std::string const &name)
         throw std::logic_error("heigtfield " + name + " contains invalid amount of data");
 
     load_from_raw_buffer((value_t const *) &buffer[0]);
+}
+
+template<class T> template<class Serializer>
+void heightfield<T>::serialize(Serializer &serializer)
+{
+	serializer
+		.pod(local_to_world_)
+		.pod(world_to_local_)
+		.pod(ncols_)
+		.pod(nrows_)
+		.pod(heights_)
+		.pod(local_aabb_);
+}
+
+template<class T>
+void heightfield<T>::write(boost::shared_ptr<util::FileHandle> const &file_handle)
+{
+	serialize(util::Serializer(file_handle.get()));
+}
+
+template<class T>
+void heightfield<T>::read(boost::shared_ptr<util::FileHandle> const &file_handle)
+{
 }
 
 template<class T>

@@ -122,7 +122,7 @@ void Heightfield::add(math::vec<3> const &position, math::scalar delta)
 {
 	math::vec<2, int> cell = heightfield_.world_position_to_cell(position);
 
-	if (cell.x > 0 && cell.y > 0 && cell.x < heightfield_.ncols() - 1&& cell.y < heightfield_.nrows() - 1)
+	if (cell.x > 0 && cell.y > 0 && cell.x < heightfield_.ncols() - 1 && cell.y < heightfield_.nrows() - 1)
 	{
 		heightfield_.local_y_at(cell.x, cell.y) += delta / 4;
 		heightfield_.local_y_at(cell.x + 1, cell.y) += delta / 4;
@@ -144,6 +144,8 @@ void Heightfield::write(boost::shared_ptr<util::FileHandle> const &file_handle)
 {
 	unsigned format = BINARY_FORMAT_VERSION;
 	file_handle->write(&format, sizeof(format));
+
+	heightfield_.write(file_handle);
 }
 
 void Heightfield::bind(lua_State *L)

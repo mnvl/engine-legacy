@@ -11,6 +11,8 @@
 
 #include <vector>
 #include <luabind/lua_include.hpp>
+#include <boost/shared_ptr.hpp>
+#include <util/file_handle.h>
 #include "vec.h"
 #include "aabb.h"
 #include "line.h"
@@ -43,6 +45,12 @@ public:
 
     void load_from_raw_buffer(value_t const *heights);
     void load_from_raw_file(std::string const &name);
+
+	template<class Serializer>
+	void serialize(Serializer &serializer);
+
+	void write(boost::shared_ptr<util::FileHandle> const &file_handle);
+	void read(boost::shared_ptr<util::FileHandle> const &file_handle);
 
 	static void bind(lua_State *L, char const *name);
 
