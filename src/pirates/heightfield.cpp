@@ -8,6 +8,10 @@
 // prior written consent of Manvel Avetisian.
 //-----------------------------------------------------------------------------
 
+#include <sstream>
+#include <boost/archive/binary_iarchive.hpp>
+#include <boost/archive/binary_oarchive.hpp>
+#include <boost/serialization/vector.hpp>
 #include <luabind/luabind.hpp>
 #include <graphic/uber_draw_call.h>
 #include <graphic/material.h>
@@ -17,6 +21,8 @@
 
 namespace pirates
 {
+
+char const Heightfield::ARCHIVE_CHUNK_NAME[] = "HEIGHTFIELD";
 
 Heightfield::Heightfield(graphic::RendererPtr const &renderer, graphic::SchedulerPtr const &scheduler,
 	graphic::CameraPtr const &camera, math::matrix<4,4> const &tf,
@@ -130,12 +136,31 @@ void Heightfield::add(math::vec<3> const &position, math::scalar delta)
 	}
 }
 
-void Heightfield::read(std::fstream *file)
+void Heightfield::read(util::ArchiveReaderPtr const &reader)
 {
+	std::stringstream ss;
+
+	{
+		std::string buffer;
+		reader->read_data(ARCHIVE_CHUNK_NAME, buffer);
+
+		ss.str(buffer);
+	}
+
+	boost::archive::binary_iarchive ia(ss);
+	ia & *this;
 }
 
-void Heightfield::write(std::fstream *file)
+void Heightfield::write(util::ArchiveWriterPtr const &writer)
 {
+	std::stringstream ss;
+
+	{
+		boost::archive::binary_oarchive oa(ss);
+		oa & *this;
+	}
+
+	writer->write_data(ARCHIVE_CHUNK_NAME, ss.str());
 }
 
 void Heightfield::bind(lua_State *L)
@@ -162,6 +187,12 @@ void Heightfield::bind(lua_State *L)
 		.def("read", &Heightfield::read)
 		.def("write", &Heightfield::write)
 	];
+}
+
+template<class Archive>
+void Heightfield::serialize(Archive &archive, unsigned const /*file_version*/)
+{
+	archive & heightfield_;
 }
 
 }

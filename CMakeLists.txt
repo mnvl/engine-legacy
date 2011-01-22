@@ -70,7 +70,7 @@ INCLUDE_DIRECTORIES(${ENGINE_ROOT}/src)
 INCLUDE_DIRECTORIES(${ENGINE_ROOT}/build/src)
 
 SET(Boost_USE_MULTITHREADED ON)
-FIND_PACKAGE(Boost 1.42 REQUIRED COMPONENTS system thread date_time regex filesystem unit_test_framework)
+FIND_PACKAGE(Boost 1.42 REQUIRED COMPONENTS system thread date_time regex filesystem unit_test_framework serialization)
 INCLUDE_DIRECTORIES(${Boost_INCLUDE_DIRS})
 LIST(APPEND ENGINE_LIBRARIES ${Boost_LIBRARIES})
 

@@ -11,6 +11,7 @@
 
 #include <fstream>
 #include <boost/cstdint.hpp>
+#include <boost/shared_ptr.hpp>
 #include <boost/unordered_map.hpp>
 #include <luabind/lua_include.hpp>
 #include <luabind/object.hpp>
@@ -18,8 +19,13 @@
 namespace util
 {
 
-class Archive
-{
+class ArchiveReader;
+class ArchiveWriter;
+
+typedef boost::shared_ptr<ArchiveReader> ArchiveReaderPtr;
+typedef boost::shared_ptr<ArchiveWriter> ArchiveWriterPtr;
+
+class Archive {
 protected:
 	static unsigned const VERSION = 0x0100;
 
@@ -44,23 +50,23 @@ protected:
 	void read_directory();
 };
 
-class ArchiveReader: public Archive
-{
+class ArchiveReader: public Archive {
 public:
 	void open(std::string const &filename);
 	void read_data(std::string const &key, std::vector<char> &buffer);
+	void read_data(std::string const &key, std::string &buffer);
 	luabind::object read_string(lua_State *L, std::string const &key);
 	void close();
 
 	static void bind(lua_State *L);
 };
 
-class ArchiveWriter: public Archive
-{
+class ArchiveWriter: public Archive {
 public:
 	void create(std::string const &filename);
 	void open(std::string const &filename);
 	void write_data(std::string const &key, void const *data, size_t len);
+	void write_data(std::string const &key, std::string const &data);
 	void write_file(std::string const &key, std::fstream &file);
 	void write_file(std::string const &key, std::string const &path);
 	void close();

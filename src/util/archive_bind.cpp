@@ -21,7 +21,7 @@ void ArchiveReader::bind(lua_State *L)
 
 	module_(L, "util")
 	[
-		class_<ArchiveReader, boost::shared_ptr<ArchiveReader> >("ArchiveReader")
+		class_<ArchiveReader, ArchiveReaderPtr>("ArchiveReader")
 		.def(constructor<>())
 		.def("open", &ArchiveReader::open)
 		.def("read_string", &ArchiveReader::read_string)
@@ -35,7 +35,7 @@ void ArchiveWriter::bind(lua_State *L)
 
 	module_(L, "util")
 	[
-		class_<ArchiveWriter, boost::shared_ptr<ArchiveWriter> >("ArchiveWriter")
+		class_<ArchiveWriter, ArchiveWriterPtr>("ArchiveWriter")
 		.def(constructor<>())
 		.def("create", &ArchiveWriter::create)
 		.def("write_file", (void (ArchiveWriter::*)(std::string const &, std::string const &)) &ArchiveWriter::write_file)

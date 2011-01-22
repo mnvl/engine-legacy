@@ -92,6 +92,14 @@ void ArchiveReader::read_data(std::string const &key, std::vector<char> &buffer)
 	file_.read(&buffer[0], buffer.size());
 }
 
+void ArchiveReader::read_data(std::string const &key, std::string &buffer)
+{
+	std::vector<char> temp;
+	read_data(key, temp);
+
+	buffer.assign(temp.begin(), temp.end());
+}
+
 luabind::object ArchiveReader::read_string(lua_State *L, std::string const &key)
 {
 	std::vector<char> buffer;
@@ -136,6 +144,11 @@ void ArchiveWriter::write_data(std::string const &key, void const *data, size_t 
 	{
 		throw std::runtime_error("archive already contains file with key " + key);
 	}
+}
+
+void ArchiveWriter::write_data(std::string const &key, std::string const &data)
+{
+	write_data(key, data.c_str(), data.size());
 }
 
 void ArchiveWriter::write_file(std::string const &key, std::fstream &file)

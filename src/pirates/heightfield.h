@@ -16,6 +16,7 @@
 #include <graphic/forward.h>
 #include <graphic/vertex_array.h>
 #include <graphic/index_array.h>
+#include <util/archive.h>
 
 namespace pirates
 {
@@ -43,12 +44,17 @@ public:
 
 	void add(math::vec<3> const &position, math::scalar delta);
 
-	void read(std::fstream *file);
-	void write(std::fstream *file);
+	void read(util::ArchiveReaderPtr const &reader);
+	void write(util::ArchiveWriterPtr const &writer);
+
+	template<class Archive>
+	void serialize(Archive &archive, unsigned const /*file_version*/);
 
 	static void bind(lua_State *L);
 
 private:
+	static char const ARCHIVE_CHUNK_NAME[];
+
 	graphic::RendererPtr const renderer_;
 	graphic::SchedulerPtr const scheduler_;
 	math::heightfield<> heightfield_;
