@@ -13,7 +13,6 @@
 #include <graphic/material.h>
 #include <graphic/scheduler.h>
 #include <graphic/renderer.h>
-#include <util/file_handle.h>
 #include "heightfield.h"
 
 namespace pirates
@@ -131,21 +130,12 @@ void Heightfield::add(math::vec<3> const &position, math::scalar delta)
 	}
 }
 
-void Heightfield::read(boost::shared_ptr<util::FileHandle> const &file_handle)
+void Heightfield::read(std::fstream *file)
 {
-	unsigned format;
-	file_handle->read(&format, sizeof(format));
-
-	if (format != BINARY_FORMAT_VERSION)
-		throw std::runtime_error("mismatching format version");
 }
 
-void Heightfield::write(boost::shared_ptr<util::FileHandle> const &file_handle)
+void Heightfield::write(std::fstream *file)
 {
-	unsigned format = BINARY_FORMAT_VERSION;
-	file_handle->write(&format, sizeof(format));
-
-	heightfield_.write(file_handle);
 }
 
 void Heightfield::bind(lua_State *L)

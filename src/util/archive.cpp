@@ -18,8 +18,8 @@ void Archive::read_directory()
 	chunks_.clear();
 
 	ARCHIVE_HEADER header;
-	file_.lseek(0, SEEK_SET);
-	file_.read(&header, sizeof(ARCHIVE_HEADER));
+	file_.seekg(0, std::ios_base::beg);
+	file_.read((char *) &header, sizeof(ARCHIVE_HEADER));
 
 	if (header.version != VERSION)
 	{
@@ -32,8 +32,8 @@ void Archive::read_directory()
 	}
 
 	std::vector<char> buffer(header.directory_layout.length);
-	file_.lseek(header.directory_layout.offset, SEEK_SET);
-	file_.read(&buffer[0], buffer.size());
+	file_.seekg(header.directory_layout.offset, std::ios_base::beg);
+	file_.read((char *) &buffer[0], buffer.size());
 
 	char *cursor = &buffer[0];
 	size_t bytes_left = buffer.size();
@@ -78,7 +78,7 @@ void Archive::read_directory()
 
 void ArchiveReader::open(std::string const &filename)
 {
-	file_.open(filename, O_RDONLY);
+	file_.open(filename.c_str(), std::ios_base::in | std::ios_base::binary);
 	read_directory();
 }
 
@@ -88,7 +88,7 @@ void ArchiveReader::read_data(std::string const &key, std::vector<char> &buffer)
 	if (it == chunks_.end()) throw std::runtime_error("can't find chunk " + key);
 
 	buffer.resize(it->second.length);
-	file_.lseek(it->second.offset, SEEK_SET);
+	file_.seekg(it->second.offset, std::ios_base::beg);
 	file_.read(&buffer[0], buffer.size());
 }
 
@@ -109,28 +109,28 @@ void ArchiveReader::close()
 
 void ArchiveWriter::create(std::string const &filename)
 {
-	file_.open(filename, O_WRONLY | O_CREAT | O_TRUNC);
+	file_.open(filename.c_str(), std::ios_base::out | std::ios_base::trunc | std::ios_base::binary);
 
 	ARCHIVE_HEADER header;
 	header.version = VERSION;
 	header.directory_layout.offset = 0;
 	header.directory_layout.length = 0;
-	file_.write(&header, sizeof(ARCHIVE_HEADER));
+	file_.write((char const *) &header, sizeof(ARCHIVE_HEADER));
 }
 
 void ArchiveWriter::open(std::string const &filename)
 {
-	file_.open(filename, O_RDWR);
+	file_.open(filename.c_str(), std::ios_base::in | std::ios_base::out | std::ios_base::binary);
 	read_directory();
 }
 
 void ArchiveWriter::write_data(std::string const &key, void const *data, size_t len)
 {
 	CHUNK_LAYOUT chunk_layout;
-	chunk_layout.offset = file_.tell();
+	chunk_layout.offset = file_.tellp();
 	chunk_layout.length = len;
 
-	file_.write(data, len);
+	file_.write((char const *) data, len);
 
 	if (!chunks_.insert(std::make_pair(key, chunk_layout)).second)
 	{
@@ -138,17 +138,26 @@ void ArchiveWriter::write_data(std::string const &key, void const *data, size_t 
 	}
 }
 
-void ArchiveWriter::write_file(std::string const &key, FileHandle &file_handle)
+void ArchiveWriter::write_file(std::string const &key, std::fstream &file)
 {
-	std::vector<char> buffer;
-	file_handle.read_all(buffer);
+	file.seekg(0, std::ios_base::end);
+	size_t size = file.tellg();
+
+	std::vector<char> buffer(size);
+
+	if (size)
+	{
+		file.seekg(0, std::ios_base::beg);
+		file.read(&buffer[0], size);
+	}
+
 	write_data(key, &buffer[0], buffer.size());
 }
 
 void ArchiveWriter::write_file(std::string const &key, std::string const &path)
 {
-	FileHandle file(path, O_RDONLY);
-	write_file(key, file);
+	std::fstream fs(path.c_str(), std::ios_base::in | std::ios_base::binary);
+	write_file(key, fs);
 }
 
 void ArchiveWriter::close()
@@ -161,18 +170,18 @@ void ArchiveWriter::write_directory()
 {
 	ARCHIVE_HEADER header;
 	header.version = VERSION;
-	header.directory_layout.offset = file_.tell();
+	header.directory_layout.offset = file_.tellp();
 	header.directory_layout.length = 0;
 
 	for (chunks_t::const_iterator it = chunks_.begin(); it != chunks_.end(); it++)
 	{
 		file_.write(it->first.c_str(), it->first.size() + 1);
-		file_.write(&it->second, sizeof(CHUNK_LAYOUT));
+		file_.write((char const *) &it->second, sizeof(CHUNK_LAYOUT));
 	}
 
-	header.directory_layout.length = file_.tell() - header.directory_layout.offset;
-	file_.lseek(0, SEEK_SET);
-	file_.write(&header, sizeof(ARCHIVE_HEADER));
+	header.directory_layout.length = size_t(file_.tellp()) - header.directory_layout.offset;
+	file_.seekp(0, std::ios_base::beg);
+	file_.write((char const *) &header, sizeof(ARCHIVE_HEADER));
 }
 
 }

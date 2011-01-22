@@ -127,6 +127,12 @@ public:
 
 	bool trace(ray_t const &r, scalar_t *t0, scalar_t *t1, scalar_t t_min = 0, scalar_t t_max = 1) const;
 	bool trace(ray_t const &r, scalar_t t_min = 0, scalar_t t_max = 1) const;
+
+	template<class Archive>
+	void serialize(Archive &archive, unsigned const /*file_version*/)
+	{
+		archive & lo & hi;
+	}
 };
 
 void bind_aabb(lua_State *L);

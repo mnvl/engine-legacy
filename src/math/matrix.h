@@ -22,28 +22,25 @@
 
 namespace math
 {
-	template<int N,int M,class T=scalar> class matrix;
-	template<class T> class matrix<3,3,T>;
-	template<class T> class matrix<4,4,T>;
 
-	template<class T> inline void mul(vec<2,T> &r,const vec<2,T> &v,const matrix<3,3,T> &m);
-	template<class T> inline void mul(vec<3,T> &r,const vec<2,T> &v,const matrix<3,3,T> &m);
-	template<class T> inline void mul(vec<3,T> &r,const vec<3,T> &v,const matrix<3,3,T> &m);
-	template<class T> inline void mul(vec<3,T> &r,const vec<3,T> &v,const matrix<4,4,T> &m);
-	template<class T> inline void mul(vec<4,T> &r,const vec<3,T> &v,const matrix<4,4,T> &m);
-	template<class T> inline void mul(vec<4,T> &r,const vec<4,T> &v,const matrix<4,4,T> &m);
+template<int N,int M,class T=scalar> class matrix;
+template<class T> class matrix<3,3,T>;
+template<class T> class matrix<4,4,T>;
 
-	template<int M,int N,int K,class T> inline void
-	mul(matrix<M,K,T> &result,const matrix<M,N,T> &left,const matrix<N,K,T> &right);
+template<class T> inline void mul(vec<2,T> &r,const vec<2,T> &v,const matrix<3,3,T> &m);
+template<class T> inline void mul(vec<3,T> &r,const vec<2,T> &v,const matrix<3,3,T> &m);
+template<class T> inline void mul(vec<3,T> &r,const vec<3,T> &v,const matrix<3,3,T> &m);
+template<class T> inline void mul(vec<3,T> &r,const vec<3,T> &v,const matrix<4,4,T> &m);
+template<class T> inline void mul(vec<4,T> &r,const vec<3,T> &v,const matrix<4,4,T> &m);
+template<class T> inline void mul(vec<4,T> &r,const vec<4,T> &v,const matrix<4,4,T> &m);
 
-	template <int M, int N, class T> bool
-	operator ==(math::matrix<M, N, T> const &lhs, math::matrix<M, N, T> const &rhs);
+template<int M,int N,int K,class T> inline void
+mul(matrix<M,K,T> &result,const matrix<M,N,T> &left,const matrix<N,K,T> &right);
 
-	void bind_matrix(lua_State *L);
-}
+void bind_matrix(lua_State *L);
 
 template<class T>
-class math::matrix<3,3,T> {
+class matrix<3,3,T> {
 public:
 	// типы и константы
 	static size_t const WIDTH=3,HEIGHT=3;
@@ -164,11 +161,17 @@ public:
 	}
 
 	void decompose(vec_t &rotation) const;
+
+	template<class Archive>
+	void serialize(Archive &archive, unsigned const /*file_version*/)
+	{
+		archive & ij;
+	}
 };
 
 // must be binary-compatible with D3DMATRIX, see graphic/renderer.cpp
 template<class T>
-class math::matrix<4,4,T> {
+class matrix<4,4,T> {
 public:
 	// типы и константы
 	static size_t const WIDTH=4,HEIGHT=4;
@@ -325,7 +328,84 @@ public:
 
 	bool decompose(point_t &scale,point_t &shear,point_t &rotate,point_t &translate,
 		vec_t &persp) const;
+
+	template<class Archive>
+	void serialize(Archive &archive, unsigned const /*file_version*/)
+	{
+		archive & ij;
+	}
 };
+
+template<class T> void
+mul(vec<2,T> &result,const vec<2,T> &v,const matrix<3,3,T> &m) {
+	vec<3,T> r;
+	mul(r,v,m);
+	result.x = r.x/r.z;
+	result.y = r.y/r.z;
+}
+
+template<class T> void
+mul(vec<3,T> &result,const vec<2,T> &v,const matrix<3,3,T> &m) {
+	assert(&result != &v);
+
+	result.x=m.ij[0][0]*v.x+m.ij[1][0]*v.y+m.ij[2][0];
+	result.y=m.ij[0][1]*v.x+m.ij[1][1]*v.y+m.ij[2][1];
+	result.z=m.ij[0][2]*v.x+m.ij[1][2]*v.y+m.ij[2][2];
+}
+
+template<class T> void
+mul(vec<3,T> &result,const vec<3,T> &v,const matrix<3,3,T> &m) {
+	assert(&result != &v);
+
+	result.x=m.ij[0][0]*v.x+m.ij[1][0]*v.y+m.ij[2][0]*v.z;
+	result.y=m.ij[0][1]*v.x+m.ij[1][1]*v.y+m.ij[2][1]*v.z;
+	result.z=m.ij[0][2]*v.x+m.ij[1][2]*v.y+m.ij[2][2]*v.z;
+}
+
+template<class T> void
+mul(vec<3,T> &result,const vec<3,T> &v,const matrix<4,4,T> &m) {
+	assert(&result != &v);
+
+	result.x=m.ij[0][0]*v.x+m.ij[1][0]*v.y+m.ij[2][0]*v.z+m.ij[3][0];
+	result.y=m.ij[0][1]*v.x+m.ij[1][1]*v.y+m.ij[2][1]*v.z+m.ij[3][1];
+	result.z=m.ij[0][2]*v.x+m.ij[1][2]*v.y+m.ij[2][2]*v.z+m.ij[3][2];
+}
+
+template<class T> void
+mul(vec<4,T> &result,const vec<3,T> &v,const matrix<4,4,T> &m) {
+	assert(&result != &v);
+
+	result.x=m.ij[0][0]*v.x+m.ij[1][0]*v.y+m.ij[2][0]*v.z+m.ij[3][0];
+	result.y=m.ij[0][1]*v.x+m.ij[1][1]*v.y+m.ij[2][1]*v.z+m.ij[3][1];
+	result.z=m.ij[0][2]*v.x+m.ij[1][2]*v.y+m.ij[2][2]*v.z+m.ij[3][2];
+	result.w=m.ij[0][3]*v.x+m.ij[1][3]*v.y+m.ij[2][3]*v.z+m.ij[3][3];
+}
+
+template<class T> void
+mul(vec<4,T> &result,const vec<4,T> &v,const matrix<4,4,T> &m) {
+	assert(&result != &v);
+
+	result.x=m.ij[0][0]*v.x+m.ij[1][0]*v.y+m.ij[2][0]*v.z+m.ij[3][0]*v.w;
+	result.y=m.ij[0][1]*v.x+m.ij[1][1]*v.y+m.ij[2][1]*v.z+m.ij[3][1]*v.w;
+	result.z=m.ij[0][2]*v.x+m.ij[1][2]*v.y+m.ij[2][2]*v.z+m.ij[3][2]*v.w;
+	result.w=m.ij[0][3]*v.x+m.ij[1][3]*v.y+m.ij[2][3]*v.z+m.ij[3][3]*v.w;
+}
+
+template<int M,int N,int K,class T> void
+mul(matrix<M,K,T> &result,const matrix<M,N,T> &left,const matrix<N,K,T> &right) {
+	assert(&result != &left);
+	assert(&result != &right);
+
+	int i,j,k;
+	for(i=0; i<M; i++) {
+		for(j=0; j<K; j++) {
+			result.ij[i][j]=left.ij[i][0]*right.ij[0][j];
+			for(k=1; k<N; k++) result.ij[i][j]+=left.ij[i][k]*right.ij[k][j];
+		}
+	}
+}
+
+}
 
 template<int M,int N,class T> inline math::vec<N-1,T>
 operator *(const math::vec<N-1,T> &left, const math::matrix<M,N,T> &right) {
@@ -354,93 +434,14 @@ inline math::vec<N,T> &operator *=(math::vec<N,T> &left, const math::matrix<M,N,
 	return left;
 }
 
-template<class T> void
-math::mul(math::vec<2,T> &result,const math::vec<2,T> &v,const math::matrix<3,3,T> &m) {
-	math::vec<3,T> r;
-	mul(r,v,m);
-	result.x = r.x/r.z;
-	result.y = r.y/r.z;
-}
-
-template<class T> void
-math::mul(math::vec<3,T> &result,const math::vec<2,T> &v,const math::matrix<3,3,T> &m) {
-	assert(&result != &v);
-
-	result.x=m.ij[0][0]*v.x+m.ij[1][0]*v.y+m.ij[2][0];
-	result.y=m.ij[0][1]*v.x+m.ij[1][1]*v.y+m.ij[2][1];
-	result.z=m.ij[0][2]*v.x+m.ij[1][2]*v.y+m.ij[2][2];
-}
-
-template<class T> void
-math::mul(math::vec<3,T> &result,const math::vec<3,T> &v,const math::matrix<3,3,T> &m) {
-	assert(&result != &v);
-
-	result.x=m.ij[0][0]*v.x+m.ij[1][0]*v.y+m.ij[2][0]*v.z;
-	result.y=m.ij[0][1]*v.x+m.ij[1][1]*v.y+m.ij[2][1]*v.z;
-	result.z=m.ij[0][2]*v.x+m.ij[1][2]*v.y+m.ij[2][2]*v.z;
-}
-
-template<class T> void
-math::mul(math::vec<3,T> &result,const math::vec<3,T> &v,const math::matrix<4,4,T> &m) {
-	assert(&result != &v);
-
-	result.x=m.ij[0][0]*v.x+m.ij[1][0]*v.y+m.ij[2][0]*v.z+m.ij[3][0];
-	result.y=m.ij[0][1]*v.x+m.ij[1][1]*v.y+m.ij[2][1]*v.z+m.ij[3][1];
-	result.z=m.ij[0][2]*v.x+m.ij[1][2]*v.y+m.ij[2][2]*v.z+m.ij[3][2];
-}
-
-template<class T> void
-math::mul(math::vec<4,T> &result,const math::vec<3,T> &v,const math::matrix<4,4,T> &m) {
-	assert(&result != &v);
-
-	result.x=m.ij[0][0]*v.x+m.ij[1][0]*v.y+m.ij[2][0]*v.z+m.ij[3][0];
-	result.y=m.ij[0][1]*v.x+m.ij[1][1]*v.y+m.ij[2][1]*v.z+m.ij[3][1];
-	result.z=m.ij[0][2]*v.x+m.ij[1][2]*v.y+m.ij[2][2]*v.z+m.ij[3][2];
-	result.w=m.ij[0][3]*v.x+m.ij[1][3]*v.y+m.ij[2][3]*v.z+m.ij[3][3];
-}
-
-template<class T> void
-math::mul(math::vec<4,T> &result,const math::vec<4,T> &v,const math::matrix<4,4,T> &m) {
-	assert(&result != &v);
-
-	result.x=m.ij[0][0]*v.x+m.ij[1][0]*v.y+m.ij[2][0]*v.z+m.ij[3][0]*v.w;
-	result.y=m.ij[0][1]*v.x+m.ij[1][1]*v.y+m.ij[2][1]*v.z+m.ij[3][1]*v.w;
-	result.z=m.ij[0][2]*v.x+m.ij[1][2]*v.y+m.ij[2][2]*v.z+m.ij[3][2]*v.w;
-	result.w=m.ij[0][3]*v.x+m.ij[1][3]*v.y+m.ij[2][3]*v.z+m.ij[3][3]*v.w;
-}
-
-template<int M,int N,int K,class T> void
-math::mul(math::matrix<M,K,T> &result,const math::matrix<M,N,T> &left,const math::matrix<N,K,T> &right) {
-	assert(&result != &left);
-	assert(&result != &right);
-
-	int i,j,k;
-	for(i=0; i<M; i++) {
-		for(j=0; j<K; j++) {
-			result.ij[i][j]=left.ij[i][0]*right.ij[0][j];
-			for(k=1; k<N; k++) result.ij[i][j]+=left.ij[i][k]*right.ij[k][j];
-		}
-	}
-}
-
 template <int M, int N, class T> bool
-math::operator ==(math::matrix<M, N, T> const &lhs, math::matrix<M, N, T> const &rhs) {
+operator ==(math::matrix<M, N, T> const &lhs, math::matrix<M, N, T> const &rhs) {
 	for(size_t i = 0; i < M; i++) {
 		for(size_t j = 0; j < N; j++) {
-			if (abs(lhs.ij[i][j] - rhs.ij[i][j]) > EPSILON) return false;
+			if (abs(lhs.ij[i][j] - rhs.ij[i][j]) > math::EPSILON) return false;
 		}
 	}
 
 	return true;
 }
 
-template <int M, int N, class T>
-std::istream &operator >>(std::istream &is, math::matrix<M, N, T> &m) {
-	for (int i = 0; i < M; i++) {
-		for (int j = 0; j < N; j++)	{
-			is >> m.ij[i][j];
-		}
-	}
-
-	return is;
-}

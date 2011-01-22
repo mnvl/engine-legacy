@@ -16,7 +16,6 @@
 #include <graphic/forward.h>
 #include <graphic/vertex_array.h>
 #include <graphic/index_array.h>
-#include <util/file_handle.h>
 
 namespace pirates
 {
@@ -28,6 +27,7 @@ public:
 	static size_t const TEXTURE_SEABED = 0;
 	static size_t const TEXTURE_SAND  = 1;
 	static size_t const TEXTURE_GRASS = 2;
+	static size_t const TEXTURES_COUNT = 3;
 
 	Heightfield(graphic::RendererPtr const &renderer, graphic::SchedulerPtr const &scheduler,
 		graphic::CameraPtr const &camera, math::matrix<4,4> const &tf,
@@ -43,8 +43,8 @@ public:
 
 	void add(math::vec<3> const &position, math::scalar delta);
 
-	void read(boost::shared_ptr<util::FileHandle> const &file_handle);
-	void write(boost::shared_ptr<util::FileHandle> const &file_handle);
+	void read(std::fstream *file);
+	void write(std::fstream *file);
 
 	static void bind(lua_State *L);
 

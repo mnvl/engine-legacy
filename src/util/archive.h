@@ -9,11 +9,11 @@
 // prior written consent of Manvel Avetisian.
 //-----------------------------------------------------------------------------
 
+#include <fstream>
 #include <boost/cstdint.hpp>
 #include <boost/unordered_map.hpp>
 #include <luabind/lua_include.hpp>
 #include <luabind/object.hpp>
-#include "file_handle.h"
 
 namespace util
 {
@@ -38,7 +38,7 @@ protected:
 
 	typedef boost::unordered_map<std::string, CHUNK_LAYOUT> chunks_t;
 
-	FileHandle file_;
+	std::fstream file_;
 	chunks_t chunks_;
 
 	void read_directory();
@@ -61,7 +61,7 @@ public:
 	void create(std::string const &filename);
 	void open(std::string const &filename);
 	void write_data(std::string const &key, void const *data, size_t len);
-	void write_file(std::string const &key, FileHandle &file_handle);
+	void write_file(std::string const &key, std::fstream &file);
 	void write_file(std::string const &key, std::string const &path);
 	void close();
 

@@ -8,6 +8,7 @@
 // prior written consent of Manvel Avetisian.
 //-----------------------------------------------------------------------------
 
+#include <io.h>
 #include <boost/test/unit_test.hpp>
 #include "logger.h"
 #include "archive.h"

@@ -249,6 +249,12 @@ public:
 	}
 
 	vec perpendicular() const { return vec(y, -x); }
+
+	template<class Archive>
+	void serialize(Archive &archive, unsigned const /*file_version*/)
+	{
+		archive & x & y;
+	}
 };
 #pragma pack(pop)
 
@@ -465,6 +471,12 @@ public:
 	vec perpendicular_xz() const;
 
 	static vec const I, J, K, null;
+
+	template<class Archive>
+	void serialize(Archive &archive, unsigned const /*file_version*/)
+	{
+		archive & x & y & z;
+	}
 };
 #pragma pack(pop)
 
@@ -775,6 +787,12 @@ public:
 	{
 		scalar_t l=length();
 		if(abs(l) > 0) *this /= l;
+	}
+
+	template<class Archive>
+	void serialize(Archive &archive, unsigned const /*file_version*/)
+	{
+		archive & x & y & z & w;
 	}
 };
 #pragma pack(pop)
