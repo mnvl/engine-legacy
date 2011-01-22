@@ -13,6 +13,11 @@
 namespace util
 {
 
+Archive::Archive()
+{
+	file_.exceptions(std::ios::failbit | std::ios::badbit);
+}
+
 void Archive::read_directory()
 {
 	chunks_.clear();

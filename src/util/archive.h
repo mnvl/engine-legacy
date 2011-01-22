@@ -48,6 +48,8 @@ protected:
 	chunks_t chunks_;
 
 	void read_directory();
+
+	Archive();
 };
 
 class ArchiveReader: public Archive {
