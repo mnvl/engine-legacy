@@ -38,6 +38,7 @@ void ArchiveWriter::bind(lua_State *L)
 		class_<ArchiveWriter, ArchiveWriterPtr>("ArchiveWriter")
 		.def(constructor<>())
 		.def("create", &ArchiveWriter::create)
+		.def("write_data", (void (ArchiveWriter::*)(std::string const &, std::string const &)) &ArchiveWriter::write_data)
 		.def("write_file", (void (ArchiveWriter::*)(std::string const &, std::string const &)) &ArchiveWriter::write_file)
 		.def("close", &ArchiveWriter::close)
 	];
