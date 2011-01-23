@@ -25,17 +25,18 @@ class Heightfield: public boost::noncopyable {
 public:
 	static unsigned const BINARY_FORMAT_VERSION = 1;
 
-	static size_t const TEXTURE_SEABED = 0;
-	static size_t const TEXTURE_SAND  = 1;
-	static size_t const TEXTURE_GRASS = 2;
-	static size_t const TEXTURES_COUNT = 3;
+	static unsigned const TEXTURE_SEABED = 0;
+	static unsigned const TEXTURE_SAND  = 1;
+	static unsigned const TEXTURE_GRASS = 2;
+	static unsigned const TEXTURES_COUNT = 3;
 
 	Heightfield(graphic::RendererPtr const &renderer, graphic::SchedulerPtr const &scheduler,
 		graphic::CameraPtr const &camera, math::matrix<4,4> const &tf,
 		size_t nrows, size_t ncols, math::vec<3> const &scale);
 	~Heightfield();
 
-	void set_texture(std::string const &filename, size_t type);
+	void set_texture_filename(std::string const &filename, unsigned type);
+	std::string const &get_texture_filename(unsigned type);
 
 	void update();
 	void draw();

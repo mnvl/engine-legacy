@@ -52,9 +52,14 @@ Heightfield::~Heightfield()
 {
 }
 
-void Heightfield::set_texture(std::string const &filename, size_t index)
+void Heightfield::set_texture_filename(std::string const &filename, unsigned index)
 {
 	material_->set_diffuse_texture(filename, index);
+}
+
+std::string const &Heightfield::get_texture_filename(unsigned index)
+{
+	return material_->get_diffuse_texture(index)->get_filename();
 }
 
 void Heightfield::update()
@@ -181,7 +186,8 @@ void Heightfield::bind(lua_State *L)
 			size_t, size_t, math::vec<3> const &>())
 		.def("update", &Heightfield::update)
 		.def("draw", &Heightfield::draw)
-		.def("set_texture", &Heightfield::set_texture)
+		.def("set_texture_filename", &Heightfield::set_texture_filename)
+		.def("get_texture_filename", &Heightfield::get_texture_filename)
 		.def("get_storage", &Heightfield::get_storage)
 		.def("add", &Heightfield::add)
 		.def("read", &Heightfield::read)
