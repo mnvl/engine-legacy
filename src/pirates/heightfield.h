@@ -41,7 +41,7 @@ public:
 	void update();
 	void draw();
 
-	math::heightfield<> const &get_storage() const { return heightfield_; }
+	math::heightfield<> *get_storage() { return &heightfield_; }
 
 	void add(math::vec<3> const &position, math::scalar delta);
 

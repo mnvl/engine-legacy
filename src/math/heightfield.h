@@ -44,6 +44,8 @@ public:
 
     void load_from_raw_buffer(value_t const *heights);
 
+	void resize(size_t ncols, size_t nrows);
+
 	template<class Archive>
 	void serialize(Archive &archive, unsigned const /*file_version*/)
 	{

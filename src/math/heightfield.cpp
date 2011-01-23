@@ -134,6 +134,27 @@ void heightfield<T>::load_from_raw_buffer(value_t const *heights)
 }
 
 template<class T>
+void heightfield<T>::resize(size_t ncols, size_t nrows)
+{
+	std::vector<value_t> heights;
+	heights.resize(nrows * ncols);
+
+	for (size_t i = 0, ni = std::min(nrows, nrows_); i < ni; ++i)
+	{
+		for (size_t j = 0, nj = std::min(ncols, ncols_); j < nj; ++j)
+		{
+			heights[i * ncols + j] = heights_[i * ncols_ + j];
+		}
+	}
+
+	heights_.swap(heights);
+	ncols_ = ncols;
+	nrows_ = nrows;
+
+	post_load();
+}
+
+template<class T>
 void heightfield<T>::post_load()
 {
 	local_aabb_.null();
@@ -167,6 +188,9 @@ void heightfield<T>::bind(lua_State *L, char const *name)
 		class_<heightfield>(name)
 		.def(constructor<matrix<4,4> const &, size_t, size_t, vec<3> const &>())
 		.def("trace", &heightfield::trace)
+		.def("ncols", &heightfield::nrows)
+		.def("nrows", &heightfield::ncols)
+		.def("resize", &heightfield::resize)
 	];
 }
 
