@@ -40,6 +40,7 @@ heightfield<T>::~heightfield()
 template<class T>
 void heightfield<T>::set_local_to_world(math::matrix<4, 4> const &tf)
 {
+	local_to_world_ = tf;
 	local_to_world_.scale(scale_.x / (ncols_ - 1), 1, scale_.z / (nrows_ - 1));
     local_to_world_.inverse(world_to_local_);
 }
@@ -170,14 +171,8 @@ void heightfield<T>::post_load()
 		if (local_aabb_.hi.y < *it) local_aabb_.hi.y = *it;
 	}
 
-	if (local_aabb_.lo.y == local_aabb_.hi.y)
-	{
-		local_aabb_.lo.y -= 0.5f;
-		local_aabb_.hi.y += 0.5f;
-	}
-
-	local_aabb_.lo.x = 0;
-	local_aabb_.lo.z = 0;
+	local_aabb_.lo.y -= 1;
+	local_aabb_.hi.y += 1;
 
 	local_aabb_.hi.x = scalar(ncols_ - 1);
 	local_aabb_.hi.z = scalar(nrows_ - 1);
