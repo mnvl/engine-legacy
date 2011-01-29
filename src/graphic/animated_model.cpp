@@ -8,6 +8,7 @@
 // prior written consent of Manvel Avetisian.
 //-----------------------------------------------------------------------------
 
+#include <luabind/luabind.hpp>
 #include "animated_mesh.h"
 #include "animated_model.h"
 
@@ -30,6 +31,25 @@ MeshPtr BasicAnimatedModel<V>::add_mesh()
 {
 	meshes.push_back(MeshPtr(new BasicAnimatedMesh<V>(this)));
 	return meshes.back();
+}
+
+template<class V>
+void BasicAnimatedModel<V>::bind(lua_State *L, char const *classname)
+{
+    using namespace luabind;
+
+    module_(L, "graphic")
+    [
+        class_<BasicAnimatedModel, Model, boost::shared_ptr<BasicAnimatedModel> >(classname)
+		.def(constructor<BasicAnimatedModel const &>())
+        .def(constructor<RendererPtr const &, SchedulerPtr const &>())
+	];
+}
+
+void bind_animated_model(lua_State *L)
+{
+	AnimatedModelPNJWT::bind(L, "AnimatedModelPNJWT");
+	AnimatedModelPTBNJWT::bind(L, "AnimatedModelPTBNJWT");
 }
 
 template AnimatedModelPNJWT;
