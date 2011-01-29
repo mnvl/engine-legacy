@@ -32,20 +32,14 @@ Heightfield::Heightfield(graphic::RendererPtr const &renderer, graphic::Schedule
 	scheduler_(scheduler),
 	heightfield_(tf, nrows, ncols, scale)
 {
-	vertex_array_ = renderer->create_vertex_array<graphic::VERTEX_PNTB>(nrows * ncols);
-	index_array_ = renderer->create_index_array<graphic::INDEX_U16>((nrows - 1) * (ncols - 1) * 2 * 3);
 	material_ = renderer->create_material();
 	draw_call_ = renderer->create_uber_draw_call();
 
 	draw_call_->set_always_visible(true);
 	draw_call_->set_priority(-2);
-	draw_call_->set_vertex_buffer(vertex_array_->get_vertex_buffer());
-	draw_call_->set_index_buffer(index_array_->get_index_buffer());
 	draw_call_->set_material(material_);
-	draw_call_->set_vertices_count(nrows * ncols);
-	draw_call_->set_triangles_count((nrows - 1) * (ncols - 1) * 2);
-	draw_call_->set_world_matrix(tf);
 	draw_call_->set_camera(camera);
+	draw_call_->set_world_matrix(tf);
 }
 
 Heightfield::~Heightfield()
@@ -62,8 +56,25 @@ std::string const &Heightfield::get_texture_filename(unsigned index)
 	return material_->get_diffuse_texture(index)->get_filename();
 }
 
+void Heightfield::set_transform(math::matrix<4, 4> const &tf)
+{
+	heightfield_.set_local_to_world(tf);
+	draw_call_->set_world_matrix(tf);
+}
+
 void Heightfield::update()
 {
+	size_t nrows = heightfield_.nrows();
+	size_t ncols = heightfield_.ncols();
+
+	vertex_array_ = renderer_->create_vertex_array<graphic::VERTEX_PNTB>(nrows * ncols);
+	index_array_ = renderer_->create_index_array<graphic::INDEX_U16>((nrows - 1) * (ncols - 1) * 2 * 3);
+
+	draw_call_->set_vertex_buffer(vertex_array_->get_vertex_buffer());
+	draw_call_->set_index_buffer(index_array_->get_index_buffer());
+	draw_call_->set_vertices_count(nrows * ncols);
+	draw_call_->set_triangles_count((nrows - 1) * (ncols - 1) * 2);
+
 	{
 		graphic::VERTEX_PNTB *vertex = vertex_array_->lock(true);
 
@@ -188,6 +199,7 @@ void Heightfield::bind(lua_State *L)
 		.def("draw", &Heightfield::draw)
 		.def("set_texture_filename", &Heightfield::set_texture_filename)
 		.def("get_texture_filename", &Heightfield::get_texture_filename)
+		.def("set_transform", &Heightfield::set_transform)
 		.def("get_storage", &Heightfield::get_storage)
 		.def("add", &Heightfield::add)
 		.def("read", &Heightfield::read)

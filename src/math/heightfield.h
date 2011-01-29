@@ -37,6 +37,10 @@ public:
 
 	size_t ncols() const { return ncols_; }
 	size_t nrows() const { return nrows_; }
+    matrix<4,4> const &get_local_to_world() const { return local_to_world_; }
+    matrix<4,4> const &get_world_to_local() const { return world_to_local_; }
+
+	void set_local_to_world(math::matrix<4, 4> const &tf);
 
 	vec<2, int> world_position_to_cell(vec<3> const &position);
 

@@ -20,13 +20,11 @@ namespace math
 
 template<class T>
 heightfield<T>::heightfield(matrix<4,4> const &tf, size_t nrows, size_t ncols, vec<3> const &scale):
-    local_to_world_(tf),
     nrows_(nrows),
     ncols_(ncols),
     scale_(scale)
 {
-    local_to_world_.scale(scale_.x / (ncols_ - 1), 1, scale_.z / (nrows_ - 1));
-    local_to_world_.inverse(world_to_local_);
+	set_local_to_world(tf);
 
 	heights_.resize(nrows * ncols);
 
@@ -37,6 +35,13 @@ heightfield<T>::heightfield(matrix<4,4> const &tf, size_t nrows, size_t ncols, v
 template<class T>
 heightfield<T>::~heightfield()
 {
+}
+
+template<class T>
+void heightfield<T>::set_local_to_world(math::matrix<4, 4> const &tf)
+{
+	local_to_world_.scale(scale_.x / (ncols_ - 1), 1, scale_.z / (nrows_ - 1));
+    local_to_world_.inverse(world_to_local_);
 }
 
 template<class T>
@@ -191,6 +196,7 @@ void heightfield<T>::bind(lua_State *L, char const *name)
 		.def("ncols", &heightfield::nrows)
 		.def("nrows", &heightfield::ncols)
 		.def("resize", &heightfield::resize)
+		.def("set_local_to_world", &heightfield::set_local_to_world)
 	];
 }
 

@@ -38,6 +38,8 @@ public:
 	void set_texture_filename(std::string const &filename, unsigned type);
 	std::string const &get_texture_filename(unsigned type);
 
+	void set_transform(math::matrix<4, 4> const &tf);
+
 	void update();
 	void draw();
 
@@ -58,11 +60,11 @@ private:
 
 	graphic::RendererPtr const renderer_;
 	graphic::SchedulerPtr const scheduler_;
+	graphic::UberDrawCallPtr draw_call_;
 	math::heightfield<> heightfield_;
 	boost::shared_ptr<graphic::VertexArrayPNTB> vertex_array_;
 	boost::shared_ptr<graphic::IndexArray16> index_array_;
 	graphic::MaterialPtr material_;
-	graphic::UberDrawCallPtr draw_call_;
 };
 
 }
