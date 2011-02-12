@@ -85,8 +85,8 @@ void bind_ray(lua_State *L)
 		.def(constructor<const vec<2> &, const vec<2> &>())
 		.def("set", &ray<2>::set)
 		.def("apply", &ray<2>::apply)
-		.def_readwrite("origin", &ray<2>::r0)
-		.def_readwrite("direction", &ray<2>::a),
+		.def_readwrite("r0", &ray<2>::r0)
+		.def_readwrite("a", &ray<2>::a),
 
 		class_<ray<3> >("ray3")
 		.def(constructor<>())
