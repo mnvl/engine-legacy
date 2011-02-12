@@ -285,7 +285,7 @@ obb<3,T>::test_noncollision(const obb &box, const vec_t &vel, scalar_t t_min,
 template<class T> bool
 obb<3,T>::is_basis_linearly_independent() const
 {
-	return abs(tangent & normal) > EPSILON && abs(tangent & binormal) > EPSILON && abs(normal & binormal) > EPSILON;
+	return abs(tangent & normal) <= EPSILON && abs(tangent & binormal) <= EPSILON && abs(normal & binormal) <= EPSILON;
 }
 
 template class obb<3>;
