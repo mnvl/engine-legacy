@@ -68,8 +68,8 @@ public:
 	// операции
 	void null() {
 		for(size_t n=0; n<ARITY; n++) {
-			lo.i[n] = limits_t::max();
-			hi.i[n] = limits_t::min();
+			lo.i[n] = +limits_t::max();
+			hi.i[n] = -limits_t::max();
 		}
 	}
 

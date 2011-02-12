@@ -180,12 +180,12 @@ BOOST_AUTO_TEST_CASE(from_matrix_and_intersection_with_obb_1)
 	bound.normal.set(0.00000000f, 1.0000000f, 0.00000000f);
 	bound.binormal.set(0.00000000f, 0.00000000f, 2.0000000f);
 
-	BOOST_REQUIRE (fr.contains(bound.origin) == true);
-	BOOST_REQUIRE (fr.contains(bound.origin + bound.tangent) == true);
-	BOOST_REQUIRE (fr.contains(bound.origin + bound.normal) == true);
-	BOOST_REQUIRE (fr.contains(bound.origin + bound.binormal) == true);
+	BOOST_REQUIRE (fr.contains(bound.origin) == false);
+	BOOST_REQUIRE (fr.contains(bound.origin + bound.tangent) == false);
+	BOOST_REQUIRE (fr.contains(bound.origin + bound.normal) == false);
+	BOOST_REQUIRE (fr.contains(bound.origin + bound.binormal) == false);
 
-	BOOST_REQUIRE (fr.test_intersection(bound) == true);
+	BOOST_REQUIRE (fr.test_intersection(bound) == false);
 }
 
 BOOST_AUTO_TEST_SUITE_END()

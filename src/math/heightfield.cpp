@@ -174,6 +174,9 @@ void heightfield<T>::post_load()
 	local_aabb_.lo.y -= 1;
 	local_aabb_.hi.y += 1;
 
+	local_aabb_.lo.x = 0;
+	local_aabb_.lo.z = 0;
+
 	local_aabb_.hi.x = scalar(ncols_ - 1);
 	local_aabb_.hi.z = scalar(nrows_ - 1);
 }
