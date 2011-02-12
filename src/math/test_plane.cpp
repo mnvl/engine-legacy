@@ -106,6 +106,28 @@ BOOST_AUTO_TEST_CASE(classify_obb_2)
 		== math::plane<>::INTERSECTS);
 }
 
+BOOST_AUTO_TEST_CASE(classify_obb_3)
+{
+	math::plane<> pl;
+	pl.A =  0.00000000f;
+	pl.B = -0.26937401f;
+	pl.C = -0.26937401f;
+	pl.D =  1.00618340f;
+
+	math::obb<3> bound;
+	bound.origin.set(-5.6245117f, 0.00000000f, 23.716305f);
+	bound.tangent.set(2.0000000f, 0.00000000f, 0.00000000f);
+	bound.normal.set(0.00000000f, 1.0000000f, 0.00000000f);
+	bound.binormal.set(0.00000000f, 0.00000000f, 2.0000000f);
+
+	BOOST_REQUIRE (pl.classify(bound.origin) == math::plane<>::NEGATIVE);
+	BOOST_REQUIRE (pl.classify(bound.origin + bound.tangent) == math::plane<>::NEGATIVE);
+	BOOST_REQUIRE (pl.classify(bound.origin + bound.normal) == math::plane<>::NEGATIVE);
+	BOOST_REQUIRE (pl.classify(bound.origin + bound.binormal) == math::plane<>::NEGATIVE);
+
+	BOOST_REQUIRE (pl.classify(bound) == math::plane<>::NEGATIVE);
+}
+
 BOOST_AUTO_TEST_CASE(raytrace_1)
 {
 	math::plane<> pl(math::vec<3>(0, 0, 0), math::vec<3>(0, 1, 0));
