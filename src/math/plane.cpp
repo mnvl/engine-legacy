@@ -28,8 +28,8 @@ plane<T>::get_origin() const
 	if (abs(B) > EPSILON) return vec_t(0, -D / B, 0);
 	if (abs(C) > EPSILON) return vec_t(0, 0, -D / C);
 
-	// does not define plane
-	assert(0);
+	assert(0 && "does not define plane");
+
 	return vec_t(0, 0, 0);
 }
 

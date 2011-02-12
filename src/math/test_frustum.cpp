@@ -152,6 +152,31 @@ BOOST_AUTO_TEST_CASE(orthographic_projection_with_rotation_and_obb_3)
 	BOOST_REQUIRE (fr.test_intersection(bound) == false);
 }
 
+BOOST_AUTO_TEST_CASE(perspective_projection_with_rotation_translation_and_obb_1)
+{
+	math::matrix<4,4> projection;
+	projection.perspective(math::PI/2, 1.5f, 0, 1000);
+
+	math::matrix<4,4> world;
+	world.translation(-500, -10, 500);
+	world.rotate(-math::PI/4, 0, 0);
+
+	math::frustum<> fr(world * projection);
+
+	math::obb<3> bound;
+	bound.origin.set(510, 2, 490);
+	bound.tangent.set(1, 0, 0);
+	bound.normal.set(0, 1, 0);
+	bound.binormal.set(0, 0, 1);
+
+	BOOST_REQUIRE (fr.contains(bound.origin) == true);
+	BOOST_REQUIRE (fr.contains(bound.origin + bound.tangent) == true);
+	BOOST_REQUIRE (fr.contains(bound.origin + bound.normal) == true);
+	BOOST_REQUIRE (fr.contains(bound.origin + bound.binormal) == true);
+
+	BOOST_REQUIRE (fr.test_intersection(bound) == true);
+}
+
 BOOST_AUTO_TEST_CASE(from_matrix_and_intersection_with_obb_1)
 {
 	math::matrix<4,4> tf;

@@ -26,40 +26,40 @@ frustum<T>::frustum(matrix<4,4> const &tf)
 	// http://zach.in.tu-clausthal.de/teaching/cg_literatur/lighthouse3d_view_frustum_culling/index.html
 
 	// left clipping plane
-	planes[0].A = tf._14 + tf._11;
-	planes[0].B = tf._24 + tf._21;
-	planes[0].C = tf._34 + tf._31;
-	planes[0].D = tf._44 + tf._41;
+	planes[0].A = tf._41 + tf._11;
+	planes[0].B = tf._42 + tf._12;
+	planes[0].C = tf._43 + tf._13;
+	planes[0].D = tf._44 + tf._14;
 
 	// right clipping plane
-	planes[1].A = tf._14 - tf._11;
-	planes[1].B = tf._24 - tf._21;
-	planes[1].C = tf._34 - tf._31;
-	planes[1].D = tf._44 - tf._41;
+	planes[1].A = tf._41 - tf._11;
+	planes[1].B = tf._42 - tf._12;
+	planes[1].C = tf._43 - tf._13;
+	planes[1].D = tf._44 - tf._14;
 
 	// top clipping plane
-	planes[2].A = tf._14 - tf._12;
-	planes[2].B = tf._24 - tf._22;
-	planes[2].C = tf._34 - tf._32;
-	planes[2].D = tf._44 - tf._42;
+	planes[2].A = tf._41 - tf._21;
+	planes[2].B = tf._42 - tf._22;
+	planes[2].C = tf._43 - tf._23;
+	planes[2].D = tf._44 - tf._24;
 
 	// bottom clipping plane
-	planes[3].A = tf._14 + tf._12;
-	planes[3].B = tf._24 + tf._22;
-	planes[3].C = tf._34 + tf._32;
-	planes[3].D = tf._44 + tf._42;
+	planes[3].A = tf._41 + tf._21;
+	planes[3].B = tf._42 + tf._22;
+	planes[3].C = tf._43 + tf._23;
+	planes[3].D = tf._44 + tf._24;
 
 	// near clipping plane
-	planes[4].A = tf._13;
-	planes[4].B = tf._23;
-	planes[4].C = tf._33;
-	planes[4].D = tf._43;
+	planes[4].A = tf._41 + tf._31;
+	planes[4].B = tf._42 + tf._32;
+	planes[4].C = tf._43 + tf._33;
+	planes[4].D = tf._44 + tf._34;
 
 	// far clipping plane
-	planes[5].A = tf._14 - tf._13;
-	planes[5].B = tf._24 - tf._23;
-	planes[5].C = tf._34 - tf._33;
-	planes[5].D = tf._44 - tf._43;
+	planes[5].A = tf._41 - tf._31;
+	planes[5].B = tf._42 - tf._32;
+	planes[5].C = tf._43 - tf._33;
+	planes[5].D = tf._44 - tf._34;
 }
 
 template<class T>
