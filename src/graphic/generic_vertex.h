@@ -41,7 +41,7 @@ struct GenericVertex {
 		if (math::lexicographical_greater(normal, rhs.normal)) return false;
 
 		if (math::lexicographical_less(texcoords, rhs.texcoords)) return true;
-		if (math::lexicographical_greater(texcoords, rhs.texcoords)) return true;
+		if (math::lexicographical_greater(texcoords, rhs.texcoords)) return false;
 
 		return math::lexicographical_less(texutre_blend_weights, rhs.texutre_blend_weights);
 	}
