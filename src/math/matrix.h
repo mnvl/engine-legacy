@@ -133,7 +133,7 @@ public:
 	// инвертирует матрицу
 	// возвращает false если детерминант равен нулю
 	bool invert() {
-		return inverse(*this);
+		return matrix_t(*this).inverse(*this);
 	}
 
 	// записать в T транспонированную матрицу

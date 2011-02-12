@@ -12,6 +12,7 @@
 #include <boost/noncopyable.hpp>
 #include <boost/shared_ptr.hpp>
 #include <math/obb.h>
+#include <math/frustum.h>
 #include "forward.h"
 
 namespace graphic
@@ -58,6 +59,7 @@ protected:
 	math::matrix<4,4> world_matrix_;
 	CameraPtr camera_;
 	math::matrix<4,4> world_view_projection_matrix_;
+	math::frustum<> frustum_;
 };
 
 }

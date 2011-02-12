@@ -28,11 +28,13 @@ public:
 	static size_t const PLANES_COUNT = 6;
 	typedef plane<scalar_t> plane_t;
 
+	plane_t planes[PLANES_COUNT];
+
 	frustum();
 	frustum(math::matrix<4,4> const &tf);
 	~frustum();
 
-	plane_t planes[PLANES_COUNT];
+	void load(math::matrix<4,4> const &tf);
 
 	bool contains(math::vec<3> const &point) const;
 	bool test_intersection(aabb<3,T> const &bounds) const;

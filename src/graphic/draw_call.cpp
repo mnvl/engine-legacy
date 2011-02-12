@@ -104,6 +104,7 @@ void DrawCall::commit()
 	if (!material_) throw std::logic_error("material not set");
 	if (!camera_) throw std::logic_error("camera not set");
 	world_view_projection_matrix_ = world_matrix_ * camera_->get_view_matrix() * camera_->get_projection_matrix();
+	frustum_.load(world_view_projection_matrix_);
 }
 
 bool DrawCall::operator <(DrawCall const &rhs) const
@@ -116,7 +117,7 @@ bool DrawCall::operator <(DrawCall const &rhs) const
 
 bool DrawCall::is_visible() const
 {
-	return always_visible_ || math::frustum<>(world_view_projection_matrix_).test_intersection(bounds_);
+	return always_visible_ || frustum_.test_intersection(bounds_);
 }
 
 void DrawCall::execute()

@@ -23,6 +23,17 @@ frustum<T>::frustum()
 template<class T>
 frustum<T>::frustum(matrix<4,4> const &tf)
 {
+	load(tf);
+}
+
+template<class T>
+frustum<T>::~frustum()
+{
+}
+
+template<class T>
+void frustum<T>::load(matrix<4,4> const &tf)
+{
 	// http://zach.in.tu-clausthal.de/teaching/cg_literatur/lighthouse3d_view_frustum_culling/index.html
 
 	// left clipping plane
@@ -63,11 +74,6 @@ frustum<T>::frustum(matrix<4,4> const &tf)
 }
 
 template<class T>
-frustum<T>::~frustum()
-{
-}
-
-template<class T>
 bool frustum<T>::contains(math::vec<3> const &point) const
 {
 	for(size_t i = 0; i < PLANES_COUNT; i++)
@@ -93,8 +99,6 @@ bool frustum<T>::test_intersection(aabb<3,T> const &bounds) const
 template<class T>
 bool frustum<T>::test_intersection(obb<3,T> const &bounds) const
 {
-	return contains(bounds.origin);
-
 	for (size_t i = 0; i < PLANES_COUNT; ++i)
 	{
 		if (planes[i].classify(bounds) == plane_t::NEGATIVE) return false;
