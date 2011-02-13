@@ -32,7 +32,7 @@ BOOST_AUTO_TEST_CASE(basic)
 
 	renderer->postconstruct();
 
-	graphic::MaterialPtr material(new graphic::Material(renderer));
+	graphic::MaterialPtr material = renderer->create_material();
 	material->set_diffuse_texture(src + "test_gray.png");
 	material->set_normal_map_texture(src + "test_normal_map.jpeg");
 

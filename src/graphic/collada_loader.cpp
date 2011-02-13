@@ -1452,7 +1452,7 @@ namespace collada_elements
 	public:
 		MaterialPtr build_material() const
 		{
-			MaterialPtr material_ptr(new Material(get_model()->get_renderer()));
+			MaterialPtr material_ptr = get_model()->get_renderer()->create_material();
 
 			{
 				std::wstring const &diffuse_texture = get_surface_filename(L"diffuse");

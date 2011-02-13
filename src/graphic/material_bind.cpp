@@ -30,7 +30,6 @@ void Material::bind(lua_State *L)
 			value("BLEND_DEST_ALPHA", BLEND_DEST_ALPHA),
 			value("BLEND_INV_DEST_ALPHA", BLEND_INV_DEST_ALPHA)
 		]
-		.def(constructor<RendererPtr const &>())
 		.def("get_name", &Material::get_name)
 		.def("set_alpha_blend_enabled", &Material::set_alpha_blend_enabled)
 		.def("set_src_blend_mode", &Material::set_src_blend_mode)

@@ -16,16 +16,6 @@
 namespace graphic
 {
 
-Material::Material(RendererPtr const &renderer_ptr):
-	renderer_(renderer_ptr),
-	cull_mode_(CULL_NONE),
-	zwrite_enabled_(true),
-	alpha_blend_enabled_(false),
-	src_blend_mode_(BLEND_ONE),
-	dest_blend_mode_(BLEND_ZERO)
-{
-}
-
 Material::~Material()
 {
 }
@@ -63,7 +53,13 @@ void Material::set_normal_map_texture(std::string const &filename)
 	}
 }
 
-void Material::select()
+Material::Material(RendererPtr const &renderer_ptr):
+	renderer_(renderer_ptr),
+	cull_mode_(CULL_NONE),
+	zwrite_enabled_(true),
+	alpha_blend_enabled_(false),
+	src_blend_mode_(BLEND_ONE),
+	dest_blend_mode_(BLEND_ZERO)
 {
 }
 

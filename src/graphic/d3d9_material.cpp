@@ -51,11 +51,14 @@ void D3D9Material::select()
 	hr = renderer_->get_device()->SetRenderState(D3DRS_ALPHABLENDENABLE, alpha_blend_enabled_);
 	if (FAILED(hr)) throw exception::directx_error(hr);
 
-	hr = renderer_->get_device()->SetRenderState(D3DRS_SRCBLEND, blend_mode_table[src_blend_mode_]);
-	if (FAILED(hr)) throw exception::directx_error(hr);
+	if (alpha_blend_enabled_)
+	{
+		hr = renderer_->get_device()->SetRenderState(D3DRS_SRCBLEND, blend_mode_table[src_blend_mode_]);
+		if (FAILED(hr)) throw exception::directx_error(hr);
 
-	hr = renderer_->get_device()->SetRenderState(D3DRS_DESTBLEND, blend_mode_table[dest_blend_mode_]);
-	if (FAILED(hr)) throw exception::directx_error(hr);
+		hr = renderer_->get_device()->SetRenderState(D3DRS_DESTBLEND, blend_mode_table[dest_blend_mode_]);
+		if (FAILED(hr)) throw exception::directx_error(hr);
+	}
 }
 
 }

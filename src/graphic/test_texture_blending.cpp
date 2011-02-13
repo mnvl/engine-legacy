@@ -31,7 +31,7 @@ BOOST_AUTO_TEST_CASE(blending_weights_in_vertex)
 
 	renderer->postconstruct();
 
-	graphic::MaterialPtr material(new graphic::Material(renderer));
+	graphic::MaterialPtr material = renderer->create_material();
 	material->set_diffuse_texture(src + "test_gray.png", 0);
 	material->set_diffuse_texture(src + "test_brick_rounded.jpeg", 3);
 
@@ -126,7 +126,7 @@ BOOST_AUTO_TEST_CASE(blending_weights_in_texture)
 
 	renderer->postconstruct();
 
-	graphic::MaterialPtr material(new graphic::Material(renderer));
+	graphic::MaterialPtr material = renderer->create_material();
 	material->set_diffuse_texture(src + "test_gray.png", 0);
 	material->set_diffuse_texture(src + "test_brick_rounded.jpeg", 2);
 	material->set_texture_blending_weights_texture(src + "test_texture_blending_weights.png");
