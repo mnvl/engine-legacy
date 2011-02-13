@@ -62,6 +62,8 @@ public:
 	// and blend factor in this function
     virtual void set_animation_time(math::scalar t);
 
+	virtual void set_always_visible(bool flag);
+
     virtual void draw(CameraPtr const &camera, math::matrix<4,4> const &world_matrix);
 
     static void bind(lua_State *L);

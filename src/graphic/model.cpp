@@ -9,6 +9,7 @@
 //-----------------------------------------------------------------------------
 
 #include <boost/unordered_map.hpp>
+#include <luabind/luabind.hpp>
 #include "collada_loader.h"
 #include "model.h"
 
@@ -172,6 +173,14 @@ void Model::set_animation_time(math::scalar t)
 	}
 }
 
+void Model::set_always_visible(bool flag)
+{
+	for (meshes_type::const_iterator it = meshes.begin(); it != meshes.end(); ++it)
+	{
+		(*it)->set_always_visible(flag);
+	}
+}
+
 void Model::draw(CameraPtr const &camera, math::matrix<4,4> const &world_matrix)
 {
 	for (joints_type::iterator it = joints.begin(); it != joints.end(); it++)
@@ -181,6 +190,29 @@ void Model::draw(CameraPtr const &camera, math::matrix<4,4> const &world_matrix)
 			mesh_ptr->draw(it->get(), camera, world_matrix);
 		}
 	}
+}
+
+void Model::bind(lua_State *L)
+{
+    using namespace luabind;
+
+    module_(L, "graphic")
+    [
+        class_<Model, boost::shared_ptr<Model> >("Model")
+		.def("load_from_collada", &Model::load_from_collada)
+		.def("get_joint_by_id", &Model::get_joint_by_id)
+		.def("get_joint_by_name", &Model::get_joint_by_name)
+		.def("set_animation_time", &Model::set_animation_time)
+		.def("set_always_visible", &Model::set_always_visible)
+		.def("draw", &Model::draw)
+		.scope
+		[
+			class_<materials_type>("materials_type")
+			.def("size", &materials_type::size)
+			.def("at", (MaterialPtr &(materials_type::*)(size_t)) &materials_type::at)
+		]
+		.def_readwrite("materials", &Model::materials)
+    ];
 }
 
 }

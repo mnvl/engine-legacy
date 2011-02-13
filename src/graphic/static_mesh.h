@@ -42,6 +42,7 @@ public:
 
 	virtual void set_vertices(GenericVertex *vertices, GenericVertex::format_type format, size_t count);
 	virtual void set_indices(unsigned *indices, size_t count);
+	virtual void set_always_visible(bool flag);
 
 protected:
 	typedef VertexArray<V> vertex_array_type;
@@ -53,6 +54,7 @@ protected:
 	GenericVertex::format_type initialized_vertex_components_;
 	boost::shared_ptr<vertex_array_type> vertex_array_;
 	boost::shared_ptr<index_array_type> index_array_;
+	bool always_visible_;
 };
 
 typedef BasicStaticMesh<VERTEX_PNT> StaticMeshPNT;

@@ -78,6 +78,11 @@ void MemoryMesh::set_indices(unsigned *indices, size_t count)
 	}
 }
 
+void MemoryMesh::set_always_visible(bool /*flag*/)
+{
+	// frustum culling is not supported for memory mesh
+}
+
 void MemoryMesh::transform_vertices(Joint const *joint_ptr, std::vector<vertex_type> &result) const
 {
     std::vector<math::matrix<4,4> > joint_matrix_array;

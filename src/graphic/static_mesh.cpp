@@ -23,7 +23,8 @@ namespace graphic
 template<class T>
 BasicStaticMesh<T>::BasicStaticMesh(Model *model_ptr):
     Mesh(model_ptr),
-	initialized_vertex_components_(0)
+	initialized_vertex_components_(0),
+	always_visible_(false)
 {
 }
 
@@ -80,6 +81,7 @@ void BasicStaticMesh<T>::draw(Joint *joint_ptr, CameraPtr const &camera, math::m
 		draw_call->set_triangles_count(it->triangles_count);
 		draw_call->set_world_matrix(transform);
 		draw_call->set_camera(camera);
+		draw_call->set_always_visible(always_visible_);
 		draw_call->commit();
 
 		get_model()->get_scheduler()->add(draw_call);
@@ -161,6 +163,13 @@ void BasicStaticMesh<T>::set_indices(unsigned *buffer, size_t count)
 
     index_array_->unlock();
 }
+
+template<class T>
+void BasicStaticMesh<T>::set_always_visible(bool flag)
+{
+	always_visible_ = flag;
+}
+
 
 template StaticMeshPNT;
 template StaticMeshPTBNT;

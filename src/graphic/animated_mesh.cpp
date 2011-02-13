@@ -117,6 +117,7 @@ void BasicAnimatedMesh<V>::draw(Joint *joint_ptr, CameraPtr const &camera,
 		draw_call->set_world_matrix(transform);
 		draw_call->set_camera(camera);
 		draw_call->set_joint_matrix_array(joint_matrix_array);
+		draw_call->set_always_visible(always_visible_);
 		draw_call->commit();
 
 		get_model()->get_scheduler()->add(draw_call);

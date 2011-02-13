@@ -47,6 +47,7 @@ public:
 
 	virtual void set_vertices(GenericVertex *vertices, GenericVertex::format_type format, size_t count);
 	virtual void set_indices(unsigned *indices, size_t count);
+	virtual void set_always_visible(bool flag);
 
 	void transform_vertices(Joint const *joint_ptr, std::vector<vertex_type> &result) const;
 

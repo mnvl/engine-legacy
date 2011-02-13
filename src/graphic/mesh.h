@@ -61,6 +61,7 @@ public:
 
 	virtual void set_vertices(GenericVertex *vertices, GenericVertex::format_type format, size_t count) = 0;
 	virtual void set_indices(unsigned *indices, size_t count) = 0;
+	virtual void set_always_visible(bool flag) = 0;
 
 	virtual void check();
 
