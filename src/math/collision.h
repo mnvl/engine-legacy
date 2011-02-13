@@ -149,7 +149,7 @@ bool collide(obb<2, S> const &o, sphere<2, S> const &s, vec<2, S> const &vel, co
 	if (vel.length_sq() < EPSILON) return false;
 
 	if (not_from_inside && o.contains(s.centre)) {
-		for (size_t i = 0; i < obb<2, S>::sides_count; i++) {
+		for (size_t i = 0; i < obb<2, S>::SIDES_COUNT; i++) {
 			vec<2, S> vertex = o.get_vertex(i), normal = o.get_normal(i);
 
 			contact_info<2, S> ci0;
@@ -168,7 +168,7 @@ bool collide(obb<2, S> const &o, sphere<2, S> const &s, vec<2, S> const &vel, co
 		}
 	}
 
-	for (size_t i = 0; i < obb<2, S>::sides_count; i++) {
+	for (size_t i = 0; i < obb<2, S>::SIDES_COUNT; i++) {
 		line<2, S> side = o.get_side(i);
 
 		contact_info<2, S> ci0;

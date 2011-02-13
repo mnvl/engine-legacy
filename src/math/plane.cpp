@@ -28,7 +28,7 @@ plane<T>::get_origin() const
 	if (abs(B) > EPSILON) return vec_t(0, -D / B, 0);
 	if (abs(C) > EPSILON) return vec_t(0, 0, -D / C);
 
-	assert(0 && "does not define plane");
+	assert(0 && "does not define a plane");
 
 	return vec_t(0, 0, 0);
 }
@@ -90,8 +90,6 @@ plane<T>::classify(vec_t const &point) const
 template<class T> typename plane<T>::classification_t
 plane<T>::classify(aabb<ARITY, scalar_t> const &bounds) const
 {
-	// http://zach.in.tu-clausthal.de/teaching/cg_literatur/lighthouse3d_view_frustum_culling/index.html
-
 	vec_t p_point(A >= 0 ? bounds.hi.x : bounds.lo.x, B >= 0 ? bounds.hi.y : bounds.lo.y, C >= 0 ? bounds.hi.z : bounds.lo.z);
 	vec_t n_point(A < 0 ? bounds.hi.x : bounds.lo.x, B < 0 ? bounds.hi.y : bounds.lo.y, C < 0 ? bounds.hi.z : bounds.lo.z);
 
@@ -103,18 +101,25 @@ plane<T>::classify(aabb<ARITY, scalar_t> const &bounds) const
 template<class T> typename plane<T>::classification_t
 plane<T>::classify(obb<ARITY, scalar_t> const &bounds) const
 {
-	if (bounds.is_basis_linearly_independent())
+	bool positive = false, negative = false;
+
+	for (size_t i = 0; i < obb<ARITY, scalar_t>::VERTICES_COUNT; ++i)
 	{
-		plane p;
-		bounds.world_to_local_plane(p, *this);
-		return p.classify(aabb<ARITY, scalar_t>(vec_t(0, 0, 0), vec_t(1, 1, 1)));
+		vec_t vertex;
+		bounds.get_vertex(i, vertex);
+
+		switch (classify(vertex)) {
+		case POSITIVE: positive = true; break;
+		case NEGATIVE: negative = true; break;
+		default: return INTERSECTS;
+		};
 	}
-	else
-	{
-		aabb<3> b;
-		bounds.get_aabb(b);
-		return classify(b);
-	}
+
+	if (positive && negative) return INTERSECTS;
+	if (positive) return POSITIVE;
+
+	assert (negative);
+	return NEGATIVE;
 }
 
 template plane<>;

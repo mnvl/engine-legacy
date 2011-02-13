@@ -34,8 +34,8 @@ public:
 	typedef vec<ARITY,scalar_t> vec_t;
 	typedef matrix<ARITY+1,ARITY+1,scalar_t> matrix_t;
 	typedef aabb<ARITY,scalar_t> aabb_t;
-	static size_t const sides_count = 4;
-	static size_t const vertices_count = 4;
+	static size_t const SIDES_COUNT = 4;
+	static size_t const VERTICES_COUNT = 4;
 
 	vec_t origin, tangent, normal;
 
@@ -98,7 +98,7 @@ public:
 	line<ARITY, scalar_t> get_side(size_t side_number) const {
 		line<ARITY, scalar_t> side;
 		side.A = get_vertex(side_number);
-		side.B = get_vertex((1 + side_number) % sides_count);
+		side.B = get_vertex((1 + side_number) % SIDES_COUNT);
 		return side;
 	}
 
@@ -129,9 +129,9 @@ public:
 	typedef matrix<ARITY, ARITY, scalar_t> matrix3_t;
 	typedef matrix<ARITY+1, ARITY+1, scalar_t> matrix_t;
 	typedef aabb<ARITY,scalar_t> aabb_t;
-	static size_t const sides_count = 6;
-	static size_t const vertices_count = 8;
-	static size_t const segments_count = 4;
+	static size_t const SIDES_COUNT = 6;
+	static size_t const VERTICES_COUNT = 8;
+	static size_t const SEGMENTS_COUNT = 4;
 
 	vec_t origin, tangent, normal, binormal;
 

@@ -30,7 +30,7 @@ public:
 	enum classification_t {
 		POSITIVE = 1,
 		INTERSECTS,
-		NEGATIVE
+		NEGATIVE,
 	};
 
 	// данные
@@ -100,6 +100,8 @@ public:
 		return true;
 	}
 
+	bool is_correct() const { return abs(A) > 0 || abs(B) > 0 || abs(C) > 0; }
+
 	vec_t get_origin() const;
 	vec_t get_normal() const { return vec_t(A, B, C); }
 
@@ -108,8 +110,6 @@ public:
 
 	classification_t classify(vec_t const &point) const;
 	classification_t classify(aabb<ARITY, scalar_t> const &bounds) const;
-
-	// results may be inaccurate in case of non-linearly-independent components of OBB's basis
 	classification_t classify(obb<ARITY, scalar_t> const &bounds) const;
 };
 
