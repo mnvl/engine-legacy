@@ -28,6 +28,15 @@ public:
 	static size_t const PLANES_COUNT = 6;
 	typedef plane<scalar_t> plane_t;
 
+	enum {
+		PLANE_LEFT,
+		PLANE_RIGHT,
+		PLANE_TOP,
+		PLANE_BOTTOM,
+		PLANE_NEAR,
+		PLANE_FAR,
+	};
+
 	plane_t planes[PLANES_COUNT];
 
 	frustum();
