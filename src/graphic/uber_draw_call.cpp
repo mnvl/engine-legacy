@@ -44,6 +44,7 @@ DrawCallPtr downcast_to_draw_call(UberDrawCallPtr const &uber_draw_call)
 }
 
 }
+
 void UberDrawCall::bind(lua_State *L)
 {
 	using namespace luabind;
