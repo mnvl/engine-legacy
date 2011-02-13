@@ -103,8 +103,11 @@ void DrawCall::commit()
 	if (!vertex_buffer_) throw std::logic_error("vertex buffer not set");
 	if (!material_) throw std::logic_error("material not set");
 	if (!camera_) throw std::logic_error("camera not set");
-	world_view_projection_matrix_ = world_matrix_ * camera_->get_view_matrix() * camera_->get_projection_matrix();
-	frustum_.load(world_view_projection_matrix_);
+
+	view_projection_matrix_ = camera_->get_view_matrix() * camera_->get_projection_matrix();
+	world_view_projection_matrix_ = world_matrix_ * view_projection_matrix_;
+
+	frustum_.load(view_projection_matrix_);
 }
 
 bool DrawCall::operator <(DrawCall const &rhs) const

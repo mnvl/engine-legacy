@@ -58,7 +58,7 @@ protected:
 	size_t minimal_vertex_index_, vertices_count_, first_index_offset_, triangles_count_;
 	math::matrix<4,4> world_matrix_;
 	CameraPtr camera_;
-	math::matrix<4,4> world_view_projection_matrix_;
+	math::matrix<4,4> view_projection_matrix_, world_view_projection_matrix_;
 	math::frustum<> frustum_;
 };
 
