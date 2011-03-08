@@ -1,0 +1,71 @@
+//-----------------------------------------------------------------------------
+// Copyright (c) 2004 - 2011 Manvel Avetisian.
+// All Rights Reserved.
+//
+// This source code contains unpublished, confidential and proprietary
+// information of Manvel Avetisian and may not be disclosed to third parties
+// or copied or duplicated in any form, in whole or in part, without the
+// prior written consent of Manvel Avetisian.
+//-----------------------------------------------------------------------------
+
+#include <crtdbg.h>
+#include <iomanip>
+#include <windows.h>
+#include <boost/filesystem.hpp>
+#include <boost/filesystem/operations.hpp>
+#include <boost/regex.hpp>
+#include <log4cplus/configurator.h>
+#include <util/lua_state.h>
+#include <util/logger.h>
+
+std::vector< std::pair<std::string, std::string> > tests;
+
+void search_for_tests(boost::filesystem::path const &path)
+{
+	for (boost::filesystem::directory_iterator it(path), end; it != end; ++it)
+	{
+		if (boost::filesystem::is_directory(*it))
+		{
+			search_for_tests(*it);
+		}
+		else if (boost::filesystem::is_regular_file(*it))
+		{
+			if (boost::regex_match(it->path().filename(), boost::regex("test_.*.lua")))
+			{
+				tests.push_back(std::make_pair(it->path().filename(), it->path().native_file_string()));
+			}
+		}
+	}
+}
+
+int main(int argc, char *argv[])
+{
+    try
+    {
+		log4cplus::BasicConfigurator::doConfigure();
+
+		search_for_tests(boost::filesystem::path(ENGINE_ROOT "/lua"));
+
+		std::sort(tests.begin(), tests.end());
+
+		for (std::vector< std::pair<std::string, std::string> >::const_iterator it = tests.begin(); it != tests.end(); ++it)
+		{
+			LOG_INFO("*** [" << std::right << std::setw(3) << it - tests.begin() << " / " << std::right << std::setw(3) << tests.size() << "] " << it->first);
+
+			util::LuaState().run(it->second.c_str());
+		}
+
+    }
+    catch (std::exception const &error)
+    {
+        LOG_ERROR("exception caught: " << error.what());
+        return 1;
+    }
+    catch (...)
+    {
+        LOG_ERROR("unknown exception caught");
+        return 1;
+    }
+
+    return 0;
+}

@@ -39,6 +39,7 @@ public:
 	size_t nrows() const { return nrows_; }
     matrix<4,4> const &get_local_to_world() const { return local_to_world_; }
     matrix<4,4> const &get_world_to_local() const { return world_to_local_; }
+	aabb<3> const &get_local_aabb() const { return local_aabb_; }
 
 	void set_local_to_world(math::matrix<4, 4> const &tf);
 

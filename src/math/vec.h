@@ -9,7 +9,6 @@
 // prior written consent of Manvel Avetisian.
 //-----------------------------------------------------------------------------
 
-#include <stdio.h>
 #include <iosfwd>
 #include <string>
 #include <algorithm>
@@ -241,13 +240,6 @@ public:
 
 	void to_polar(scalar_t &modulus, scalar_t &angle) const;
 
-	std::string to_string() const
-	{
-		char buf[256];
-		sprintf(buf, "%f %f", x, y);
-		return buf;
-	}
-
 	vec perpendicular() const { return vec(y, -x); }
 
 	template<class Archive>
@@ -459,13 +451,6 @@ public:
 		return (*this ^ v).length_sq() < epsilon;
 	}
 
-	std::string to_string() const
-	{
-		char buf[256];
-		sprintf(buf, "%f %f %f", x, y, z);
-		return buf;
-	}
-
 	vec perpendicular_xy() const;
 	vec perpendicular_yz() const;
 	vec perpendicular_xz() const;
@@ -658,13 +643,6 @@ public:
 		y = -y;
 		z = -z;
 		w = -w;
-	}
-
-	std::string to_string() const
-	{
-		char buf[256];
-		sprintf(buf, "%f %f %f %f", x, y, z, w);
-		return buf;
 	}
 };
 #pragma pack(pop)

@@ -1,0 +1,100 @@
+//-----------------------------------------------------------------------------
+// Copyright (c) 2004 - 2011 Manvel Avetisian.
+// All Rights Reserved.
+//
+// This source code contains unpublished, confidential and proprietary
+// information of Manvel Avetisian and may not be disclosed to third parties
+// or copied or duplicated in any form, in whole or in part, without the
+// prior written consent of Manvel Avetisian.
+//-----------------------------------------------------------------------------
+
+#include <xercesc/util/PlatformUtils.hpp>
+#include <luabind/luabind.hpp>
+#include <luabind/detail/pcall.hpp>
+#include <graphic/bind.h>
+#include <platform/timer.h>
+#include <platform/window.h>
+#include <platform/input.h>
+#include <platform/keyboard.h>
+#include <platform/mouse.h>
+#include <math/bind.h>
+#include <spatial/bind.h>
+#include <particle_system/bind.h>
+#include <util/logger.h>
+#include <util/archive.h>
+#include "lua_state.h"
+
+extern "C"
+{
+	#include <lualib.h>
+}
+
+namespace util
+{
+
+LuaState::LuaState():
+	L_(lua_open())
+{
+	xercesc::XMLPlatformUtils::Initialize();
+
+	luaL_openlibs(L_);
+	luabind::open(L_);
+
+	graphic::bind(L_);
+
+	platform::Timer::bind(L_);
+	platform::Window::bind(L_);
+
+	math::bind(L_);
+	spatial::bind(L_);
+
+	particle_system::bind(L_);
+
+	util::bind_logger(L_);
+	util::ArchiveReader::bind(L_);
+	util::ArchiveWriter::bind(L_);
+
+	platform::Input::bind(L_);
+	platform::Keyboard::bind(L_);
+	platform::Mouse::bind(L_);
+}
+
+LuaState::~LuaState()
+{
+	lua_close(L_);
+
+	xercesc::XMLPlatformUtils::Terminate();
+}
+
+void LuaState::run(char const *filename)
+{
+	lua_getglobal(L_, "debug");
+	lua_getfield(L_, -1, "traceback");
+	lua_remove(L_, -2);
+
+	int result = luaL_loadfile(L_, filename);
+
+	if (result == 0) result = lua_pcall(L_, 0, 0, -2);
+
+	switch (result)
+	{
+	case 0:
+		// success
+		break;
+
+	case LUA_ERRSYNTAX:
+		throw std::runtime_error("syntax eror");
+
+	case LUA_ERRRUN:
+		throw std::runtime_error(lua_tostring(L_, -1));
+
+	case LUA_ERRFILE:
+		throw std::runtime_error("file not found");
+
+	default:
+		throw std::runtime_error("unknown error");
+	}
+}
+
+}
+

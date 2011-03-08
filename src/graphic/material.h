@@ -39,6 +39,7 @@ public:
 		BLEND_INV_DEST_ALPHA
 	};
 
+	Material(RendererPtr const &renderer_ptr = RendererPtr());
 	virtual ~Material();
 
 	std::string const &get_name() const { return name_; }
@@ -58,7 +59,7 @@ public:
 	void set_texture_blending_weights_texture(std::string const &filename);
 	void set_normal_map_texture(std::string const &filename);
 
-	virtual void select() = 0;
+	virtual void select();
 
 	static void bind(lua_State *L);
 
@@ -75,8 +76,6 @@ protected:
 	std::vector<TexturePtr> diffuse_textures_;
 	TexturePtr texture_blending_weights_texture_;
 	TexturePtr normal_map_texture_;
-
-	Material(RendererPtr const &renderer_ptr = RendererPtr());
 };
 
 }

@@ -1452,7 +1452,17 @@ namespace collada_elements
 	public:
 		MaterialPtr build_material() const
 		{
-			MaterialPtr material_ptr = get_model()->get_renderer()->create_material();
+			MaterialPtr material_ptr;
+
+			if (get_model()->get_renderer())
+			{
+				material_ptr = get_model()->get_renderer()->create_material();
+			}
+			else
+			{
+				LOG_WARN("material without renderer");
+				material_ptr.reset(new Material());
+			}
 
 			{
 				std::wstring const &diffuse_texture = get_surface_filename(L"diffuse");
@@ -1945,7 +1955,15 @@ void ColladaLoader::load(std::string const &filename)
 	}
 	catch (collada_elements::error const &error)
 	{
-		throw load_error("error loading collada " + filename + ": " + util::xerces_lcp_transcode(error.what()));
+		throw load_error("error loading collada '" + filename + "': " + util::xerces_lcp_transcode(error.what()));
+	}
+	catch (xercesc::XMLException const &error)
+	{
+		throw load_error("xml error loading collada '" + filename + "': " + util::xerces_lcp_transcode(error.getMessage()));
+	}
+	catch (xercesc::SAXException const &error)
+	{
+		throw load_error("sax error loading collada '" + filename + "': " + util::xerces_lcp_transcode(error.getMessage()));
 	}
 }
 
