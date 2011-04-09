@@ -58,7 +58,6 @@ std::string const &Heightfield::get_texture_filename(unsigned index)
 
 void Heightfield::set_transform(math::matrix<4, 4> const &tf)
 {
-	heightfield_.set_local_to_world(tf);
 	draw_call_->set_world_matrix(tf);
 }
 

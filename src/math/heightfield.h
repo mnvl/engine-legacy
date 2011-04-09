@@ -54,7 +54,7 @@ public:
 	template<class Archive>
 	void serialize(Archive &archive, unsigned const /*file_version*/)
 	{
-		archive & local_to_world_ & world_to_local_ & ncols_ & nrows_ & heights_ & local_aabb_;
+		archive & local_to_world_ & world_to_local_ & ncols_ & nrows_ & scale_ & heights_ & local_aabb_;
 	}
 
 	static void bind(lua_State *L, char const *name);
