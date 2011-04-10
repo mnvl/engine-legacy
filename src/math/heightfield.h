@@ -26,13 +26,13 @@ class heightfield {
 public:
     typedef T value_t;
 
-    heightfield(matrix<4,4> const &tf, size_t ncols, size_t nrows, vec<3> const &scale);
+    heightfield(matrix<4,4> const &tf, size_t ncols, size_t nrows);
     ~heightfield();
 
 	value_t local_y_at(int col, int row) const { return heights_.at(row * ncols_ + col); }
 	value_t &local_y_at(int col, int row) { return heights_.at(row * ncols_ + col); }
 
-	scalar y_at(int col, int row) const { return local_y_at(col, row) * scale_.y; }
+	scalar y_at(int col, int row) const { return local_y_at(col, row); }
 	vec<3> local_vertex_at(int col, int row) const { return vec<3>(scalar(col), local_y_at(col, row), scalar(row)); }
 
 	size_t ncols() const { return ncols_; }
@@ -54,7 +54,7 @@ public:
 	template<class Archive>
 	void serialize(Archive &archive, unsigned const /*file_version*/)
 	{
-		archive & local_to_world_ & world_to_local_ & ncols_ & nrows_ & scale_ & heights_ & local_aabb_;
+		archive & local_to_world_ & world_to_local_ & ncols_ & nrows_ & heights_ & local_aabb_;
 	}
 
 	static void bind(lua_State *L, char const *name);
@@ -62,11 +62,10 @@ public:
 private:
     matrix<4,4> local_to_world_, world_to_local_;
     size_t ncols_, nrows_;
-    vec<3> scale_;
     std::vector<value_t> heights_;
 	aabb<3> local_aabb_;
 
-    size_t nheights()
+    size_t nsamples()
     {
         return nrows_ * ncols_;
     }

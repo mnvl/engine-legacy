@@ -19,10 +19,9 @@ namespace math
 {
 
 template<class T>
-heightfield<T>::heightfield(matrix<4,4> const &tf, size_t nrows, size_t ncols, vec<3> const &scale):
+heightfield<T>::heightfield(matrix<4,4> const &tf, size_t nrows, size_t ncols):
     nrows_(nrows),
-    ncols_(ncols),
-    scale_(scale)
+    ncols_(ncols)
 {
 	set_local_to_world(tf);
 
@@ -41,7 +40,6 @@ template<class T>
 void heightfield<T>::set_local_to_world(math::matrix<4, 4> const &tf)
 {
 	local_to_world_ = tf;
-	local_to_world_.scale(scale_.x / (ncols_ - 1), 1, scale_.z / (nrows_ - 1));
     local_to_world_.inverse(world_to_local_);
 }
 
@@ -134,7 +132,7 @@ contact_info<3> heightfield<T>::trace(ray<3> const &r, scalar max_distance) cons
 template<class T>
 void heightfield<T>::load_from_raw_buffer(value_t const *heights)
 {
-    heights_.assign(heights, heights + nheights());
+    heights_.assign(heights, heights + nsamples());
 
 	post_load();
 }
@@ -189,7 +187,7 @@ void heightfield<T>::bind(lua_State *L, char const *name)
 	module(L, "math")
 	[
 		class_<heightfield>(name)
-		.def(constructor<matrix<4,4> const &, size_t, size_t, vec<3> const &>())
+		.def(constructor<matrix<4,4> const &, size_t, size_t>())
 		.def("trace", &heightfield::trace)
 		.def("ncols", &heightfield::ncols)
 		.def("nrows", &heightfield::nrows)

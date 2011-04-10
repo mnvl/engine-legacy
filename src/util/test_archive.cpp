@@ -54,7 +54,7 @@ BOOST_AUTO_TEST_CASE(writer_reader)
 	{
 		util::ArchiveWriter writer;
 		writer.open(archive_file_name);
-		writer.write_data(KEY3, DATA3, sizeof(DATA1));
+		writer.write_data(KEY3, DATA3, sizeof(DATA3));
 		writer.close();
 	}
 

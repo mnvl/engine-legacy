@@ -23,7 +23,7 @@ BOOST_AUTO_TEST_CASE(test_raytrace_simple_1)
 	math::matrix<4,4> tf;
     tf.identity();
 
-	math::heightfield<boost::uint8_t> hf(tf, 2, 2, math::vec<3>(1, 1, 1));
+	math::heightfield<boost::uint8_t> hf(tf, 2, 2);
 
     static boost::uint8_t const heights[] = {
 		0, 1,
@@ -45,7 +45,7 @@ BOOST_AUTO_TEST_CASE(test_raytrace_simple_2)
 	math::matrix<4,4> tf;
     tf.identity();
 
-	math::heightfield<boost::uint8_t> hf(tf, 2, 2, math::vec<3>(1, 1, 1));
+	math::heightfield<boost::uint8_t> hf(tf, 2, 2);
 
     static boost::uint8_t const heights[] = {
 		0, 1,
@@ -67,7 +67,7 @@ BOOST_AUTO_TEST_CASE(test_raytrace_simple_3)
 	math::matrix<4,4> tf;
     tf.identity();
 
-	math::heightfield<boost::uint8_t> hf(tf, 2, 2, math::vec<3>(1, 1, 1));
+	math::heightfield<boost::uint8_t> hf(tf, 2, 2);
 
     static boost::uint8_t const heights[] = {
 		0, 1,
@@ -89,7 +89,7 @@ BOOST_AUTO_TEST_CASE(test_raytrace_simple_4)
 	math::matrix<4,4> tf;
     tf.identity();
 
-	math::heightfield<boost::uint8_t> hf(tf, 2, 2, math::vec<3>(1, 1, 1));
+	math::heightfield<boost::uint8_t> hf(tf, 2, 2);
 
     static boost::uint8_t const heights[] = {
 		0, 1,
@@ -111,7 +111,7 @@ BOOST_AUTO_TEST_CASE(test_raytrace_simple_5)
 	math::matrix<4,4> tf;
     tf.identity();
 
-	math::heightfield<boost::uint8_t> hf(tf, 2, 2, math::vec<3>(1, 1, 1));
+	math::heightfield<boost::uint8_t> hf(tf, 2, 2);
 
     static boost::uint8_t const heights[] = {
 		0, 1,
@@ -133,7 +133,7 @@ BOOST_AUTO_TEST_CASE(test_raytrace_simple_6)
 	math::matrix<4,4> tf;
     tf.identity();
 
-	math::heightfield<boost::uint8_t> hf(tf, 2, 2, math::vec<3>(1, 1, 1));
+	math::heightfield<boost::uint8_t> hf(tf, 2, 2);
 
     static boost::uint8_t const heights[] = {
 		0, 1,
@@ -153,9 +153,9 @@ BOOST_AUTO_TEST_CASE(test_raytrace_simple_6)
 BOOST_AUTO_TEST_CASE(test_raytrace_complex_1)
 {
 	math::matrix<4,4> tf;
-    tf.identity();
+    tf.scaling(10, 1, 10);
 
-	math::heightfield<boost::uint8_t> hf(tf, 11, 11, math::vec<3>(10, 1, 10));
+	math::heightfield<boost::uint8_t> hf(tf, 11, 11);
 
     static boost::uint8_t const heights[] = {
 		0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
@@ -187,9 +187,9 @@ BOOST_AUTO_TEST_CASE(test_raytrace_complex_1)
 BOOST_AUTO_TEST_CASE(test_raytrace_complex_2)
 {
 	math::matrix<4,4> tf;
-    tf.identity();
+    tf.scaling(10, 1, 10);
 
-	math::heightfield<boost::uint8_t> hf(tf, 11, 11, math::vec<3>(10, 1, 10));
+	math::heightfield<boost::uint8_t> hf(tf, 11, 11);
 
     static boost::uint8_t const heights[] = {
 		0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
@@ -221,9 +221,9 @@ BOOST_AUTO_TEST_CASE(test_raytrace_complex_2)
 BOOST_AUTO_TEST_CASE(test_raytrace_complex_3)
 {
 	math::matrix<4,4> tf;
-    tf.identity();
+    tf.scaling(10, 1, 10);
 
-	math::heightfield<boost::uint8_t> hf(tf, 11, 11, math::vec<3>(10, 1, 10));
+	math::heightfield<boost::uint8_t> hf(tf, 11, 11);
 
     static boost::uint8_t const heights[] = {
 		0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
@@ -254,9 +254,9 @@ BOOST_AUTO_TEST_CASE(test_raytrace_complex_3)
 BOOST_AUTO_TEST_CASE(test_raytrace_complex_4)
 {
 	math::matrix<4,4> tf;
-    tf.identity();
+    tf.scaling(10, 1, 10);
 
-	math::heightfield<boost::uint8_t> hf(tf, 11, 11, math::vec<3>(10, 1, 10));
+	math::heightfield<boost::uint8_t> hf(tf, 11, 11);
 
     static boost::uint8_t const heights[] = {
 		0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
@@ -294,9 +294,9 @@ BOOST_AUTO_TEST_CASE(test_raytrace_simple_save_load_1)
 
 	{
 		math::matrix<4,4> tf;
-		tf.identity();
+		tf.scaling(10, 1, 10);
 
-		math::heightfield<boost::uint8_t> hf(tf, 11, 11, math::vec<3>(10, 1, 10));
+		math::heightfield<boost::uint8_t> hf(tf, 11, 11);
 
 		static boost::uint8_t const heights[] = {
 			0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
@@ -321,7 +321,7 @@ BOOST_AUTO_TEST_CASE(test_raytrace_simple_save_load_1)
 		dump = ss.str();
 	}
 
-	math::heightfield<boost::uint8_t> hf(math::matrix<4,4>(), 10, 10, math::vec<3>(1, 1, 1));
+	math::heightfield<boost::uint8_t> hf(math::matrix<4,4>(), 10, 10);
 	boost::archive::binary_iarchive(std::stringstream(dump)) & hf;
 
 	math::vec<3> p1(0, 10, 0);

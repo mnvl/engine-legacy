@@ -25,12 +25,11 @@ namespace pirates
 char const Heightfield::ARCHIVE_CHUNK_NAME[] = "HEIGHTFIELD";
 
 Heightfield::Heightfield(graphic::RendererPtr const &renderer, graphic::SchedulerPtr const &scheduler,
-	graphic::CameraPtr const &camera, math::matrix<4,4> const &tf,
-	size_t ncols, size_t nrows, math::vec<3> const &scale)
+	graphic::CameraPtr const &camera, math::matrix<4,4> const &tf, size_t ncols, size_t nrows)
 :
 	renderer_(renderer),
 	scheduler_(scheduler),
-	heightfield_(tf, nrows, ncols, scale)
+	heightfield_(tf, nrows, ncols)
 {
 	material_ = renderer->create_material();
 	draw_call_ = renderer->create_uber_draw_call();
@@ -58,6 +57,7 @@ std::string const &Heightfield::get_texture_filename(unsigned index)
 
 void Heightfield::set_transform(math::matrix<4, 4> const &tf)
 {
+	heightfield_.set_local_to_world(tf);
 	draw_call_->set_world_matrix(tf);
 }
 
@@ -83,7 +83,7 @@ void Heightfield::update()
 			{
 				math::scalar h = heightfield_.y_at(i, j);
 
-				vertex->position.set((math::scalar) i, h, (math::scalar) j);
+				vertex->position.set(math::scalar(i) /* (heightfield_.ncols() - 1)*/, h, math::scalar(j) /* (heightfield_.nrows() - 1)*/);
 				vertex->normal.set(0, 1, 0);
 				vertex->texcoords.set((math::scalar) i, (math::scalar) j);
 
@@ -192,8 +192,7 @@ void Heightfield::bind(lua_State *L)
 			value("GRASS", TEXTURE_GRASS)
 		]
 		.def(constructor<graphic::RendererPtr const &, graphic::SchedulerPtr const &,
-			graphic::CameraPtr const &, math::matrix<4,4> const &,
-			size_t, size_t, math::vec<3> const &>())
+			graphic::CameraPtr const &, math::matrix<4,4> const &, size_t, size_t>())
 		.def("update", &Heightfield::update)
 		.def("draw", &Heightfield::draw)
 		.def("set_texture_filename", &Heightfield::set_texture_filename)

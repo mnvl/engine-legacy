@@ -31,8 +31,7 @@ public:
 	static unsigned const TEXTURES_COUNT = 3;
 
 	Heightfield(graphic::RendererPtr const &renderer, graphic::SchedulerPtr const &scheduler,
-		graphic::CameraPtr const &camera, math::matrix<4,4> const &tf,
-		size_t nrows, size_t ncols, math::vec<3> const &scale);
+		graphic::CameraPtr const &camera, math::matrix<4,4> const &tf, size_t nrows, size_t ncols);
 	~Heightfield();
 
 	void set_texture_filename(std::string const &filename, unsigned type);
