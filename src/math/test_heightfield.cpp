@@ -153,7 +153,7 @@ BOOST_AUTO_TEST_CASE(test_raytrace_simple_6)
 BOOST_AUTO_TEST_CASE(test_raytrace_complex_1)
 {
 	math::matrix<4,4> tf;
-    tf.scaling(10, 1, 10);
+    tf.scaling(10, 10, 10);
 
 	math::heightfield<boost::uint8_t> hf(tf, 11, 11);
 
@@ -187,7 +187,7 @@ BOOST_AUTO_TEST_CASE(test_raytrace_complex_1)
 BOOST_AUTO_TEST_CASE(test_raytrace_complex_2)
 {
 	math::matrix<4,4> tf;
-    tf.scaling(10, 1, 10);
+    tf.scaling(10, 10, 10);
 
 	math::heightfield<boost::uint8_t> hf(tf, 11, 11);
 
@@ -221,7 +221,7 @@ BOOST_AUTO_TEST_CASE(test_raytrace_complex_2)
 BOOST_AUTO_TEST_CASE(test_raytrace_complex_3)
 {
 	math::matrix<4,4> tf;
-    tf.scaling(10, 1, 10);
+    tf.scaling(10, 10, 10);
 
 	math::heightfield<boost::uint8_t> hf(tf, 11, 11);
 
@@ -254,7 +254,7 @@ BOOST_AUTO_TEST_CASE(test_raytrace_complex_3)
 BOOST_AUTO_TEST_CASE(test_raytrace_complex_4)
 {
 	math::matrix<4,4> tf;
-    tf.scaling(10, 1, 10);
+    tf.scaling(10, 10, 10);
 
 	math::heightfield<boost::uint8_t> hf(tf, 11, 11);
 
@@ -294,7 +294,7 @@ BOOST_AUTO_TEST_CASE(test_raytrace_simple_save_load_1)
 
 	{
 		math::matrix<4,4> tf;
-		tf.scaling(10, 1, 10);
+		tf.scaling(10, 10, 10);
 
 		math::heightfield<boost::uint8_t> hf(tf, 11, 11);
 

@@ -37,6 +37,29 @@ heightfield<T>::~heightfield()
 }
 
 template<class T>
+scalar heightfield<T>::y_near(vec<3> const &position, scalar default_value)
+{
+	vec<3> local_position = position * world_to_local_;
+	if (local_position.x < 0 || local_position.y < 0) return default_value;
+
+	vec<2, unsigned> cell(unsigned(local_position.x), unsigned(local_position.z));
+	if (cell.x >= ncols_ - 1 || cell.y >= nrows_ - 1) return default_value;
+
+	scalar v1 = local_y_at(cell.x + 0, cell.y + 0);
+	scalar v2 = local_y_at(cell.x + 0, cell.y + 1);
+	scalar v3 = local_y_at(cell.x + 1, cell.y + 0);
+	scalar v4 = local_y_at(cell.x + 1, cell.y + 1);
+
+	scalar k1 = local_position.x - cell.x;
+	scalar k2 = local_position.y - cell.x;
+
+	scalar v12 = v1 * k1 + v2 * (1 - k1);
+	scalar v34 = v3 * k1 + v2 * (1 - k1);
+
+	return v12 * k2 + v34 * (1 - k2);
+}
+
+template<class T>
 void heightfield<T>::set_local_to_world(math::matrix<4, 4> const &tf)
 {
 	local_to_world_ = tf;
@@ -87,15 +110,15 @@ contact_info<3> heightfield<T>::trace(ray<3> const &r, scalar max_distance) cons
 		vec<3> v3 = local_vertex_at(cell.x + 1, cell.y + 1);
 		vec<3> v4 = local_vertex_at(cell.x + 1, cell.y + 0);
 
-        triangle<3> tri1(v1, v2, v3);
-        triangle<3> tri2(v1, v3, v4);
+		triangle<3> t1(v1, v2, v3);
+		triangle<3> t2(v1, v3, v4);
 
 		bool trace_h1, trace_h2;
         scalar trace_t1, trace_t2;
 		vec<3> trace_p1, trace_p2;
 
-		trace_h1 = tri1.trace(local_ray, trace_t1, trace_p1);
-		trace_h2 = tri2.trace(local_ray, trace_t2, trace_p2);
+		trace_h1 = t1.trace(local_ray, trace_t1, trace_p1);
+		trace_h2 = t2.trace(local_ray, trace_t2, trace_p2);
 
 		if (trace_h1 || trace_h2)
         {
@@ -107,13 +130,13 @@ contact_info<3> heightfield<T>::trace(ray<3> const &r, scalar max_distance) cons
             if (trace_h1 && ((trace_h2 && trace_t1 < trace_t2) || trace_h2 == false))
             {
                 ci.position = trace_p1;
-                ci.normal = tri1.get_normal();
+                ci.normal = t1.get_normal();
                 ci.time = trace_t1;
             }
             else
             {
                 ci.position = trace_p2;
-                ci.normal = tri2.get_normal();
+                ci.normal = t2.get_normal();
                 ci.time = trace_t2;
             }
 
@@ -194,6 +217,7 @@ void heightfield<T>::bind(lua_State *L, char const *name)
 		.def("get_local_aabb", &heightfield::get_local_aabb)
 		.def("resize", &heightfield::resize)
 		.def("set_local_to_world", &heightfield::set_local_to_world)
+		.def("y_near", &heightfield::y_near)
 	];
 }
 

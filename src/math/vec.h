@@ -188,7 +188,7 @@ public:
 
 	bool operator <=(vec const &rhs) const
 	{
-		return x < rhs.x && y < rhs.y;
+		return x <= rhs.x && y <= rhs.y;
 	}
 
 	bool operator >(vec const &rhs) const
@@ -198,7 +198,7 @@ public:
 
 	bool operator >=(vec const &rhs) const
 	{
-		return x > rhs.x && y > rhs.y;
+		return x >= rhs.x && y >= rhs.y;
 	}
 
 	bool operator ==(vec const &rhs) const

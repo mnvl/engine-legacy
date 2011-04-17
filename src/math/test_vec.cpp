@@ -1,3 +1,4 @@
+
 //-----------------------------------------------------------------------------
 // Copyright (c) 2004 - 2011 Manvel Avetisian.
 // All Rights Reserved.
@@ -11,9 +12,9 @@
 #include <boost/test/unit_test.hpp>
 #include "vec.h"
 
-BOOST_AUTO_TEST_SUITE (vec)
+BOOST_AUTO_TEST_SUITE(vec)
 
-BOOST_AUTO_TEST_CASE (perpendiculars)
+BOOST_AUTO_TEST_CASE(perpendiculars)
 {
 	for (int i = 0; i < 1000; i++)
 	{
