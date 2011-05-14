@@ -37,7 +37,7 @@ heightfield<T>::~heightfield()
 }
 
 template<class T>
-scalar heightfield<T>::y_near(vec<3> const &position, scalar default_value)
+scalar heightfield<T>::y_under(vec<3> const &position, scalar default_value)
 {
 	vec<3> local_position = position * world_to_local_;
 	if (local_position.x < 0 || local_position.y < 0) return default_value;
@@ -46,17 +46,17 @@ scalar heightfield<T>::y_near(vec<3> const &position, scalar default_value)
 	if (cell.x >= ncols_ - 1 || cell.y >= nrows_ - 1) return default_value;
 
 	scalar v1 = local_y_at(cell.x + 0, cell.y + 0);
-	scalar v2 = local_y_at(cell.x + 0, cell.y + 1);
-	scalar v3 = local_y_at(cell.x + 1, cell.y + 0);
+	scalar v2 = local_y_at(cell.x + 1, cell.y + 0);
+	scalar v3 = local_y_at(cell.x + 0, cell.y + 1);
 	scalar v4 = local_y_at(cell.x + 1, cell.y + 1);
 
 	scalar k1 = local_position.x - cell.x;
-	scalar k2 = local_position.y - cell.x;
+	scalar k2 = local_position.z - cell.x;
 
-	scalar v12 = v1 * k1 + v2 * (1 - k1);
-	scalar v34 = v3 * k1 + v2 * (1 - k1);
+	scalar v12 = v1 * (1 - k1) + v2 * k1;
+	scalar v34 = v3 * (1 - k1) + v4 * k1;
 
-	return v12 * k2 + v34 * (1 - k2);
+	return v12 * (1 - k2) + v34 * k2;
 }
 
 template<class T>
@@ -217,7 +217,7 @@ void heightfield<T>::bind(lua_State *L, char const *name)
 		.def("get_local_aabb", &heightfield::get_local_aabb)
 		.def("resize", &heightfield::resize)
 		.def("set_local_to_world", &heightfield::set_local_to_world)
-		.def("y_near", &heightfield::y_near)
+		.def("y_under", &heightfield::y_under)
 	];
 }
 

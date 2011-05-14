@@ -33,7 +33,7 @@ public:
 	value_t &local_y_at(int col, int row) { return heights_.at(row * ncols_ + col); }
 	vec<3> local_vertex_at(int col, int row) const { return vec<3>(scalar(col), local_y_at(col, row), scalar(row)); }
 
-	scalar y_near(vec<3> const &position, scalar default_value = 0);
+	scalar y_under(vec<3> const &position, scalar default_value = 0);
 
 	size_t ncols() const { return ncols_; }
 	size_t nrows() const { return nrows_; }

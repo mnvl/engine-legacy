@@ -66,7 +66,6 @@ public:
 class ArchiveWriter: public Archive {
 public:
 	void create(std::string const &filename);
-	void open(std::string const &filename);
 	void write_data(std::string const &key, void const *data, size_t len);
 	void write_data(std::string const &key, std::string const &data);
 	void write_file(std::string const &key, std::fstream &file);

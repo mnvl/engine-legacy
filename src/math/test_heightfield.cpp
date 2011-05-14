@@ -335,4 +335,45 @@ BOOST_AUTO_TEST_CASE(test_raytrace_simple_save_load_1)
 	BOOST_REQUIRE (ci.normal.y > 0);
 }
 
+BOOST_AUTO_TEST_CASE(test_y_under)
+{
+	math::matrix<4,4> tf;
+	tf.scaling(1, 1, 1);
+
+	math::heightfield<boost::uint8_t> hf(tf, 2, 2);
+
+	static boost::uint8_t heights[2 * 2] = {
+		0, 1,
+		4, 9,
+	};
+
+	hf.load_from_raw_buffer(heights);
+
+	for (size_t i = 0; i < 100; ++i)
+	{
+		math::scalar height = hf.y_under(math::vec<3>(i / 100.0f, 100, 0));
+		BOOST_REQUIRE (abs(height - i / 100.0) < 1e-3);
+	}
+
+	for (size_t i = 0; i < 100; ++i)
+	{
+		math::scalar height = hf.y_under(math::vec<3>(0, 100, i / 100.0f));
+		BOOST_REQUIRE (abs(height - 4 * i / 100.0) < 1e-3);
+	}
+
+	for (size_t i = 0; i < 100; ++i)
+	{
+		math::scalar height1 = hf.y_under(math::vec<3>(i / 100.0f, 100, 1 - 1e-6f));
+		math::scalar height2 = 4 + (9 - 4) * i / 100.0;
+		BOOST_REQUIRE (abs(height1 - height2) < 0.01f);
+	}
+
+	for (size_t i = 0; i < 100; ++i)
+	{
+		math::scalar height1 = hf.y_under(math::vec<3>(1 - 1e-6f, 100, i / 100.0f));
+		math::scalar height2 = 1 + (9 - 1) * i / 100.0;
+		BOOST_REQUIRE (abs(height1 - height2) < 0.01f);
+	}
+}
+
 BOOST_AUTO_TEST_SUITE_END()

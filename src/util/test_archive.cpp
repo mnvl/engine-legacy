@@ -51,6 +51,7 @@ BOOST_AUTO_TEST_CASE(writer_reader)
 		BOOST_ASSERT(std::equal(data2.begin(), data2.end(), DATA2));
 	}
 
+	/*
 	{
 		util::ArchiveWriter writer;
 		writer.open(archive_file_name);
@@ -74,29 +75,7 @@ BOOST_AUTO_TEST_CASE(writer_reader)
 		reader.read_data(KEY3, data3);
 		BOOST_ASSERT(std::equal(data3.begin(), data3.end(), DATA3));
 	}
-
-	{
-		util::ArchiveWriter writer;
-		writer.open(archive_file_name);
-		writer.close();
-	}
-
-	{
-		util::ArchiveReader reader;
-		reader.open(archive_file_name);
-
-		std::vector<char> data1;
-		reader.read_data(KEY1, data1);
-		BOOST_ASSERT(std::equal(data1.begin(), data1.end(), DATA1));
-
-		std::vector<char> data2;
-		reader.read_data(KEY2, data2);
-		BOOST_ASSERT(std::equal(data2.begin(), data2.end(), DATA2));
-
-		std::vector<char> data3;
-		reader.read_data(KEY3, data3);
-		BOOST_ASSERT(std::equal(data3.begin(), data3.end(), DATA3));
-	}
+	*/
 
 	unlink(archive_file_name);
 }

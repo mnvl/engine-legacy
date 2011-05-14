@@ -17,7 +17,7 @@ BOOST_AUTO_TEST_CASE(position_and_node)
 {
 	class my_scorer: public math::a_star::scorer {
 	public:
-		virtual math::scalar get_score(math::vec<3> const &position) const {
+		virtual math::scalar get_score(math::vec<3> const &position, math::vec<3> const &goal) const {
 			return 1;
 		}
 	};
@@ -28,6 +28,21 @@ BOOST_AUTO_TEST_CASE(position_and_node)
 	BOOST_REQUIRE((as.node_to_position(as.position_to_node(math::vec<2>(0, 0))) - math::vec<2>(0, 0)).length_sq() < 1e-6);
 	BOOST_REQUIRE((as.node_to_position(as.position_to_node(math::vec<2>(11, 22))) - math::vec<2>(11, 22)).length_sq() < 1e-6);
 	BOOST_REQUIRE((as.node_to_position(as.position_to_node(math::vec<2>(-401, 62))) - math::vec<2>(-401, 62)).length_sq() < 1e-6);
+}
+
+BOOST_AUTO_TEST_CASE(simple_path)
+{
+	class my_scorer: public math::a_star::scorer {
+	public:
+		virtual math::scalar get_score(math::vec<3> const &position, math::vec<3> const &goal) const {
+			return (goal - position).length();
+		}
+	};
+
+	my_scorer scorer;
+	math::a_star as(math::vec<2>(-10, 20), math::vec<2>(20, 10), 0.1f, &scorer);
+
+	as.calculate();
 }
 
 BOOST_AUTO_TEST_SUITE_END()

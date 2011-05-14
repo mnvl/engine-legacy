@@ -131,12 +131,6 @@ void ArchiveWriter::create(std::string const &filename)
 	file_.write((char const *) &header, sizeof(ARCHIVE_HEADER));
 }
 
-void ArchiveWriter::open(std::string const &filename)
-{
-	file_.open(filename.c_str(), std::ios_base::in | std::ios_base::out | std::ios_base::binary);
-	read_directory();
-}
-
 void ArchiveWriter::write_data(std::string const &key, void const *data, size_t len)
 {
 	CHUNK_LAYOUT chunk_layout;
