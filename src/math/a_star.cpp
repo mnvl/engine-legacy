@@ -32,14 +32,41 @@ void a_star::calculate_path()
 	run();
 }
 
-std::vector<a_star::point> a_star::build_path() const
+std::vector<a_star::point> a_star::build_path(bool allow_best_heuristic_point) const
 {
 	std::vector<point> result;
-
-	if (failed_) return result;
-
 	point current_point = goal_;
-	result.push_back(goal_);
+
+	if (failed_)
+	{
+		if (allow_best_heuristic_point)
+		{
+			scalar best_cost = -1;
+			point best_point;
+
+			for (boost::unordered_map<point, PointRecord, PointHash>::const_iterator it = point_records_.begin();
+				 it != point_records_.end(); ++it)
+			{
+				if (it->second.heuristic_cost < 0) continue;
+
+				if (best_cost < 0 || it->second.heuristic_cost < best_cost)
+				{
+					best_cost = it->second.heuristic_cost;
+					best_point = it->first;
+				}
+			}
+
+			if (best_cost < 0) return result;
+
+			current_point = best_point;
+		}
+		else
+		{
+			return result;
+		}
+	}
+
+	result.push_back(current_point);
 
 	while (current_point != start_)
 	{
@@ -80,6 +107,8 @@ void a_star::start()
 	pr.best_cost = 0;
 	pr.heuristic_cost = scorer_(start_);
 	pr.total_cost = pr.heuristic_cost;
+
+	if (pr.heuristic_cost < 0) return;
 
 	add_open_point(start_, pr.total_cost);
 }
@@ -127,6 +156,12 @@ void a_star::process_point_neighbour(point const &p, PointRecord const &pr, poin
 		nr.came_from = p;
 		nr.best_cost = tentative_best_cost;
 		nr.heuristic_cost = scorer_(n);
+
+		if (nr.heuristic_cost < 0) {
+			nr.total_cost = -nr.best_cost;
+			return;
+		}
+
 		nr.total_cost = nr.best_cost + nr.heuristic_cost;
 
 		add_open_point(n, nr.total_cost);

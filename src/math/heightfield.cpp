@@ -11,7 +11,10 @@
 #include <stdexcept>
 #include <utility>
 #include <boost/cstdint.hpp>
+#include <boost/bind.hpp>
 #include <luabind/luabind.hpp>
+#include <luabind/iterator_policy.hpp>
+#include <math/a_star.h>
 #include "bresenham_supercover.h"
 #include "heightfield.h"
 
@@ -71,6 +74,12 @@ vec<2, int> heightfield<T>::world_position_to_cell(vec<3> const &position)
 {
 	vec<3> p = position * world_to_local_;
 	return vec<2, int>(int(p.x), int(p.z));
+}
+
+template<class T>
+vec<3> heightfield<T>::cell_to_world_position(vec<2, int> const &cell)
+{
+	return vec<3>((scalar) cell.x, 0, (scalar) cell.y) * local_to_world_;
 }
 
 template<class T>
@@ -182,6 +191,49 @@ void heightfield<T>::resize(size_t ncols, size_t nrows)
 }
 
 template<class T>
+std::vector< vec<2, int> > heightfield<T>::build_path(vec<3> const &from, vec<3> const &to, value_t min_value, bool allow_best_heuristic_point)
+{
+	vec<2, int> start = world_position_to_cell(from);
+	vec<2, int> goal = world_position_to_cell(to);
+
+	struct scorer
+	{
+		heightfield const *hf;
+		scalar min_value;
+		vec<2, int> goal;
+
+		scalar get_score(vec<2, int> const &cell)
+		{
+			scalar delta = (scalar) (cell - goal).length_sq();
+
+			if (cell.x < 0) return -1;
+			if (cell.y < 0) return -1;
+			if (cell.x >= (int) hf->nrows()) return -1;
+			if (cell.y >= (int) hf->ncols()) return -1;
+
+			if (hf->local_y_at(cell.x, cell.y) < min_value)
+			{
+				return delta;
+			}
+			else
+			{
+				return -1;
+			}
+		}
+	};
+
+	scorer s;
+	s.hf = this;
+	s.min_value = min_value;
+	s.goal = goal;
+
+	a_star pathfinder(start, goal, boost::bind(&scorer::get_score, &s, _1));
+	pathfinder.calculate_path();
+
+	return pathfinder.build_path(allow_best_heuristic_point);
+}
+
+template<class T>
 void heightfield<T>::post_load()
 {
 	local_aabb_.null();
@@ -211,13 +263,16 @@ void heightfield<T>::bind(lua_State *L, char const *name)
 	[
 		class_<heightfield>(name)
 		.def(constructor<matrix<4,4> const &, size_t, size_t>())
-		.def("trace", &heightfield::trace)
+		.def("y_under", &heightfield::y_under)
 		.def("ncols", &heightfield::ncols)
 		.def("nrows", &heightfield::nrows)
-		.def("get_local_aabb", &heightfield::get_local_aabb)
-		.def("resize", &heightfield::resize)
 		.def("set_local_to_world", &heightfield::set_local_to_world)
-		.def("y_under", &heightfield::y_under)
+		.def("get_local_aabb", &heightfield::get_local_aabb)
+		.def("world_position_to_cell", &heightfield::world_position_to_cell)
+		.def("cell_to_world_position", &heightfield::cell_to_world_position)
+		.def("build_path", &heightfield::build_path)
+		.def("trace", &heightfield::trace)
+		.def("resize", &heightfield::resize)
 	];
 }
 

@@ -26,6 +26,7 @@
 #include <particle_system/bind.h>
 #include <util/logger.h>
 #include <util/archive.h>
+#include <util/bind_stl.h>
 #include <util/bind_boost.h>
 #include "heightfield.h"
 
@@ -63,6 +64,7 @@ public:
 		platform::Keyboard::bind(L_);
 		platform::Mouse::bind(L_);
 
+		util::bind_stl(L_);
 		util::bind_boost(L_);
 
 		pirates::Heightfield::bind(L_);

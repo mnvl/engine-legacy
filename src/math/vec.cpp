@@ -86,22 +86,34 @@ template<int N, class T> void deserialize(math::vec<N, T> &v, std::string const 
 
 }
 
-void bind_vec(lua_State *L)
+template<class T>
+void bind_vec2(lua_State *L, char const *name)
 {
 	using namespace luabind;
 
 	module(L, "math")
 	[
-		class_<vec<2> >("vec2")
+		class_< vec<2, T> >(name)
 		.def(constructor<>())
 		.def(constructor<scalar, scalar>())
-		.def_readwrite("x", &vec<2>::x)
-		.def_readwrite("y", &vec<2>::y)
-		.def("set", &vec<2>::set)
+		.def_readwrite("x", &vec<2, T>::x)
+		.def_readwrite("y", &vec<2, T>::y)
+		.def("set", &vec<2, T>::set)
 		.def(const_self < const_self)
 		.def(const_self == const_self)
-		.def(tostring(const_self)),
+		.def(tostring(const_self))
+	 ];
+}
 
+void bind_vec(lua_State *L)
+{
+	using namespace luabind;
+
+	bind_vec2<int>(L, "vec2i");
+	bind_vec2<scalar>(L, "vec2");
+
+	module(L, "math")
+	[
 		class_<vec<3> >("vec3")
 		.def(constructor<>())
 		.def(constructor<scalar, scalar, scalar>())

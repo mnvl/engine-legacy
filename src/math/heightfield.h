@@ -42,14 +42,12 @@ public:
 	aabb<3> const &get_local_aabb() const { return local_aabb_; }
 
 	void set_local_to_world(math::matrix<4, 4> const &tf);
-
 	vec<2, int> world_position_to_cell(vec<3> const &position);
-
+	vec<3> cell_to_world_position(vec<2, int> const &cell);
     contact_info<3> trace(ray<3> const &r, scalar max_distance = 1000.0f) const;
-
     void load_from_raw_buffer(value_t const *heights);
-
 	void resize(size_t ncols, size_t nrows);
+	std::vector< vec<2, int> > build_path(vec<3> const &from, vec<3> const &to, value_t min_value = 0, bool allow_best_heuristic_point = false);
 
 	template<class Archive>
 	void serialize(Archive &archive, unsigned const /*file_version*/)

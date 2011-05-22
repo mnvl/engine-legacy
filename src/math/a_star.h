@@ -29,7 +29,7 @@ public:
 
 	void calculate_path();
 	bool have_failed() const { return failed_; }
-	std::vector<point> build_path() const;
+	std::vector<point> build_path(bool allow_best_heuristic_point = false) const;
 
 private:
 	point const start_, goal_;
