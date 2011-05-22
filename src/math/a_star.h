@@ -9,8 +9,9 @@
 // prior written consent of Manvel Avetisian.
 //-----------------------------------------------------------------------------
 
-#include <map>
+#include <set>
 #include <vector>
+#include <boost/function.hpp>
 #include <boost/unordered_set.hpp>
 #include <boost/unordered_map.hpp>
 #include "vec.h"
@@ -20,56 +21,48 @@ namespace math
 
 class a_star {
 public:
-	typedef vec<2, int> node_t;
+	typedef vec<2, int> point;
+	typedef boost::function<scalar (point const &)> scorer_t;
 
-	node_t const position_to_node(vec<2> const &position) {
-		vec<2> delta = (position - start_) / delta_;
-		return vec<2, int>(int(delta.x), int(delta.y));
-	}
-
-	vec<2> const node_to_position(node_t const &node)
-	{
-		return start_ + vec<2>(node.x * delta_, node.y * delta_);
-	}
-
-	class scorer {
-	public:
-		virtual ~scorer();
-		virtual scalar get_score(vec<3> const &position, vec<3> const &goal) const = 0;
-	};
-
-	a_star(vec<2> const &start, vec<2> const &goal, scalar delta, scorer *scorer_ptr, scalar score_threshold = 0);
+	a_star(point const &start, point const &goal, scorer_t const &scorer);
 	~a_star();
 
-	void calculate();
+	void calculate_path();
+	bool have_failed() const { return failed_; }
+	std::vector<point> build_path() const;
 
 private:
-	vec<2> const start_;
-	node_t start_node_;
-	vec<2> const goal_;
-	node_t goal_node_;
-	scalar const delta_;
-	scalar const score_threshold_;
-	scorer * const scorer_ptr_;
+	point const start_, goal_;
+	scorer_t const scorer_;
+	bool failed_;
 
-	class NodeHash: public std::unary_function<node_t, size_t> {
-	public:
-		size_t operator ()(node_t const &node) const
-		{
-			return node.x * 10133 + node.y;
-		}
+	struct PointRecord
+	{
+		point came_from;
+		scalar best_cost;
+		scalar heuristic_cost;
+		scalar total_cost;
 	};
 
-	boost::unordered_set<node_t, NodeHash> closed_set_;
-	std::multimap<scalar, node_t> open_set_forw_;
-	boost::unordered_map<node_t, scalar, NodeHash> open_set_backw_;
-	boost::unordered_map<node_t, node_t, NodeHash> came_from_;
+	struct PointHash
+	{
+		size_t operator ()(point const &p) const { return size_t(p.x) * 1000 + size_t(p.y); }
+	};
 
-	boost::unordered_map<node_t, scalar, NodeHash> g_score_; // distance from start along optimal path
-	boost::unordered_map<node_t, scalar, NodeHash> f_score_; // heuristic estimate of distance
-	boost::unordered_map<node_t, scalar, NodeHash> h_score_; // estimated total distance from start to goal through y
+	boost::unordered_set<point, PointHash> closed_points_;
+	boost::unordered_set<point, PointHash> open_points_;
+	std::multiset< std::pair<scalar, point> > weighted_open_points_;
+	boost::unordered_map<point, PointRecord, PointHash> point_records_;
 
-	void reconstruct_path();
+	void add_open_point(point const &p, scalar w);
+	point pop_cheapest_open_point();
+	bool is_point_open(point const &p) const { return open_points_.find(p) != open_points_.end(); }
+	void update_open_point_cost(point const &p, scalar prev_w, scalar new_w);
+
+	void start();
+	void run();
+	void process_next_point();
+	void process_point_neighbour(point const &p, PointRecord const &pr, point const &n);
 };
 
 }
