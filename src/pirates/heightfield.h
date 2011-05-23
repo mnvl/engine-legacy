@@ -44,7 +44,7 @@ public:
 
 	math::heightfield<> *get_storage() { return &heightfield_; }
 
-	void add(math::vec<3> const &position, math::scalar delta);
+	void add(math::vec<3> const &position, int radius, math::scalar delta);
 
 	void read(util::ArchiveReaderPtr const &reader);
 	void write(util::ArchiveWriterPtr const &writer);

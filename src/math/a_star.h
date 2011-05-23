@@ -36,7 +36,7 @@ private:
 	scorer_t const scorer_;
 	bool failed_;
 
-	struct PointRecord
+	struct point_record
 	{
 		point came_from;
 		scalar best_cost;
@@ -44,15 +44,22 @@ private:
 		scalar total_cost;
 	};
 
-	struct PointHash
-	{
-		size_t operator ()(point const &p) const { return size_t(p.x) * 1000 + size_t(p.y); }
+	struct point_hash { size_t operator ()(point const &p) const { return size_t(p.x) * 1000 + size_t(p.y); } };
+	struct point_equal { bool operator ()(point const &p1, point const &p2) const { return p1 == p2; } };
+
+	struct weighted_point_less {
+		bool operator ()(std::pair<scalar, point> const &l, std::pair<scalar, point> const &r) const {
+			if (l.first < r.first) return true;
+			if (l.first > r.first) return false;
+
+			return lexicographical_less(l.second, r.second);
+		}
 	};
 
-	boost::unordered_set<point, PointHash> closed_points_;
-	boost::unordered_set<point, PointHash> open_points_;
-	std::multiset< std::pair<scalar, point> > weighted_open_points_;
-	boost::unordered_map<point, PointRecord, PointHash> point_records_;
+	boost::unordered_set<point, point_hash, point_equal> closed_points_;
+	boost::unordered_set<point, point_hash, point_equal> open_points_;
+	std::multiset< std::pair<scalar, point>, weighted_point_less> weighted_open_points_;
+	boost::unordered_map<point, point_record, point_hash, point_equal> point_records_;
 
 	void add_open_point(point const &p, scalar w);
 	point pop_cheapest_open_point();
@@ -62,7 +69,7 @@ private:
 	void start();
 	void run();
 	void process_next_point();
-	void process_point_neighbour(point const &p, PointRecord const &pr, point const &n);
+	void process_point_neighbour(point const &p, point_record const &pr, point const &n);
 };
 
 }

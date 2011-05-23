@@ -138,16 +138,25 @@ void Heightfield::draw()
 	scheduler_->add(draw_call_);
 }
 
-void Heightfield::add(math::vec<3> const &position, math::scalar delta)
+void Heightfield::add(math::vec<3> const &position, int radius, math::scalar delta)
 {
 	math::vec<2, int> cell = heightfield_.world_position_to_cell(position);
 
-	if (cell.x > 0 && cell.y > 0 && cell.x < heightfield_.ncols() - 1 && cell.y < heightfield_.nrows() - 1)
+	for (int x = cell.x - radius; x <= cell.x + radius; ++x)
 	{
-		heightfield_.local_y_at(cell.x, cell.y) += delta / 4;
-		heightfield_.local_y_at(cell.x + 1, cell.y) += delta / 4;
-		heightfield_.local_y_at(cell.x, cell.y + 1) += delta / 4;
-		heightfield_.local_y_at(cell.x + 1, cell.y + 1) += delta / 4;
+		for (int y = cell.y - radius; y <= cell.y + radius; ++y)
+		{
+			if (x >= 0 && y >= 0 && x < (int) heightfield_.ncols() - 1 && y < (int) heightfield_.nrows() - 1)
+			{
+				int dx = x - cell.x;
+				int dy = y - cell.y;
+
+				if (dx * dx + dy * dy < radius * radius)
+				{
+					heightfield_.local_y_at(x, y) += delta;
+				}
+			}
+		}
 	}
 }
 

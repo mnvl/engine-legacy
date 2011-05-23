@@ -44,7 +44,7 @@ std::vector<a_star::point> a_star::build_path(bool allow_best_heuristic_point) c
 			scalar best_cost = -1;
 			point best_point;
 
-			for (boost::unordered_map<point, PointRecord, PointHash>::const_iterator it = point_records_.begin();
+			for (boost::unordered_map<point, point_record, point_hash>::const_iterator it = point_records_.begin();
 				 it != point_records_.end(); ++it)
 			{
 				if (it->second.heuristic_cost < 0) continue;
@@ -103,7 +103,7 @@ void a_star::update_open_point_cost(point const &p, scalar prev_w, scalar new_w)
 
 void a_star::start()
 {
-	PointRecord &pr = point_records_[start_];
+	point_record &pr = point_records_[start_];
 	pr.best_cost = 0;
 	pr.heuristic_cost = scorer_(start_);
 	pr.total_cost = pr.heuristic_cost;
@@ -130,26 +130,25 @@ void a_star::process_next_point()
 
 	closed_points_.insert(p);
 
-	PointRecord const &pr = point_records_.find(p)->second;
+	point_record const &pr = point_records_.find(p)->second;
 
 	process_point_neighbour(p, pr, p + point(-1, -1));
 	process_point_neighbour(p, pr, p + point(-1,  0));
 	process_point_neighbour(p, pr, p + point(-1,  1));
 	process_point_neighbour(p, pr, p + point( 0, -1));
-	process_point_neighbour(p, pr, p + point( 0,  0));
 	process_point_neighbour(p, pr, p + point( 0,  1));
 	process_point_neighbour(p, pr, p + point( 1, -1));
 	process_point_neighbour(p, pr, p + point( 1,  0));
 	process_point_neighbour(p, pr, p + point( 1,  1));
 }
 
-void a_star::process_point_neighbour(point const &p, PointRecord const &pr, point const &n)
+void a_star::process_point_neighbour(point const &p, point_record const &pr, point const &n)
 {
 	if (closed_points_.find(n) != closed_points_.end()) return;
 
 	scalar tentative_best_cost = pr.best_cost + 1;
 
-	PointRecord &nr = point_records_[n];
+	point_record &nr = point_records_[n];
 
 	if (!is_point_open(n))
 	{
@@ -157,8 +156,10 @@ void a_star::process_point_neighbour(point const &p, PointRecord const &pr, poin
 		nr.best_cost = tentative_best_cost;
 		nr.heuristic_cost = scorer_(n);
 
-		if (nr.heuristic_cost < 0) {
+		if (nr.heuristic_cost < 0)
+		{
 			nr.total_cost = -nr.best_cost;
+			closed_points_.insert(n);
 			return;
 		}
 
