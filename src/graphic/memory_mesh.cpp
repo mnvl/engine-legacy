@@ -24,6 +24,11 @@ MemoryMesh::~MemoryMesh()
 {
 }
 
+math::aabb<3> const &MemoryMesh::get_bounds() const
+{
+	throw std::runtime_error("not supported");
+}
+
 MeshPtr MemoryMesh::shallow_copy() const
 {
 	return MeshPtr(new MemoryMesh(*this));

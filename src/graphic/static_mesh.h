@@ -32,6 +32,7 @@ public:
 	BasicStaticMesh(Model *model_ptr);
 	~BasicStaticMesh();
 
+	virtual math::aabb<3> const &get_bounds() const;
 	virtual MeshPtr shallow_copy() const;
 
 	BasicStaticModel<V> *get_model();

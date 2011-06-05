@@ -43,6 +43,8 @@ public:
 	RendererPtr const &get_renderer() const { return renderer_; }
 	SchedulerPtr const &get_scheduler() const { return scheduler_; }
 
+	virtual math::aabb<3> get_bounds() const;
+
 	JointPtr get_joint_by_id(std::string const &name);
 	JointPtr get_joint_by_name(std::string const &name);
 	MeshPtr get_mesh_by_id(std::string const &id);

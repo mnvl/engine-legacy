@@ -34,6 +34,12 @@ BasicStaticMesh<T>::~BasicStaticMesh()
 }
 
 template<class T>
+math::aabb<3> const &BasicStaticMesh<T>::get_bounds() const
+{
+	return bounds_;
+}
+
+template<class T>
 MeshPtr BasicStaticMesh<T>::shallow_copy() const
 {
 	return MeshPtr(new BasicStaticMesh<T>(*this));

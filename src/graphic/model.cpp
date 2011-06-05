@@ -93,6 +93,19 @@ Model::~Model()
 {
 }
 
+math::aabb<3> Model::get_bounds() const
+{
+	math::aabb<3> bounds;
+	bounds.null();
+
+	for (meshes_type::const_iterator it = meshes.begin(); it != meshes.end(); ++it)
+	{
+		bounds.extend((*it)->get_bounds());
+	}
+
+	return bounds;
+}
+
 JointPtr Model::add_joint()
 {
 	joints.push_back(JointPtr(new Joint(joints.size())));
@@ -199,6 +212,7 @@ void Model::bind(lua_State *L)
     module_(L, "graphic")
     [
         class_<Model, boost::shared_ptr<Model> >("Model")
+		.def("get_bounds", &Model::get_bounds)
 		.def("load_from_collada", &Model::load_from_collada)
 		.def("get_joint_by_id", &Model::get_joint_by_id)
 		.def("get_joint_by_name", &Model::get_joint_by_name)

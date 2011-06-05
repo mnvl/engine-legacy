@@ -66,7 +66,10 @@ scalar heightfield<T>::y_under(vec<3> const &position, scalar default_value)
 template<class T>
 scalar heightfield<T>::max_y_in_cell(int col, int row, scalar default_value) const
 {
-	if (col < 0 || row < 0 || col >= (int) ncols_ - 1 || row >= (int) nrows_ - 1) return default_value;
+	if (col < 0 || row < 0 || col >= (int) ncols_ - 1 || row >= (int) nrows_ - 1)
+	{
+		return default_value;
+	}
 
 	scalar v1 = local_y_at(col + 0, row + 0);
 	scalar v2 = local_y_at(col + 1, row + 0);
@@ -289,6 +292,7 @@ void heightfield<T>::bind(lua_State *L, char const *name)
 		class_<heightfield>(name)
 		.def(constructor<matrix<4,4> const &, size_t, size_t>())
 		.def("y_under", &heightfield::y_under)
+		.def("max_y_in_cell", (scalar (heightfield::*)(vec<3> const &, scalar) const) &heightfield::max_y_in_cell)
 		.def("ncols", &heightfield::ncols)
 		.def("nrows", &heightfield::nrows)
 		.def("set_local_to_world", &heightfield::set_local_to_world)

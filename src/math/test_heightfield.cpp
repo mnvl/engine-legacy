@@ -358,20 +358,20 @@ BOOST_AUTO_TEST_CASE(test_y_under)
 	for (size_t i = 0; i < 100; ++i)
 	{
 		math::scalar height = hf.y_under(math::vec<3>(0, 100, i / 100.0f));
-		BOOST_REQUIRE (abs(height - 4 * i / 100.0) < 1e-3);
+		BOOST_REQUIRE (abs(height - 4 * i / 100.0f) < 1e-3);
 	}
 
 	for (size_t i = 0; i < 100; ++i)
 	{
 		math::scalar height1 = hf.y_under(math::vec<3>(i / 100.0f, 100, 1 - 1e-6f));
-		math::scalar height2 = 4 + (9 - 4) * i / 100.0;
+		math::scalar height2 = 4 + (9 - 4) * i / 100.0f;
 		BOOST_REQUIRE (abs(height1 - height2) < 0.01f);
 	}
 
 	for (size_t i = 0; i < 100; ++i)
 	{
 		math::scalar height1 = hf.y_under(math::vec<3>(1 - 1e-6f, 100, i / 100.0f));
-		math::scalar height2 = 1 + (9 - 1) * i / 100.0;
+		math::scalar height2 = 1 + (9 - 1) * i / 100.0f;
 		BOOST_REQUIRE (abs(height1 - height2) < 0.01f);
 	}
 }

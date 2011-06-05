@@ -39,6 +39,7 @@ public:
 	MemoryMesh(MemoryModel *m);
 	virtual ~MemoryMesh();
 
+	virtual math::aabb<3> const &get_bounds() const;
 	virtual MeshPtr shallow_copy() const;
 
 	std::vector<vertex_type> const &get_vertex_buffer() const { return vertices_; }

@@ -12,6 +12,7 @@
 #include <vector>
 #include <boost/shared_ptr.hpp>
 #include <boost/weak_ptr.hpp>
+#include <math/aabb.h>
 #include <math/matrix.h>
 #include "material.h"
 #include "generic_vertex.h"
@@ -53,6 +54,8 @@ public:
 
 	Mesh(Model *model_ptr = 0);
 	virtual ~Mesh();
+
+	virtual math::aabb<3> const &get_bounds() const = 0;
 
 	virtual MeshPtr shallow_copy() const = 0;
 
