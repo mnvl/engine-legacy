@@ -254,7 +254,7 @@ void Octree::intersect_shallow(ShapePtr const &shape, math::aabb<3> const &bound
 	{
 		if (ShapePtr sh = it->lock())
 		{
-			if (sh->get_bounds().test_intersection(bounds))
+			if (sh != shape && sh->get_bounds().test_intersection(bounds))
 			{
 				// maybe check here that result does not contain shape
 

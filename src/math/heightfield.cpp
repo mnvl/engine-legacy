@@ -43,23 +43,48 @@ template<class T>
 scalar heightfield<T>::y_under(vec<3> const &position, scalar default_value)
 {
 	vec<3> local_position = position * world_to_local_;
-	if (local_position.x < 0 || local_position.y < 0) return default_value;
 
-	vec<2, unsigned> cell(unsigned(local_position.x), unsigned(local_position.z));
-	if (cell.x >= ncols_ - 1 || cell.y >= nrows_ - 1) return default_value;
+	int col = (int) local_position.x;
+	int row = (int) local_position.z;
 
-	scalar v1 = local_y_at(cell.x + 0, cell.y + 0);
-	scalar v2 = local_y_at(cell.x + 1, cell.y + 0);
-	scalar v3 = local_y_at(cell.x + 0, cell.y + 1);
-	scalar v4 = local_y_at(cell.x + 1, cell.y + 1);
+	if (col < 0 || row < 0 || col >= (int) ncols_ - 1 || row >= (int) nrows_ - 1) return default_value;
 
-	scalar k1 = local_position.x - cell.x;
-	scalar k2 = local_position.z - cell.x;
+	scalar v1 = local_y_at(col + 0, row + 0);
+	scalar v2 = local_y_at(col + 1, row + 0);
+	scalar v3 = local_y_at(col + 0, row + 1);
+	scalar v4 = local_y_at(col + 1, row + 1);
+
+	scalar k1 = local_position.x - col;
+	scalar k2 = local_position.z - col;
 
 	scalar v12 = v1 * (1 - k1) + v2 * k1;
 	scalar v34 = v3 * (1 - k1) + v4 * k1;
 
 	return v12 * (1 - k2) + v34 * k2;
+}
+
+template<class T>
+scalar heightfield<T>::max_y_in_cell(int col, int row, scalar default_value) const
+{
+	if (col < 0 || row < 0 || col >= (int) ncols_ - 1 || row >= (int) nrows_ - 1) return default_value;
+
+	scalar v1 = local_y_at(col + 0, row + 0);
+	scalar v2 = local_y_at(col + 1, row + 0);
+	scalar v3 = local_y_at(col + 0, row + 1);
+	scalar v4 = local_y_at(col + 1, row + 1);
+
+	return std::max(std::max(v1, v2), std::max(v3, v4));
+}
+
+template<class T>
+scalar heightfield<T>::max_y_in_cell(vec<3> const &position, scalar default_value) const
+{
+	vec<3> local_position = position * world_to_local_;
+
+	int col = (int) local_position.x;
+	int row = (int) local_position.z;
+
+	return max_y_in_cell(col, row, default_value);
 }
 
 template<class T>
@@ -211,7 +236,7 @@ std::vector< vec<2, int> > heightfield<T>::build_path(vec<3> const &from, vec<3>
 			if (cell.x >= (int) hf->nrows()) return -1;
 			if (cell.y >= (int) hf->ncols()) return -1;
 
-			if (hf->local_y_at(cell.x, cell.y) < min_value)
+			if (hf->max_y_in_cell(cell.x, cell.y) < min_value)
 			{
 				return delta;
 			}
