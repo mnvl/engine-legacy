@@ -71,12 +71,12 @@ scalar heightfield<T>::max_y_in_cell(int col, int row, scalar default_value) con
 		return default_value;
 	}
 
-	scalar v1 = local_y_at(col + 0, row + 0);
-	scalar v2 = local_y_at(col + 1, row + 0);
-	scalar v3 = local_y_at(col + 0, row + 1);
-	scalar v4 = local_y_at(col + 1, row + 1);
+	scalar result = (scalar) local_y_at(col + 0, row + 0);
+	result = std::max(result, (scalar) local_y_at(col + 0, row + 1));
+	result = std::max(result, (scalar) local_y_at(col + 1, row + 0));
+	result = std::max(result, (scalar) local_y_at(col + 1, row + 1));
 
-	return std::max(std::max(v1, v2), std::max(v3, v4));
+	return result;
 }
 
 template<class T>
@@ -97,17 +97,17 @@ void heightfield<T>::set_local_to_world(math::matrix<4, 4> const &tf)
     local_to_world_.inverse(world_to_local_);
 }
 
-template<class T>
-vec<2, int> heightfield<T>::world_position_to_cell(vec<3> const &position)
+template<class T> typename heightfield<T>::cell_t
+heightfield<T>::world_position_to_cell(vec<3> const &position) const
 {
 	vec<3> p = position * world_to_local_;
-	return vec<2, int>(int(p.x), int(p.z));
+	return cell_t(int(p.x), int(p.z));
 }
 
 template<class T>
-vec<3> heightfield<T>::cell_to_world_position(vec<2, int> const &cell)
+vec<3> heightfield<T>::cell_to_world_position(cell_t const &cell) const
 {
-	return vec<3>((scalar) cell.x, 0, (scalar) cell.y) * local_to_world_;
+	return vec<3>((scalar) cell.x + 0.5f, 0, (scalar) cell.y + 0.5f) * local_to_world_;
 }
 
 template<class T>
@@ -128,12 +128,12 @@ contact_info<3> heightfield<T>::trace(ray<3> const &r, scalar max_distance) cons
 	vec<3> local_p0_adjusted = local_ray.apply(local_ray_t0);
 	vec<3> local_p1_adjusted = local_ray.apply(local_ray_t1);
 
-	bresenham_supercover<> cells_iterator(vec<2, int>(int (local_p0_adjusted.x), int(local_p0_adjusted.z)),
-		vec<2, int>(int(local_p1_adjusted.x), int(local_p1_adjusted.z)));
+	bresenham_supercover<> cells_iterator(cell_t(int (local_p0_adjusted.x), int(local_p0_adjusted.z)),
+		cell_t(int(local_p1_adjusted.x), int(local_p1_adjusted.z)));
 
 	while (true)
 	{
-		vec<2, int> cell;
+		cell_t cell;
 		bool flag;
 
 		boost::tie(cell, flag) = cells_iterator.get();
@@ -218,28 +218,39 @@ void heightfield<T>::resize(size_t ncols, size_t nrows)
 	post_load();
 }
 
-template<class T>
-std::vector< vec<2, int> > heightfield<T>::build_path(vec<3> const &from, vec<3> const &to, value_t min_value, bool allow_best_heuristic_point)
+template<class T> std::vector<typename heightfield<T>::cell_t>
+heightfield<T>::build_path(vec<3> const &from, vec<3> const &to, value_t min_value, bool allow_best_heuristic_point,
+	std::vector<cell_t> const &obstacles) const
 {
-	vec<2, int> start = world_position_to_cell(from);
-	vec<2, int> goal = world_position_to_cell(to);
+	cell_t start = world_position_to_cell(from);
+	cell_t goal = world_position_to_cell(to);
 
-	struct scorer
-	{
-		heightfield const *hf;
-		scalar min_value;
-		vec<2, int> goal;
-
-		scalar get_score(vec<2, int> const &cell)
+	class scorer {
+	public:
+		scorer(heightfield const *hf, scalar min_value, cell_t goal, std::vector< cell_t > const &obstacles):
+			hf_(hf),
+			min_value_(min_value),
+			goal_(goal),
+			obstacles_(obstacles)
 		{
-			scalar delta = (scalar) (cell - goal).length_sq();
+		}
 
+		scalar get_score(cell_t const &cell) const
+		{
 			if (cell.x < 0) return -1;
 			if (cell.y < 0) return -1;
-			if (cell.x >= (int) hf->nrows()) return -1;
-			if (cell.y >= (int) hf->ncols()) return -1;
+			if (cell.x >= (int) hf_->nrows()) return -1;
+			if (cell.y >= (int) hf_->ncols()) return -1;
 
-			if (hf->max_y_in_cell(cell.x, cell.y) < min_value)
+			for (std::vector< cell_t >::const_iterator it = obstacles_.begin();
+				 it != obstacles_.end(); ++it)
+			{
+				if (cell == *it) return -1;
+			}
+
+			scalar delta = (scalar) (cell - goal_).length_sq();
+
+			if (hf_->max_y_in_cell(cell.x, cell.y) < min_value_)
 			{
 				return delta;
 			}
@@ -248,13 +259,15 @@ std::vector< vec<2, int> > heightfield<T>::build_path(vec<3> const &from, vec<3>
 				return -1;
 			}
 		}
+
+	private:
+		heightfield const *hf_;
+		scalar min_value_;
+		cell_t goal_;
+		std::vector<cell_t> const &obstacles_;
 	};
 
-	scorer s;
-	s.hf = this;
-	s.min_value = min_value;
-	s.goal = goal;
-
+	scorer s(this, min_value, goal, obstacles);
 	a_star pathfinder(start, goal, boost::bind(&scorer::get_score, &s, _1));
 	pathfinder.calculate_path();
 

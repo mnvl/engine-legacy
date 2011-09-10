@@ -24,7 +24,9 @@ void bind_vector(lua_State* L, char const *name)
 	module(L, "stl")
 	[
 		class_< std::vector<T> >(name)
+		.def(constructor<>())
 		.def("size", &std::vector<T>::size)
+		.def("push_back", &std::vector<T>::push_back)
 		.def("at", (T const &(std::vector<T>::*)(size_t) const) &std::vector<T>::at)
 	 ];
 }

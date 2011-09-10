@@ -44,7 +44,7 @@ private:
 		scalar total_cost;
 	};
 
-	struct point_hash { size_t operator ()(point const &p) const { return size_t(p.x) * 1000 + size_t(p.y); } };
+	struct point_hash { size_t operator ()(point const &p) const { return size_t(p.x) * 1011 + size_t(p.y); } };
 	struct point_equal { bool operator ()(point const &p1, point const &p2) const { return p1 == p2; } };
 
 	struct weighted_point_less {
