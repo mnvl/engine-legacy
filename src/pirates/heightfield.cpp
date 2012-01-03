@@ -146,7 +146,7 @@ void Heightfield::add(math::vec<3> const &position, int radius, math::scalar del
 	{
 		for (int y = cell.y - radius; y <= cell.y + radius; ++y)
 		{
-			if (x >= 0 && y >= 0 && x < (int) heightfield_.ncols() - 1 && y < (int) heightfield_.nrows() - 1)
+			if (x >= 0 && y >= 0 && x < (int) heightfield_.ncols() && y < (int) heightfield_.nrows())
 			{
 				int dx = x - cell.x;
 				int dy = y - cell.y;

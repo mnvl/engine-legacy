@@ -184,10 +184,10 @@ public:
 	// данные
 	union {
 		struct {
-			float _11, _12, _13, _14;
-            float _21, _22, _23, _24;
-            float _31, _32, _33, _34;
-            float _41, _42, _43, _44;
+			scalar_t _11, _12, _13, _14;
+            scalar_t _21, _22, _23, _24;
+            scalar_t _31, _32, _33, _34;
+            scalar_t _41, _42, _43, _44;
         };
 
 		scalar_t ij[WIDTH][HEIGHT];
