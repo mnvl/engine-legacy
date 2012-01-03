@@ -49,6 +49,7 @@ namespace collada_elements
 		error(std::wstring const &message):
 			message_(message)
 		{
+			int a = 0;
 		}
 
 		std::wstring const &what() const { return message_; }
@@ -791,7 +792,7 @@ namespace collada_elements
 			{
 				vertices_ = construct<vertices_e>(child_ptr);
 			}
-			else if (child_name == L"triangles")
+			else if (child_name == L"triangles" || child_name == L"polygons")
 			{
 				triangles_.push_back(construct<triangles_e>(child_ptr));
 			}
@@ -1439,11 +1440,13 @@ namespace collada_elements
 			}
 		}
 
-		newparam_e const *get_newparam(std::wstring const &name) const
+		newparam_e const *get_newparam(std::wstring const &name, bool throw_on_error = true) const
 		{
 			boost::ptr_map<std::wstring, newparam_e>::const_iterator it = newparams_.find(name);
-			if (it == newparams_.end()) throw error(L"<newparam> with name " + name + L" not found");
-
+			if (it == newparams_.end()) {
+				if (throw_on_error) throw error(L"<newparam> with name " + name + L" not found");
+				return 0;
+			}
 			return it->second;
 		}
 
@@ -1762,15 +1765,15 @@ namespace collada_elements
 		std::wstring const &sampler_name = technique_->get_shader()->get_sampler_name(component_name);
 		if (sampler_name.empty()) return sampler_name;
 
-		newparam_e const *sampler_ptr = get_newparam(sampler_name);
+		if (newparam_e const *sampler_ptr = get_newparam(sampler_name, false)) {
+			std::wstring const &surface_name = sampler_ptr->get_sampler()->get_source();
+			newparam_e const *surface_ptr = get_newparam(surface_name);
+			std::wstring const &image_name = surface_ptr->get_surface()->get_init_from();
+			std::wstring const &filepath = get_root()->get_images()->get_image_by_name(image_name)->get_init_from();
+			return boost::filesystem::wpath(filepath).filename();
+		}
 
-		std::wstring const &surface_name = sampler_ptr->get_sampler()->get_source();
-		newparam_e const *surface_ptr = get_newparam(surface_name);
-
-		std::wstring const &image_name = surface_ptr->get_surface()->get_init_from();
-
-		std::wstring const &filepath = get_root()->get_images()->get_image_by_name(image_name)->get_init_from();
-
+		std::wstring const &filepath = get_root()->get_images()->get_image_by_name(sampler_name)->get_init_from();
 		return boost::filesystem::wpath(filepath).filename();
 	}
 
