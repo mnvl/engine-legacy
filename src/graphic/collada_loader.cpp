@@ -49,7 +49,6 @@ namespace collada_elements
 		error(std::wstring const &message):
 			message_(message)
 		{
-			int a = 0;
 		}
 
 		std::wstring const &what() const { return message_; }
