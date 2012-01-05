@@ -27,7 +27,7 @@ BOOST_FIXTURE_TEST_CASE(basic, graphic::TestFixture)
 	graphic::RendererPtr renderer(new graphic::D3D9Renderer());
 	renderer->postconstruct();
 
-	graphic::FontPtr font(new graphic::Font(renderer, "d:/home/arial.ttf", 72));
+	graphic::FontPtr font(new graphic::Font(renderer, "arial.ttf", 72));
 
 	graphic::TexturePtr texture = font->create_texture("hello", math::vec<3>(1, 1, 1));
 

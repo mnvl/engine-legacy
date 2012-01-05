@@ -42,6 +42,7 @@ void D3D9Texture::create_texture() {
 		pixel_format.direct3d_format, pool_, &texture_ptr, 0);
 	if (FAILED(hr)) throw exception::directx_error(hr);
 	texture_.reset(texture_ptr);
+	texture_ptr->Release();
 
 	clone_.resize(width_ * height_ * pixel_format.bits / 8);
 }
