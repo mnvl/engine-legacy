@@ -57,6 +57,7 @@ public:
 	void set_dest_blend_mode(blend_mode_type dest_blend_mode) { dest_blend_mode_ = dest_blend_mode; }
 
 	void set_diffuse_texture(std::string const &filename, size_t index = 0);
+	void set_diffuse_texture(TexturePtr const &texture, size_t index = 0);
 	void set_texture_blending_weights_texture(std::string const &filename);
 	void set_normal_map_texture(std::string const &filename);
 

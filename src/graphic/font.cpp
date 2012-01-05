@@ -10,6 +10,7 @@
 
 #include <boost/lexical_cast.hpp>
 #include <luabind/luabind.hpp>
+#include "texture.h"
 #include "renderer.h"
 #include "font.h"
 
@@ -21,34 +22,30 @@ namespace graphic
 {
 
 Font::Font(RendererPtr const &renderer, std::string const &filename, int height):
-	renderer_(renderer),
-	ft_library_(get_ft_library())
+	renderer_(renderer)
 {
-	FT_Error error;
+	init_library();
 
-	error = FT_New_Face(ft_library_.get(), filename.c_str(), 0, &ft_face_);
-	if (error) throw_freetype_error(error);
-
-	error = FT_Set_Pixel_Sizes(ft_face_, 0, height);
-	if (error) throw_freetype_error(error);
+	font_ = TTF_OpenFont(filename.c_str(), height);
+	if (!font_) throw_error();
 }
 
 Font::~Font() {
+	TTF_CloseFont(font_);
 }
 
-TexturePtr Font::create_texture(std::string const& text, math::vec<3> const &color, math::vec<3> const &background_color) {
-	FT_Error error;
+TexturePtr Font::create_texture(std::string const& text, math::vec<3> const &color) {
+	SDL_Color sdl_color;
 
-	int width = ft_face_->max_advance_width * text.size();
-	int height = ft_face_->max_advance_height * text.size();
+	sdl_color.r = Uint8(color.r * 255);
+	sdl_color.g = Uint8(color.g * 255);
+	sdl_color.b = Uint8(color.b * 255);
 
-	TexturePtr texture = renderer_->create_texture((int) ceil(double(width) / 64),
-		(int) ceil(double(height) / 64), 32);
+	SDL_Surface *surface = TTF_RenderUTF8_Solid(font_, text.c_str(), sdl_color);
 
-	for (size_t i = 0; i < text.size(); ++i) {
-		error = FT_Load_Char(ft_face_, text[i], FT_LOAD_RENDER);
-		if (error) throw_freetype_error(error);
-	}
+	TexturePtr texture = Texture::load_from_sdl_surface(renderer_, surface);
+
+	SDL_FreeSurface(surface);
 
 	return texture;
 }
@@ -58,23 +55,24 @@ void Font::draw(math::vec<2> const &left_top, math::vec<2> const &right_bottom, 
 {
 }
 
-boost::shared_ptr<Font::ft_library_type> Font::get_ft_library() {
-	static boost::weak_ptr<ft_library_type> weak_ft_library;
+void Font::init_library() {
+	struct Guard {
+		Guard() {
+			if (TTF_Init() == -1) {
+				throw_error();
+			}
+		}
 
-	if (boost::shared_ptr<ft_library_type> result = weak_ft_library.lock())
-		return result;
+		~Guard() {
+			TTF_Quit();
+		}
+	};
 
-	FT_Library ft_library;
-	FT_Error error = FT_Init_FreeType(&ft_library);
-	if (error) throw_freetype_error(error);
-
-	boost::shared_ptr<ft_library_type> result(ft_library, FT_Done_FreeType);
-	weak_ft_library = result;
-	return result;
+	static Guard guard;
 }
 
-void Font::throw_freetype_error(FT_Error error) {
-	throw std::runtime_error("freetype error " + boost::lexical_cast<std::string>(error));
+void Font::throw_error() {
+	throw std::runtime_error(std::string("SDL_ttf error ") + TTF_GetError());
 }
 
 void Font::bind(lua_State *L)

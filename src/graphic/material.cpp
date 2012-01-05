@@ -30,6 +30,11 @@ Material::~Material()
 {
 }
 
+void Material::set_diffuse_texture(TexturePtr const &texture, size_t index) {
+	if (diffuse_textures_.size() <= index) diffuse_textures_.resize(index + 1);
+	diffuse_textures_[index] = texture;
+}
+
 void Material::set_diffuse_texture(std::string const &filename, size_t index)
 {
 	if (diffuse_textures_.size() <= index) diffuse_textures_.resize(index + 1);

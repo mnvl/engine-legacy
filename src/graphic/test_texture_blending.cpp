@@ -18,7 +18,6 @@
 #include "vertex_array.h"
 #include "index_array.h"
 #include "uber_draw_call.h"
-#include "d3d9_shader.h"
 #include "d3d9_renderer.h"
 
 BOOST_AUTO_TEST_SUITE(texture_blending)
@@ -28,7 +27,6 @@ BOOST_FIXTURE_TEST_CASE(blending_weights_in_vertex, graphic::TestFixture)
 	std::string const &src = util::get_graphic_sources_path();
 
 	boost::shared_ptr<graphic::D3D9Renderer> renderer(new graphic::D3D9Renderer());
-
 	renderer->postconstruct();
 
 	graphic::MaterialPtr material = renderer->create_material();

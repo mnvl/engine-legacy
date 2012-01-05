@@ -55,7 +55,7 @@ public:
 		bool dynamic = false, bool writeonly = false);
 
 	virtual TexturePtr create_texture(int width, int height, unsigned pixel_format,
-		bool dynamic = false, bool writeonly = false) = 0;
+		bool dynamic = false, bool writeonly = false);
 	virtual MaterialPtr create_material();
 	virtual ShaderPtr create_shader();
 
