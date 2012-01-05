@@ -1,6 +1,6 @@
 
 //-----------------------------------------------------------------------------
-// Copyright (c) 2004 - 2011 Manvel Avetisian.
+// Copyright (c) 2004 - 2012 Manvel Avetisian.
 // All Rights Reserved.
 //
 // This source code contains unpublished, confidential and proprietary

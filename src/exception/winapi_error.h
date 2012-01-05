@@ -1,6 +1,6 @@
 #pragma once
 //-----------------------------------------------------------------------------
-// Copyright (c) 2004 - 2010 Manvel Avetisian.
+// Copyright (c) 2004 - 2012 Manvel Avetisian.
 // All Rights Reserved.
 //
 // This source code contains unpublished, confidential and proprietary
