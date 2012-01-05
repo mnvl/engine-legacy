@@ -67,13 +67,13 @@ void D3D9Texture::unlock() {
 	size_t source_pitch = width_ * pixel_format.bits / 8;
 
 	char *get = &clone_[0];
-	char *put = (char *) locked_rect.pBits;
 
 	for (int y = 0; y < height_; ++y) {
+		char *put = (char *) locked_rect.pBits + locked_rect.Pitch * (height_ - y - 1);
+
 		memcpy(put, get, source_pitch);
 
 		get += source_pitch;
-		put += locked_rect.Pitch;
 	}
 
 	texture_->UnlockRect(0);
@@ -81,10 +81,13 @@ void D3D9Texture::unlock() {
 
 void D3D9Texture::handle_lost_device()
 {
+	texture_.reset();
 }
 
 void D3D9Texture::handle_reset_device()
 {
+	create_texture();
+	unlock();
 }
 
 }

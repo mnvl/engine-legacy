@@ -91,6 +91,8 @@ void Font::bind(lua_State *L)
 			value("FLAG_ALIGN_VCENTER", FLAG_ALIGN_VCENTER),
 			value("FLAG_ALIGN_BOTTOM", FLAG_ALIGN_BOTTOM)
 		]
+		.def(constructor<RendererPtr const &, std::string const &, int>())
+		.def("create_texture", &Font::create_texture)
 		.def("draw", &Font::draw)
     ];
 }
