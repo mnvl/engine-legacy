@@ -26,9 +26,7 @@
 namespace graphic
 {
 
-Renderer::Renderer(boost::shared_ptr<platform::Window> const &window):
-	window_(window)
-{
+Renderer::Renderer() {
 }
 
 Renderer::~Renderer() {

@@ -8,6 +8,8 @@
 // prior written consent of Manvel Avetisian.
 //-----------------------------------------------------------------------------
 
+#include <SDL.h>
+#include <SDL_syswm.h>
 #include <exception/directx_error.h>
 #include <util/logger.h>
 #include <util/get_sources_path.h>
@@ -25,18 +27,20 @@
 namespace graphic
 {
 
-D3D9Renderer::D3D9Renderer(boost::shared_ptr<platform::Window> const &window, int width, int height, bool fullscreen):
-	Renderer(window),
+D3D9Renderer::D3D9Renderer(int width, int height, bool fullscreen):
+	Renderer(),
 	screen_width_(width),
 	screen_height_(height),
 	fullscreen_(fullscreen)
 {
+  	HWND window_handle = get_window_handle();
+
 	HRESULT hr;
 
 	if (!screen_width_ || !screen_height_)
 	{
 		RECT rc;
-		GetClientRect(window->get_handle(), &rc);
+		GetClientRect(window_handle, &rc);
 
 		screen_width_ = rc.right - rc.left;
 		screen_height_ = rc.bottom - rc.top;
@@ -84,7 +88,7 @@ D3D9Renderer::D3D9Renderer(boost::shared_ptr<platform::Window> const &window, in
 		pp_.MultiSampleType = D3DMULTISAMPLE_NONE;
 		pp_.MultiSampleQuality = 0;
 		pp_.SwapEffect = D3DSWAPEFFECT_DISCARD;
-		pp_.hDeviceWindow = window_->get_handle();
+		pp_.hDeviceWindow = window_handle;
 		pp_.Windowed = !fullscreen_;
 		pp_.EnableAutoDepthStencil = TRUE;
 		pp_.AutoDepthStencilFormat = D3DFMT_D24S8;
@@ -92,7 +96,7 @@ D3D9Renderer::D3D9Renderer(boost::shared_ptr<platform::Window> const &window, in
 		pp_.FullScreen_RefreshRateInHz = 0;
 		pp_.PresentationInterval = D3DPRESENT_INTERVAL_IMMEDIATE;
 
-		hr = direct3d_->CreateDevice(adapter, device_type, window_->get_handle(),
+		hr = direct3d_->CreateDevice(adapter, device_type, window_handle,
 			D3DCREATE_HARDWARE_VERTEXPROCESSING, &pp_, &device_ptr);
 
 		if (FAILED(hr))
@@ -100,7 +104,7 @@ D3D9Renderer::D3D9Renderer(boost::shared_ptr<platform::Window> const &window, in
 			LOG_ERROR("failed to create direct3d device with hr = " << std::hex << hr
 				<< ", trying sw vertex processing");
 
-			hr = direct3d_->CreateDevice(adapter, device_type, window_->get_handle(),
+			hr = direct3d_->CreateDevice(adapter, device_type, window_handle,
 				D3DCREATE_SOFTWARE_VERTEXPROCESSING, &pp_, &device_ptr);
 		}
 
@@ -131,8 +135,10 @@ void D3D9Renderer::postconstruct()
 
 	vertex_declarations_.reset(new D3D9VertexDeclarations(this));
 
+	/*
 	window_->signal_resize.connect
 		(boost::signals2::signal0<void>::slot_type(&D3D9Renderer::handle_resize, this).track(shared_from_this()));
+*/
 
 	reset_state();
 }
@@ -281,12 +287,19 @@ UberShaderPtr D3D9Renderer::get_uber_shader() const
 	return uber_shader_;
 }
 
+HWND D3D9Renderer::get_window_handle() {
+	SDL_SysWMinfo si;
+	SDL_VERSION(&si.version);
+	if (SDL_GetWMInfo(&si) <= 0) throw std::runtime_error(SDL_GetError());
+	return (HWND) si.window;
+}
+
 void D3D9Renderer::handle_resize()
 {
 	if (fullscreen_) return;
 
 	RECT rc;
-	GetClientRect(window_->get_handle(), &rc);
+	GetClientRect(get_window_handle(), &rc);
 
 	screen_width_ = rc.right - rc.left;
 	screen_height_ = rc.bottom - rc.top;

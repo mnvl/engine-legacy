@@ -1,7 +1,6 @@
 
 IF(WIN32)
   ADD_SUBDIRECTORY(graphic)
-  ADD_SUBDIRECTORY(platform)
   ADD_SUBDIRECTORY(particle_system)
 
   ADD_SUBDIRECTORY(translator)

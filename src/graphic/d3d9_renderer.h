@@ -83,6 +83,7 @@ private:
 	UberShaderPtr uber_shader_;
 	boost::scoped_ptr<D3D9VertexDeclarations> vertex_declarations_;
 
+	static HWND get_window_handle();
 	void handle_resize();
 };
 

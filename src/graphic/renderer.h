@@ -26,7 +26,7 @@ namespace graphic
 
 class Renderer: public boost::enable_shared_from_this<Renderer>, public boost::noncopyable {
 public:
-	Renderer(boost::shared_ptr<platform::Window> const &window);
+	Renderer();
 	virtual ~Renderer();
 
 	virtual void postconstruct() = 0;
@@ -69,9 +69,6 @@ public:
 	virtual UberDrawCallPtr create_uber_draw_call() = 0;
 
     static void bind(lua_State *L);
-
-protected:
-	boost::shared_ptr<platform::Window> const window_;
 };
 
 }

@@ -41,7 +41,7 @@ void graphic::Renderer::bind(lua_State *L)
 		.def("create_font", &Renderer::create_font),
 
 		class_<D3D9Renderer, Renderer, RendererPtr>("D3D9Renderer")
-		.def(constructor<boost::shared_ptr<platform::Window> const &, int, int, bool>())
+		.def(constructor<int, int, bool>())
     ];
 }
 
