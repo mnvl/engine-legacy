@@ -271,9 +271,9 @@ IndexBufferPtr D3D9Renderer::create_index_buffer(unsigned format, size_t size, b
 	return index_buffer;
 }
 
-TexturePtr D3D9Renderer::create_texture(std::string const &filename)
+TexturePtr D3D9Renderer::create_texture(int width, int height, int bpp)
 {
-	boost::shared_ptr<D3D9Texture> texture(new D3D9Texture(shared_from_this(), filename));
+	boost::shared_ptr<D3D9Texture> texture(new D3D9Texture(shared_from_this(), width, height, bpp));
 	register_resource(texture);
 	return texture;
 }

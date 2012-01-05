@@ -8,18 +8,6 @@
 // prior written consent of Manvel Avetisian.
 //-----------------------------------------------------------------------------
 
-#include <d3dx9.h>
-#include <boost/bind.hpp>
-#include <exception/directx_error.h>
-#include <util/logger.h>
-#include "d3d9_vertex_buffer.h"
-#include "d3d9_index_buffer.h"
-#include "d3d9_texture.h"
-#include "texture.h"
-#include "font.h"
-#include "shader.h"
-#include "material.h"
-#include "d3d9_vertex_declarations.h"
 #include "renderer.h"
 
 namespace graphic

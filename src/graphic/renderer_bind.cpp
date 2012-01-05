@@ -12,7 +12,6 @@
 #include <luabind/luabind.hpp>
 #include "texture.h"
 #include "material.h"
-#include "font.h"
 #include "renderer.h"
 #include "draw_call.h"
 #include "uber_draw_call.h"

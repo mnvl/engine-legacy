@@ -54,7 +54,7 @@ public:
 	virtual IndexBufferPtr create_index_buffer(unsigned index_format, size_t size,
 		bool dynamic = false, bool writeonly = false);
 
-	virtual TexturePtr create_texture(std::string const &filename);
+	virtual TexturePtr create_texture(int width, int height, int bpp);
 	virtual MaterialPtr create_material();
 	virtual ShaderPtr create_shader();
 

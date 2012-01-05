@@ -59,7 +59,7 @@ public:
 				create_index_buffer(INDEX_FORMAT_U16, sizeof(I) * count, dynamic, writeonly)));
 	}
 
-	virtual TexturePtr create_texture(std::string const &filename) = 0;
+	virtual TexturePtr create_texture(int width, int height, int bpp) = 0;
 	virtual MaterialPtr create_material() = 0;
 	virtual ShaderPtr create_shader() = 0;
 

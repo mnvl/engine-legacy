@@ -15,8 +15,8 @@
 namespace graphic
 {
 
-Texture::Texture(std::string const &filename):
-	filename_(filename)
+Texture::Texture(int width, int height, int bpp):
+	width_(width), height_(height), bpp_(bpp)
 {
 }
 
