@@ -37,6 +37,11 @@ D3D9Renderer::D3D9Renderer(int width, int height, bool fullscreen, HWND window_h
 	init();
 }
 
+	D3D9Renderer::~D3D9Renderer()
+{
+}
+
+
 void D3D9Renderer::init() {
 	HRESULT hr;
 
@@ -118,10 +123,6 @@ void D3D9Renderer::init() {
 	}
 }
 
-D3D9Renderer::~D3D9Renderer()
-{
-}
-
 int D3D9Renderer::get_screen_width() const
 {
 	return screen_width_;
@@ -132,16 +133,34 @@ int D3D9Renderer::get_screen_height() const
 	return screen_height_;
 }
 
+void D3D9Renderer::resize(int width, int height)
+{
+	if (fullscreen_) return;
+
+	if (!width || !height) {
+		RECT rc;
+		GetClientRect(window_handle_, &rc);
+
+		screen_width_ = rc.right - rc.left;
+		screen_height_ = rc.bottom - rc.top;
+	} else {
+		screen_width_ = width;
+		screen_height_ = height;
+	}
+
+	LOG_INFO("window resized, new client dimensions are " << screen_width_ << 'x' << screen_height_);
+
+	pp_.BackBufferWidth = screen_width_;
+	pp_.BackBufferHeight = screen_height_;
+
+	reset_device();
+}
+
 void D3D9Renderer::postconstruct()
 {
 	uber_shader_.reset(new UberShader(shared_from_this()));
 
 	vertex_declarations_.reset(new D3D9VertexDeclarations(this));
-
-	/*
-	window_->signal_resize.connect
-		(boost::signals2::signal0<void>::slot_type(&D3D9Renderer::handle_resize, this).track(shared_from_this()));
-*/
 
 	reset_state();
 }
@@ -295,24 +314,6 @@ HWND D3D9Renderer::get_sdl_window_handle() {
 	SDL_VERSION(&si.version);
 	if (SDL_GetWMInfo(&si) <= 0) throw std::runtime_error(SDL_GetError());
 	return (HWND) si.window;
-}
-
-void D3D9Renderer::handle_resize()
-{
-	if (fullscreen_) return;
-
-	RECT rc;
-	GetClientRect(window_handle_, &rc);
-
-	screen_width_ = rc.right - rc.left;
-	screen_height_ = rc.bottom - rc.top;
-
-	LOG_INFO("window resized, new client dimensions are " << screen_width_ << 'x' << screen_height_);
-
-	pp_.BackBufferWidth = screen_width_;
-	pp_.BackBufferHeight = screen_height_;
-
-	reset_device();
 }
 
 }

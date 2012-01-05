@@ -32,6 +32,7 @@ public:
 
 	virtual int get_screen_width() const = 0;
 	virtual int get_screen_height() const = 0;
+	virtual void resize(int width, int height) = 0;
 
 	virtual void begin_frame() = 0;
 	virtual void finish_frame() = 0;

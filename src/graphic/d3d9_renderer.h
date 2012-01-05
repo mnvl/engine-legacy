@@ -35,6 +35,7 @@ public:
 
 	virtual int get_screen_width() const;
 	virtual int get_screen_height() const;
+	virtual void resize(int width, int height);
 
 	virtual void postconstruct();
 
