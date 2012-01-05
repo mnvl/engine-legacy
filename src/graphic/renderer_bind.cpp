@@ -17,7 +17,10 @@
 #include "uber_draw_call.h"
 #include "d3d9_renderer.h"
 
-void graphic::Renderer::bind(lua_State *L)
+namespace graphic
+{
+
+void Renderer::bind(lua_State *L)
 {
     using namespace luabind;
 
@@ -41,7 +44,7 @@ void graphic::Renderer::bind(lua_State *L)
 
 		class_<D3D9Renderer, Renderer, RendererPtr>("D3D9Renderer")
 		.def(constructor<int, int, bool>())
-		.def(constructor<int, int, bool, HWND>())
     ];
 }
 
+}

@@ -18,21 +18,22 @@ namespace util
 
 namespace
 {
-	struct dummy {};
 
-	math::vec<2> SDL_GetMousePosition() {
-		int x, y;
-		SDL_GetMouseState(&x, &y);
-		return math::vec<2>((math::scalar) x, (math::scalar) y);
-	}
+struct dummy {};
 
-	math::vec<3, bool> SDL_GetMouseButtons() {
-		Uint8 state;
-		state = SDL_GetMouseState(0, 0);
-		return math::vec<3, bool>((state & 1) != 0, (state & 2) != 0, (state & 4) != 0);
-	}
+math::vec<2> SDL_GetMousePosition() {
+	int x, y;
+	SDL_GetMouseState(&x, &y);
+	return math::vec<2>((math::scalar) x, (math::scalar) y);
 }
 
+math::vec<3, bool> SDL_GetMouseButtons() {
+	Uint8 state;
+	state = SDL_GetMouseState(0, 0);
+	return math::vec<3, bool>((state & 1) != 0, (state & 2) != 0, (state & 4) != 0);
+}
+
+}
 
 void bind_SDL(lua_State* L)
 {
