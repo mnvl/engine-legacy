@@ -33,14 +33,12 @@ struct Fixture
 
 BOOST_AUTO_TEST_SUITE(collada_loader)
 
-BOOST_AUTO_TEST_CASE(plane)
+BOOST_FIXTURE_TEST_CASE(plane, Fixture)
 {
-	Fixture fixture;
-
 	std::auto_ptr<graphic::MemoryModel> model_ptr(new graphic::MemoryModel(graphic::RendererPtr(), boost::shared_ptr<graphic::Scheduler>()));
 
     graphic::ColladaLoader loader(model_ptr.get());
-	loader.load("test_collada_loader_plane.xml");
+	loader.load(util::get_graphic_sources_path() + "/test_collada_loader_plane.xml");
 	loader.build_model();
 
     BOOST_ASSERT (model_ptr->meshes.size() == 1);
@@ -66,14 +64,12 @@ BOOST_AUTO_TEST_CASE(plane)
     BOOST_ASSERT (mesh_ptr->get_index_buffer()[5] == 3);
 }
 
-BOOST_AUTO_TEST_CASE(joint)
+BOOST_FIXTURE_TEST_CASE(joint, Fixture)
 {
-	Fixture fixture;
-
     std::auto_ptr<graphic::MemoryModel> model_ptr(new graphic::MemoryModel(graphic::RendererPtr(), boost::shared_ptr<graphic::Scheduler>()));
 
     graphic::ColladaLoader loader(model_ptr.get());
-	loader.load("test_collada_loader_joint.xml");
+	loader.load(util::get_graphic_sources_path() + "/test_collada_loader_joint.xml");
 	loader.build_model();
 
     BOOST_ASSERT (model_ptr->meshes.size() == 1);
@@ -102,13 +98,11 @@ BOOST_AUTO_TEST_CASE(joint)
     BOOST_ASSERT (abs(vertices2[0].position.y - 1.0f) < 0.1f);
 }
 
-BOOST_AUTO_TEST_CASE(animation)
+BOOST_FIXTURE_TEST_CASE(animation, Fixture)
 {
-	Fixture fixture;
-
     std::auto_ptr<graphic::MemoryModel> model_ptr(new graphic::MemoryModel(graphic::RendererPtr(), boost::shared_ptr<graphic::Scheduler>()));
     graphic::ColladaLoader loader(model_ptr.get());
-	loader.load("test_collada_loader_animation.xml");
+	loader.load(util::get_graphic_sources_path() + "/test_collada_loader_animation.xml");
 	loader.build_model();
 
     BOOST_ASSERT (model_ptr->meshes.size() == 1);
@@ -148,14 +142,14 @@ BOOST_AUTO_TEST_CASE(animation)
     BOOST_ASSERT((vertices2[3].position - math::vec<3>(2.0f, 0.0f, -0.3f)).length_sq() < 0.1f);
 }
 
-BOOST_AUTO_TEST_CASE(materials)
+BOOST_FIXTURE_TEST_CASE(materials, Fixture)
 {
 	Fixture fixture;
 
     std::auto_ptr<graphic::MemoryModel> model_ptr(new graphic::MemoryModel(graphic::RendererPtr(), boost::shared_ptr<graphic::Scheduler>()));
 
     graphic::ColladaLoader loader(model_ptr.get());
-	loader.load("test_collada_loader_materials.xml");
+	loader.load(util::get_graphic_sources_path() + "/test_collada_loader_materials.xml");
 	loader.build_model();
 
     BOOST_ASSERT (model_ptr->meshes.size() == 2);
@@ -240,14 +234,12 @@ BOOST_AUTO_TEST_CASE(materials)
     }
 }
 
-BOOST_AUTO_TEST_CASE(tbn)
+BOOST_FIXTURE_TEST_CASE(tbn, Fixture)
 {
-	Fixture fixture;
-
     std::auto_ptr<graphic::MemoryModel> model_ptr(new graphic::MemoryModel(graphic::RendererPtr(), boost::shared_ptr<graphic::Scheduler>()));
 
     graphic::ColladaLoader loader(model_ptr.get());
-	loader.load("test_collada_loader_tbn.xml");
+	loader.load(util::get_graphic_sources_path() + "/test_collada_loader_tbn.xml");
 	loader.build_model();
 
 	BOOST_ASSERT (model_ptr->meshes.size() == 1);

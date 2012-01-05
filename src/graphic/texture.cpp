@@ -80,6 +80,7 @@ TexturePtr Texture::load_from_file(RendererPtr const &renderer, std::string cons
 	SDL_Surface *surface = IMG_Load(filename.c_str());
 
 	TexturePtr texture = load_from_sdl_surface(renderer, surface);
+	texture->filename_ = filename;
 
 	SDL_FreeSurface(surface);
 
