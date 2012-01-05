@@ -13,7 +13,6 @@
 #include <exception/directx_error.h>
 #include <util/logger.h>
 #include <util/get_sources_path.h>
-#include "font.h"
 #include "uber_shader.h"
 #include "d3d9_vertex_buffer.h"
 #include "d3d9_index_buffer.h"
@@ -37,7 +36,7 @@ D3D9Renderer::D3D9Renderer(int width, int height, bool fullscreen, HWND window_h
 	init();
 }
 
-	D3D9Renderer::~D3D9Renderer()
+D3D9Renderer::~D3D9Renderer()
 {
 }
 
@@ -154,6 +153,10 @@ void D3D9Renderer::resize(int width, int height)
 	pp_.BackBufferHeight = screen_height_;
 
 	reset_device();
+}
+
+void *D3D9Renderer::get_window_handle() const {
+	return window_handle_;
 }
 
 void D3D9Renderer::postconstruct()
@@ -278,13 +281,6 @@ TexturePtr D3D9Renderer::create_texture(std::string const &filename)
 MaterialPtr D3D9Renderer::create_material()
 {
 	return MaterialPtr(new D3D9Material(shared_from_this()));
-}
-
-FontPtr D3D9Renderer::create_font(std::string const &face_name, int height)
-{
-	FontPtr font(new Font(shared_from_this(), face_name, height));
-	register_resource(font);
-	return font;
 }
 
 ShaderPtr D3D9Renderer::create_shader()

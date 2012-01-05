@@ -8,49 +8,49 @@
 // prior written consent of Manvel Avetisian.
 //-----------------------------------------------------------------------------
 
+#include <SDL.h>
 #include <boost/test/unit_test.hpp>
-#include <platform/window.h>
 #include <util/get_sources_path.h>
+#include "test_fixture.h"
 #include "font.h"
 #include "d3d9_renderer.h"
 
 BOOST_AUTO_TEST_SUITE(window_resize)
 
-BOOST_AUTO_TEST_CASE(basic)
+BOOST_FIXTURE_TEST_CASE(basic, graphic::TestFixture)
 {
-	boost::shared_ptr<platform::Window> window(new platform::Window("test_window_resize"));
-	graphic::RendererPtr renderer(new graphic::D3D9Renderer(window));
+	graphic::RendererPtr renderer(new graphic::D3D9Renderer());
 
-	for (int i = 0; i < 10 && window->run_message_loop(); i++)
+	for (int i = 0; i < 10; i++)
 	{
-		if (i == 5) MoveWindow(window->get_handle(), 100, 100, 900, 700, TRUE);
+		graphic::TestFixture::process_events();
+
+		if (i == 5) MoveWindow((HWND) renderer->get_window_handle(), 100, 100, 900, 700, TRUE);
 
 		renderer->begin_frame();
 		renderer->finish_frame();
 	}
 }
 
-BOOST_AUTO_TEST_CASE(with_postconstruct)
+BOOST_FIXTURE_TEST_CASE(with_postconstruct, graphic::TestFixture)
 {
-	boost::shared_ptr<platform::Window> window(new platform::Window("test_window_resize"));
-
-	graphic::RendererPtr renderer(new graphic::D3D9Renderer(window));
+	graphic::RendererPtr renderer(new graphic::D3D9Renderer());
 	renderer->postconstruct();
 
-	for (int i = 0; i < 10 && window->run_message_loop(); i++)
+	for (int i = 0; i < 10; i++)
 	{
-		if (i == 5) MoveWindow(window->get_handle(), 100, 100, 900, 700, TRUE);
+		graphic::TestFixture::process_events();
+
+		if (i == 5) MoveWindow((HWND) renderer->get_window_handle(), 100, 100, 900, 700, TRUE);
 
 		renderer->begin_frame();
 		renderer->finish_frame();
 	}
 }
 
-BOOST_AUTO_TEST_CASE(with_postconstruct_and_vertex_array)
+BOOST_FIXTURE_TEST_CASE(with_postconstruct_and_vertex_array, graphic::TestFixture)
 {
-	boost::shared_ptr<platform::Window> window(new platform::Window("test_window_resize"));
-
-	graphic::RendererPtr renderer(new graphic::D3D9Renderer(window));
+	graphic::RendererPtr renderer(new graphic::D3D9Renderer());
 	renderer->postconstruct();
 
 	boost::shared_ptr<graphic::VertexArrayPT> vertex_array1;
@@ -58,8 +58,10 @@ BOOST_AUTO_TEST_CASE(with_postconstruct_and_vertex_array)
 	boost::shared_ptr<graphic::VertexArrayPT> vertex_array3;
 	boost::shared_ptr<graphic::VertexArrayPT> vertex_array4;
 
-	for (int i = 0; i < 20 && window->run_message_loop(); i++)
+	for (int i = 0; i < 20; i++)
 	{
+		graphic::TestFixture::process_events();
+
 		if (i == 5)
 		{
 			vertex_array1 = renderer->create_vertex_array<graphic::VERTEX_PT>(100, false, false);
@@ -70,7 +72,7 @@ BOOST_AUTO_TEST_CASE(with_postconstruct_and_vertex_array)
 
 		if (i == 15)
 		{
-			MoveWindow(window->get_handle(), 100, 100, 900, 700, TRUE);
+			MoveWindow((HWND) renderer->get_window_handle(), 100, 100, 900, 700, TRUE);
 		}
 
 		renderer->begin_frame();
@@ -78,11 +80,9 @@ BOOST_AUTO_TEST_CASE(with_postconstruct_and_vertex_array)
 	}
 }
 
-BOOST_AUTO_TEST_CASE(with_postconstruct_and_index_array)
+BOOST_FIXTURE_TEST_CASE(with_postconstruct_and_index_array, graphic::TestFixture)
 {
-	boost::shared_ptr<platform::Window> window(new platform::Window("test_window_resize"));
-
-	graphic::RendererPtr renderer(new graphic::D3D9Renderer(window));
+	graphic::RendererPtr renderer(new graphic::D3D9Renderer());
 	renderer->postconstruct();
 
 	boost::shared_ptr<graphic::IndexArray16> index_array1;
@@ -90,8 +90,10 @@ BOOST_AUTO_TEST_CASE(with_postconstruct_and_index_array)
 	boost::shared_ptr<graphic::IndexArray16> index_array3;
 	boost::shared_ptr<graphic::IndexArray16> index_array4;
 
-	for (int i = 0; i < 20 && window->run_message_loop(); i++)
+	for (int i = 0; i < 20; i++)
 	{
+		graphic::TestFixture::process_events();
+
 		if (i == 5)
 		{
 			index_array1 = renderer->create_index_array<graphic::INDEX_U16>(100, false, false);
@@ -102,7 +104,7 @@ BOOST_AUTO_TEST_CASE(with_postconstruct_and_index_array)
 
 		if (i == 15)
 		{
-			MoveWindow(window->get_handle(), 100, 100, 900, 700, TRUE);
+			MoveWindow((HWND) renderer->get_window_handle(), 100, 100, 900, 700, TRUE);
 		}
 
 		renderer->begin_frame();
@@ -110,17 +112,20 @@ BOOST_AUTO_TEST_CASE(with_postconstruct_and_index_array)
 	}
 }
 
-BOOST_AUTO_TEST_CASE(with_postconstruct_and_texture)
+BOOST_FIXTURE_TEST_CASE(with_postconstruct_and_texture, graphic::TestFixture)
 {
-	boost::shared_ptr<platform::Window> window(new platform::Window("test_window_resize"));
+	SDL_Init(SDL_INIT_VIDEO);
+	SDL_SetVideoMode(800, 600, 0, 0);
 
-	graphic::RendererPtr renderer(new graphic::D3D9Renderer(window));
+	graphic::RendererPtr renderer(new graphic::D3D9Renderer());
 	renderer->postconstruct();
 
 	boost::shared_ptr<graphic::Texture> texture;
 
-	for (int i = 0; i < 20 && window->run_message_loop(); i++)
+	for (int i = 0; i < 20; i++)
 	{
+		graphic::TestFixture::process_events();
+
 		if (i == 5)
 		{
 			texture = renderer->create_texture("test_white.png");
@@ -128,45 +133,14 @@ BOOST_AUTO_TEST_CASE(with_postconstruct_and_texture)
 
 		if (i == 15)
 		{
-			MoveWindow(window->get_handle(), 100, 100, 900, 700, TRUE);
+			MoveWindow((HWND) renderer->get_window_handle(), 100, 100, 900, 700, TRUE);
 		}
 
 		renderer->begin_frame();
 		renderer->finish_frame();
 	}
-}
 
-BOOST_AUTO_TEST_CASE(with_postconstruct_and_font)
-{
-	boost::shared_ptr<platform::Window> window(new platform::Window("test_window_resize"));
-
-	graphic::RendererPtr renderer(new graphic::D3D9Renderer(window));
-	renderer->postconstruct();
-
-	boost::shared_ptr<graphic::Font> font;
-
-	for (int i = 0; i < 20 && window->run_message_loop(); i++)
-	{
-		if (i == 5)
-		{
-			font = renderer->create_font("Courier New");
-		}
-
-		if (i == 15)
-		{
-			MoveWindow(window->get_handle(), 100, 100, 900, 700, TRUE);
-		}
-
-		renderer->begin_frame();
-
-		if (font)
-		{
-			font->draw(math::vec<2>(0, 0), math::vec<2>(100, 100), "hi!",
-				graphic::Font::FLAG_ALIGN_LEFT, math::vec<3>(1,1,1));
-		}
-
-		renderer->finish_frame();
-	}
+	SDL_Quit();
 }
 
 BOOST_AUTO_TEST_SUITE_END()

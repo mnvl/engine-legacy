@@ -8,11 +8,12 @@
 // prior written consent of Manvel Avetisian.
 //-----------------------------------------------------------------------------
 
+#include <SDL.h>
 #include <boost/test/unit_test.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
-#include <platform/window.h>
 #include <util/get_sources_path.h>
 #include <exception/directx_error.h>
+#include "test_fixture.h"
 #include "material.h"
 #include "vertex_array.h"
 #include "index_array.h"
@@ -22,12 +23,11 @@
 
 BOOST_AUTO_TEST_SUITE(texture_blending)
 
-BOOST_AUTO_TEST_CASE(blending_weights_in_vertex)
+BOOST_FIXTURE_TEST_CASE(blending_weights_in_vertex, graphic::TestFixture)
 {
 	std::string const &src = util::get_graphic_sources_path();
 
-	boost::shared_ptr<platform::Window> window(new platform::Window("blending_weights_in_vertex"));
-	boost::shared_ptr<graphic::D3D9Renderer> renderer(new graphic::D3D9Renderer(window));
+	boost::shared_ptr<graphic::D3D9Renderer> renderer(new graphic::D3D9Renderer());
 
 	renderer->postconstruct();
 
@@ -106,9 +106,10 @@ BOOST_AUTO_TEST_CASE(blending_weights_in_vertex)
 	math::scalar delta;
 	math::scalar const DURATION = 5e6;
 
-	while ((delta = math::scalar((boost::posix_time::microsec_clock::local_time() - start_time).total_microseconds())) < DURATION
-		&& window->run_message_loop())
+	while ((delta = math::scalar((boost::posix_time::microsec_clock::local_time() - start_time).total_microseconds())) < DURATION)
 	{
+		graphic::TestFixture::process_events();
+
 		renderer->begin_frame();
 
 		draw_call->execute();
@@ -117,12 +118,11 @@ BOOST_AUTO_TEST_CASE(blending_weights_in_vertex)
 	}
 }
 
-BOOST_AUTO_TEST_CASE(blending_weights_in_texture)
+BOOST_FIXTURE_TEST_CASE(blending_weights_in_texture, graphic::TestFixture)
 {
 	std::string const &src = util::get_graphic_sources_path();
 
-	boost::shared_ptr<platform::Window> window(new platform::Window("blending_weights_in_texture"));
-	boost::shared_ptr<graphic::D3D9Renderer> renderer(new graphic::D3D9Renderer(window));
+	boost::shared_ptr<graphic::D3D9Renderer> renderer(new graphic::D3D9Renderer());
 
 	renderer->postconstruct();
 
@@ -198,9 +198,10 @@ BOOST_AUTO_TEST_CASE(blending_weights_in_texture)
 	math::scalar delta;
 	math::scalar const DURATION = 5e6;
 
-	while ((delta = math::scalar((boost::posix_time::microsec_clock::local_time() - start_time).total_microseconds())) < DURATION
-		&& window->run_message_loop())
+	while ((delta = math::scalar((boost::posix_time::microsec_clock::local_time() - start_time).total_microseconds())) < DURATION)
 	{
+		graphic::TestFixture::process_events();
+
 		renderer->begin_frame();
 
 		draw_call->execute();

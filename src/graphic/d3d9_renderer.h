@@ -36,6 +36,7 @@ public:
 	virtual int get_screen_width() const;
 	virtual int get_screen_height() const;
 	virtual void resize(int width, int height);
+	virtual void *get_window_handle() const;
 
 	virtual void postconstruct();
 
@@ -55,7 +56,6 @@ public:
 
 	virtual TexturePtr create_texture(std::string const &filename);
 	virtual MaterialPtr create_material();
-	virtual FontPtr create_font(std::string const &face_name, int height = 16);
 	virtual ShaderPtr create_shader();
 
 	virtual DrawCallPtr create_draw_call();

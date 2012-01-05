@@ -9,22 +9,20 @@
 //-----------------------------------------------------------------------------
 
 #include <boost/test/unit_test.hpp>
-#include <platform/timer.h>
-#include <platform/window.h>
 #include <util/get_sources_path.h>
 #include <util/logger.h>
 #include <graphic/material.h>
 #include <graphic/scheduler.h>
 #include <graphic/d3d9_renderer.h>
+#include <graphic/test_fixture.h>
 #include "directional_particle_system.h"
 #include "cylindrical_particle_system.h"
 
 BOOST_AUTO_TEST_SUITE(particle_system)
 
-BOOST_AUTO_TEST_CASE(directional_ps)
+BOOST_FIXTURE_TEST_CASE(directional_ps, graphic::TestFixture)
 {
-	boost::shared_ptr<platform::Window> window(new platform::Window("particle_system"));
-	graphic::RendererPtr renderer(new graphic::D3D9Renderer(window));
+	graphic::RendererPtr renderer(new graphic::D3D9Renderer());
 
 	graphic::CameraPtr camera(new graphic::Camera());
 	camera->set_orthographic_projection(20.0f, 20.0f * renderer->get_screen_height() / renderer->get_screen_width(), 1.0f, 1000.0f);
@@ -34,7 +32,6 @@ BOOST_AUTO_TEST_CASE(directional_ps)
 
 	renderer->postconstruct();
 
-	platform::Timer timer;
 	boost::shared_ptr<particle_system::DirectionalParticleSystem> ps(
 		new particle_system::DirectionalParticleSystem(renderer, scheduler, camera));
 
@@ -49,11 +46,13 @@ BOOST_AUTO_TEST_CASE(directional_ps)
 	ps->get_drawer().set_material(material);
 
 	math::scalar total_time = 0;
-	double prev_t = timer.get_current_time();
+	double prev_t = SDL_GetTicks();
 
-	for (int i = 0; i < 100 && window->run_message_loop(); i++)
+	for (int i = 0; i < 100; i++)
 	{
-		double t = timer.get_current_time();
+		graphic::TestFixture::process_events();
+
+		double t = SDL_GetTicks() * 0.001;
 		math::scalar dt = math::scalar(t - prev_t);
 
 		total_time += dt;
@@ -74,10 +73,9 @@ BOOST_AUTO_TEST_CASE(directional_ps)
 	}
 }
 
-BOOST_AUTO_TEST_CASE(cylindrical_ps)
+BOOST_FIXTURE_TEST_CASE(cylindrical_ps, graphic::TestFixture)
 {
-	boost::shared_ptr<platform::Window> window(new platform::Window("particle_system"));
-	graphic::RendererPtr renderer(new graphic::D3D9Renderer(window));
+	graphic::RendererPtr renderer(new graphic::D3D9Renderer());
 
 	graphic::CameraPtr camera(new graphic::Camera());
 	camera->set_orthographic_projection(20.0f, 20.0f * renderer->get_screen_height() / renderer->get_screen_width(), 1.0f, 1000.0f);
@@ -87,7 +85,6 @@ BOOST_AUTO_TEST_CASE(cylindrical_ps)
 
 	renderer->postconstruct();
 
-	platform::Timer timer;
 	boost::shared_ptr<particle_system::CylindricalParticleSystem> ps(
 		new particle_system::CylindricalParticleSystem(renderer, scheduler, camera));
 
@@ -103,11 +100,13 @@ BOOST_AUTO_TEST_CASE(cylindrical_ps)
 	ps->get_drawer().set_material(material);
 
 	math::scalar total_time = 0;
-	double prev_t = timer.get_current_time();
+	double prev_t = SDL_GetTicks() * 0.001;
 
-	for (int i = 0; i < 100 && window->run_message_loop(); i++)
+	for (int i = 0; i < 100; i++)
 	{
-		double t = timer.get_current_time();
+		graphic::TestFixture::process_events();
+
+		double t = SDL_GetTicks() * 0.001;
 		math::scalar dt = math::scalar(t - prev_t);
 
 		total_time += dt;

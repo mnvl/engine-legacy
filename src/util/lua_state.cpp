@@ -12,16 +12,13 @@
 #include <luabind/luabind.hpp>
 #include <luabind/detail/pcall.hpp>
 #include <graphic/bind.h>
-#include <platform/timer.h>
-#include <platform/window.h>
-#include <platform/input.h>
-#include <platform/keyboard.h>
-#include <platform/mouse.h>
 #include <math/bind.h>
 #include <spatial/bind.h>
 #include <particle_system/bind.h>
 #include <util/logger.h>
 #include <util/archive.h>
+#include <util/bind_boost.h>
+#include <util/bind_stl.h>
 #include "lua_state.h"
 
 extern "C"
@@ -42,9 +39,6 @@ LuaState::LuaState():
 
 	graphic::bind(L_);
 
-	platform::Timer::bind(L_);
-	platform::Window::bind(L_);
-
 	math::bind(L_);
 	spatial::bind(L_);
 
@@ -53,10 +47,8 @@ LuaState::LuaState():
 	util::bind_logger(L_);
 	util::ArchiveReader::bind(L_);
 	util::ArchiveWriter::bind(L_);
-
-	platform::Input::bind(L_);
-	platform::Keyboard::bind(L_);
-	platform::Mouse::bind(L_);
+	util::bind_boost(L_);
+	util::bind_stl(L_);
 }
 
 LuaState::~LuaState()

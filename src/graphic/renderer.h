@@ -33,6 +33,7 @@ public:
 	virtual int get_screen_width() const = 0;
 	virtual int get_screen_height() const = 0;
 	virtual void resize(int width, int height) = 0;
+	virtual void *get_window_handle() const = 0;
 
 	virtual void begin_frame() = 0;
 	virtual void finish_frame() = 0;
@@ -60,7 +61,6 @@ public:
 
 	virtual TexturePtr create_texture(std::string const &filename) = 0;
 	virtual MaterialPtr create_material() = 0;
-	virtual FontPtr create_font(std::string const &face_name, int height = 16) = 0;
 	virtual ShaderPtr create_shader() = 0;
 
 	virtual UberShaderPtr get_uber_shader() const = 0;

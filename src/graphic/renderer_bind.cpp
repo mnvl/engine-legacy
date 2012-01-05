@@ -38,8 +38,7 @@ void graphic::Renderer::bind(lua_State *L)
 		.def("create_vertex_array_pnjwt", &Renderer::create_vertex_array<VERTEX_PNJWT>)
 		.def("create_index_array_16", &Renderer::create_index_array<INDEX_U16>)
 		.def("create_draw_call", &Renderer::create_draw_call)
-		.def("create_uber_draw_call", &Renderer::create_uber_draw_call)
-		.def("create_font", &Renderer::create_font),
+		.def("create_uber_draw_call", &Renderer::create_uber_draw_call),
 
 		class_<D3D9Renderer, Renderer, RendererPtr>("D3D9Renderer")
 		.def(constructor<int, int, bool>())
