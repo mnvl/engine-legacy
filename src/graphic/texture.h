@@ -18,13 +18,18 @@ namespace graphic
 
 class Texture: public boost::noncopyable {
 public:
+	enum PixelFormat {
+		PIXEL_FORMAT_R8G8B8 = 1
+	};
+
 	Texture(std::string const &filename);
-	Texture(int width, int height, int bpp);
+	Texture(int width, int height, unsigned pixel_format,
+		bool dynamic = false, bool writeonly = false);
 	virtual ~Texture();
 
 	int get_width() const { return width_; }
 	int get_height() const { return height_; }
-	int get_bpp() const { return bpp_; }
+	int get_pixel_format() const { return pixel_format_; }
 	std::string const &get_filename() const { return filename_; }
 
 	static TexturePtr load_from_file(RendererPtr const &renderer, std::string const &filename);
@@ -32,7 +37,10 @@ public:
 	static void bind(lua_State *L);
 
 protected:
-	int width_, height_, bpp_;
+	int width_, height_;
+	unsigned pixel_format_;
+	bool dynamic_;
+	bool writeonly_;
 	std::string filename_;
 };
 

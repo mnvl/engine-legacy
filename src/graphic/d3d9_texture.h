@@ -27,7 +27,8 @@ class D3D9Texture: public Texture {
 	friend Renderer;
 
 public:
-	D3D9Texture(D3D9RendererPtr const &renderer_ptr, int width, int height, int bpp);
+	D3D9Texture(D3D9RendererPtr const &renderer_ptr, int width, int height,
+		unsigned pixel_format, bool dynamic = false, bool writeonly = false);
 	~D3D9Texture();
 
 	IDirect3DTexture9 *get() const
@@ -40,10 +41,11 @@ public:
 
 private:
 	D3D9RendererPtr renderer_;
+	DWORD usage_;
+	D3DPOOL pool_;
 	boost::intrusive_ptr<IDirect3DTexture9> texture_;
 
-	void load_from_file(std::string const &filename);
-	void create_texture(int width, int height, int bpp);
+	void create_texture();
 };
 
 }

@@ -20,13 +20,18 @@ Texture::Texture(std::string const &filename):
 	filename_(filename),
 	width_(-1),
 	height_(-1),
-	bpp_(-1) {
+	pixel_format_(-1),
+	dynamic_(false),
+	writeonly_(false) {
 }
 
-Texture::Texture(int width, int height, int bpp):
+Texture::Texture(int width, int height, unsigned pixel_format,
+	bool dynamic, bool writeonly):
 	width_(width),
 	height_(height),
-	bpp_(bpp)
+	pixel_format_(pixel_format),
+	dynamic_(dynamic),
+	writeonly_(writeonly)
 {
 }
 

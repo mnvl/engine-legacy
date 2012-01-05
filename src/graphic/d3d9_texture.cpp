@@ -17,24 +17,32 @@
 namespace graphic
 {
 
-D3D9Texture::D3D9Texture(D3D9RendererPtr const &renderer_ptr, int width, int height, int bpp):
-	Texture(width, height, bpp),
-	renderer_(renderer_ptr)
+D3D9Texture::D3D9Texture(D3D9RendererPtr const &renderer_ptr, int width, int height,
+	unsigned pixel_format, bool dynamic, bool writeonly):
+	Texture(width, height, pixel_format, dynamic, writeonly),
+	renderer_(renderer_ptr),
+	usage_(0),
+	pool_(dynamic ? D3DPOOL_DEFAULT : D3DPOOL_MANAGED)
 {
-	create_texture(width, height, bpp);
+	if(dynamic) usage_ |= D3DUSAGE_DYNAMIC;
+	if(writeonly) usage_ |= D3DUSAGE_WRITEONLY;
+
+	create_texture();
 }
 
 D3D9Texture::~D3D9Texture()
 {
 }
 
-void D3D9Texture::create_texture(int width, int height, int bpp) {
-	IDirect3DTexture9 *texture_ptr;
-	HRESULT hr = renderer_->get_device()->CreateTexture(width, height, 1, D3DUSAGE_DYNAMIC, D3DFMT_A8R8G8B8,
-		D3DPOOL_MANAGED, &texture_ptr, 0);
-	if (FAILED(hr)) throw exception::directx_error(hr);
-}
+void D3D9Texture::create_texture() {
+	assert (pixel_format_ == PIXEL_FORMAT_R8G8B8);
 
+	IDirect3DTexture9 *texture_ptr;
+	HRESULT hr = renderer_->get_device()->CreateTexture(width, height, 1, usage_, D3DFMT_A8R8G8B8,
+		pool_, &texture_ptr, 0);
+	if (FAILED(hr)) throw exception::directx_error(hr);
+	texture_.reset(texture_ptr);
+}
 
 void D3D9Texture::handle_lost_device()
 {

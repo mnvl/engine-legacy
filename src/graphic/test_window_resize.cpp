@@ -12,7 +12,7 @@
 #include <boost/test/unit_test.hpp>
 #include <util/get_sources_path.h>
 #include "test_fixture.h"
-#include "font.h"
+#include "texture.h"
 #include "d3d9_renderer.h"
 
 BOOST_AUTO_TEST_SUITE(window_resize)
@@ -128,7 +128,7 @@ BOOST_FIXTURE_TEST_CASE(with_postconstruct_and_texture, graphic::TestFixture)
 
 		if (i == 5)
 		{
-			texture = renderer->create_texture("test_white.png");
+			texture = graphic::Texture::load_from_file(renderer, "test_white.png");
 		}
 
 		if (i == 15)

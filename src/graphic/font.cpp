@@ -42,7 +42,8 @@ TexturePtr Font::create_texture(std::string const& text, math::vec<3> const &col
 	int width = ft_face_->max_advance_width * text.size();
 	int height = ft_face_->max_advance_height * text.size();
 
-	TexturePtr texture = renderer_->create_texture((int) ceil(width / 64.0), (int) ceil(height / 64.0), 32);
+	TexturePtr texture = renderer_->create_texture((int) ceil(double(width) / 64),
+		(int) ceil(double(height) / 64), 32);
 
 	for (size_t i = 0; i < text.size(); ++i) {
 		error = FT_Load_Char(ft_face_, text[i], FT_LOAD_RENDER);
