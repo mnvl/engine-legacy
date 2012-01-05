@@ -9,6 +9,7 @@
 // prior written consent of Manvel Avetisian.
 //-----------------------------------------------------------------------------
 
+#include <vector>
 #include <boost/noncopyable.hpp>
 #include <boost/shared_ptr.hpp>
 #include <luabind/lua_include.hpp>

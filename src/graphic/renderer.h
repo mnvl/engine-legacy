@@ -14,7 +14,6 @@
 #include <boost/enable_shared_from_this.hpp>
 #include <luabind/lua_include.hpp>
 #include <math/matrix.h>
-#include <platform/window.h>
 #include "forward.h"
 #include "camera.h"
 #include "vertex_traits.h"

@@ -13,6 +13,7 @@
 #include <d3dx9.h>
 #include <boost/scoped_ptr.hpp>
 #include <boost/intrusive_ptr.hpp>
+#include <boost/signals2.hpp>
 #include <util/boost_com_intrusive_ptr.h>
 #include "d3d9_vertex_declarations.h"
 #include "renderer.h"
@@ -27,8 +28,10 @@ public:
 		return boost::static_pointer_cast<D3D9Renderer>(Renderer::shared_from_this());
 	}
 
-	D3D9Renderer(int width = 0, int height = 0, bool fullscreen = false);
+	D3D9Renderer(int width = 0, int height = 0, bool fullscreen = false, HWND window_handle = 0);
 	virtual ~D3D9Renderer();
+
+	void init();
 
 	virtual int get_screen_width() const;
 	virtual int get_screen_height() const;
@@ -70,6 +73,8 @@ public:
 	}
 
 private:
+	HWND window_handle_;
+
 	int screen_width_, screen_height_;
 	bool fullscreen_;
 	D3DPRESENT_PARAMETERS pp_;
@@ -83,7 +88,7 @@ private:
 	UberShaderPtr uber_shader_;
 	boost::scoped_ptr<D3D9VertexDeclarations> vertex_declarations_;
 
-	static HWND get_window_handle();
+	static HWND get_sdl_window_handle();
 	void handle_resize();
 };
 

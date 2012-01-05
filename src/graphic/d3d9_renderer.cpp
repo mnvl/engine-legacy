@@ -27,20 +27,23 @@
 namespace graphic
 {
 
-D3D9Renderer::D3D9Renderer(int width, int height, bool fullscreen):
+D3D9Renderer::D3D9Renderer(int width, int height, bool fullscreen, HWND window_handle):
 	Renderer(),
+	window_handle_(window_handle ? window_handle : get_sdl_window_handle()),
 	screen_width_(width),
 	screen_height_(height),
 	fullscreen_(fullscreen)
 {
-  	HWND window_handle = get_window_handle();
+	init();
+}
 
+void D3D9Renderer::init() {
 	HRESULT hr;
 
 	if (!screen_width_ || !screen_height_)
 	{
 		RECT rc;
-		GetClientRect(window_handle, &rc);
+		GetClientRect(window_handle_, &rc);
 
 		screen_width_ = rc.right - rc.left;
 		screen_height_ = rc.bottom - rc.top;
@@ -88,7 +91,7 @@ D3D9Renderer::D3D9Renderer(int width, int height, bool fullscreen):
 		pp_.MultiSampleType = D3DMULTISAMPLE_NONE;
 		pp_.MultiSampleQuality = 0;
 		pp_.SwapEffect = D3DSWAPEFFECT_DISCARD;
-		pp_.hDeviceWindow = window_handle;
+		pp_.hDeviceWindow = window_handle_;
 		pp_.Windowed = !fullscreen_;
 		pp_.EnableAutoDepthStencil = TRUE;
 		pp_.AutoDepthStencilFormat = D3DFMT_D24S8;
@@ -96,7 +99,7 @@ D3D9Renderer::D3D9Renderer(int width, int height, bool fullscreen):
 		pp_.FullScreen_RefreshRateInHz = 0;
 		pp_.PresentationInterval = D3DPRESENT_INTERVAL_IMMEDIATE;
 
-		hr = direct3d_->CreateDevice(adapter, device_type, window_handle,
+		hr = direct3d_->CreateDevice(adapter, device_type, window_handle_,
 			D3DCREATE_HARDWARE_VERTEXPROCESSING, &pp_, &device_ptr);
 
 		if (FAILED(hr))
@@ -104,7 +107,7 @@ D3D9Renderer::D3D9Renderer(int width, int height, bool fullscreen):
 			LOG_ERROR("failed to create direct3d device with hr = " << std::hex << hr
 				<< ", trying sw vertex processing");
 
-			hr = direct3d_->CreateDevice(adapter, device_type, window_handle,
+			hr = direct3d_->CreateDevice(adapter, device_type, window_handle_,
 				D3DCREATE_SOFTWARE_VERTEXPROCESSING, &pp_, &device_ptr);
 		}
 
@@ -287,7 +290,7 @@ UberShaderPtr D3D9Renderer::get_uber_shader() const
 	return uber_shader_;
 }
 
-HWND D3D9Renderer::get_window_handle() {
+HWND D3D9Renderer::get_sdl_window_handle() {
 	SDL_SysWMinfo si;
 	SDL_VERSION(&si.version);
 	if (SDL_GetWMInfo(&si) <= 0) throw std::runtime_error(SDL_GetError());
@@ -299,7 +302,7 @@ void D3D9Renderer::handle_resize()
 	if (fullscreen_) return;
 
 	RECT rc;
-	GetClientRect(get_window_handle(), &rc);
+	GetClientRect(window_handle_, &rc);
 
 	screen_width_ = rc.right - rc.left;
 	screen_height_ = rc.bottom - rc.top;

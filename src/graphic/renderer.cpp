@@ -11,7 +11,6 @@
 #include <d3dx9.h>
 #include <boost/bind.hpp>
 #include <exception/directx_error.h>
-#include <platform/timer.h>
 #include <util/logger.h>
 #include "d3d9_vertex_buffer.h"
 #include "d3d9_index_buffer.h"
