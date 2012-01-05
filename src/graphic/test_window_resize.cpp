@@ -125,7 +125,7 @@ BOOST_FIXTURE_TEST_CASE(with_postconstruct_and_texture, graphic::TestFixture)
 
 		if (i == 5)
 		{
-			texture = graphic::Texture::load_from_file(renderer, "test_white.png");
+			texture = graphic::Texture::load_from_file(renderer, util::get_graphic_sources_path() + "/test_white.png");
 		}
 
 		if (i == 15)

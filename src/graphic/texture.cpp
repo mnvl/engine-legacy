@@ -78,6 +78,7 @@ TexturePtr Texture::load_from_sdl_surface(RendererPtr const &renderer, SDL_Surfa
 
 TexturePtr Texture::load_from_file(RendererPtr const &renderer, std::string const &filename) {
 	SDL_Surface *surface = IMG_Load(filename.c_str());
+	if (!surface) throw std::runtime_error(SDL_GetError());
 
 	TexturePtr texture = load_from_sdl_surface(renderer, surface);
 	texture->filename_ = filename;
