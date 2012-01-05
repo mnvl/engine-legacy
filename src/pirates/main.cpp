@@ -28,6 +28,7 @@
 #include <util/archive.h>
 #include <util/bind_stl.h>
 #include <util/bind_boost.h>
+#include <util/bind_sdl.h>
 #include "heightfield.h"
 
 extern "C"
@@ -66,6 +67,7 @@ public:
 
 		util::bind_stl(L_);
 		util::bind_boost(L_);
+		util::bind_SDL(L_);
 
 		pirates::Heightfield::bind(L_);
 

@@ -27,8 +27,7 @@ public:
 		return boost::static_pointer_cast<D3D9Renderer>(Renderer::shared_from_this());
 	}
 
-	D3D9Renderer(boost::shared_ptr<platform::Window> const &window, int width = 0, int height = 0,
-		bool fullscreen = false);
+	D3D9Renderer(int width = 0, int height = 0, bool fullscreen = false);
 	virtual ~D3D9Renderer();
 
 	virtual int get_screen_width() const;
