@@ -42,19 +42,14 @@ TexturePtr Font::create_texture(std::string const& text, math::vec<3> const &col
 	int width = ft_face_->max_advance_width * text.size();
 	int height = ft_face_->max_advance_height * text.size();
 
-	TexturePtr texture = renderer_->create_texture(
+	TexturePtr texture = renderer_->create_texture((int) ceil(width / 64.0), (int) ceil(height / 64.0), 32);
 
 	for (size_t i = 0; i < text.size(); ++i) {
 		error = FT_Load_Char(ft_face_, text[i], FT_LOAD_RENDER);
 		if (error) throw_freetype_error(error);
-
-		width += ft_face_->glyph->advance.x;
-		height = std::max(height, (int) ft_face_->glyph->bitmap.rows);
 	}
 
-	int a = 0;
-
-	return TexturePtr();
+	return texture;
 }
 
 void Font::draw(math::vec<2> const &left_top, math::vec<2> const &right_bottom, char const *text, unsigned flags,

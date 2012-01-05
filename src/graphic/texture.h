@@ -18,17 +18,22 @@ namespace graphic
 
 class Texture: public boost::noncopyable {
 public:
+	Texture(std::string const &filename);
 	Texture(int width, int height, int bpp);
 	virtual ~Texture();
 
 	int get_width() const { return width_; }
 	int get_height() const { return height_; }
 	int get_bpp() const { return bpp_; }
+	std::string const &get_filename() const { return filename_; }
+
+	static TexturePtr load_from_file(RendererPtr const &renderer, std::string const &filename);
 
 	static void bind(lua_State *L);
 
 protected:
 	int width_, height_, bpp_;
+	std::string filename_;
 };
 
 }

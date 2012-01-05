@@ -27,7 +27,6 @@ class D3D9Texture: public Texture {
 	friend Renderer;
 
 public:
-	D3D9Texture(D3D9RendererPtr const &renderer_ptr, std::string const &filename);
 	D3D9Texture(D3D9RendererPtr const &renderer_ptr, int width, int height, int bpp);
 	~D3D9Texture();
 
