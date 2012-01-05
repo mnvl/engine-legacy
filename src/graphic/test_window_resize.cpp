@@ -114,9 +114,6 @@ BOOST_FIXTURE_TEST_CASE(with_postconstruct_and_index_array, graphic::TestFixture
 
 BOOST_FIXTURE_TEST_CASE(with_postconstruct_and_texture, graphic::TestFixture)
 {
-	SDL_Init(SDL_INIT_VIDEO);
-	SDL_SetVideoMode(800, 600, 0, 0);
-
 	graphic::RendererPtr renderer(new graphic::D3D9Renderer());
 	renderer->postconstruct();
 
@@ -139,8 +136,6 @@ BOOST_FIXTURE_TEST_CASE(with_postconstruct_and_texture, graphic::TestFixture)
 		renderer->begin_frame();
 		renderer->finish_frame();
 	}
-
-	SDL_Quit();
 }
 
 BOOST_AUTO_TEST_SUITE_END()
