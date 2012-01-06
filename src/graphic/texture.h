@@ -30,13 +30,21 @@ public:
 	virtual void *lock(bool discard);
 	virtual void unlock();
 
+	// Return resources calling SDL_FreeSurface() for returned
+	// surface and unlock() for texture.
+	SDL_Surface *lock_as_surface(bool discard);
+	SDL_Surface const *lock_as_surface() const;
+
 	int get_width() const { return width_; }
 	int get_height() const { return height_; }
 	int get_pixel_format() const { return pixel_format_; }
 	std::string const &get_filename() const { return filename_; }
 
-	static TexturePtr load_from_sdl_surface(RendererPtr const &renderer, SDL_Surface *surface);
+	static TexturePtr load_from_surface(RendererPtr const &renderer, SDL_Surface *surface);
 	static TexturePtr load_from_file(RendererPtr const &renderer, std::string const &filename);
+
+	// Only BMP format is supported.
+	static void save_to_file(TexturePtr const &texture, std::string const &filename);
 
 	static void bind(lua_State *L);
 

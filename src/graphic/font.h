@@ -43,8 +43,11 @@ public:
 	static unsigned const FLAG_ALIGN_VCENTER = 16;
 	static unsigned const FLAG_ALIGN_BOTTOM = 32;
 
-	void draw(math::vec<2> const &left_top, math::vec<2> const &right_bottom,
-		std::string const &text, unsigned align, math::vec<3> const &color) const;
+	// Creates draw call and executes it immediately.
+	void draw(math::vec<3> const &p1, math::vec<3> const &p2,
+		math::vec<3> const &p3, math::vec<3> const &p4, std::string const &text,
+		math::vec<4> const &text_color, math::vec<4> const &background_color,
+		CameraPtr const &camera) const;
 
 	static void bind(lua_State *L);
 

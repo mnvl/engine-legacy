@@ -53,7 +53,7 @@ TexturePtr Font::make_texture(std::string const& text, math::vec<4> const &text_
 
 	SDL_Surface *surface = TTF_RenderUTF8_Shaded(font_, text.c_str(), c1, c2);
 
-	TexturePtr texture = Texture::load_from_sdl_surface(renderer_, surface);
+	TexturePtr texture = Texture::load_from_surface(renderer_, surface);
 
 	SDL_FreeSurface(surface);
 
@@ -122,8 +122,16 @@ DrawCallPtr Font::make_draw_call(math::vec<3> const &p1, math::vec<3> const &p2,
 	return draw_call;
 }
 
-void Font::draw(math::vec<2> const &left_top, math::vec<2> const &right_bottom,
-	std::string const &text, unsigned flags, math::vec<3> const &color) const {
+void Font::draw(math::vec<3> const &p1, math::vec<3> const &p2,
+	math::vec<3> const &p3, math::vec<3> const &p4, std::string const &text,
+	math::vec<4> const &text_color, math::vec<4> const &background_color,
+	CameraPtr const &camera) const
+{
+	DrawCallPtr draw_call = make_draw_call(p1, p2, p3, p4, text, text_color, background_color);
+	draw_call->set_camera(camera);
+	draw_call->set_always_visible(true);
+	draw_call->commit();
+	draw_call->execute();
 }
 
 void Font::init_library() {

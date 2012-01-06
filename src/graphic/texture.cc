@@ -44,6 +44,15 @@ const void *Texture::lock() const {
 	return 0;
 }
 
+SDL_Surface const *Texture::lock_as_surface() const {
+	PixelFormat const &pixel_format = PixelFormat::get(get_pixel_format());
+
+	return SDL_CreateRGBSurfaceFrom(const_cast<void *>(lock()),width_, height_,
+		pixel_format.bits, pixel_format.bits * width_ / 8,
+		pixel_format.masks.r, pixel_format.masks.g, pixel_format.masks.b,
+		pixel_format.masks.a);
+}
+
 void Texture::unlock() const {
 }
 
@@ -51,26 +60,28 @@ void *Texture::lock(bool discard) {
 	return 0;
 }
 
+SDL_Surface *Texture::lock_as_surface(bool discard) {
+	PixelFormat const &pixel_format = PixelFormat::get(get_pixel_format());
+
+	return SDL_CreateRGBSurfaceFrom(lock(discard), width_, height_,
+		pixel_format.bits, pixel_format.bits * width_ / 8,
+		pixel_format.masks.r, pixel_format.masks.g, pixel_format.masks.b,
+		pixel_format.masks.a);
+}
+
 void Texture::unlock() {
 }
 
-TexturePtr Texture::load_from_sdl_surface(RendererPtr const &renderer, SDL_Surface *surface) {
+TexturePtr Texture::load_from_surface(RendererPtr const &renderer, SDL_Surface *surface) {
 	TexturePtr texture = renderer->create_texture(surface->w, surface->h,
 		PixelFormat::X8R8G8B8, true, false);
 
-	PixelFormat const &pixel_format = PixelFormat::get(texture->get_pixel_format());
-
-	void *pixels = texture->lock(true);
-
-	SDL_Surface *texture_surface = SDL_CreateRGBSurfaceFrom(pixels, surface->w, surface->h,
-		pixel_format.bits, pixel_format.bits * surface->w / 8,
-		pixel_format.masks.r, pixel_format.masks.g, pixel_format.masks.b, pixel_format.masks.a);
+	SDL_Surface *texture_surface = texture->lock_as_surface(true);
 
 	int status = SDL_BlitSurface(surface, 0, texture_surface, 0);
 	if (status < 0) throw std::runtime_error(SDL_GetError());
 
 	SDL_FreeSurface(texture_surface);
-
 	texture->unlock();
 
 	return texture;
@@ -80,12 +91,21 @@ TexturePtr Texture::load_from_file(RendererPtr const &renderer, std::string cons
 	SDL_Surface *surface = IMG_Load(filename.c_str());
 	if (!surface) throw std::runtime_error(SDL_GetError());
 
-	TexturePtr texture = load_from_sdl_surface(renderer, surface);
+	TexturePtr texture = load_from_surface(renderer, surface);
 	texture->filename_ = filename;
 
 	SDL_FreeSurface(surface);
 
 	return texture;
+}
+
+void Texture::save_to_file(TexturePtr const &texture, std::string const &filename) {
+	SDL_Surface *texture_surface = texture->lock_as_surface(true);
+
+	SDL_SaveBMP(texture_surface, filename.c_str());
+
+	SDL_FreeSurface(texture_surface);
+	texture->unlock();
 }
 
 void Texture::bind(lua_State *L)

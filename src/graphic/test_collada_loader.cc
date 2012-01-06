@@ -40,7 +40,6 @@ struct CompositeFixture: Fixture, graphic::TestFixture {};
 
 BOOST_AUTO_TEST_SUITE(collada_loader)
 
-/*
 BOOST_FIXTURE_TEST_CASE(plane, Fixture)
 {
 	boost::scoped_ptr<graphic::MemoryModel> model_ptr(new graphic::MemoryModel(graphic::RendererPtr(), boost::shared_ptr<graphic::Scheduler>()));
@@ -279,7 +278,6 @@ BOOST_FIXTURE_TEST_CASE(tbn, Fixture)
 	BOOST_ASSERT (index_buffer[1] == 1);
 	BOOST_ASSERT (index_buffer[2] == 2);
 }
-*/
 
 // Both arrows should start at high corener, yellow arrow is directed towards low corner and
 // red arrow is directed towards middle corner.
