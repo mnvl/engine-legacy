@@ -1478,7 +1478,19 @@ namespace collada_elements
 				}
 				else
 				{
-					LOG_DEBUG("diffuse texture = null");
+					std::wstring const &transparent_texture = get_surface_filename(L"transparent");
+
+					if (transparent_texture.size())
+					{
+						std::string filename = xerces_lcp_transcode((get_root()->get_basepath() / transparent_texture).native_file_string());
+
+						LOG_DEBUG("transparent diffuse texture = " << filename);
+						material_ptr->set_diffuse_texture(filename);
+					}
+					else
+					{
+						LOG_WARN("diffuse texture = null");
+					}
 				}
 			}
 
@@ -1747,7 +1759,8 @@ namespace collada_elements
 
 	MaterialPtr material_e::build_material() const
 	{
-		LOG_DEBUG("material " << xerces_lcp_transcode(name_));
+		LOG_DEBUG("material " << xerces_lcp_transcode(name_)
+			<< ", instance effect " << xerces_lcp_transcode(instance_effect_url_));
 
 		MaterialPtr material_ptr(get_root()->
 			get_effects()->
@@ -1769,10 +1782,13 @@ namespace collada_elements
 			newparam_e const *surface_ptr = get_newparam(surface_name);
 			std::wstring const &image_name = surface_ptr->get_surface()->get_init_from();
 			std::wstring const &filepath = get_root()->get_images()->get_image_by_name(image_name)->get_init_from();
+			LOG_INFO("sampler " << xerces_lcp_transcode(sampler_name) << " has texture "
+				<< xerces_lcp_transcode(filepath) << " (via newparams)");
 			return boost::filesystem::wpath(filepath).filename();
 		}
 
 		std::wstring const &filepath = get_root()->get_images()->get_image_by_name(sampler_name)->get_init_from();
+		LOG_INFO("sampler " << xerces_lcp_transcode(sampler_name) << " has texture " << xerces_lcp_transcode(filepath));
 		return boost::filesystem::wpath(filepath).filename();
 	}
 
