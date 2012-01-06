@@ -169,7 +169,7 @@ public:
 	}
 };
 
-// must be binary-compatible with D3DMATRIX, see graphic/renderer.cpp
+// must be binary-compatible with D3DMATRIX, see graphic/renderer.cc
 template<class T>
 class matrix<4,4,T> {
 public:
