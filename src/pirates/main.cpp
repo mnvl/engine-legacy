@@ -16,18 +16,15 @@
 #include <luabind/detail/pcall.hpp>
 #include <log4cplus/configurator.h>
 #include <graphic/bind.h>
-#include <platform/timer.h>
-#include <platform/window.h>
-#include <platform/input.h>
-#include <platform/keyboard.h>
-#include <platform/mouse.h>
+#include <graphic/d3d9_renderer.h>
 #include <math/bind.h>
 #include <spatial/bind.h>
 #include <particle_system/bind.h>
 #include <util/logger.h>
 #include <util/archive.h>
-#include <util/bind_stl.h>
 #include <util/bind_boost.h>
+#include <util/bind_sdl.h>
+#include <util/bind_stl.h>
 #include "heightfield.h"
 
 extern "C"
@@ -35,8 +32,15 @@ extern "C"
 	#include <lualib.h>
 }
 
-class Main
+namespace
 {
+graphic::RendererPtr create_renderer_for_editor(int w, int h, luabind::object const &window_handle) {
+	return graphic::RendererPtr(
+		new graphic::D3D9Renderer(w, h, false, (HWND) lua_touserdata(window_handle.interpreter(), -1)));
+}
+}
+
+class Main {
 public:
     Main():
 		L_(lua_open())
@@ -48,9 +52,6 @@ public:
 
 		graphic::bind(L_);
 
-		platform::Timer::bind(L_);
-		platform::Window::bind(L_);
-
 		math::bind(L_);
 		spatial::bind(L_);
 
@@ -60,12 +61,9 @@ public:
 		util::ArchiveReader::bind(L_);
 		util::ArchiveWriter::bind(L_);
 
-		platform::Input::bind(L_);
-		platform::Keyboard::bind(L_);
-		platform::Mouse::bind(L_);
-
-		util::bind_stl(L_);
 		util::bind_boost(L_);
+		util::bind_SDL(L_);
+		util::bind_stl(L_);
 
 		pirates::Heightfield::bind(L_);
 
@@ -75,6 +73,11 @@ public:
 			archive_reader_->open("pack0.dat");
 			luabind::globals(L_)["SCRIPTS_ARCHIVE_READER"] = archive_reader_;
 		}
+
+		luabind::module_(L_, "graphic")
+		[
+			luabind::def("create_renderer_for_editor", &create_renderer_for_editor)
+		];
 	}
 
     ~Main()

@@ -1,3 +1,4 @@
+#pragma once
 //-----------------------------------------------------------------------------
 // Copyright (c) 2004 - 2012 Manvel Avetisian.
 // All Rights Reserved.
@@ -8,16 +9,12 @@
 // prior written consent of Manvel Avetisian.
 //-----------------------------------------------------------------------------
 
-#include <luabind/luabind.hpp>
-#include "input.h"
+#include <luabind/lua_include.hpp>
 
-void platform::Input::bind(lua_State *L)
+namespace util
 {
-	using namespace luabind;
 
-	module_(L, "platform")
-	[
-		class_<Input, boost::shared_ptr<Input> >("Input")
-		.def(constructor<boost::shared_ptr<Window> const &>())
-	];
+void bind_SDL(lua_State *L);
+
 }
+

@@ -8,11 +8,12 @@
 // prior written consent of Manvel Avetisian.
 //-----------------------------------------------------------------------------
 
+#include <SDL.h>
 #include <boost/test/unit_test.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
-#include <platform/window.h>
 #include <util/get_sources_path.h>
 #include <exception/directx_error.h>
+#include "test_fixture.h"
 #include "material.h"
 #include "vertex_array.h"
 #include "index_array.h"
@@ -23,12 +24,11 @@
 
 BOOST_AUTO_TEST_SUITE(normal_map)
 
-BOOST_AUTO_TEST_CASE(basic)
+BOOST_FIXTURE_TEST_CASE(basic, graphic::TestFixture)
 {
 	std::string const &src = util::get_graphic_sources_path();
 
-	boost::shared_ptr<platform::Window> window(new platform::Window("test normal_map basic"));
-	boost::shared_ptr<graphic::D3D9Renderer> renderer(new graphic::D3D9Renderer(window));
+	boost::shared_ptr<graphic::D3D9Renderer> renderer(new graphic::D3D9Renderer());
 
 	renderer->postconstruct();
 
@@ -140,9 +140,10 @@ BOOST_AUTO_TEST_CASE(basic)
 
 	HRESULT hr;
 
-	while ((delta = math::scalar((boost::posix_time::microsec_clock::local_time() - start_time).total_microseconds())) < DURATION
-		&& window->run_message_loop())
+	while ((delta = math::scalar((boost::posix_time::microsec_clock::local_time() - start_time).total_microseconds())) < DURATION)
 	{
+		graphic::TestFixture::process_events();
+
 		math::scalar angle = delta / DURATION * math::PI * 4;
 
 		point.position.set(-cos(angle) * 0.5f + 0.5f, 0.5f, sin(angle) * 0.5f);

@@ -31,10 +31,10 @@ class D3D9VertexBuffer: public VertexBuffer
 public:
 	virtual ~D3D9VertexBuffer();
 
-	const void *lock() const;
-	void unlock() const;
-	void *lock(bool discard);
-	void unlock();
+	virtual const void *lock() const;
+	virtual void unlock() const;
+	virtual void *lock(bool discard);
+	virtual void unlock();
 
 	size_t get_size() const { return clone_.size(); }
 

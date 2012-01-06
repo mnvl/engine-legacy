@@ -9,9 +9,11 @@
 // prior written consent of Manvel Avetisian.
 //-----------------------------------------------------------------------------
 
+#include <SDL.h>
 #include <luabind/lua_include.hpp>
 #include <boost/noncopyable.hpp>
 #include "forward.h"
+#include "pixel.h"
 
 namespace graphic
 {
@@ -19,16 +21,30 @@ namespace graphic
 class Texture: public boost::noncopyable {
 public:
 	Texture(std::string const &filename);
+	Texture(int width, int height, unsigned pixel_format,
+		bool dynamic = false, bool writeonly = false);
 	virtual ~Texture();
 
-	std::string const &get_filename() const
-	{
-		return filename_;
-	}
+	virtual const void *lock() const;
+	virtual void unlock() const;
+	virtual void *lock(bool discard);
+	virtual void unlock();
+
+	int get_width() const { return width_; }
+	int get_height() const { return height_; }
+	int get_pixel_format() const { return pixel_format_; }
+	std::string const &get_filename() const { return filename_; }
+
+	static TexturePtr load_from_sdl_surface(RendererPtr const &renderer, SDL_Surface *surface);
+	static TexturePtr load_from_file(RendererPtr const &renderer, std::string const &filename);
 
 	static void bind(lua_State *L);
 
 protected:
+	int width_, height_;
+	unsigned pixel_format_;
+	bool dynamic_;
+	bool writeonly_;
 	std::string filename_;
 };
 

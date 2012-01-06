@@ -9,24 +9,20 @@
 // prior written consent of Manvel Avetisian.
 //-----------------------------------------------------------------------------
 
-#include <luabind/lua_include.hpp>
-#include <boost/cstdint.hpp>
+#include <d3d9.h>
+#include <math/vec.h>
 
-namespace platform
+namespace graphic
 {
 
-class Timer {
-public:
-	Timer();
-	~Timer();
+struct PixelFormat {
+	static unsigned const X8R8G8B8 = 1;
 
-	static double get_current_time();
-	static void bind(lua_State *L);
+	const math::vec<4, unsigned> masks;
+	const D3DFORMAT direct3d_format;
+	const int bits;
 
-private:
-	static Timer &instance();
-	boost::int64_t performance_frequency_;
+	static PixelFormat const &get(unsigned pixel_format);
 };
 
 }
-

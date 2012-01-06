@@ -1,3 +1,4 @@
+#pragma once
 //-----------------------------------------------------------------------------
 // Copyright (c) 2004 - 2012 Manvel Avetisian.
 // All Rights Reserved.
@@ -8,19 +9,26 @@
 // prior written consent of Manvel Avetisian.
 //-----------------------------------------------------------------------------
 
-#include <luabind/luabind.hpp>
-#include "input.h"
-#include "mouse.h"
+#include <SDL.h>
 
-void platform::Mouse::bind(lua_State *L)
+namespace graphic
 {
-	using namespace luabind;
 
-	module_(L, "platform")
-	[
-		class_<Mouse, boost::shared_ptr<Mouse> >("Mouse")
-		.def(constructor<boost::shared_ptr<Input> const &, bool, bool>())
-		.def("update", &Mouse::update)
-		.def("get_position", &Mouse::get_position)
-	];
+struct TestFixture {
+	TestFixture() {
+		SDL_Init(0);
+		SDL_SetVideoMode(400, 300, 0, 0);
+	}
+
+	~TestFixture() {
+		SDL_Quit();
+	}
+
+	static void process_events() {
+		SDL_Event event;
+		while (SDL_PollEvent(&event)) {
+		}
+	}
+};
+
 }

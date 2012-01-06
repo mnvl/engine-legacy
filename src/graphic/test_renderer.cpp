@@ -9,34 +9,27 @@
 //-----------------------------------------------------------------------------
 
 #include <boost/test/unit_test.hpp>
-#include <platform/window.h>
-#include <platform/timer.h>
 #include <util/logger.h>
+#include "test_fixture.h"
 #include "d3d9_renderer.h"
 
 BOOST_AUTO_TEST_SUITE(renderer)
 
-BOOST_AUTO_TEST_CASE(basic)
+BOOST_FIXTURE_TEST_CASE(basic, graphic::TestFixture)
 {
-	boost::shared_ptr<platform::Window> window(new platform::Window("test renderer basic"));
-	graphic::D3D9RendererPtr renderer(new graphic::D3D9Renderer(window));
+	graphic::D3D9RendererPtr renderer(new graphic::D3D9Renderer());
 
 	renderer->postconstruct();
 	renderer->reset_state();
 
-	double t = platform::Timer::get_current_time();
+	double t = SDL_GetTicks();
 
-	while (platform::Timer::get_current_time() - t < 1.0)
+	while (SDL_GetTicks() - t < 1000)
 	{
-		double t0 = platform::Timer::get_current_time();
-		window->run_message_loop();
-		double t1 = platform::Timer::get_current_time();
-		renderer->begin_frame();
-		double t2 = platform::Timer::get_current_time();
-		renderer->finish_frame();
-		double t3 = platform::Timer::get_current_time();
+		graphic::TestFixture::process_events();
 
-		LOG_DEBUG("message_loop = " << t1 - t0 <<", begin_frame = " << t2 - t1 <<", finish_frame = " << t3 - t2);
+		renderer->begin_frame();
+		renderer->finish_frame();
 	}
 }
 

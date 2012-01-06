@@ -8,10 +8,11 @@
 // prior written consent of Manvel Avetisian.
 //-----------------------------------------------------------------------------
 
+#include <SDL.h>
+#include <SDL_syswm.h>
 #include <exception/directx_error.h>
 #include <util/logger.h>
 #include <util/get_sources_path.h>
-#include "font.h"
 #include "uber_shader.h"
 #include "d3d9_vertex_buffer.h"
 #include "d3d9_index_buffer.h"
@@ -25,18 +26,28 @@
 namespace graphic
 {
 
-D3D9Renderer::D3D9Renderer(boost::shared_ptr<platform::Window> const &window, int width, int height, bool fullscreen):
-	Renderer(window),
+D3D9Renderer::D3D9Renderer(int width, int height, bool fullscreen, HWND window_handle):
+	Renderer(),
+	window_handle_(window_handle ? window_handle : get_sdl_window_handle()),
 	screen_width_(width),
 	screen_height_(height),
 	fullscreen_(fullscreen)
 {
+	init();
+}
+
+D3D9Renderer::~D3D9Renderer()
+{
+}
+
+
+void D3D9Renderer::init() {
 	HRESULT hr;
 
 	if (!screen_width_ || !screen_height_)
 	{
 		RECT rc;
-		GetClientRect(window->get_handle(), &rc);
+		GetClientRect(window_handle_, &rc);
 
 		screen_width_ = rc.right - rc.left;
 		screen_height_ = rc.bottom - rc.top;
@@ -84,7 +95,7 @@ D3D9Renderer::D3D9Renderer(boost::shared_ptr<platform::Window> const &window, in
 		pp_.MultiSampleType = D3DMULTISAMPLE_NONE;
 		pp_.MultiSampleQuality = 0;
 		pp_.SwapEffect = D3DSWAPEFFECT_DISCARD;
-		pp_.hDeviceWindow = window_->get_handle();
+		pp_.hDeviceWindow = window_handle_;
 		pp_.Windowed = !fullscreen_;
 		pp_.EnableAutoDepthStencil = TRUE;
 		pp_.AutoDepthStencilFormat = D3DFMT_D24S8;
@@ -92,7 +103,7 @@ D3D9Renderer::D3D9Renderer(boost::shared_ptr<platform::Window> const &window, in
 		pp_.FullScreen_RefreshRateInHz = 0;
 		pp_.PresentationInterval = D3DPRESENT_INTERVAL_IMMEDIATE;
 
-		hr = direct3d_->CreateDevice(adapter, device_type, window_->get_handle(),
+		hr = direct3d_->CreateDevice(adapter, device_type, window_handle_,
 			D3DCREATE_HARDWARE_VERTEXPROCESSING, &pp_, &device_ptr);
 
 		if (FAILED(hr))
@@ -100,7 +111,7 @@ D3D9Renderer::D3D9Renderer(boost::shared_ptr<platform::Window> const &window, in
 			LOG_ERROR("failed to create direct3d device with hr = " << std::hex << hr
 				<< ", trying sw vertex processing");
 
-			hr = direct3d_->CreateDevice(adapter, device_type, window_->get_handle(),
+			hr = direct3d_->CreateDevice(adapter, device_type, window_handle_,
 				D3DCREATE_SOFTWARE_VERTEXPROCESSING, &pp_, &device_ptr);
 		}
 
@@ -109,10 +120,6 @@ D3D9Renderer::D3D9Renderer(boost::shared_ptr<platform::Window> const &window, in
 		device_.reset(device_ptr);
 		device_ptr->Release();
 	}
-}
-
-D3D9Renderer::~D3D9Renderer()
-{
 }
 
 int D3D9Renderer::get_screen_width() const
@@ -125,14 +132,38 @@ int D3D9Renderer::get_screen_height() const
 	return screen_height_;
 }
 
+void D3D9Renderer::resize(int width, int height)
+{
+	if (fullscreen_) return;
+
+	if (!width || !height) {
+		RECT rc;
+		GetClientRect(window_handle_, &rc);
+
+		screen_width_ = rc.right - rc.left;
+		screen_height_ = rc.bottom - rc.top;
+	} else {
+		screen_width_ = width;
+		screen_height_ = height;
+	}
+
+	LOG_INFO("window resized, new client dimensions are " << screen_width_ << 'x' << screen_height_);
+
+	pp_.BackBufferWidth = screen_width_;
+	pp_.BackBufferHeight = screen_height_;
+
+	reset_device();
+}
+
+void *D3D9Renderer::get_window_handle() const {
+	return window_handle_;
+}
+
 void D3D9Renderer::postconstruct()
 {
 	uber_shader_.reset(new UberShader(shared_from_this()));
 
 	vertex_declarations_.reset(new D3D9VertexDeclarations(this));
-
-	window_->signal_resize.connect
-		(boost::signals2::signal0<void>::slot_type(&D3D9Renderer::handle_resize, this).track(shared_from_this()));
 
 	reset_state();
 }
@@ -240,9 +271,11 @@ IndexBufferPtr D3D9Renderer::create_index_buffer(unsigned format, size_t size, b
 	return index_buffer;
 }
 
-TexturePtr D3D9Renderer::create_texture(std::string const &filename)
+TexturePtr D3D9Renderer::create_texture(int width, int height, unsigned pixel_format,
+		bool dynamic, bool writeonly)
 {
-	boost::shared_ptr<D3D9Texture> texture(new D3D9Texture(shared_from_this(), filename));
+	boost::shared_ptr<D3D9Texture> texture(new D3D9Texture(shared_from_this(), width, height,
+		pixel_format, dynamic, writeonly));
 	register_resource(texture);
 	return texture;
 }
@@ -250,13 +283,6 @@ TexturePtr D3D9Renderer::create_texture(std::string const &filename)
 MaterialPtr D3D9Renderer::create_material()
 {
 	return MaterialPtr(new D3D9Material(shared_from_this()));
-}
-
-FontPtr D3D9Renderer::create_font(std::string const &face_name, int height)
-{
-	FontPtr font(new Font(shared_from_this(), face_name, height));
-	register_resource(font);
-	return font;
 }
 
 ShaderPtr D3D9Renderer::create_shader()
@@ -281,22 +307,11 @@ UberShaderPtr D3D9Renderer::get_uber_shader() const
 	return uber_shader_;
 }
 
-void D3D9Renderer::handle_resize()
-{
-	if (fullscreen_) return;
-
-	RECT rc;
-	GetClientRect(window_->get_handle(), &rc);
-
-	screen_width_ = rc.right - rc.left;
-	screen_height_ = rc.bottom - rc.top;
-
-	LOG_INFO("window resized, new client dimensions are " << screen_width_ << 'x' << screen_height_);
-
-	pp_.BackBufferWidth = screen_width_;
-	pp_.BackBufferHeight = screen_height_;
-
-	reset_device();
+HWND D3D9Renderer::get_sdl_window_handle() {
+	SDL_SysWMinfo si;
+	SDL_VERSION(&si.version);
+	if (SDL_GetWMInfo(&si) <= 0) throw std::runtime_error(SDL_GetError());
+	return (HWND) si.window;
 }
 
 }

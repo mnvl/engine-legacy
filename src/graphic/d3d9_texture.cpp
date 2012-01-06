@@ -17,66 +17,67 @@
 namespace graphic
 {
 
-D3D9Texture::D3D9Texture(D3D9RendererPtr const &renderer_ptr, std::string const &filename):
-	Texture(filename),
-	renderer_(renderer_ptr)
+D3D9Texture::D3D9Texture(D3D9RendererPtr const &renderer_ptr, int width, int height,
+	unsigned pixel_format, bool dynamic, bool writeonly):
+	Texture(width, height, pixel_format, dynamic, writeonly),
+	renderer_(renderer_ptr),
+	usage_(0),
+	pool_(dynamic ? D3DPOOL_DEFAULT : D3DPOOL_MANAGED)
 {
-	load_from_file(filename);
+	if(dynamic) usage_ |= D3DUSAGE_DYNAMIC;
+	if(writeonly) usage_ |= D3DUSAGE_WRITEONLY;
+
+	create_texture();
 }
 
 D3D9Texture::~D3D9Texture()
 {
 }
 
-void D3D9Texture::load_from_file(std::string const &filename)
-{
-	{
-		boost::filesystem::path original_file_path(filename, boost::filesystem::native);
+void D3D9Texture::create_texture() {
+	PixelFormat const &pixel_format = PixelFormat::get(pixel_format_);
 
-		if (original_file_path.extension() != ".dds")
-		{
-			boost::filesystem::path dds_file_path = boost::filesystem::change_extension(original_file_path, ".dds");
+	IDirect3DTexture9 *texture_ptr;
+	HRESULT hr = renderer_->get_device()->CreateTexture(width_, height_, 0, usage_,
+		pixel_format.direct3d_format, pool_, &texture_ptr, 0);
+	if (FAILED(hr)) throw exception::directx_error(hr);
+	texture_.reset(texture_ptr);
+	texture_ptr->Release();
 
-			if (boost::filesystem::exists(dds_file_path))
-			{
-				filename_ = dds_file_path.native_file_string();
-				LOG_INFO("overrided " << filename << " to " << filename_);
-			}
-			else
-			{
-				filename_ = filename;
-			}
-		}
-		else
-		{
-			filename_ = filename;
-		}
+	clone_.resize(width_ * height_ * pixel_format.bits / 8);
+}
+
+const void *D3D9Texture::lock() const {
+	return &clone_[0];
+}
+
+void D3D9Texture::unlock() const {
+}
+
+void *D3D9Texture::lock(bool discard) {
+	return &clone_[0];
+}
+
+void D3D9Texture::unlock() {
+	PixelFormat const &pixel_format = PixelFormat::get(pixel_format_);
+
+	D3DLOCKED_RECT locked_rect;
+	HRESULT hr = texture_->LockRect(0, &locked_rect, 0, D3DLOCK_DISCARD);
+	if (FAILED(hr)) throw exception::directx_error(hr);
+
+	size_t source_pitch = width_ * pixel_format.bits / 8;
+
+	char *get = &clone_[0];
+	char *put = (char *) locked_rect.pBits;
+
+	for (int y = 0; y < height_; ++y) {
+		memcpy(put, get, source_pitch);
+
+		get += source_pitch;
+		put += locked_rect.Pitch;
 	}
 
-	LOG_INFO("loading texture from file " << filename_);
-
-	if (renderer_)
-	{
-		IDirect3DTexture9 *texture_ptr;
-		HRESULT hr = D3DXCreateTextureFromFile(renderer_->get_device(), filename_.c_str(), &texture_ptr);
-		if (FAILED(hr)) throw exception::directx_error(hr);
-		texture_.reset(texture_ptr);
-		texture_ptr->Release();
-	}
-
-#if defined(_DEBUG)
-	if (texture_)
-	{
-		D3DSURFACE_DESC ddsd;
-		HRESULT hr = texture_->GetLevelDesc(0, &ddsd);
-		if (FAILED(hr)) throw exception::directx_error(hr);
-
-		typedef unsigned char uchar;
-
-		LOG_DEBUG("format = " << std::hex << ddsd.Format << " (" << uchar(ddsd.Format >> 24) <<
-			uchar(ddsd.Format >> 16) << uchar(ddsd.Format >> 8) << uchar(ddsd.Format) << ")");
-	}
-#endif
+	texture_->UnlockRect(0);
 }
 
 void D3D9Texture::handle_lost_device()
@@ -86,14 +87,8 @@ void D3D9Texture::handle_lost_device()
 
 void D3D9Texture::handle_reset_device()
 {
-	if (renderer_)
-	{
-		IDirect3DTexture9 *texture_ptr;
-		HRESULT hr = D3DXCreateTextureFromFile(renderer_->get_device(), filename_.c_str(), &texture_ptr);
-		if (FAILED(hr)) throw exception::directx_error(hr);
-		texture_.reset(texture_ptr);
-		texture_ptr->Release();
-	}
+	create_texture();
+	unlock();
 }
 
 }

@@ -12,13 +12,15 @@
 #include <luabind/luabind.hpp>
 #include "texture.h"
 #include "material.h"
-#include "font.h"
 #include "renderer.h"
 #include "draw_call.h"
 #include "uber_draw_call.h"
 #include "d3d9_renderer.h"
 
-void graphic::Renderer::bind(lua_State *L)
+namespace graphic
+{
+
+void Renderer::bind(lua_State *L)
 {
     using namespace luabind;
 
@@ -27,6 +29,7 @@ void graphic::Renderer::bind(lua_State *L)
         class_<Renderer, RendererPtr>("Renderer")
 		.def("get_screen_width", &Renderer::get_screen_width)
 		.def("get_screen_height", &Renderer::get_screen_height)
+		.def("resize", &Renderer::resize)
 		.def("postconstruct", &Renderer::postconstruct)
 		.def("begin_frame", &Renderer::begin_frame)
 		.def("finish_frame", &Renderer::finish_frame)
@@ -37,11 +40,11 @@ void graphic::Renderer::bind(lua_State *L)
 		.def("create_vertex_array_pnjwt", &Renderer::create_vertex_array<VERTEX_PNJWT>)
 		.def("create_index_array_16", &Renderer::create_index_array<INDEX_U16>)
 		.def("create_draw_call", &Renderer::create_draw_call)
-		.def("create_uber_draw_call", &Renderer::create_uber_draw_call)
-		.def("create_font", &Renderer::create_font),
+		.def("create_uber_draw_call", &Renderer::create_uber_draw_call),
 
 		class_<D3D9Renderer, Renderer, RendererPtr>("D3D9Renderer")
-		.def(constructor<boost::shared_ptr<platform::Window> const &, int, int, bool>())
+		.def(constructor<int, int, bool>())
     ];
 }
 
+}

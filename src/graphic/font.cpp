@@ -8,60 +8,71 @@
 // prior written consent of Manvel Avetisian.
 //-----------------------------------------------------------------------------
 
-#include <exception/directx_error.h>
+#include <boost/lexical_cast.hpp>
 #include <luabind/luabind.hpp>
+#include "texture.h"
 #include "renderer.h"
-#include "d3d9_renderer.h"
 #include "font.h"
+
+#if defined(max)
+#undef max
+#endif
 
 namespace graphic
 {
 
-Font::Font(RendererPtr const &renderer, std::string const &face_name, int height)
+Font::Font(RendererPtr const &renderer, std::string const &filename, int height):
+	renderer_(renderer)
 {
-	HRESULT hr;
+	init_library();
 
-	ID3DXFont *font_ptr;
-	hr = D3DXCreateFont(boost::static_pointer_cast<D3D9Renderer>(renderer)->get_device(), height, 0, FW_MEDIUM, 1, FALSE, DEFAULT_CHARSET,
-		OUT_DEFAULT_PRECIS, DEFAULT_QUALITY, DEFAULT_PITCH | FF_DONTCARE, face_name.c_str(), &font_ptr);
-	if (FAILED(hr)) throw exception::directx_error(hr);
-
-	font_.reset(font_ptr);
-	font_ptr->Release();
+	font_ = TTF_OpenFont(filename.c_str(), height);
+	if (!font_) throw_error();
 }
 
 Font::~Font() {
+	TTF_CloseFont(font_);
+}
+
+TexturePtr Font::create_texture(std::string const& text, math::vec<3> const &color) {
+	SDL_Color sdl_color;
+
+	sdl_color.r = Uint8(color.r * 255);
+	sdl_color.g = Uint8(color.g * 255);
+	sdl_color.b = Uint8(color.b * 255);
+
+	SDL_Surface *surface = TTF_RenderUTF8_Solid(font_, text.c_str(), sdl_color);
+
+	TexturePtr texture = Texture::load_from_sdl_surface(renderer_, surface);
+
+	SDL_FreeSurface(surface);
+
+	return texture;
 }
 
 void Font::draw(math::vec<2> const &left_top, math::vec<2> const &right_bottom, char const *text, unsigned flags,
 	math::vec<3> const &color)
 {
-	RECT rc;
-	rc.left = (LONG) left_top.x;
-	rc.top = (LONG) left_top.y;
-	rc.right = (LONG) right_bottom.x;
-	rc.bottom = (LONG) right_bottom.y;
-
-	BYTE r = BYTE(color.r * 255);
-	BYTE g = BYTE(color.g * 255);
-	BYTE b = BYTE(color.b * 255);
-
-	INT status = get()->DrawText(0, text, strlen(text), &rc, flags, D3DCOLOR_XRGB(r, g, b));
-
-	if (!status)
-	{
-		throw std::runtime_error("can't draw text");
-	}
 }
 
-void Font::handle_lost_device()
-{
-	get()->OnLostDevice();
+void Font::init_library() {
+	struct Guard {
+		Guard() {
+			if (TTF_Init() == -1) {
+				throw_error();
+			}
+		}
+
+		~Guard() {
+			TTF_Quit();
+		}
+	};
+
+	static Guard guard;
 }
 
-void Font::handle_reset_device()
-{
-	get()->OnResetDevice();
+void Font::throw_error() {
+	throw std::runtime_error(std::string("SDL_ttf error ") + TTF_GetError());
 }
 
 void Font::bind(lua_State *L)
@@ -80,6 +91,8 @@ void Font::bind(lua_State *L)
 			value("FLAG_ALIGN_VCENTER", FLAG_ALIGN_VCENTER),
 			value("FLAG_ALIGN_BOTTOM", FLAG_ALIGN_BOTTOM)
 		]
+		.def(constructor<RendererPtr const &, std::string const &, int>())
+		.def("create_texture", &Font::create_texture)
 		.def("draw", &Font::draw)
     ];
 }

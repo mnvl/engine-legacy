@@ -14,7 +14,6 @@
 #include <boost/enable_shared_from_this.hpp>
 #include <luabind/lua_include.hpp>
 #include <math/matrix.h>
-#include <platform/window.h>
 #include "forward.h"
 #include "camera.h"
 #include "vertex_traits.h"
@@ -26,13 +25,15 @@ namespace graphic
 
 class Renderer: public boost::enable_shared_from_this<Renderer>, public boost::noncopyable {
 public:
-	Renderer(boost::shared_ptr<platform::Window> const &window);
+	Renderer();
 	virtual ~Renderer();
 
 	virtual void postconstruct() = 0;
 
 	virtual int get_screen_width() const = 0;
 	virtual int get_screen_height() const = 0;
+	virtual void resize(int width, int height) = 0;
+	virtual void *get_window_handle() const = 0;
 
 	virtual void begin_frame() = 0;
 	virtual void finish_frame() = 0;
@@ -58,9 +59,9 @@ public:
 				create_index_buffer(INDEX_FORMAT_U16, sizeof(I) * count, dynamic, writeonly)));
 	}
 
-	virtual TexturePtr create_texture(std::string const &filename) = 0;
+	virtual TexturePtr create_texture(int width, int height, unsigned pixel_format,
+		bool dynamic = false, bool writeonly = false) = 0;
 	virtual MaterialPtr create_material() = 0;
-	virtual FontPtr create_font(std::string const &face_name, int height = 16) = 0;
 	virtual ShaderPtr create_shader() = 0;
 
 	virtual UberShaderPtr get_uber_shader() const = 0;
@@ -69,9 +70,6 @@ public:
 	virtual UberDrawCallPtr create_uber_draw_call() = 0;
 
     static void bind(lua_State *L);
-
-protected:
-	boost::shared_ptr<platform::Window> const window_;
 };
 
 }
