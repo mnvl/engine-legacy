@@ -8,9 +8,14 @@
 // prior written consent of Manvel Avetisian.
 //-----------------------------------------------------------------------------
 
+#include <boost/scoped_ptr.hpp>
 #include <boost/test/unit_test.hpp>
 #include <util/get_sources_path.h>
+#include "test_fixture.h"
 #include "memory_model.h"
+#include "static_model.h"
+#include "scheduler.h"
+#include "d3d9_renderer.h"
 #include "collada_loader.h"
 
 namespace
@@ -29,13 +34,16 @@ struct Fixture
     }
 };
 
+struct CompositeFixture: Fixture, graphic::TestFixture {};
+
 }
 
 BOOST_AUTO_TEST_SUITE(collada_loader)
 
+/*
 BOOST_FIXTURE_TEST_CASE(plane, Fixture)
 {
-	std::auto_ptr<graphic::MemoryModel> model_ptr(new graphic::MemoryModel(graphic::RendererPtr(), boost::shared_ptr<graphic::Scheduler>()));
+	boost::scoped_ptr<graphic::MemoryModel> model_ptr(new graphic::MemoryModel(graphic::RendererPtr(), boost::shared_ptr<graphic::Scheduler>()));
 
     graphic::ColladaLoader loader(model_ptr.get());
 	loader.load(util::get_graphic_sources_path() + "/test_collada_loader_plane.xml");
@@ -66,7 +74,7 @@ BOOST_FIXTURE_TEST_CASE(plane, Fixture)
 
 BOOST_FIXTURE_TEST_CASE(joint, Fixture)
 {
-    std::auto_ptr<graphic::MemoryModel> model_ptr(new graphic::MemoryModel(graphic::RendererPtr(), boost::shared_ptr<graphic::Scheduler>()));
+    boost::scoped_ptr<graphic::MemoryModel> model_ptr(new graphic::MemoryModel(graphic::RendererPtr(), boost::shared_ptr<graphic::Scheduler>()));
 
     graphic::ColladaLoader loader(model_ptr.get());
 	loader.load(util::get_graphic_sources_path() + "/test_collada_loader_joint.xml");
@@ -100,7 +108,7 @@ BOOST_FIXTURE_TEST_CASE(joint, Fixture)
 
 BOOST_FIXTURE_TEST_CASE(animation, Fixture)
 {
-    std::auto_ptr<graphic::MemoryModel> model_ptr(new graphic::MemoryModel(graphic::RendererPtr(), boost::shared_ptr<graphic::Scheduler>()));
+    boost::scoped_ptr<graphic::MemoryModel> model_ptr(new graphic::MemoryModel(graphic::RendererPtr(), boost::shared_ptr<graphic::Scheduler>()));
     graphic::ColladaLoader loader(model_ptr.get());
 	loader.load(util::get_graphic_sources_path() + "/test_collada_loader_animation.xml");
 	loader.build_model();
@@ -146,7 +154,7 @@ BOOST_FIXTURE_TEST_CASE(materials, Fixture)
 {
 	Fixture fixture;
 
-    std::auto_ptr<graphic::MemoryModel> model_ptr(new graphic::MemoryModel(graphic::RendererPtr(), boost::shared_ptr<graphic::Scheduler>()));
+    boost::scoped_ptr<graphic::MemoryModel> model_ptr(new graphic::MemoryModel(graphic::RendererPtr(), boost::shared_ptr<graphic::Scheduler>()));
 
     graphic::ColladaLoader loader(model_ptr.get());
 	loader.load(util::get_graphic_sources_path() + "/test_collada_loader_materials.xml");
@@ -236,7 +244,7 @@ BOOST_FIXTURE_TEST_CASE(materials, Fixture)
 
 BOOST_FIXTURE_TEST_CASE(tbn, Fixture)
 {
-    std::auto_ptr<graphic::MemoryModel> model_ptr(new graphic::MemoryModel(graphic::RendererPtr(), boost::shared_ptr<graphic::Scheduler>()));
+    boost::scoped_ptr<graphic::MemoryModel> model_ptr(new graphic::MemoryModel(graphic::RendererPtr(), boost::shared_ptr<graphic::Scheduler>()));
 
     graphic::ColladaLoader loader(model_ptr.get());
 	loader.load(util::get_graphic_sources_path() + "/test_collada_loader_tbn.xml");
@@ -270,6 +278,44 @@ BOOST_FIXTURE_TEST_CASE(tbn, Fixture)
 	BOOST_ASSERT (index_buffer[0] == 0);
 	BOOST_ASSERT (index_buffer[1] == 1);
 	BOOST_ASSERT (index_buffer[2] == 2);
+}
+*/
+
+// Both arrows should start at high corener, yellow arrow is directed towards low corner and
+// red arrow is directed towards middle corner.
+BOOST_FIXTURE_TEST_CASE(directions, CompositeFixture)
+{
+	graphic::D3D9RendererPtr renderer(new graphic::D3D9Renderer());
+	renderer->postconstruct();
+
+	graphic::SchedulerPtr scheduler(new graphic::Scheduler(renderer));
+
+	graphic::ModelPtr model(new graphic::StaticModelPNT(renderer, scheduler));
+	model->load_from_collada(util::get_graphic_sources_path() + "/test_directions.xml");
+	model->set_animation_time(0);
+	model->set_always_visible(true);
+
+	boost::shared_ptr<graphic::Camera> camera(new graphic::Camera());
+	camera->set_perspective_projection(math::PI / 2, 4.0f / 3.0f, 1, 1000);
+	camera->set_eye_lookat_up(math::vec<3>(10, 1, 10), math::vec<3>(0, 0, 0), math::vec<3>(0, 1, 0));
+
+	math::matrix<4,4> world_matrix;
+	world_matrix.identity();
+
+	double t = SDL_GetTicks();
+
+	while (SDL_GetTicks() - t < 10000)
+	{
+		graphic::TestFixture::process_events();
+
+		world_matrix.rotation(math::vec<3>(0, 0.001 * (SDL_GetTicks() - t) * math::PI, 0));
+
+		model->draw(camera, world_matrix);
+
+		renderer->begin_frame();
+		scheduler->flush();
+		renderer->finish_frame();
+	}
 }
 
 BOOST_AUTO_TEST_SUITE_END()

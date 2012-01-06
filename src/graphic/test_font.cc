@@ -22,78 +22,19 @@
 
 BOOST_AUTO_TEST_SUITE(font)
 
-BOOST_FIXTURE_TEST_CASE(basic, graphic::TestFixture)
+BOOST_FIXTURE_TEST_CASE(make_draw_call, graphic::TestFixture)
 {
 	graphic::RendererPtr renderer(new graphic::D3D9Renderer());
 	renderer->postconstruct();
 
 	graphic::FontPtr font(new graphic::Font(renderer, "arial.ttf", 72));
 
-	graphic::TexturePtr texture = font->create_texture("hello", math::vec<3>(1, 1, 1));
-
-	graphic::MaterialPtr material = renderer->create_material();
-	material->set_diffuse_texture(texture);
-
-	boost::shared_ptr<graphic::VertexArrayPNT> vertex_array = renderer->create_vertex_array<graphic::VERTEX_PNT>(4);
-
-	{
-		graphic::VERTEX_PNT *v = vertex_array->lock(true);
-
-		v->position.set(0, 1, 0);
-		v->normal.set(0, 0, 1);
-		v->texcoords.set(0, 1);
-		++v;
-
-		v->position.set(0, 0, 0);
-		v->normal.set(0, 0, 1);
-		v->texcoords.set(0, 0);
-		++v;
-
-		v->position.set(1, 0, 0);
-		v->normal.set(0, 0, 1);
-		v->texcoords.set(1, 0);
-		++v;
-
-		v->position.set(1, 1, 0);
-		v->normal.set(0, 0, 1);
-		v->texcoords.set(1, 1);
-		++v;
-
-		vertex_array->unlock();
-	}
-
-	boost::shared_ptr<graphic::IndexArray16> index_array = renderer->create_index_array<graphic::INDEX_U16>(6);
-
-	{
-		graphic::INDEX_U16 *i = index_array->lock(true);
-
-		*i++ = 0;
-		*i++ = 1;
-		*i++ = 2;
-		*i++ = 2;
-		*i++ = 3;
-		*i++ = 0;
-
-		index_array->unlock();
-	}
-
-	graphic::UberShaderPtr shader = renderer->get_uber_shader();
-
 	boost::shared_ptr<graphic::Camera> camera(new graphic::Camera());
 	camera->set_orthographic_projection(2, 2 * math::scalar(renderer->get_screen_height()) / renderer->get_screen_width(), 0, 2);
 	camera->set_eye_lookat_up(math::vec<3>(0.5f, 0.5f, 1), math::vec<3>(0.5f, 0.5f, 0), math::vec<3>(0, 1, 0));
 
-	math::matrix<4,4> world_matrix;
-	world_matrix.identity();
-
-	graphic::UberDrawCallPtr draw_call = renderer->create_uber_draw_call();
-
-	draw_call->set_always_visible(true);
-	draw_call->set_vertex_buffer(vertex_array->get_vertex_buffer());
-	draw_call->set_index_buffer(index_array->get_index_buffer());
-	draw_call->set_material(material);
-	draw_call->set_vertices_count(4);
-	draw_call->set_triangles_count(2);
+	graphic::DrawCallPtr draw_call = font->make_draw_call(math::vec<3>(0, 1, 0), math::vec<3>(1, 1, 0),
+		math::vec<3>(1, 0, 0), math::vec<3>(0, 0, 0), "hello", math::vec<4>(1, 1, 1, 0), math::vec<4>(0, 0.2, 0.2, 0));
 	draw_call->set_camera(camera);
 	draw_call->commit();
 

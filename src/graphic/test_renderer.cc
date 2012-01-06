@@ -18,7 +18,6 @@ BOOST_AUTO_TEST_SUITE(renderer)
 BOOST_FIXTURE_TEST_CASE(basic, graphic::TestFixture)
 {
 	graphic::D3D9RendererPtr renderer(new graphic::D3D9Renderer());
-
 	renderer->postconstruct();
 	renderer->reset_state();
 

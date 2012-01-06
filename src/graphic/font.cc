@@ -11,6 +11,8 @@
 #include <boost/lexical_cast.hpp>
 #include <luabind/luabind.hpp>
 #include "texture.h"
+#include "material.h"
+#include "uber_draw_call.h"
 #include "renderer.h"
 #include "font.h"
 
@@ -34,14 +36,22 @@ Font::~Font() {
 	TTF_CloseFont(font_);
 }
 
-TexturePtr Font::create_texture(std::string const& text, math::vec<3> const &color) {
-	SDL_Color sdl_color;
+TexturePtr Font::make_texture(std::string const& text, math::vec<4> const &text_color,
+	math::vec<4> const &background_color) const {
 
-	sdl_color.r = Uint8(color.r * 255);
-	sdl_color.g = Uint8(color.g * 255);
-	sdl_color.b = Uint8(color.b * 255);
+	SDL_Color c1;
+	c1.r = Uint8(text_color.r * 255);
+	c1.g = Uint8(text_color.g * 255);
+	c1.b = Uint8(text_color.b * 255);
+	c1.unused = Uint8(text_color.a * 255);
 
-	SDL_Surface *surface = TTF_RenderUTF8_Solid(font_, text.c_str(), sdl_color);
+	SDL_Color c2;
+	c2.r = Uint8(background_color.r * 255);
+	c2.g = Uint8(background_color.g * 255);
+	c2.b = Uint8(background_color.b * 255);
+	c2.unused = Uint8(background_color.a * 255);
+
+	SDL_Surface *surface = TTF_RenderUTF8_Shaded(font_, text.c_str(), c1, c2);
 
 	TexturePtr texture = Texture::load_from_sdl_surface(renderer_, surface);
 
@@ -50,9 +60,70 @@ TexturePtr Font::create_texture(std::string const& text, math::vec<3> const &col
 	return texture;
 }
 
-void Font::draw(math::vec<2> const &left_top, math::vec<2> const &right_bottom, char const *text, unsigned flags,
-	math::vec<3> const &color)
-{
+DrawCallPtr Font::make_draw_call(math::vec<3> const &p1, math::vec<3> const &p2,
+	math::vec<3> const &p3, math::vec<3> const &p4, std::string const &text,
+	math::vec<4> const &text_color, math::vec<4> const &background_color) const {
+	graphic::TexturePtr texture = make_texture(text, text_color, background_color);
+
+	graphic::MaterialPtr material = renderer_->create_material();
+	material->set_diffuse_texture(texture);
+
+	boost::shared_ptr<graphic::VertexArrayPT> vertex_array = renderer_->create_vertex_array<graphic::VERTEX_PT>(4);
+
+	{
+		graphic::VERTEX_PT *v = vertex_array->lock(true);
+
+		v->position = p1;
+		v->texcoords.set(0, 0);
+		++v;
+
+		v->position = p2;
+		v->texcoords.set(1, 0);
+		++v;
+
+		v->position = p3;
+		v->texcoords.set(1, 1);
+		++v;
+
+		v->position = p4;
+		v->texcoords.set(0, 1);
+		++v;
+
+		vertex_array->unlock();
+	}
+
+	boost::shared_ptr<graphic::IndexArray16> index_array = renderer_->create_index_array<graphic::INDEX_U16>(6);
+
+	{
+		graphic::INDEX_U16 *i = index_array->lock(true);
+
+		*i++ = 0;
+		*i++ = 1;
+		*i++ = 2;
+		*i++ = 0;
+		*i++ = 2;
+		*i++ = 3;
+
+		index_array->unlock();
+	}
+
+	math::matrix<4,4> world_matrix;
+	world_matrix.identity();
+
+	graphic::UberDrawCallPtr draw_call = renderer_->create_uber_draw_call();
+
+	draw_call->set_always_visible(true);
+	draw_call->set_vertex_buffer(vertex_array->get_vertex_buffer());
+	draw_call->set_index_buffer(index_array->get_index_buffer());
+	draw_call->set_material(material);
+	draw_call->set_vertices_count(4);
+	draw_call->set_triangles_count(2);
+
+	return draw_call;
+}
+
+void Font::draw(math::vec<2> const &left_top, math::vec<2> const &right_bottom,
+	std::string const &text, unsigned flags, math::vec<3> const &color) const {
 }
 
 void Font::init_library() {
@@ -92,7 +163,8 @@ void Font::bind(lua_State *L)
 			value("FLAG_ALIGN_BOTTOM", FLAG_ALIGN_BOTTOM)
 		]
 		.def(constructor<RendererPtr const &, std::string const &, int>())
-		.def("create_texture", &Font::create_texture)
+		.def("make_texture", &Font::make_texture)
+		.def("make_draw_call", &Font::make_draw_call)
 		.def("draw", &Font::draw)
     ];
 }
