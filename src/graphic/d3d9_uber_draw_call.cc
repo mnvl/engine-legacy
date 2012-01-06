@@ -8,7 +8,7 @@
 // prior written consent of Manvel Avetisian.
 //-----------------------------------------------------------------------------
 
-#include <exception/directx_error.h>
+#include "directx_error.h"
 #include "vertex_array.h"
 #include "index_array.h"
 #include "material.h"
@@ -45,13 +45,13 @@ void D3D9UberDrawCall::execute()
 	D3D9Shader *shader = static_cast<D3D9Shader *>(shader_instance->get_shader().get());
 
 	hr = device_ptr->SetVertexDeclaration(renderer_->get_vertex_declarations()->get(vertex_traits));
-	if (FAILED(hr)) throw exception::directx_error(hr);
+	if (FAILED(hr)) throw directx_error(hr);
 
     hr = device_ptr->SetStreamSource(0, vertex_buffer->get(), 0, vertex_traits->get_size());
-	if (FAILED(hr)) throw exception::directx_error(hr);
+	if (FAILED(hr)) throw directx_error(hr);
 
     hr = device_ptr->SetIndices(index_buffer->get());
-	if (FAILED(hr)) throw exception::directx_error(hr);
+	if (FAILED(hr)) throw directx_error(hr);
 
 	if (material_)
 	{
@@ -79,23 +79,23 @@ void D3D9UberDrawCall::execute()
 
 	UINT passes_count;
 	hr = shader->get()->Begin(&passes_count, D3DXFX_DONOTSAVESTATE);
-	if (FAILED(hr)) throw exception::directx_error(hr);
+	if (FAILED(hr)) throw directx_error(hr);
 
 	for(UINT pass = 0; pass < passes_count; ++pass)
 	{
 		hr = shader->get()->BeginPass(pass);
-		if (FAILED(hr)) throw exception::directx_error(hr);
+		if (FAILED(hr)) throw directx_error(hr);
 
 		hr = device_ptr->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, minimal_vertex_index_, vertices_count_,
 			first_index_offset_, triangles_count_);
-		if (FAILED(hr)) throw exception::directx_error(hr);
+		if (FAILED(hr)) throw directx_error(hr);
 
 		hr = shader->get()->EndPass();
-		if (FAILED(hr)) throw exception::directx_error(hr);
+		if (FAILED(hr)) throw directx_error(hr);
 	}
 
 	hr = shader->get()->End();
-	if (FAILED(hr)) throw exception::directx_error(hr);
+	if (FAILED(hr)) throw directx_error(hr);
 }
 
 }

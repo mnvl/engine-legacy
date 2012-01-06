@@ -10,7 +10,7 @@
 
 #include <luabind/luabind.hpp>
 #include <math/frustum.h>
-#include <exception/directx_error.h>
+#include "directx_error.h"
 #include "vertex_traits.h"
 #include "camera.h"
 #include "uber_shader.h"

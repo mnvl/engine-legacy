@@ -9,7 +9,7 @@
 //-----------------------------------------------------------------------------
 
 #include <luabind/luabind.hpp>
-#include <exception/directx_error.h>
+#include "directx_error.h"
 #include "renderer.h"
 #include "index_array.h"
 

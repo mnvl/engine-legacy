@@ -8,7 +8,7 @@
 // prior written consent of Manvel Avetisian.
 //-----------------------------------------------------------------------------
 
-#include <exception/directx_error.h>
+#include "directx_error.h"
 #include "d3d9_renderer.h"
 #include "d3d9_vertex_declarations.h"
 
@@ -33,7 +33,7 @@ IDirect3DVertexDeclaration9 *D3D9VertexDeclarations::get(VertexTraits const *ver
 		IDirect3DVertexDeclaration9 *decl_ptr;
 
 		HRESULT hr = renderer_->get_device()->CreateVertexDeclaration(vertex_traits->get_descr(), &decl_ptr);
-		if (FAILED(hr)) throw exception::directx_error(hr);
+		if (FAILED(hr)) throw directx_error(hr);
 
 		traits_to_declarations_.insert(std::make_pair(vertex_traits, VertexDeclarationPtr(decl_ptr)));
 

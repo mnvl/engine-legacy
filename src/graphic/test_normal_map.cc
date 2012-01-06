@@ -12,7 +12,7 @@
 #include <boost/test/unit_test.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <util/get_sources_path.h>
-#include <exception/directx_error.h>
+#include "directx_error.h"
 #include "test_fixture.h"
 #include "material.h"
 #include "vertex_array.h"
@@ -155,14 +155,14 @@ BOOST_FIXTURE_TEST_CASE(basic, graphic::TestFixture)
 		draw_call->execute();
 
 		hr = renderer->get_device()->SetFVF(D3DFVF_XYZ|D3DFVF_DIFFUSE);
-		if (FAILED(hr)) throw exception::directx_error(hr);
+		if (FAILED(hr)) throw directx_error(hr);
 
 		float point_size = 32.0f;
 		hr = renderer->get_device()->SetRenderState(D3DRS_POINTSIZE, *((DWORD*) &point_size));
-		if (FAILED(hr)) throw exception::directx_error(hr);
+		if (FAILED(hr)) throw directx_error(hr);
 
 		hr = renderer->get_device()->DrawPrimitiveUP(D3DPT_POINTLIST, 1, &point, sizeof(POINT_VERTEX));
-		if (FAILED(hr)) throw exception::directx_error(hr);
+		if (FAILED(hr)) throw directx_error(hr);
 
 		renderer->finish_frame();
 	}

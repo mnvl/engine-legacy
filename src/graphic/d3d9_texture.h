@@ -15,7 +15,7 @@
 #include <boost/shared_ptr.hpp>
 #include <boost/intrusive_ptr.hpp>
 #include <util/boost_com_intrusive_ptr.h>
-#include <exception/directx_error.h>
+#include "directx_error.h"
 #include "texture.h"
 
 namespace graphic

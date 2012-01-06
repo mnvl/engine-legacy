@@ -10,7 +10,7 @@
 
 #include <SDL.h>
 #include <SDL_syswm.h>
-#include <exception/directx_error.h>
+#include "directx_error.h"
 #include <util/logger.h>
 #include <util/get_sources_path.h>
 #include "uber_shader.h"
@@ -115,7 +115,7 @@ void D3D9Renderer::init() {
 				D3DCREATE_SOFTWARE_VERTEXPROCESSING, &pp_, &device_ptr);
 		}
 
-		if (FAILED(hr)) throw exception::directx_error(hr);
+		if (FAILED(hr)) throw directx_error(hr);
 
 		device_.reset(device_ptr);
 		device_ptr->Release();
@@ -173,19 +173,19 @@ void D3D9Renderer::reset_state()
 	HRESULT hr;
 
 	hr = device_->SetRenderState(D3DRS_LIGHTING, FALSE);
-	if (FAILED(hr)) throw exception::directx_error(hr);
+	if (FAILED(hr)) throw directx_error(hr);
 
 	hr = device_->SetRenderState(D3DRS_ALPHAREF, 1u);
-	if (FAILED(hr)) throw exception::directx_error(hr);
+	if (FAILED(hr)) throw directx_error(hr);
 
 	hr = device_->SetRenderState(D3DRS_ALPHATESTENABLE, TRUE);
-	if (FAILED(hr)) throw exception::directx_error(hr);
+	if (FAILED(hr)) throw directx_error(hr);
 
 	hr = device_->SetRenderState(D3DRS_ALPHAFUNC, D3DCMP_GREATEREQUAL);
-	if (FAILED(hr)) throw exception::directx_error(hr);
+	if (FAILED(hr)) throw directx_error(hr);
 
 	hr = device_->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
-	if (FAILED(hr)) throw exception::directx_error(hr);
+	if (FAILED(hr)) throw directx_error(hr);
 
 	{
 		D3DMATERIAL9 material;
@@ -196,7 +196,7 @@ void D3D9Renderer::reset_state()
 		material.Power = 1.0f;
 
 		hr = device_->SetMaterial(&material);
-		if (FAILED(hr)) throw exception::directx_error(hr);
+		if (FAILED(hr)) throw directx_error(hr);
 	}
 }
 
@@ -207,7 +207,7 @@ void D3D9Renderer::reset_device()
 
 	LOG_INFO("resetting device...");
 	HRESULT hr = get_device()->Reset(&pp_);
-	if (FAILED(hr)) throw exception::directx_error(hr);
+	if (FAILED(hr)) throw directx_error(hr);
 
 	LOG_INFO("restoring all resources...");
 	signal_reset_device_();
@@ -239,10 +239,10 @@ void D3D9Renderer::begin_frame()
 	}
 
 	hr = device_->Clear(0, 0, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER | D3DCLEAR_STENCIL, D3DCOLOR_ARGB(0, 0, 0, 0), 1.0f, 0);
-	if (FAILED(hr)) throw exception::directx_error(hr);
+	if (FAILED(hr)) throw directx_error(hr);
 
 	hr = device_->BeginScene();
-	if (FAILED(hr)) throw exception::directx_error(hr);
+	if (FAILED(hr)) throw directx_error(hr);
 }
 
 void D3D9Renderer::finish_frame()
@@ -250,10 +250,10 @@ void D3D9Renderer::finish_frame()
 	HRESULT hr;
 
 	hr = device_->EndScene();
-	if (FAILED(hr)) throw exception::directx_error(hr);
+	if (FAILED(hr)) throw directx_error(hr);
 
 	hr = device_->Present(0, 0, 0, 0);
-	if (FAILED(hr)) throw exception::directx_error(hr);
+	if (FAILED(hr)) throw directx_error(hr);
 }
 
 VertexBufferPtr D3D9Renderer::create_vertex_buffer(VertexTraits const *traits, size_t size, bool dynamic, bool writeonly)

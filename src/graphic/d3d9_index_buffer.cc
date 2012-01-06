@@ -8,7 +8,7 @@
 // prior written consent of Manvel Avetisian.
 //-----------------------------------------------------------------------------
 
-#include <exception/directx_error.h>
+#include "directx_error.h"
 #include "d3d9_renderer.h"
 #include "d3d9_index_buffer.h"
 
@@ -29,7 +29,7 @@ D3D9IndexBuffer::D3D9IndexBuffer(D3D9RendererPtr const &renderer, D3DFORMAT form
 
 	IDirect3DIndexBuffer9 *buffer;
 	HRESULT hr = renderer_->get_device()->CreateIndexBuffer(size, usage_, format_, pool_, &buffer, 0);
-	if(FAILED(hr)) throw exception::directx_error(hr);
+	if(FAILED(hr)) throw directx_error(hr);
 
 	buffer_.reset(buffer);
 	buffer->Release();
@@ -58,12 +58,12 @@ void D3D9IndexBuffer::unlock()
 	void *ptr = 0;
 
 	HRESULT hr = buffer_->Lock(0, 0, (void **) &ptr, (usage_ & D3DUSAGE_DYNAMIC) ? D3DLOCK_DISCARD : 0);
-	if(FAILED(hr)) throw exception::directx_error(hr);
+	if(FAILED(hr)) throw directx_error(hr);
 
 	memcpy(ptr, &clone_[0], clone_.size());
 
 	hr = buffer_->Unlock();
-	if(FAILED(hr)) throw exception::directx_error(hr);
+	if(FAILED(hr)) throw directx_error(hr);
 }
 
 void D3D9IndexBuffer::handle_lost_device()
@@ -79,7 +79,7 @@ void D3D9IndexBuffer::handle_reset_device()
 
 	IDirect3DIndexBuffer9 *buffer;
 	HRESULT hr = renderer_->get_device()->CreateIndexBuffer(clone_.size(), usage_, format_, pool_, &buffer, 0);
-	if(FAILED(hr)) throw exception::directx_error(hr);
+	if(FAILED(hr)) throw directx_error(hr);
 
 	buffer_.reset(buffer);
 	buffer->Release();

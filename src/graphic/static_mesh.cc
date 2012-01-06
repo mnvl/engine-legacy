@@ -8,7 +8,7 @@
 // prior written consent of Manvel Avetisian.
 //-----------------------------------------------------------------------------
 
-#include <exception/directx_error.h>
+#include "directx_error.h"
 #include <util/logger.h>
 #include "uber_shader.h"
 #include "uber_draw_call.h"

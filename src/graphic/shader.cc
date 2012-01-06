@@ -9,7 +9,7 @@
 //-----------------------------------------------------------------------------
 
 #include <util/logger.h>
-#include <exception/directx_error.h>
+#include "directx_error.h"
 #include "shader.h"
 
 namespace graphic

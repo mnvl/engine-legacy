@@ -9,7 +9,7 @@
 //-----------------------------------------------------------------------------
 
 #include <luabind/luabind.hpp>
-#include <exception/directx_error.h>
+#include "directx_error.h"
 #include "static_model.h"
 
 namespace graphic

@@ -13,7 +13,7 @@
 #include <dxerr.h>
 #include <exception>
 
-namespace exception {
+namespace graphic {
 
 class directx_error: public std::exception {
 private:

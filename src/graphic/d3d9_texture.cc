@@ -40,7 +40,7 @@ void D3D9Texture::create_texture() {
 	IDirect3DTexture9 *texture_ptr;
 	HRESULT hr = renderer_->get_device()->CreateTexture(width_, height_, 0, usage_,
 		pixel_format.direct3d_format, pool_, &texture_ptr, 0);
-	if (FAILED(hr)) throw exception::directx_error(hr);
+	if (FAILED(hr)) throw directx_error(hr);
 	texture_.reset(texture_ptr);
 	texture_ptr->Release();
 
@@ -63,7 +63,7 @@ void D3D9Texture::unlock() {
 
 	D3DLOCKED_RECT locked_rect;
 	HRESULT hr = texture_->LockRect(0, &locked_rect, 0, D3DLOCK_DISCARD);
-	if (FAILED(hr)) throw exception::directx_error(hr);
+	if (FAILED(hr)) throw directx_error(hr);
 
 	size_t source_pitch = width_ * pixel_format.bits / 8;
 

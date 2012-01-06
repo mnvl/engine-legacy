@@ -12,7 +12,7 @@
 #include <boost/test/unit_test.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <util/get_sources_path.h>
-#include <exception/directx_error.h>
+#include "directx_error.h"
 #include "test_fixture.h"
 #include "material.h"
 #include "vertex_array.h"
