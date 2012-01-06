@@ -74,7 +74,8 @@ void Texture::unlock() {
 
 TexturePtr Texture::load_from_surface(RendererPtr const &renderer, SDL_Surface *surface) {
 	TexturePtr texture = renderer->create_texture(surface->w, surface->h,
-		PixelFormat::DEFAULT_FORMAT, true, false);
+		surface->format->colorkey ? PixelFormat::DEFAULT_ALPHA_FORMAT : PixelFormat::DEFAULT_FORMAT,
+		true, false);
 
 	SDL_Surface *texture_surface = texture->lock_as_surface(true);
 
