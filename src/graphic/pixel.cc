@@ -8,6 +8,7 @@
 // prior written consent of Manvel Avetisian.
 //-----------------------------------------------------------------------------
 
+#include <stdexcept>
 #include <boost/lexical_cast.hpp>
 #include "pixel.h"
 

@@ -78,7 +78,7 @@ bool frustum<T>::contains(math::vec<3> const &point) const
 {
 	for(size_t i = 0; i < PLANES_COUNT; i++)
 	{
-		plane_t::classification_t cl = planes[i].classify(point);
+		typename plane_t::classification_t cl = planes[i].classify(point);
 		if (cl == plane_t::NEGATIVE) return false;
 	}
 

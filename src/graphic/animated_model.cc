@@ -52,7 +52,7 @@ void bind_animated_model(lua_State *L)
 	AnimatedModelPTBNJWT::bind(L, "AnimatedModelPTBNJWT");
 }
 
-template AnimatedModelPNJWT;
-template AnimatedModelPTBNJWT;
+template class BasicAnimatedModel<VERTEX_PNJWT>;
+template class BasicAnimatedModel<VERTEX_PTBNJWT>;
 
 }

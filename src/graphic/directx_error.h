@@ -10,7 +10,6 @@
 //-----------------------------------------------------------------------------
 
 #include <windows.h>
-#include <dxerr.h>
 #include <exception>
 
 namespace graphic {
@@ -22,7 +21,7 @@ private:
 public:
 	directx_error(HRESULT hr) throw(): hresult_(hr) {}
 	~directx_error() throw() {}
-	char const *what() const throw() { return DXGetErrorDescription(hresult_); }
+	char const *what() const throw() { return ""/* DXGetErrorDescription(hresult_)*/; }
 };
 
 }

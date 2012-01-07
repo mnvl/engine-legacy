@@ -94,14 +94,15 @@ void BasicStaticMesh<T>::draw(Joint *joint_ptr, CameraPtr const &camera, math::m
 	}
 }
 
-template<class T>
-void BasicStaticMesh<T>::set_vertices(GenericVertex *vertices, GenericVertex::format_type format, size_t count)
+template<class V>
+void BasicStaticMesh<V>::set_vertices(GenericVertex *vertices, GenericVertex::format_type format, size_t count)
 {
 	LOG_DEBUG("vertices: count = " << count << ", format = " << std::hex << format);
 
 	if (!vertex_array_)
 	{
-		vertex_array_ = get_model()->get_renderer()->create_vertex_array<vertex_type>(count, false, true);
+		vertex_array_ = get_model()->get_renderer()->
+			Renderer::create_vertex_array<vertex_type>(count, false, true);
 
 		vertex_array_->lock(true);
 		memset(vertex_array_->begin(), 0, vertex_array_->get_size());
@@ -111,7 +112,7 @@ void BasicStaticMesh<T>::set_vertices(GenericVertex *vertices, GenericVertex::fo
 		vertex_array_->lock(false);
 	}
 
-	if (initialized_vertex_components_ == 0 || T::FORMAT == format)
+	if (initialized_vertex_components_ == 0 || vertex_type::FORMAT == format)
 	{
 		vertex_type *p = vertex_array_->begin();
 		GenericVertex *vertex = vertices;
@@ -156,7 +157,8 @@ void BasicStaticMesh<T>::set_indices(unsigned *buffer, size_t count)
 {
 	LOG_DEBUG("indices: count = " << count);
 
-	index_array_ = get_model()->get_renderer()->create_index_array<INDEX_U16>(count, false, true);
+	index_array_ = get_model()->get_renderer()->
+		Renderer::create_index_array<INDEX_U16>(count, false, true);
 
     index_array_->lock(false);
 
@@ -176,10 +178,9 @@ void BasicStaticMesh<T>::set_always_visible(bool flag)
 	always_visible_ = flag;
 }
 
-
-template StaticMeshPNT;
-template StaticMeshPTBNT;
-template StaticMeshPNJWT;
-template StaticMeshPTBNJWT;
+template class BasicStaticMesh<VERTEX_PNT>;
+template class BasicStaticMesh<VERTEX_PTBNT>;
+template class BasicStaticMesh<VERTEX_PNJWT>;
+template class BasicStaticMesh<VERTEX_PTBNJWT>;
 
 }

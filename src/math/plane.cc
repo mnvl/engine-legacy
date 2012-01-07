@@ -122,7 +122,7 @@ plane<T>::classify(obb<ARITY, scalar_t> const &bounds) const
 	return NEGATIVE;
 }
 
-template plane<>;
+template class plane<>;
 
 void bind_plane(lua_State *L)
 {

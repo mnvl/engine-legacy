@@ -781,12 +781,6 @@ public:
 		scalar_t l=length();
 		if(abs(l) > 0) *this /= l;
 	}
-
-	template<class Archive>
-	void serialize(Archive &archive, unsigned const /*file_version*/)
-	{
-		archive & x & y & z & w;
-	}
 };
 #pragma pack(pop)
 

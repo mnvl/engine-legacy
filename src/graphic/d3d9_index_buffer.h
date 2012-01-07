@@ -19,11 +19,9 @@
 namespace graphic
 {
 
-class D3D9Renderer;
-
 class D3D9IndexBuffer: public IndexBuffer
 {
-	friend D3D9Renderer;
+	friend class D3D9Renderer;
 
 public:
 	virtual ~D3D9IndexBuffer();

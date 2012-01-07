@@ -21,7 +21,7 @@ template<class V = VERTEX_PNJWT>
 class BasicAnimatedMesh: public BasicStaticMesh<V> {
 public:
     BasicAnimatedMesh(Model *model_ptr);
-	~BasicAnimatedMesh();
+	virtual ~BasicAnimatedMesh();
 
 	virtual MeshPtr shallow_copy() const;
 

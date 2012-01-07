@@ -18,9 +18,6 @@
 namespace graphic
 {
 
-class DrawCall;
-class Renderer;
-
 class Scheduler: public boost::noncopyable {
 public:
 	Scheduler(RendererPtr const &renderer);
@@ -35,7 +32,6 @@ public:
 	static void bind(lua_State *L);
 
 private:
-	typedef DrawCallPtr DrawCallPtr;
 	typedef std::vector<DrawCallPtr> draw_calls_type;
 
 	size_t visible_calls_count_, invisible_calls_count_;

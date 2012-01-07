@@ -166,7 +166,7 @@ void bresenham_supercover<T>::next()
 	++i_;
 }
 
-template bresenham_supercover<>;
+template class bresenham_supercover<>;
 
 }
 

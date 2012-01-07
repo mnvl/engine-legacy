@@ -134,7 +134,7 @@ bool aabb<N, T>::trace(ray_t const &r, scalar_t *t0, scalar_t *t1, scalar_t t_mi
 }
 
 template<int N, class T>
-bool aabb<N, T>::trace(ray_t const &r, scalar_t t_min = 0, scalar_t t_max = 1) const
+bool aabb<N, T>::trace(ray_t const &r, scalar_t t_min, scalar_t t_max) const
 {
 	scalar_t t0, t1;
 

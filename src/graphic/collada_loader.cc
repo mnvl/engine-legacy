@@ -1285,7 +1285,7 @@ public:
 		throw error(L"material " + name + L" not found");
 	}
 
-	void library_materials_e::build_materials() const
+	void build_materials() const
 	{
 		LOG_DEBUG("building materials...");
 
@@ -1450,7 +1450,7 @@ private:
 		return it->second;
 	}
 
-	std::wstring get_surface_filename(std::wstring const &component_name) const;
+	std::string get_surface_filename(std::wstring const &component_name) const;
 
 public:
 	MaterialPtr build_material() const
@@ -1468,22 +1468,22 @@ public:
 		}
 
 		{
-			std::wstring const &diffuse_texture = get_surface_filename(L"diffuse");
+			std::string const &diffuse_texture = get_surface_filename(L"diffuse");
 
 			if (diffuse_texture.size())
 			{
-				std::string filename = xerces_lcp_transcode((get_root()->get_basepath() / diffuse_texture).native_file_string());
+				std::string filename = (get_root()->get_basepath() / diffuse_texture).string();
 
 				LOG_DEBUG("diffuse texture = " << filename);
 				material_ptr->set_diffuse_texture(filename);
 			}
 			else
 			{
-				std::wstring const &transparent_texture = get_surface_filename(L"transparent");
+				std::string const &transparent_texture = get_surface_filename(L"transparent");
 
 				if (transparent_texture.size())
 				{
-					std::string filename = xerces_lcp_transcode((get_root()->get_basepath() / transparent_texture).native_file_string());
+					std::string filename = (get_root()->get_basepath() / transparent_texture).string();
 
 					LOG_DEBUG("transparent diffuse texture = " << filename);
 					material_ptr->set_diffuse_texture(filename);
@@ -1777,10 +1777,10 @@ MaterialPtr material_e::build_material() const
 	return material_ptr;
 }
 
-std::wstring profile_common_e::get_surface_filename(std::wstring const &component_name) const
+std::string profile_common_e::get_surface_filename(std::wstring const &component_name) const
 {
 	std::wstring const &sampler_name = technique_->get_shader()->get_sampler_name(component_name);
-	if (sampler_name.empty()) return sampler_name;
+	if (sampler_name.empty()) return std::string();
 
 	if (newparam_e const *sampler_ptr = get_newparam(sampler_name, false)) {
 		std::wstring const &surface_name = sampler_ptr->get_sampler()->get_source();
@@ -1789,12 +1789,12 @@ std::wstring profile_common_e::get_surface_filename(std::wstring const &componen
 		std::wstring const &filepath = get_root()->get_images()->get_image_by_name(image_name)->get_init_from();
 		LOG_INFO("sampler " << xerces_lcp_transcode(sampler_name) << " has texture "
 			<< xerces_lcp_transcode(filepath) << " (via newparams)");
-		return boost::filesystem::wpath(filepath).filename();
+		return boost::filesystem::wpath(filepath).filename().string();
 	}
 
 	std::wstring const &filepath = get_root()->get_images()->get_image_by_name(sampler_name)->get_init_from();
 	LOG_INFO("sampler " << xerces_lcp_transcode(sampler_name) << " has texture " << xerces_lcp_transcode(filepath));
-	return boost::filesystem::wpath(filepath).filename();
+	return boost::filesystem::wpath(filepath).filename().string();
 }
 
 class collada_e: public element, public root_element {
@@ -1896,7 +1896,7 @@ public:
 
 	void set_filename(std::wstring const &filename)
 	{
-		basepath_ = boost::filesystem::wpath(filename, boost::filesystem::native).parent_path();
+		basepath_ = boost::filesystem::wpath(filename).parent_path();
 	}
 
 	void build_model(Model *model_ptr)

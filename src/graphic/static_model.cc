@@ -52,7 +52,7 @@ void bind_static_model(lua_State *L)
 	StaticModelPTBNT::bind(L, "StaticModelPTBNT");
 }
 
-template StaticModelPNT;
-template StaticModelPTBNT;
+template class BasicStaticModel<VERTEX_PNT>;
+template class BasicStaticModel<VERTEX_PTBNT>;
 
 }

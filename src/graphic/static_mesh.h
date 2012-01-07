@@ -21,7 +21,7 @@
 namespace graphic
 {
 
-template<class T> class BasicStaticModel;
+template<class V> class BasicStaticModel;
 
 template<class V = VERTEX_PNT>
 class BasicStaticMesh: public Mesh {

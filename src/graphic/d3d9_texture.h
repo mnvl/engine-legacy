@@ -21,10 +21,8 @@
 namespace graphic
 {
 
-class Renderer;
-
 class D3D9Texture: public Texture {
-	friend Renderer;
+	friend class D3D9Renderer;
 
 public:
 	D3D9Texture(D3D9RendererPtr const &renderer_ptr, int width, int height,

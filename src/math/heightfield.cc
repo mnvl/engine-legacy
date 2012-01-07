@@ -267,8 +267,10 @@ heightfield<T>::build_path(vec<3> const &from, vec<3> const &to, value_t min_val
 		std::vector<cell_t> const &obstacles_;
 	};
 
-	scorer s(this, min_value, goal, obstacles);
-	a_star pathfinder(start, goal, boost::bind(&scorer::get_score, &s, _1));
+	// TODO
+	scorer scorer_instance(this, min_value, goal, obstacles);
+	a_star pathfinder(start, goal,  /*boost::bind(&scorer::get_score, &scorer_instance, _1) */ a_star::scorer_t());
+
 	pathfinder.calculate_path();
 
 	return pathfinder.build_path(allow_best_heuristic_point);
@@ -279,7 +281,8 @@ void heightfield<T>::post_load()
 {
 	local_aabb_.null();
 
-	for (std::vector<value_t>::const_iterator it = heights_.begin(); it != heights_.end(); ++it)
+	for (typename std::vector<value_t>::const_iterator it = heights_.begin();
+		 it != heights_.end(); ++it)
 	{
 		if (local_aabb_.lo.y > *it) local_aabb_.lo.y = *it;
 		if (local_aabb_.hi.y < *it) local_aabb_.hi.y = *it;
