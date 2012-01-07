@@ -14,7 +14,6 @@
 #include <graphic/bind.h>
 #include <math/bind.h>
 #include <spatial/bind.h>
-#include <particle_system/bind.h>
 #include <util/logger.h>
 #include <util/archive.h>
 #include <util/bind_boost.h>
@@ -41,8 +40,6 @@ LuaState::LuaState():
 
 	math::bind(L_);
 	spatial::bind(L_);
-
-	particle_system::bind(L_);
 
 	util::bind_logger(L_);
 	util::ArchiveReader::bind(L_);
