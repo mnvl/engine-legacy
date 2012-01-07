@@ -8,7 +8,6 @@
 // prior written consent of Manvel Avetisian.
 //-----------------------------------------------------------------------------
 
-#include <crtdbg.h>
 #include <windows.h>
 #include <xercesc/util/PlatformUtils.hpp>
 #include <boost/filesystem.hpp>
@@ -19,7 +18,6 @@
 #include <graphic/d3d9_renderer.h>
 #include <math/bind.h>
 #include <spatial/bind.h>
-#include <particle_system/bind.h>
 #include <util/logger.h>
 #include <util/archive.h>
 #include <util/bind_boost.h>
@@ -55,8 +53,6 @@ public:
 		math::bind(L_);
 		spatial::bind(L_);
 
-		particle_system::bind(L_);
-
 		util::bind_logger(L_);
 		util::ArchiveReader::bind(L_);
 		util::ArchiveWriter::bind(L_);
@@ -67,7 +63,7 @@ public:
 
 		pirates::Heightfield::bind(L_);
 
-		if (boost::filesystem::exists(boost::filesystem::path("pack0.dat", boost::filesystem::native)))
+		if (boost::filesystem::exists(boost::filesystem::path("pack0.dat")))
 		{
 			archive_reader_.reset(new util::ArchiveReader());
 			archive_reader_->open("pack0.dat");
