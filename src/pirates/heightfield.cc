@@ -17,6 +17,7 @@
 #include <graphic/material.h>
 #include <graphic/scheduler.h>
 #include <graphic/renderer.h>
+#include <util/logger.h>
 #include "heightfield.h"
 
 namespace pirates

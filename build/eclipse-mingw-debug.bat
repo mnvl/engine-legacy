@@ -1,0 +1,1 @@
+cmake -D ECLIPSE_CDT4_GENERATE_SOURCE_PROJECT=TRUE -D CMAKE_BUILD_TYPE=Debug -G "Eclipse CDT4 - MinGW Makefiles" ../
