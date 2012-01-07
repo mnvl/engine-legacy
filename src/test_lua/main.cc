@@ -8,7 +8,6 @@
 // prior written consent of Manvel Avetisian.
 //-----------------------------------------------------------------------------
 
-#include <crtdbg.h>
 #include <iomanip>
 #include <windows.h>
 #include <boost/filesystem.hpp>
@@ -30,9 +29,9 @@ void search_for_tests(boost::filesystem::path const &path)
 		}
 		else if (boost::filesystem::is_regular_file(*it))
 		{
-			if (boost::regex_match(it->path().filename(), boost::regex("test_.*.lua")))
+			if (boost::regex_match(it->path().filename().string(), boost::regex("test_.*.lua")))
 			{
-				tests.push_back(std::make_pair(it->path().filename(), it->path().native_file_string()));
+				tests.push_back(std::make_pair(it->path().filename().string(), it->path().string()));
 			}
 		}
 	}

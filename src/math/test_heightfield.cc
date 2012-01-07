@@ -322,7 +322,8 @@ BOOST_AUTO_TEST_CASE(test_raytrace_simple_save_load_1)
 	}
 
 	math::heightfield<boost::uint8_t> hf(math::matrix<4,4>(), 10, 10);
-	boost::archive::binary_iarchive(std::stringstream(dump)) & hf;
+	std::stringstream stream(dump);
+	boost::archive::binary_iarchive(stream) & hf;
 
 	math::vec<3> p1(0, 10, 0);
 	math::vec<3> p2(2.0899076f, 0, 5.1918087f);
