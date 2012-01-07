@@ -10,6 +10,7 @@
 //-----------------------------------------------------------------------------
 
 #include <assert.h>
+#include <luabind/lua_include.hpp>
 #include "scalar.h"
 #include "vec.h"
 #include "aabb.h"
@@ -151,7 +152,6 @@ public:
 	{
 	}
 
-	// сконструировать obb из aabb
 	obb &operator =(const aabb_t &a) {
 		origin = a.lo;
 		tangent.set(a.hi.x - a.lo.x, 0, 0);
@@ -160,10 +160,11 @@ public:
 		return *this;
 	}
 
-	// получить объем
 	vec_t get_centre() const {
 		return origin + (tangent + normal + binormal) / scalar_t(2);
 	}
+
+	scalar_t get_radius() const;
 
 	scalar_t get_volume() const {
 		return tangent.length() * normal.length() * binormal.length();
@@ -310,6 +311,8 @@ private:
 	bool test_noncollision(const obb &r, vec_t const &vel, scalar_t t_min = 0,
 		scalar_t t_max = 1) const;
 };
+
+void bind_obb(lua_State *L);
 
 }
 

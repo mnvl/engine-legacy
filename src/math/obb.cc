@@ -8,10 +8,24 @@
 // prior written consent of Manvel Avetisian.
 //-----------------------------------------------------------------------------
 
-#include <math/obb.h>
+#include <luabind/luabind.hpp>
+#include "obb.h"
 
 namespace math
 {
+
+template <class T> typename obb<3,T>::scalar_t
+obb<3,T>::get_radius() const {
+	vec_t centre = get_centre();
+	scalar_t radius_sq = 0;
+	for (int i = 0; i < VERTICES_COUNT; ++i) {
+		vec_t pos;
+		get_vertex(i, pos);
+		scalar_t dist_sq = (pos - centre).length_sq();
+		if (dist_sq > radius_sq) radius_sq = dist_sq;
+	}
+	return sqrt(radius_sq);
+}
 
 template <class T> void
 obb<3,T>::world_to_local_vector(vec_t &v,vec_t const &v0) const
@@ -289,5 +303,23 @@ obb<3,T>::is_basis_linearly_independent() const
 }
 
 template class obb<3>;
+
+void bind_obb(lua_State *L)
+{
+	using namespace luabind;
+
+	module(L, "math")
+	[
+		class_<obb<3> >("obb3")
+		.def(constructor<>())
+		.def(constructor<aabb<3> const &>())
+		.def_readwrite("origin", &obb<3>::origin)
+		.def_readwrite("tangent", &obb<3>::tangent)
+		.def_readwrite("normal", &obb<3>::normal)
+		.def_readwrite("binormal", &obb<3>::binormal)
+		.def("transform", &obb<3>::transform)
+		.def("get_radius", &obb<3>::get_radius)
+	];
+}
 
 }

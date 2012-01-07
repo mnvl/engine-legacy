@@ -11,6 +11,7 @@
 #include "interval.h"
 #include "vec.h"
 #include "aabb.h"
+#include "obb.h"
 #include "matrix.h"
 #include "contact_info.h"
 #include "ray.h"
@@ -29,6 +30,7 @@ void bind(lua_State *L)
 	bind_interval(L);
 	bind_vec(L);
 	bind_aabb(L);
+	bind_obb(L);
 	bind_matrix(L);
 	bind_contact_info(L);
 	bind_ray(L);
