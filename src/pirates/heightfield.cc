@@ -139,7 +139,7 @@ void Heightfield::draw()
 	scheduler_->add(draw_call_);
 }
 
-void Heightfield::add(math::vec<3> const &position, int radius, math::scalar delta)
+void Heightfield::add(math::vec<3> const &position, math::scalar radius, math::scalar delta)
 {
 	math::vec<2, int> cell = heightfield_.world_position_to_cell(position);
 
