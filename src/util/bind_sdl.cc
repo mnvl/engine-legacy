@@ -41,8 +41,8 @@ void bind_SDL(lua_State* L)
 
 	module(L, "SDL")
 	[
-		class_<dummy>("const").
-		enum_("")
+		class_<dummy>("const")
+		.enum_("")
 		[
 			value("SDL_INIT_EVERYTHING", SDL_INIT_EVERYTHING),
 			value("SDL_MOUSEMOTION", SDL_MOUSEMOTION),

@@ -131,9 +131,18 @@ void bind_plane(lua_State *L)
 	module(L, "math")
 	[
 		class_<plane<> >("plane")
+		.enum_("const")
+		[
+			value("POSITIVE", plane<>::POSITIVE),
+			value("INTERSECTS", plane<>::INTERSECTS),
+			value("NEGATIVE", plane<>::NEGATIVE)
+		 ]
 		.def(constructor<>())
 		.def(constructor<const vec<3> &,const vec<3> &>())
 		.def("trace", (scalar (plane<>::*)(const ray<3> &) const) &plane<>::trace)
+		.def("classify", (plane<>::classification_t (plane<>::*)(vec<3> const &) const) &plane<>::classify)
+		.def("classify", (plane<>::classification_t (plane<>::*)(aabb<3> const &) const) &plane<>::classify)
+		.def("classify", (plane<>::classification_t (plane<>::*)(obb<3> const &) const) &plane<>::classify)
 	];
 }
 

@@ -17,6 +17,7 @@
 #include "ray.h"
 #include "line.h"
 #include "plane.h"
+#include "frustum.h"
 #include "sphere.h"
 #include "capsule.h"
 #include "heightfield.h"
@@ -36,6 +37,7 @@ void bind(lua_State *L)
 	bind_ray(L);
 	bind_line(L);
 	bind_plane(L);
+	bind_frustum(L);
 	bind_sphere(L);
 	bind_capsule(L);
 	bind_heightfield(L);

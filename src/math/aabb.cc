@@ -151,6 +151,7 @@ void bind_aabb(lua_State *L)
 	module(L, "math")
 	[
 		class_<aabb<3> >("aabb3")
+		.def(constructor<aabb<3> const &>())
 		.def(constructor<vec<3> const &, vec<3> const &>())
 		.def_readwrite("lo", &aabb<3>::lo)
 		.def_readwrite("hi", &aabb<3>::hi)
