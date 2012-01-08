@@ -241,11 +241,8 @@ public:
 		if (cell.x >= (int) hf_->nrows()) return -1;
 		if (cell.y >= (int) hf_->ncols()) return -1;
 
-		for (typename obstacles_t::const_iterator it = obstacles_.begin();
-			 it != obstacles_.end(); ++it)
-		{
-			if (cell == *it) return -1;
-		}
+		typename obstacles_t::const_iterator it = obstacles_.find(cell);
+		if (it != obstacles_.end()) return -1;
 
 		scalar delta = (scalar) (cell - goal_).length_sq();
 
