@@ -12,9 +12,10 @@
 #include <utility>
 #include <boost/cstdint.hpp>
 #include <boost/bind.hpp>
+#include <boost/unordered_set.hpp>
 #include <luabind/luabind.hpp>
 #include <luabind/iterator_policy.hpp>
-#include <math/a_star.h>
+#include "a_star.h"
 #include "bresenham_supercover.h"
 #include "heightfield.h"
 
@@ -218,6 +219,68 @@ void heightfield<T>::resize(size_t ncols, size_t nrows)
 	post_load();
 }
 
+namespace
+{
+template<class T>
+class scorer_closure {
+public:
+	typedef typename heightfield<T>::cell_t cell_t;
+
+	scorer_closure(heightfield<T> const *hf, scalar min_value, cell_t goal, std::vector<cell_t> const &obstacles):
+		hf_(hf),
+		min_value_(min_value),
+		goal_(goal)
+	{
+		obstacles_.insert(obstacles.begin(), obstacles.end());
+	}
+
+	scalar get_score(cell_t const &cell) const
+	{
+		if (cell.x < 0) return -1;
+		if (cell.y < 0) return -1;
+		if (cell.x >= (int) hf_->nrows()) return -1;
+		if (cell.y >= (int) hf_->ncols()) return -1;
+
+		for (typename obstacles_t::const_iterator it = obstacles_.begin();
+			 it != obstacles_.end(); ++it)
+		{
+			if (cell == *it) return -1;
+		}
+
+		scalar delta = (scalar) (cell - goal_).length_sq();
+
+		if (hf_->max_y_in_cell(cell.x, cell.y) < min_value_)
+		{
+			return delta;
+		}
+		else
+		{
+			return -1;
+		}
+	}
+
+private:
+	struct cell_hash {
+		std::size_t operator ()(cell_t const &cell) const {
+			return (cell.x * 1011) ^ cell.y;
+		}
+	};
+
+	struct cell_eq {
+		std::size_t operator ()(cell_t const &lhs, cell_t const &rhs) const {
+			return lhs == rhs;
+		}
+	};
+
+	typedef boost::unordered_set<cell_t, cell_hash, cell_eq> obstacles_t;
+
+	heightfield<T> const *hf_;
+	scalar min_value_;
+	cell_t goal_;
+	obstacles_t obstacles_;
+};
+}
+
 template<class T> std::vector<typename heightfield<T>::cell_t>
 heightfield<T>::build_path(vec<3> const &from, vec<3> const &to, value_t min_value, bool allow_best_heuristic_point,
 	std::vector<cell_t> const &obstacles) const
@@ -225,51 +288,8 @@ heightfield<T>::build_path(vec<3> const &from, vec<3> const &to, value_t min_val
 	cell_t start = world_position_to_cell(from);
 	cell_t goal = world_position_to_cell(to);
 
-	class scorer {
-	public:
-		scorer(heightfield const *hf, scalar min_value, cell_t goal, std::vector< cell_t > const &obstacles):
-			hf_(hf),
-			min_value_(min_value),
-			goal_(goal),
-			obstacles_(obstacles)
-		{
-		}
-
-		scalar get_score(cell_t const &cell) const
-		{
-			if (cell.x < 0) return -1;
-			if (cell.y < 0) return -1;
-			if (cell.x >= (int) hf_->nrows()) return -1;
-			if (cell.y >= (int) hf_->ncols()) return -1;
-
-			for (std::vector< cell_t >::const_iterator it = obstacles_.begin();
-				 it != obstacles_.end(); ++it)
-			{
-				if (cell == *it) return -1;
-			}
-
-			scalar delta = (scalar) (cell - goal_).length_sq();
-
-			if (hf_->max_y_in_cell(cell.x, cell.y) < min_value_)
-			{
-				return delta;
-			}
-			else
-			{
-				return -1;
-			}
-		}
-
-	private:
-		heightfield const *hf_;
-		scalar min_value_;
-		cell_t goal_;
-		std::vector<cell_t> const &obstacles_;
-	};
-
-	// TODO
-	scorer scorer_instance(this, min_value, goal, obstacles);
-	a_star pathfinder(start, goal,  /*boost::bind(&scorer::get_score, &scorer_instance, _1) */ a_star::scorer_t());
+	scorer_closure<T> scorer(this, min_value, goal, obstacles);
+	a_star pathfinder(start, goal, boost::bind(&scorer_closure<T>::get_score, &scorer, _1));
 
 	pathfinder.calculate_path();
 
