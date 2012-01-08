@@ -90,12 +90,7 @@ plane<T>::classify(vec_t const &point) const
 template<class T> typename plane<T>::classification_t
 plane<T>::classify(aabb<ARITY, scalar_t> const &bounds) const
 {
-	vec_t p_point(A >= 0 ? bounds.hi.x : bounds.lo.x, B >= 0 ? bounds.hi.y : bounds.lo.y, C >= 0 ? bounds.hi.z : bounds.lo.z);
-	vec_t n_point(A < 0 ? bounds.hi.x : bounds.lo.x, B < 0 ? bounds.hi.y : bounds.lo.y, C < 0 ? bounds.hi.z : bounds.lo.z);
-
-	classification_t pc = classify(p_point), nc = classify(n_point);
-
-	return pc == nc ? pc : INTERSECTS;
+	return classify(obb<ARITY, scalar_t>(bounds));
 }
 
 template<class T> typename plane<T>::classification_t
@@ -113,9 +108,10 @@ plane<T>::classify(obb<ARITY, scalar_t> const &bounds) const
 		case NEGATIVE: negative = true; break;
 		default: return INTERSECTS;
 		};
+
+		if (positive && negative) return INTERSECTS;
 	}
 
-	if (positive && negative) return INTERSECTS;
 	if (positive) return POSITIVE;
 
 	assert (negative);
