@@ -23,7 +23,7 @@
 #include <util/bind_boost.h>
 #include <util/bind_sdl.h>
 #include <util/bind_stl.h>
-#include "heightfield.h"
+#include "ground.h"
 
 extern "C"
 {
@@ -61,7 +61,7 @@ public:
 		util::bind_SDL(L_);
 		util::bind_stl(L_);
 
-		pirates::Heightfield::bind(L_);
+		pirates::Ground::bind(L_);
 
 		if (boost::filesystem::exists(boost::filesystem::path("pack0.dat")))
 		{

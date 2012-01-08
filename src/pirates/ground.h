@@ -21,7 +21,7 @@
 namespace pirates
 {
 
-class Heightfield: public boost::noncopyable {
+class Ground: public boost::noncopyable {
 public:
 	static unsigned const BINARY_FORMAT_VERSION = 1;
 
@@ -30,9 +30,9 @@ public:
 	static unsigned const TEXTURE_GRASS = 2;
 	static unsigned const TEXTURES_COUNT = 3;
 
-	Heightfield(graphic::RendererPtr const &renderer, graphic::SchedulerPtr const &scheduler,
+	Ground(graphic::RendererPtr const &renderer, graphic::SchedulerPtr const &scheduler,
 		graphic::CameraPtr const &camera, math::matrix<4,4> const &tf, size_t nrows, size_t ncols);
-	~Heightfield();
+	~Ground();
 
 	void set_texture_filename(std::string const &filename, unsigned type);
 	std::string const &get_texture_filename(unsigned type);

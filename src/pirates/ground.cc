@@ -18,14 +18,14 @@
 #include <graphic/scheduler.h>
 #include <graphic/renderer.h>
 #include <util/logger.h>
-#include "heightfield.h"
+#include "ground.h"
 
 namespace pirates
 {
 
-char const Heightfield::ARCHIVE_CHUNK_NAME[] = "HEIGHTFIELD";
+char const Ground::ARCHIVE_CHUNK_NAME[] = "HEIGHTFIELD";
 
-Heightfield::Heightfield(graphic::RendererPtr const &renderer, graphic::SchedulerPtr const &scheduler,
+Ground::Ground(graphic::RendererPtr const &renderer, graphic::SchedulerPtr const &scheduler,
 	graphic::CameraPtr const &camera, math::matrix<4,4> const &tf, size_t ncols, size_t nrows)
 :
 	renderer_(renderer),
@@ -42,27 +42,27 @@ Heightfield::Heightfield(graphic::RendererPtr const &renderer, graphic::Schedule
 	draw_call_->set_world_matrix(tf);
 }
 
-Heightfield::~Heightfield()
+Ground::~Ground()
 {
 }
 
-void Heightfield::set_texture_filename(std::string const &filename, unsigned index)
+void Ground::set_texture_filename(std::string const &filename, unsigned index)
 {
 	material_->set_diffuse_texture(filename, index);
 }
 
-std::string const &Heightfield::get_texture_filename(unsigned index)
+std::string const &Ground::get_texture_filename(unsigned index)
 {
 	return material_->get_diffuse_texture(index)->get_filename();
 }
 
-void Heightfield::set_transform(math::matrix<4, 4> const &tf)
+void Ground::set_transform(math::matrix<4, 4> const &tf)
 {
 	heightfield_.set_local_to_world(tf);
 	draw_call_->set_world_matrix(tf);
 }
 
-void Heightfield::update()
+void Ground::update()
 {
 	size_t nrows = heightfield_.nrows();
 	size_t ncols = heightfield_.ncols();
@@ -133,13 +133,13 @@ void Heightfield::update()
 	}
 }
 
-void Heightfield::draw()
+void Ground::draw()
 {
 	draw_call_->commit();
 	scheduler_->add(draw_call_);
 }
 
-void Heightfield::add(math::vec<3> const &position, math::scalar radius, math::scalar delta)
+void Ground::add(math::vec<3> const &position, math::scalar radius, math::scalar delta)
 {
 	math::vec<2, int> cell = heightfield_.world_position_to_cell(position);
 
@@ -161,7 +161,7 @@ void Heightfield::add(math::vec<3> const &position, math::scalar radius, math::s
 	}
 }
 
-void Heightfield::read(util::ArchiveReaderPtr const &reader)
+void Ground::read(util::ArchiveReaderPtr const &reader)
 {
 	std::stringstream ss;
 
@@ -176,7 +176,7 @@ void Heightfield::read(util::ArchiveReaderPtr const &reader)
 	ia & *this;
 }
 
-void Heightfield::write(util::ArchiveWriterPtr const &writer)
+void Ground::write(util::ArchiveWriterPtr const &writer)
 {
 	std::stringstream ss;
 
@@ -188,13 +188,13 @@ void Heightfield::write(util::ArchiveWriterPtr const &writer)
 	writer->write_data(ARCHIVE_CHUNK_NAME, ss.str());
 }
 
-void Heightfield::bind(lua_State *L)
+void Ground::bind(lua_State *L)
 {
 	using namespace luabind;
 
     module_(L, "pirates")
     [
-        class_<Heightfield, boost::shared_ptr<Heightfield> >("Heightfield")
+        class_<Ground, boost::shared_ptr<Ground> >("Ground")
 		.enum_("texture_type")
 		[
 			value("SEABED", TEXTURE_SEABED),
@@ -203,20 +203,20 @@ void Heightfield::bind(lua_State *L)
 		]
 		.def(constructor<graphic::RendererPtr const &, graphic::SchedulerPtr const &,
 			graphic::CameraPtr const &, math::matrix<4,4> const &, size_t, size_t>())
-		.def("update", &Heightfield::update)
-		.def("draw", &Heightfield::draw)
-		.def("set_texture_filename", &Heightfield::set_texture_filename)
-		.def("get_texture_filename", &Heightfield::get_texture_filename)
-		.def("set_transform", &Heightfield::set_transform)
-		.def("get_storage", &Heightfield::get_storage)
-		.def("add", &Heightfield::add)
-		.def("read", &Heightfield::read)
-		.def("write", &Heightfield::write)
+		.def("update", &Ground::update)
+		.def("draw", &Ground::draw)
+		.def("set_texture_filename", &Ground::set_texture_filename)
+		.def("get_texture_filename", &Ground::get_texture_filename)
+		.def("set_transform", &Ground::set_transform)
+		.def("get_storage", &Ground::get_storage)
+		.def("add", &Ground::add)
+		.def("read", &Ground::read)
+		.def("write", &Ground::write)
 	];
 }
 
 template<class Archive>
-void Heightfield::serialize(Archive &archive, unsigned const /*file_version*/)
+void Ground::serialize(Archive &archive, unsigned const /*file_version*/)
 {
 	archive & heightfield_;
 }
